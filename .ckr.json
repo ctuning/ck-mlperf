@@ -1,0 +1,10 @@
+{
+  "data_uoa": "ck-mlperf",
+  "data_uid": "1be6d862d67244da",
+  "data_alias": "ck-mlperf",
+  "data_name": "ck-mlperf",
+  "dict": {
+    "shared": "git",
+    "url": "https://github.com/ctuning/ck-mlperf"
+  }
+}
