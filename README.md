@@ -9,11 +9,11 @@ This demo runs MobileNets ([v1](https://arxiv.org/abs/1704.04861) and [v2](https
 - [Android SDK](https://developer.android.com/studio/), [Android NDK](https://developer.android.com/ndk/)
 
 ### Install common tools and libraries
-
 ```
 $ sudo apt install git wget
 $ sudo apt install python3 python3-pip
 $ sudo apt install libblas-dev liblapack-dev
+$ sudo python3 -m pip install scipy
 ```
 
 ### Install CK with Python 3
@@ -45,9 +45,9 @@ $ ck pull package:imagenet-2012-val-min
 ```
 **NB:** ImageNet dataset descriptions are contained in [CK-Caffe](https://github.com/dividiti/ck-caffe) for historic reasons.
 
-### Install TensorFlow Lite
+### Install TensorFlow Lite (TFLite)
 
-List available TensorFlow Lite packages:
+List available TFLite packages:
 ```
 $ ck list package:*tflite*
 lib-tflite-prebuilt-0.1.7-linux-aarch64
@@ -64,6 +64,8 @@ or from source:
 ```
 $ ck install package:lib-tflite-0.1.7-src-static --target_os=android23-arm64
 ```
+
+**NB:** Use `--target_os=android23-arm64` to build for Android API 23 (v6.0 "Marshmallow") or [similar](https://source.android.com/setup/start/build-numbers).
 
 ### Install MobileNets models for TFLite
 
