@@ -41,7 +41,7 @@ $ ck pull repo:ck-tensorflow
 ### Install a small dataset (500 images)
 ```
 $ ck pull repo:ck-caffe --url=https://github.com/dividiti/ck-caffe
-$ ck pull package:imagenet-2012-val-min 
+$ ck install package:imagenet-2012-val-min 
 ```
 **NB:** ImageNet dataset descriptions are contained in [CK-Caffe](https://github.com/dividiti/ck-caffe) for historic reasons.
 
