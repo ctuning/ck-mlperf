@@ -1,4 +1,6 @@
 # Candidate Collective Knowledge benchmarks for MLPerf Inference
+- [MobileNets v1](https://arxiv.org/abs/1704.04861)
+- [MobileNets v2](https://arxiv.org/abs/1801.04381)
 
 1. [Installation](#installation)
     1. [Install prerequisites](#installation-debian) (Debian-specific)
@@ -62,9 +64,7 @@ $ ck install package:imagenet-2012-val-min
 <a name="mobilenets-tflite"></a>
 # MobileNets via TensorFlow Lite
 
-This demo runs MobileNets ([v1](https://arxiv.org/abs/1704.04861) and [v2](https://arxiv.org/abs/1801.04381)) via [TensorFlow Lite](https://www.tensorflow.org/lite/).
-
-*NB:** See [`program:image-classification-tflite`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tflite) for more details.
+**NB:** See [`program:image-classification-tflite`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tflite) for more details.
 
 
 ### Install TensorFlow Lite (TFLite)
