@@ -1,36 +1,36 @@
 # Candidate Collective Knowledge benchmarks for MLPerf Inference
 
-This demo runs MobileNets ([v1](https://arxiv.org/abs/1704.04861) and [v2](https://arxiv.org/abs/1801.04381)) via [TensorFlow Lite](https://www.tensorflow.org/lite/) on Android devices.
+1. [Installation](#installation)
+  1. [Install prerequisites](#installation-ubuntu) (Ubuntu)
+  1. [Install CK workflows](#installation-workflows)
+1. [Benchmark MobileNets via TensorFlow (Python)](#mobilenets-tf-py)
+1. [Benchmark MobileNets via TensorFlow (C++)](#mobilenets-tf-cpp)
+1. [Benchmark MobileNets via TensorFlow Lite](#mobilenets-tflite)
 
-## Install prerequisites on Ubuntu (last tested with 18.04)
+<a name="installation"></a>
+# Installation
 
-- Python and [pip](https://pypi.org/project/pip/)
-- [Collective Knowledge](https://cknowledge.org) (CK)
-- [Android SDK](https://developer.android.com/studio/), [Android NDK](https://developer.android.com/ndk/)
+<a name="installation-ubuntu"></a>
+## Ubuntu (last tested with v18.04)
+
+- Common tools and libraries
+- [Python](https://www.python.org/), [pip](https://pypi.org/project/pip/), [SciPy](https://www.scipy.org/), [Collective Knowledge](https://cknowledge.org) (CK)
 
 ### Install common tools and libraries
 ```
-$ sudo apt install git wget
-$ sudo apt install python3 python3-pip
+$ sudo apt install gcc g++ git wget
 $ sudo apt install libblas-dev liblapack-dev
-$ sudo python3 -m pip install scipy
 ```
 
-### Install CK with Python 3
+### Install Python, pip, SciPy and CK
 ```
+$ sudo apt install python3 python3-pip
+$ sudo python3 -m pip install scipy
 $ sudo python3 -m pip install ck
 ```
 **NB:** CK also supports Python 2.
 
-### Install Android SDK and NDK
-```
-$ sudo apt install android-sdk
-$ adb version
-Android Debug Bridge version 1.0.36
-Revision 1:7.0.0+r33-2
-$ sudo apt install google-android-ndk-installer
-```
-
+<a name="installation-workflows"></a>
 ## Install CK workflows
 
 ### Pull CK repositories
@@ -45,27 +45,43 @@ $ ck install package:imagenet-2012-val-min
 ```
 **NB:** ImageNet dataset descriptions are contained in [CK-Caffe](https://github.com/dividiti/ck-caffe) for historic reasons.
 
+<a name="mobilenets-tf-py"></a>
+# MobileNets via TensorFlow (Python)
+
+<a name="mobilenets-tf-cpp"></a>
+# MobileNets via TensorFlow (C++)
+
+<a name="mobilenets-tflite"></a>
+# MobileNets via TensorFlow Lite
+
+This demo runs MobileNets ([v1](https://arxiv.org/abs/1704.04861) and [v2](https://arxiv.org/abs/1801.04381)) via [TensorFlow Lite](https://www.tensorflow.org/lite/).
+
+**NB:** In what follows, you can optionally target Android API 23 (v6.0 "Marshmallow") devices using the `--target_os=android23-arm64` flag (or [similar](https://source.android.com/setup/start/build-numbers)).
+
+On Ubuntu, you can install the [Android SDK](https://developer.android.com/studio/) and the [Android NDK](https://developer.android.com/ndk/) as follows:
+```
+$ sudo apt install android-sdk
+$ adb version
+Android Debug Bridge version 1.0.36
+Revision 1:7.0.0+r33-2
+$ sudo apt install google-android-ndk-installer
+```
+
 ### Install TensorFlow Lite (TFLite)
 
-List available TFLite packages:
+Install TFLite from source:
 ```
-$ ck list package:*tflite*
+$ ck install package:lib-tflite-0.1.7-src-static [--target_os=android23-arm64]
+```
+
+You can also install TFLite from a prebuilt binary package for your target e.g.:
+```
+$ ck list package:lib-tflite-prebuilt*
 lib-tflite-prebuilt-0.1.7-linux-aarch64
 lib-tflite-prebuilt-0.1.7-linux-x64
 lib-tflite-prebuilt-0.1.7-android-arm64
-lib-tflite-0.1.7-src-static
-```
-
-Install TFLite either from a prebuilt binary package:
-```
 $ ck install package:lib-tflite-prebuilt-0.1.7-android-arm64 --target_os=android23-arm64
 ```
-or from source:
-```
-$ ck install package:lib-tflite-0.1.7-src-static --target_os=android23-arm64
-```
-
-**NB:** Use `--target_os=android23-arm64` to build for Android API 23 (v6.0 "Marshmallow") or [similar](https://source.android.com/setup/start/build-numbers).
 
 ### Install MobileNets models for TFLite
 
@@ -81,7 +97,7 @@ $ ck compile program:image-classification-tflite --target_os=android23-arm64
 
 ### Run the TFLite image classification client 
 
-Connect an Android device via USB and run the client:
+Connect an Android device to your host machine via USB and run the client:
 ```
 $ ck run program:image-classification-tflite --target_os=android23-arm64
 ...
