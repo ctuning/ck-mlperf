@@ -112,14 +112,59 @@ Average classification time: 0.202271s
 Accuracy top 1: 1.0 (1 of 1)
 Accuracy top 5: 1.0 (1 of 1)
 --------------------------------
-
-
-Execution time: 0.233 sec.
 ```
 
 <a name="mobilenets-tf-py"></a>
 # MobileNets via TensorFlow (Python)
 **TODO**
+
+### Install dependencies
+```
+$ sudo python3 -m pip install -U protobuf
+```
+
+### Install TensorFlow (Python)
+
+Install TensorFlow (Python) from an `x86_64` binary package:
+
+```
+$ ck install package:lib-tensorflow-1.10.1-cpu
+```
+
+or from source:
+```
+$ ck install package:lib-tensorflow-1.10.1-src-cpu
+```
+
+### Run the TensorFlow image classification client
+```
+$ ck run program:image-classification-tf-py
+...
+*** Dependency 4 = weights (TensorFlow-Python model and weights):
+    ...
+    Resolved. CK environment UID = b4fab4037b14a0b9 (version 2_1.4_224)
+...
+--------------------------------
+Process results in predictions
+---------------------------------------
+ILSVRC2012_val_00000001.JPEG - (65) n01751748 sea snake
+0.38 - (65) n01751748 sea snake
+0.19 - (54) n01729322 hognose snake, puff adder, sand viper
+0.13 - (58) n01737021 water snake
+0.12 - (62) n01744401 rock python, rock snake, Python sebae
+0.03 - (60) n01740131 night snake, Hypsiglena torquata
+---------------------------------------
+
+Summary:
+-------------------------------
+Graph loaded in 1.933857s
+All images loaded in 0.002172s
+All images classified in 0.359537s
+Average classification time: 0.359537s
+Accuracy top 1: 1.0 (1 of 1)
+Accuracy top 5: 1.0 (1 of 1)
+--------------------------------
+```
 
 <a name="mobilenets-tf-cpp"></a>
 # MobileNets via TensorFlow (C++)
