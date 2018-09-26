@@ -4,8 +4,8 @@
     1. [Install prerequisites](#installation-debian) (Debian-specific)
     1. [Install CK workflows](#installation-workflows) (universal)
 1. [Benchmark MobileNets via TensorFlow Lite](#mobilenets-tflite)
-1. [Benchmark MobileNets via TensorFlow (Python)](#mobilenets-tf-py)
 1. [Benchmark MobileNets via TensorFlow (C++)](#mobilenets-tf-cpp)
+1. [Benchmark MobileNets via TensorFlow (Python)](#mobilenets-tf-py)
 
 <a name="installation"></a>
 # Installation
@@ -13,8 +13,9 @@
 <a name="installation-debian"></a>
 ## Debian (last tested with Ubuntu v18.04)
 
-- Common tools and libraries
-- [Python](https://www.python.org/), [pip](https://pypi.org/project/pip/), [SciPy](https://www.scipy.org/), [Collective Knowledge](https://cknowledge.org) (CK)
+- Common tools and libraries.
+- [Python](https://www.python.org/), [pip](https://pypi.org/project/pip/), [SciPy](https://www.scipy.org/), [Collective Knowledge](https://cknowledge.org) (CK).
+- [[Optional]] [Android SDK](https://developer.android.com/studio/), [Android NDK](https://developer.android.com/ndk/).
 
 ### Install common tools and libraries
 ```
@@ -29,6 +30,19 @@ $ sudo python3 -m pip install scipy
 $ sudo python3 -m pip install ck
 ```
 **NB:** CK also supports Python 2.
+
+### [Optional] Install Android SDK and NDK
+
+When using the TensorFlow Lite and TensorFlow (C++) benchmarks, you can optionally target Android API 23 (v6.0 "Marshmallow") devices using the `--target_os=android23-arm64` flag (or [similar](https://source.android.com/setup/start/build-numbers)).
+
+On Debian Linux, you can install the [Android SDK](https://developer.android.com/studio/) and the [Android NDK](https://developer.android.com/ndk/) as follows:
+```
+$ sudo apt install android-sdk
+$ sudo apt install google-android-ndk-installer
+$ adb version
+Android Debug Bridge version 1.0.36
+Revision 1:7.0.0+r33-2
+```
 
 <a name="installation-workflows"></a>
 ## Install CK workflows
@@ -50,16 +64,8 @@ $ ck install package:imagenet-2012-val-min
 
 This demo runs MobileNets ([v1](https://arxiv.org/abs/1704.04861) and [v2](https://arxiv.org/abs/1801.04381)) via [TensorFlow Lite](https://www.tensorflow.org/lite/).
 
-**NB:** In what follows, you can optionally target Android API 23 (v6.0 "Marshmallow") devices using the `--target_os=android23-arm64` flag (or [similar](https://source.android.com/setup/start/build-numbers)).
+*NB:** See [`program:image-classification-tflite`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tflite) for more details.
 
-On Debian Linux, you can install the [Android SDK](https://developer.android.com/studio/) and the [Android NDK](https://developer.android.com/ndk/) as follows:
-```
-$ sudo apt install android-sdk
-$ sudo apt install google-android-ndk-installer
-$ adb version
-Android Debug Bridge version 1.0.36
-Revision 1:7.0.0+r33-2
-```
 
 ### Install TensorFlow Lite (TFLite)
 
@@ -114,8 +120,57 @@ Accuracy top 5: 1.0 (1 of 1)
 --------------------------------
 ```
 
+<a name="mobilenets-tf-cpp"></a>
+# MobileNets via TensorFlow (C++)
+
+*NB:** See [`program:image-classification-tf-cpp`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tf-cpp) for more details.
+
+### Install TensorFlow (C++)
+
+Install TensorFlow (C++) from source:
+```
+$ ck install package:lib-tensorflow-1.9.0-src-static
+```
+
+### Compile the TensorFlow (C++) image classification client
+```
+$ ck compile program:image-classification-tf-cpp
+```
+
+### Run the TensorFlow (C++) image classification client
+```
+$ ck run program:image-classification-tf-cpp
+...
+*** Dependency 3 = weights (TensorFlow model and weights):
+    ...
+    Resolved. CK environment UID = b4fab4037b14a0b9 (version 2_1.4_224)
+...
+--------------------------------
+Process results in predictions
+---------------------------------------
+ILSVRC2012_val_00000001.JPEG - (65) n01751748 sea snake
+0.17 - (62) n01744401 rock python, rock snake, Python sebae
+0.17 - (54) n01729322 hognose snake, puff adder, sand viper
+0.10 - (58) n01737021 water snake
+0.06 - (60) n01740131 night snake, Hypsiglena torquata
+0.04 - (63) n01748264 Indian cobra, Naja naja
+---------------------------------------
+
+Summary:
+-------------------------------
+Graph loaded in 0.108859s
+All images loaded in 0.005605s
+All images classified in 0.481788s
+Average classification time: 0.481788s
+Accuracy top 1: 0.0 (0 of 1)
+Accuracy top 5: 0.0 (0 of 1)
+--------------------------------
+```
+
 <a name="mobilenets-tf-py"></a>
 # MobileNets via TensorFlow (Python)
+
+**NB:** See [`program:image-classification-tf-py`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tf-py) for more details.
 
 ### Install TensorFlow (Python)
 
@@ -129,7 +184,7 @@ or from source:
 $ ck install package:lib-tensorflow-1.10.1-src-cpu
 ```
 
-### Run the TensorFlow image classification client
+### Run the TensorFlow (Python) image classification client
 ```
 $ ck run program:image-classification-tf-py
 ...
@@ -158,7 +213,3 @@ Accuracy top 1: 1.0 (1 of 1)
 Accuracy top 5: 1.0 (1 of 1)
 --------------------------------
 ```
-
-<a name="mobilenets-tf-cpp"></a>
-# MobileNets via TensorFlow (C++)
-**TODO**
