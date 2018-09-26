@@ -116,21 +116,14 @@ Accuracy top 5: 1.0 (1 of 1)
 
 <a name="mobilenets-tf-py"></a>
 # MobileNets via TensorFlow (Python)
-**TODO**
-
-### Install dependencies
-```
-$ sudo python3 -m pip install -U protobuf
-```
 
 ### Install TensorFlow (Python)
 
-Install TensorFlow (Python) from an `x86_64` binary package:
-
+Install TensorFlow (Python) from an `x86_64` binary package (requires system `protobuf`):
 ```
+$ sudo python3 -m pip install -U protobuf
 $ ck install package:lib-tensorflow-1.10.1-cpu
 ```
-
 or from source:
 ```
 $ ck install package:lib-tensorflow-1.10.1-src-cpu
