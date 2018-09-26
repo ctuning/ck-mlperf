@@ -85,9 +85,9 @@ $ ck install package:lib-tflite-prebuilt-0.1.7-android-arm64 [--target_os=androi
 
 ### Install MobileNets models for TFLite
 
-Select one of the 38 MobileNets models:
+Select one of the 38 MobileNets models compatible with TFLite:
 ```
-$ ck install package --tags=mobilenet,tflite
+$ ck install package --tags=tensorflowmodel,mobilenet,tflite
 ```
 
 ### Compile the TFLite image classification client 
@@ -123,13 +123,20 @@ Accuracy top 5: 1.0 (1 of 1)
 <a name="mobilenets-tf-cpp"></a>
 # MobileNets via TensorFlow (C++)
 
-*NB:** See [`program:image-classification-tf-cpp`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tf-cpp) for more details.
+**NB:** See [`program:image-classification-tf-cpp`](https://github.com/ctuning/ck-tensorflow/tree/master/program/image-classification-tf-cpp) for more details.
 
 ### Install TensorFlow (C++)
 
 Install TensorFlow (C++) from source:
 ```
 $ ck install package:lib-tensorflow-1.9.0-src-static
+```
+
+### Install MobileNets models for TensorFlow (C++)
+
+Select one of the 38 MobileNets models compatible with TensorFlow (C++):
+```
+$ ck install package --tags=tensorflowmodel,mobilenet,frozen
 ```
 
 ### Compile the TensorFlow (C++) image classification client
@@ -182,6 +189,21 @@ $ ck install package:lib-tensorflow-1.10.1-cpu
 or from source:
 ```
 $ ck install package:lib-tensorflow-1.10.1-src-cpu
+```
+
+### Install MobileNets models for TensorFlow (Python)
+
+Select one of the 54 MobileNets models compatible with TensorFlow (Python):
+```
+$ ck install package --tags=tensorflowmodel,mobilenet --no_tags=mobilenet-all
+```
+
+**NB:** This excludes "uber" packages which can be used to install all models in the sets `v1-2018-02-22` (16 models), `v1[-2018-06-14]` (16 models) and `v2` (22 models) in one go:
+```
+$ ck search package --tags=tensorflowmodel,mobilenet-all
+ck-tensorflow:package:tensorflowmodel-mobilenet-v1-2018_02_22
+ck-tensorflow:package:tensorflowmodel-mobilenet-v2
+ck-tensorflow:package:tensorflowmodel-mobilenet-v1
 ```
 
 ### Run the TensorFlow (Python) image classification client
