@@ -1,17 +1,17 @@
 # Candidate Collective Knowledge benchmarks for MLPerf Inference
 
 1. [Installation](#installation)
-  1. [Install prerequisites](#installation-ubuntu) (Ubuntu)
-  1. [Install CK workflows](#installation-workflows)
+    1. [Install prerequisites](#installation-debian) (Debian-specific)
+    1. [Install CK workflows](#installation-workflows) (universal)
+1. [Benchmark MobileNets via TensorFlow Lite](#mobilenets-tflite)
 1. [Benchmark MobileNets via TensorFlow (Python)](#mobilenets-tf-py)
 1. [Benchmark MobileNets via TensorFlow (C++)](#mobilenets-tf-cpp)
-1. [Benchmark MobileNets via TensorFlow Lite](#mobilenets-tflite)
 
 <a name="installation"></a>
 # Installation
 
-<a name="installation-ubuntu"></a>
-## Ubuntu (last tested with v18.04)
+<a name="installation-debian"></a>
+## Debian (last tested with Ubuntu v18.04)
 
 - Common tools and libraries
 - [Python](https://www.python.org/), [pip](https://pypi.org/project/pip/), [SciPy](https://www.scipy.org/), [Collective Knowledge](https://cknowledge.org) (CK)
@@ -45,12 +45,6 @@ $ ck install package:imagenet-2012-val-min
 ```
 **NB:** ImageNet dataset descriptions are contained in [CK-Caffe](https://github.com/dividiti/ck-caffe) for historic reasons.
 
-<a name="mobilenets-tf-py"></a>
-# MobileNets via TensorFlow (Python)
-
-<a name="mobilenets-tf-cpp"></a>
-# MobileNets via TensorFlow (C++)
-
 <a name="mobilenets-tflite"></a>
 # MobileNets via TensorFlow Lite
 
@@ -58,13 +52,13 @@ This demo runs MobileNets ([v1](https://arxiv.org/abs/1704.04861) and [v2](https
 
 **NB:** In what follows, you can optionally target Android API 23 (v6.0 "Marshmallow") devices using the `--target_os=android23-arm64` flag (or [similar](https://source.android.com/setup/start/build-numbers)).
 
-On Ubuntu, you can install the [Android SDK](https://developer.android.com/studio/) and the [Android NDK](https://developer.android.com/ndk/) as follows:
+On Debian Linux, you can install the [Android SDK](https://developer.android.com/studio/) and the [Android NDK](https://developer.android.com/ndk/) as follows:
 ```
 $ sudo apt install android-sdk
+$ sudo apt install google-android-ndk-installer
 $ adb version
 Android Debug Bridge version 1.0.36
 Revision 1:7.0.0+r33-2
-$ sudo apt install google-android-ndk-installer
 ```
 
 ### Install TensorFlow Lite (TFLite)
@@ -80,7 +74,7 @@ $ ck list package:lib-tflite-prebuilt*
 lib-tflite-prebuilt-0.1.7-linux-aarch64
 lib-tflite-prebuilt-0.1.7-linux-x64
 lib-tflite-prebuilt-0.1.7-android-arm64
-$ ck install package:lib-tflite-prebuilt-0.1.7-android-arm64 --target_os=android23-arm64
+$ ck install package:lib-tflite-prebuilt-0.1.7-android-arm64 [--target_os=android23-arm64]
 ```
 
 ### Install MobileNets models for TFLite
@@ -92,14 +86,14 @@ $ ck install package --tags=mobilenet,tflite
 
 ### Compile the TFLite image classification client 
 ```
-$ ck compile program:image-classification-tflite --target_os=android23-arm64
+$ ck compile program:image-classification-tflite [--target_os=android23-arm64]
 ```
 
 ### Run the TFLite image classification client 
 
-Connect an Android device to your host machine via USB and run the client:
+Run the client (if required, connect an Android device to your host machine via USB):
 ```
-$ ck run program:image-classification-tflite --target_os=android23-arm64
+$ ck run program:image-classification-tflite [--target_os=android23-arm64]
 ...
 ILSVRC2012_val_00000001.JPEG - (65) n01751748 sea snake
 0.42 - (65) n01751748 sea snake
@@ -122,3 +116,11 @@ Accuracy top 5: 1.0 (1 of 1)
 
 Execution time: 0.233 sec.
 ```
+
+<a name="mobilenets-tf-py"></a>
+# MobileNets via TensorFlow (Python)
+**TODO**
+
+<a name="mobilenets-tf-cpp"></a>
+# MobileNets via TensorFlow (C++)
+**TODO**
