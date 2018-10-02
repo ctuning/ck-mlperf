@@ -130,7 +130,7 @@ Accuracy top 5: 1.0 (1 of 1)
 
 Install TensorFlow (C++) from source:
 ```
-$ ck install package:lib-tensorflow-1.10.1-src-static
+$ ck install package:lib-tensorflow-1.10.1-src-static [--target_os=android23-arm64]
 ```
 
 ### Install MobileNets models for TensorFlow (C++)
@@ -142,12 +142,12 @@ $ ck install package --tags=tensorflowmodel,mobilenet,frozen
 
 ### Compile the TensorFlow (C++) image classification client
 ```
-$ ck compile program:image-classification-tf-cpp
+$ ck compile program:image-classification-tf-cpp [--target_os=android23-arm64]
 ```
 
 ### Run the TensorFlow (C++) image classification client
 ```
-$ ck run program:image-classification-tf-cpp
+$ ck run program:image-classification-tf-cpp [--target_os=android23-arm64]
 ...
 *** Dependency 3 = weights (TensorFlow model and weights):
     ...
