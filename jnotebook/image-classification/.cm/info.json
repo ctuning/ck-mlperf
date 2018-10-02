@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "14f379efda2f9b1a",
+  "backup_module_uid": "145039462db4f4d2",
+  "backup_module_uoa": "jnotebook",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2018-10-02T13:50:18.494303",
+    "version": [
+      "1",
+      "9",
+      "6",
+      "1"
+    ]
+  },
+  "data_name": "image-classification"
+}
