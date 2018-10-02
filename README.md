@@ -36,7 +36,10 @@ $ sudo python3 -m pip install ck
 
 ### [Optional] Install Android SDK and NDK
 
-When using the TensorFlow Lite and TensorFlow (C++) benchmarks, you can optionally target Android API 23 (v6.0 "Marshmallow") devices using the `--target_os=android23-arm64` flag (or [similar](https://source.android.com/setup/start/build-numbers)).
+You can optionally target Android API 23 (v6.0 "Marshmallow") devices using the
+`--target_os=android23-arm64` flag 
+(or [similar](https://source.android.com/setup/start/build-numbers)), when using
+the TensorFlow Lite benchmark (recommended) and TensorFlow (C++) benchmark (not recommended).
 
 On Debian Linux, you can install the [Android SDK](https://developer.android.com/studio/) and the [Android NDK](https://developer.android.com/ndk/) as follows:
 ```
