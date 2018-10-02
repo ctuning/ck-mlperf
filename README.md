@@ -21,6 +21,7 @@
 
 ### Install common tools and libraries
 ```
+$ sudo apt install autoconf autogen libtool
 $ sudo apt install gcc g++ git wget
 $ sudo apt install libblas-dev liblapack-dev
 ```
@@ -129,7 +130,7 @@ Accuracy top 5: 1.0 (1 of 1)
 
 Install TensorFlow (C++) from source:
 ```
-$ ck install package:lib-tensorflow-1.9.0-src-static
+$ ck install package:lib-tensorflow-1.10.1-src-static
 ```
 
 ### Install MobileNets models for TensorFlow (C++)
