@@ -21,7 +21,7 @@
 
 ### Install common tools and libraries
 ```
-$ sudo apt install autoconf autogen libtool
+$ sudo apt install autoconf autogen libtool zlib1g-dev
 $ sudo apt install gcc g++ git wget
 $ sudo apt install libblas-dev liblapack-dev
 ```
