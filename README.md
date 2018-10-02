@@ -1,6 +1,6 @@
 # Candidate Collective Knowledge benchmarks for MLPerf Inference
-- [MobileNets v1](https://arxiv.org/abs/1704.04861)
-- [MobileNets v2](https://arxiv.org/abs/1801.04381)
+- [MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications](https://arxiv.org/abs/1704.04861) (Howard et al., 2017)
+- [MobileNetV2: Inverted Residuals and Linear Bottlenecks ](https://arxiv.org/abs/1801.04381) (Sandler et al., 2018)
 
 1. [Installation](#installation)
     1. [Install prerequisites](#installation-debian) (Debian-specific)
@@ -17,7 +17,7 @@
 
 - Common tools and libraries.
 - [Python](https://www.python.org/), [pip](https://pypi.org/project/pip/), [SciPy](https://www.scipy.org/), [Collective Knowledge](https://cknowledge.org) (CK).
-- [[Optional]] [Android SDK](https://developer.android.com/studio/), [Android NDK](https://developer.android.com/ndk/).
+- (Optional) [Android SDK](https://developer.android.com/studio/), [Android NDK](https://developer.android.com/ndk/).
 
 ### Install common tools and libraries
 ```
