@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "b50bf41c6bda616e", 
+  "backup_module_uid": "5e1100048ab875d7", 
+  "backup_module_uoa": "soft", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2018-11-27T12:51:56.450614", 
+    "version": [
+      "1", 
+      "9", 
+      "6", 
+      "1"
+    ]
+  }, 
+  "data_name": "bench.sylt"
+}

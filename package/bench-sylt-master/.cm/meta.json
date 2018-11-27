@@ -1,0 +1,36 @@
+{
+  "customize": {
+    "extra_dir": "", 
+    "git_src_dir": "src", 
+    "install_env": {
+      "PACKAGE_AUTOGEN": "NO", 
+      "PACKAGE_GIT": "YES", 
+      "PACKAGE_SKIP_LINUX_MAKE": "YES", 
+      "PACKAGE_SUB_DIR": "src", 
+      "PACKAGE_SUB_DIR1": "src", 
+      "PACKAGE_URL": "https://github.com/tjablin/inference"
+    }, 
+    "use_git_revision": "yes", 
+    "version": "master"
+  }, 
+  "end_full_path_universal": "src$#sep#$trace_generator$#sep#$trace_generator.h", 
+  "need_cpu_info": "no", 
+  "only_for_host_os_tags": [
+    "linux",
+    "windows"
+  ], 
+  "package_extra_name": "", 
+  "process_script": "install", 
+  "soft_uoa": "b50bf41c6bda616e", 
+  "suggested_path": "bench-sylt", 
+  "tags": [
+    "bench", 
+    "google", 
+    "sylt", 
+    "vmaster"
+  ], 
+  "use_scripts_from_another_entry": {
+    "data_uoa": "cd9ccc74060b3d18", 
+    "module_uoa": "script"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "backup_data_uid": "048c03be2f4c7d8b", 
+  "build_compiler_vars": {}, 
+  "compile_deps": {
+    "compiler": {
+      "local": "yes", 
+      "name": "C++ compiler", 
+      "tags": "compiler,lang-cpp",
+      "sort":10
+    },
+    "bench.sylt": {
+      "local": "yes", 
+      "name": "SyLT benchmark", 
+      "tags": "bench,sylt",
+      "sort":20
+    }
+  }, 
+  "use_compile_script":"yes",
+  "compile_cmds": {
+    "demo": {
+      "cmd": "$#BIN_FILE#$"
+    }
+  },
+  "compiler_add_include_as_env_from_deps": [
+    "CK_ENV_LIB_STDCPP_INCLUDE", 
+    "CK_ENV_LIB_STDCPP_INCLUDE_EXTRA"
+  ], 
+  "compiler_env": "CK_CXX", 
+  "compiler_flags_as_env": "$<<CK_COMPILER_FLAG_CPP11>>$", 
+  "data_name": "sylt", 
+  "linker_add_lib_as_env": [
+    "CK_CXX_EXTRA", 
+    "CK_ENV_LIB_STDCPP_STATIC"
+  ], 
+  "main_language": "cpp", 
+  "process_in_tmp": "yes", 
+  "program": "yes", 
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no", 
+      "run_time": {
+        "run_cmd_main": "./a.out" 
+      }
+    }
+  }, 
+  "run_vars": {
+    "TEST": 123 
+  }, 
+  "tags": [
+    "program", 
+    "sylt"
+  ], 
+  "target_file": "a"
+}
