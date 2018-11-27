@@ -19,10 +19,9 @@
         }, 
 	"caffe2" : {
 	  "local": "yes",
-	  "name": "Caffe2 framework",
+	  "name": "PyTorch framework",
 	  "sort": 30,
-	  "TODO": "Replace with Caffe2 tags",
-	  "tags": "bench,fai-pep"
+	  "tags": "lib,pytorch"
 	},
         "python": {
           "local": "yes", 
