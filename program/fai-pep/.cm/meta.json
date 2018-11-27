@@ -26,6 +26,9 @@
       }, 
       "run_time": {
         "run_cmd_main": "../ck_run_shufflenet.sh"
+      },
+      "run_vars": {
+        "CK_ENV_BENCH_FAI_PEP_MODEL": "specifications/models/caffe2/shufflenet/shufflenet.json"
       }
     }
   }, 
