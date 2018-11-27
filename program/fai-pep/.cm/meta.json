@@ -9,7 +9,7 @@
   "process_in_tmp": "yes", 
   "program": "yes", 
   "run_cmds": {
-    "shufflenet": {
+    "run-caffe2": {
       "run_deps": {
         "bench-fai-pep": {
           "local": "yes", 
@@ -17,6 +17,13 @@
           "sort": 20, 
           "tags": "bench,fai-pep"
         }, 
+	"caffe2" : {
+	  "local": "yes",
+	  "name": "Caffe2 framework",
+	  "sort": 30,
+	  "TODO": "Replace with Caffe2 tags",
+	  "tags": "bench,fai-pep"
+	},
         "python": {
           "local": "yes", 
           "name": "Python", 
@@ -25,9 +32,10 @@
         }
       }, 
       "run_time": {
-        "run_cmd_main": "../ck_run_shufflenet.sh"
+        "run_cmd_main": "../run-caffe2.sh"
       },
       "run_vars": {
+        "TODO": "Introduce a dependency to handle any Caffe2 model specified in FAI-PEP",
         "CK_ENV_BENCH_FAI_PEP_MODEL": "specifications/models/caffe2/shufflenet/shufflenet.json"
       }
     }
