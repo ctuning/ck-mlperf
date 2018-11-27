@@ -5,6 +5,11 @@
   "data_name": "ck-mlperf",
   "dict": {
     "shared": "git",
-    "url": "https://github.com/ctuning/ck-mlperf"
+    "url": "https://github.com/ctuning/ck-mlperf",
+    "repo_deps": [
+      {
+        "repo_uoa": "ck-autotuning"
+      }
+    ] 
   }
 }
