@@ -27,7 +27,7 @@ index 555e340..c612e3c 100644
    // used by some policy mechanism to help determine on batch size.
  
 +  std::chrono::microseconds time_to_sleep( getLongOptOrDefault(argc, argv, "-t", 100) );
-+  std::cout << "Time to sleep = " << time_to_sleep.count() << " us\n";
++  std::cout << "Time to sleep ( -t ) = " << time_to_sleep.count() << " us\n";
 +
    // This example enqueue function just sleeps for 100 us.
    TraceGenerator::EnqueueFn<int> enqueue =
@@ -49,7 +49,7 @@ index 555e340..c612e3c 100644
 -  std::chrono::nanoseconds latency_bound(400000);
 +
 +  std::chrono::nanoseconds latency_bound( getLongOptOrDefault(argc, argv, "-l", 4000000) );
-+  std::cout << "Latency bound = " << latency_bound.count() << " ns\n";
++  std::cout << "Latency bound ( -l ) = " << latency_bound.count() << " ns\n";
  
    // The minimum number of queries.
    uint64_t min_queries = 4096;
@@ -59,7 +59,7 @@ index 555e340..c612e3c 100644
    // The minimum percent of queries meeting the latency bound.
 -  double latency_bound_percentile = 0.95;
 +  double latency_bound_percentile = getLongOptOrDefault(argc, argv, "-p", 95) / 100.0;
-+  std::cout << "Latency bound percentile = " << latency_bound_percentile << "\n";
++  std::cout << "Latency bound percentile ( -p ) = " << std::roundl(100 * latency_bound_percentile) << "%\n";
  
    // The pseudo-random number generator's seed.
    uint64_t seed = 0;
