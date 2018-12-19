@@ -37,6 +37,41 @@
         "TODO": "Introduce a dependency to handle any Caffe2 model specified in FAI-PEP",
         "CK_ENV_BENCH_FAI_PEP_MODEL": "specifications/models/caffe2/shufflenet/shufflenet.json"
       }
+    },
+    "run-tflite": {
+      "run_deps": {
+        "bench-fai-pep": {
+          "local": "yes", 
+          "name": "FAI-PEP AI benchmark", 
+          "sort": 20, 
+          "tags": "bench,fai-pep"
+        }, 
+	"caffe2" : {
+	  "local": "yes",
+	  "name": "TensorFlow framework",
+	  "sort": 30,
+	  "tags": "lib,tensorflow,vsrc"
+	},
+        "python": {
+          "local": "yes", 
+          "name": "Python", 
+          "sort": 10, 
+          "tags": "compiler,python"
+        },
+        "bazel": {
+          "local": "yes", 
+          "name": "Bazel", 
+          "sort": 40, 
+          "tags": "tool,bazel"
+        }
+      }, 
+      "run_time": {
+        "run_cmd_main": "../run-tflite.sh"
+      },
+      "run_vars": {
+        "TODO": "Introduce a dependency to handle any TFLite model specified in FAI-PEP",
+        "CK_ENV_BENCH_FAI_PEP_MODEL": "specifications/models/tflite/mobilenet_v1/mobilenet_v1_1.0_224_quant.json"
+      }
     }
   }, 
   "tags": [
