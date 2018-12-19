@@ -38,12 +38,14 @@
     "default": {
       "ignore_return_code": "no", 
       "run_time": {
-        "run_cmd_main": "./a.out"
+        "run_cmd_main": "./a.out -t $<<SYLT_TIME_TO_SLEEP_US>>$ -l $<<SYLT_LATENCY_BOUND>>$ -p $<<SYLT_LATENCY_BOUND_PERCENTILE>>$"
       }
     }
   }, 
   "run_vars": {
-    "TEST": 123
+    "SYLT_TIME_TO_SLEEP_US": 101,
+    "SYLT_LATENCY_BOUND": 4000001,
+    "SYLT_LATENCY_BOUND_PERCENTILE": 96
   }, 
   "tags": [
     "program", 
