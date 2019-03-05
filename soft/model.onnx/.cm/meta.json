@@ -1,0 +1,16 @@
+{
+  "auto_detect": "yes", 
+  "customize": {
+    "check_that_exists": "yes", 
+    "ck_version": 10, 
+    "env_prefix": "CK_ENV_ONNX_MODEL", 
+    "soft_file_universal": "*.onnx"
+  }, 
+  "soft_name": "ONNX model", 
+  "tags": [
+    "onnx",
+    "model"
+  ], 
+  "template": "yes", 
+  "template_type": "ONNX model"
+}
