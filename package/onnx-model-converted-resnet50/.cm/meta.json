@@ -27,6 +27,12 @@
       "sort": 20,
       "tags": "lib,python-package,numpy"
     },
+    "lib-python-onnx": {
+      "local": "yes",
+      "name": "ONNX python library",
+      "sort": 30,
+      "tags": "lib,python-package,onnx"
+    },
     "source-model": {
       "local": "yes", 
       "name": "original TF model", 
