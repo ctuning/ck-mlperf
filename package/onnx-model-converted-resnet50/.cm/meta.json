@@ -21,10 +21,16 @@
       "sort": 10,
       "tags": "compiler,python"
     },
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "NumPy python library",
+      "sort": 20,
+      "tags": "lib,python-package,numpy"
+    },
     "source-model": {
       "local": "yes", 
       "name": "original TF model", 
-      "sort": 20, 
+      "sort": 100, 
       "tags": "tensorflowmodel,weights,mlperf,resnet"
     }
   }, 
