@@ -1,0 +1,46 @@
+{
+  "check_exit_status": "yes", 
+  "customize": {
+    "install_env": {
+      "MODEL_IMAGE_HEIGHT": "224", 
+      "MODEL_IMAGE_WIDTH": "224", 
+      "MODEL_INPUT_LAYER_NAME": "input_tensor:0", 
+      "MODEL_NORMALIZE_DATA": "YES", 
+      "MODEL_OUTPUT_LAYER_NAME": "softmax_tensor:0", 
+      "PACKAGE_NAME": "resnet50_v1.onnx"
+    }, 
+    "no_os_in_suggested_path": "yes", 
+    "no_ver_in_suggested_path": "yes", 
+    "skip_file_check": "yes", 
+    "version": "1.5"
+  }, 
+  "deps": {
+    "python": {
+      "local": "yes",
+      "name": "Python",
+      "sort": 10,
+      "tags": "compiler,python"
+    },
+    "source-model": {
+      "local": "yes", 
+      "name": "original TF model", 
+      "sort": 20, 
+      "tags": "tensorflowmodel,weights,mlperf,resnet"
+    }
+  }, 
+  "end_full_path_universal": "resnet50_v1.onnx", 
+  "only_for_host_os_tags": [], 
+  "only_for_target_os_tags": [], 
+  "package_extra_name": " (resnet50-v1.5 in ONNX)", 
+  "process_script": "install", 
+  "soft_uoa": "bcaac306e9041879", 
+  "suggested_path": "onnx-model-resnet50-v1.5", 
+  "tags": [
+    "onnx", 
+    "model", 
+    "resnet", 
+    "resnet50", 
+    "resnet50-v1.5", 
+    "mlperf"
+  ]
+}
