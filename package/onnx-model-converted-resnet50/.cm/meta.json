@@ -33,6 +33,12 @@
       "sort": 30,
       "tags": "lib,python-package,onnx"
     },
+    "lib-python-tf2onnx": {
+      "local": "yes",
+      "name": "TF-2-ONNX model conversion library",
+      "sort": 40,
+      "tags": "lib,python-package,tf2onnx"
+    },
     "source-model": {
       "local": "yes", 
       "name": "original TF model", 
