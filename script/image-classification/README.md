@@ -1,6 +1,9 @@
 # Common scripts for benchmarking programs
 
-Common preprocessing and postprocessing scripts to be used in benchmarking programs such as `image-classification-tf-py`, `image-classification-tf-cpp`, `image-classification-tflite`, `mobilenets-armcl-opencl` (*TBD*).
+Common preprocessing and postprocessing scripts to be used in benchmarking
+programs such as `image-classification-tf-py`, `image-classification-tf-cpp`,
+`image-classification-tflite`, `image-classification-onnx`,
+`image-classification-armnn-tflite`, etc.
 
 A client program has to reference scripts in its meta in the section `run_time`, e.g.:
 
@@ -25,17 +28,17 @@ It is supposed that the client program provides required enviroment variables an
 
 ## Preprocessing
 
-Preprocessing script prepares images for client programs.
+The preprocessing script prepares images for a client program.
 
 Preprocessing steps:
 
-- Read required number of images from a dataset. The number of images is governed by program parameters `CK_BATCH_COUNT` and `CK_BATCH_SIZE`.
+- Read the required number of images from a dataset. The number of images is governed by program parameters `CK_BATCH_COUNT` and `CK_BATCH_SIZE`.
   
-- Prepare images for loading into a network. Preparation includes cropping images, scaling them to a size defined by input images size of a network being benchmarked. See the section **Input preprocessing parameters** below.
+- Prepare images for loading into a model. Preparation includes cropping images, scaling them to a size defined by the input images size of the model being benchmarked. See the section **Input preprocessing parameters** below.
 
 - Store prepared images into a cache directory.
 
-As a result, preprocessing script provides a set of enviroment variables that client program should use:
+As a result, the preprocessing script provides a set of enviroment variables that a client program should use:
 
 - `RUN_OPT_IMAGE_DIR`
 Path to a directory containing preprocessed images.
@@ -45,15 +48,15 @@ Path to a file containing list of images to be processed.
 This file contains only image file names (one per line) without paths.
 
 - `RUN_OPT_RESULT_DIR`
-Path to a directory to which the client program should store prediction results that will be validated by postprocessing script.
+Path to a directory to which the client program should store prediction results that will be validated by the postprocessing script.
 
 ### Program-specific preprocessing
 
-Client program can contain its own additional preprocessing script  `preprocess-next.py`. If it is presented it will be called after the common preprocessing.
+A client program may contain its own additional preprocessing script  `preprocess-next.py`. If it exists, it will be called after the common preprocessing.
 
 ## Images dataset
 
-Client program should provide access to the ImageNet dataset via run-time dependencies `imagenet-val` and `imagenet-aux`, e.g.:
+A client program should provide access to the ImageNet dataset via run-time dependencies `imagenet-val` and `imagenet-aux`, e.g.:
 
 ```json
   "run_deps": {
@@ -75,25 +78,25 @@ Client program should provide access to the ImageNet dataset via run-time depend
 
 ## Weights package
 
-A network for benchmarking is provided by program's run-time dependency `weights`, e.g.:
+The model for benchmarking is provided by a client program's run-time dependency `weights`, e.g.:
 
 ```json
   "run_deps": {
     "weights": {
       "force_target_as_host": "yes",
       "local": "yes",
-      "name": "TensorFlow-Python model and weights",
+      "name": "TensorFlow model and weights",
       "no_tags": "mobilenet-all",
       "sort": 30,
       "tags": "tensorflowmodel,weights,tflite"
     }
 ```
 
-**TODO** Currently only TensorFlow packages provide env variable giving their wanted input image size (`CK_ENV_TENSORFLOW_MODEL_IMAGE_WIDTH`). But all the packages should do.
+**TODO** Currently only TensorFlow packages provide env variable giving their required input image size (`CK_ENV_TENSORFLOW_MODEL_IMAGE_WIDTH`). But generally all packages should do as well.
 
 ## Program parameters
 
-Here are set of client program parameters affecting pre/post-processig stages.
+Here we describe a client program's parameters affecting the pre/post-processig stages.
 
 ### Input image parameters
 
@@ -137,4 +140,3 @@ defined by the model.
 Default: `87.5`.
 
 **NB:** If `CK_TMP_IMAGE_SIZE` is set and valid, this parameter is not used.
-
