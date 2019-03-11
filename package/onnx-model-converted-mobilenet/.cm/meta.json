@@ -57,11 +57,13 @@
   "only_for_target_os_tags": [], 
   "package_extra_name": " (mobilenet_v1_1.0_224 in ONNX)", 
   "process_script": "install", 
-  "soft_uoa": "bcaac306e9041879", 
+  "soft_uoa": "bcaac306e9041879",
   "suggested_path": "onnx-model-mobilenet_v1_1.0_224", 
   "tags": [
+    "converted",
     "onnx", 
     "model", 
+    "weights",
     "mobilenet", 
     "mlperf"
   ]

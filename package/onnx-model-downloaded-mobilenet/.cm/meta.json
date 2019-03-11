@@ -1,0 +1,41 @@
+{
+  "check_exit_status": "yes", 
+  "customize": {
+    "install_env": {
+      "MODEL_IMAGE_HEIGHT": "224", 
+      "MODEL_IMAGE_WIDTH": "224", 
+      "MODEL_INPUT_LAYER_NAME": "input:0",
+      "MODEL_NORMALIZE_DATA": "YES", 
+      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0",
+      "PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx.gz",
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
+      "PACKAGE_SKIP_LINUX_MAKE": "YES", 
+      "PACKAGE_UNGZIP": "YES", 
+      "PACKAGE_URL": "https://www.dropbox.com/s/eu7g3xt0yg12q3o",
+      "PACKAGE_WGET": "YES"
+    }, 
+    "no_os_in_suggested_path": "yes", 
+    "no_ver_in_suggested_path": "yes", 
+    "skip_file_check": "yes", 
+    "version": "1.5"
+  }, 
+  "end_full_path_universal": "mobilenet_v1_1.0_224.onnx", 
+  "only_for_host_os_tags": [], 
+  "only_for_target_os_tags": [], 
+  "package_extra_name": " (mobilenet-ONNX)", 
+  "process_script": "install", 
+  "soft_uoa": "bcaac306e9041879",
+  "suggested_path": "onnx-model-downloaded-mobilenet",
+  "tags": [
+    "downloaded",
+    "model", 
+    "onnx", 
+    "weights", 
+    "mobilenet",
+    "mlperf"
+  ], 
+  "use_scripts_from_another_entry": {
+    "data_uoa": "download-and-install-package", 
+    "module_uoa": "script"
+  }
+}
