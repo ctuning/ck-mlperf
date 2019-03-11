@@ -51,7 +51,7 @@ def ck_postprocess(i):
             values_map[file_name] = int(file_class)
             break
       else:
-        # Directory mode: load only required amount of values
+        # Directory mode: load only required number of values
         for _ in range(SKIP_IMAGES):
           values_file.readline().split()
         for _ in range(IMAGES_COUNT):
@@ -84,35 +84,40 @@ def ck_postprocess(i):
 
 
   # Returns list of pairs (prob, class_index)
-  def get_top5(all_probs):
+  def get_topn(all_probs, n=5):
     probs_with_classes = []
     for class_index in range(len(all_probs)):
       prob = all_probs[class_index]
       probs_with_classes.append((prob, class_index))
     sorted_probs = sorted(probs_with_classes, key = lambda pair: pair[0], reverse=True)
-    return sorted_probs[0:5]    
+    return sorted_probs[0:n]
 
 
   # Calculates if prediction was correct for specified image file
-  # top5 - list of pairs (prob, class_index)
-  def check_predictions(top5, img_file):
+  # topn - list of pairs (prob, class_index)
+  def check_predictions(img_file, topn):
     if img_file not in VALUES_MAP:
       print('Correctness information is not available')
       return {}
 
     class_correct = VALUES_MAP[img_file]
-    classes = [c[1] for c in top5]
+    classes = [c[1] for c in topn]
     is_top1 = class_correct == classes[0]
-    is_top5 = class_correct in classes
+    is_top5 = class_correct in classes[0:4]
+    is_topn = class_correct in classes
     if is_top1:
       global TOP1
       TOP1 += 1
     if is_top5:
       global TOP5
       TOP5 += 1
+    if is_topn:
+      global TOPN
+      TOPN += 1
     return {
       'accuracy_top1': 'yes' if is_top1 else 'no',
       'accuracy_top5': 'yes' if is_top5 else 'no',
+      'accuracy_topn': 'yes' if is_topn else 'no',
       'class_correct': class_correct,
       'class_topmost': classes[0],
       'file_name': img_file
@@ -144,25 +149,39 @@ def ck_postprocess(i):
         global IMAGES_COUNT
         IMAGES_COUNT -= 1
         continue
-        
-      top5 = get_top5(all_probes)
+
+      topn = get_topn(all_probes, n=5)
       if FULL_REPORT:
-        print_predictions(top5, img_file)
+        print_predictions(topn, img_file)
       elif checked_files % 100 == 0:
         print('Predictions checked: {}'.format(checked_files))
-      res = check_predictions(top5, img_file)
+
+      res = check_predictions(img_file, topn)
+
+      # Augment the result with actual TopN class probabilities and names.
+      res['topn'] = []
+      for prob_index in topn:
+        res['topn'].append({
+          'index': prob_index[1],
+          'prob': prob_index[0],
+          'name': get_class_str(prob_index[1])
+        })
+
       frame_predictions[img_file] = res
 
 
   global TOP1
   global TOP5
+  global TOPN
   TOP1 = 0
   TOP5 = 0
+  TOPN = 0
   CLASSES_LIST, VALUES_MAP = load_ImageNet_classes()
   calculate_precision()
 
   accuracy_top1 = TOP1 / float(IMAGES_COUNT) if IMAGES_COUNT > 0 else 0
-  accuracy_top5 = TOP5 / float(IMAGES_COUNT) if IMAGES_COUNT > 0 else 0 
+  accuracy_top5 = TOP5 / float(IMAGES_COUNT) if IMAGES_COUNT > 0 else 0
+  accuracy_topn = TOPN / float(IMAGES_COUNT) if IMAGES_COUNT > 0 else 0
 
   # Store benchmark results
   openme = {}
@@ -196,6 +215,7 @@ def ck_postprocess(i):
 
   openme['accuracy_top1'] = accuracy_top1
   openme['accuracy_top5'] = accuracy_top5
+  openme['accuracy_topn'] = accuracy_topn
   openme['frame_predictions'] = frame_predictions
   openme['execution_time'] = total_prediction_time
   openme['execution_time_sum'] = setup_time + test_time
