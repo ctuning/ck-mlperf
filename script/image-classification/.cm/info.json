@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "b98ee24399ef4c3a", 
+  "backup_module_uid": "84e27ad9dd12e734", 
+  "backup_module_uoa": "script", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-03-11T14:50:08.613400", 
+    "version": [
+      "1", 
+      "9", 
+      "6", 
+      "1"
+    ]
+  }, 
+  "data_name": "image-classification"
+}
