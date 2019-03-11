@@ -118,7 +118,7 @@ def ck_postprocess(i):
       'file_name': img_file
     }
 
-  frame_predictions = []
+  frame_predictions = {}
 
   def calculate_precision():
     print('Process results in {}'.format(RESULTS_DIR))
@@ -151,7 +151,7 @@ def ck_postprocess(i):
       elif checked_files % 100 == 0:
         print('Predictions checked: {}'.format(checked_files))
       res = check_predictions(top5, img_file)
-      frame_predictions.append(res)
+      frame_predictions[img_file] = res
 
 
   global TOP1
