@@ -49,7 +49,7 @@
       "local": "yes", 
       "name": "original TF model", 
       "sort": 100, 
-      "tags": "tensorflowmodel,weights,mlperf,resnet"
+      "tags": "tf,model,resnet,mlperf"
     }
   }, 
   "end_full_path_universal": "resnet50_v1.onnx", 
