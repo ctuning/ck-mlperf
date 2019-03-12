@@ -1,4 +1,24 @@
 {
-  "actions": {}, 
-  "desc": "MLPerf benchmarking (common functionality)"
+  "actions": {
+    "list_experiments": {
+      "desc": "Returns a list of all VQE-relevant CK experiment entries"
+    },
+    "pick_an_experiment": {
+      "desc": "Select an experiment from the list (interactive helper function)"
+    },
+    "compare": {
+      "desc": "Compare two experimental entries"
+    }
+  },
+  "copyright": "See CK COPYRIGHT.txt for copyright details",
+  "desc": "simplify running the vqe pipeline and recording the results",
+  "developer": "Leo Gordon",
+  "developer_email": "leo@dividiti.com",
+  "developer_webpage": "http://fursin.net",
+  "license": "See CK LICENSE.txt for licensing details",
+  "module_deps": {
+    "env": "9b9b3208ac44b891"
+  },
+  "workflow": "yes",
+  "workflow_type": "MLPerf benchmarking - common functionality"
 }
