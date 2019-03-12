@@ -211,11 +211,14 @@ def ck_postprocess(i):
   print('All images classified in {:.6f}s'.format(total_prediction_time))
   print('Average classification time: {:.6f}s'.format(avg_prediction_time))
   print('Accuracy top 1: {} ({} of {})'.format(accuracy_top1, TOP1, IMAGES_COUNT))
-  print('Accuracy top 5: {} ({} of {})'.format(accuracy_top5, TOP5, IMAGES_COUNT))  
-
   openme['accuracy_top1'] = accuracy_top1
+  print('Accuracy top 5: {} ({} of {})'.format(accuracy_top5, TOP5, IMAGES_COUNT))
   openme['accuracy_top5'] = accuracy_top5
-  openme['accuracy_topn'] = accuracy_topn
+  # TODO: Read from env
+  N=5
+  if N!=5:
+    print('Accuracy top {}: {} ({} of {})'.format(N, accuracy_topn, TOPN, IMAGES_COUNT))
+    openme['accuracy_topn'] = accuracy_topn
   openme['frame_predictions'] = frame_predictions
   openme['execution_time'] = total_prediction_time
   openme['execution_time_sum'] = setup_time + test_time
