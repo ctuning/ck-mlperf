@@ -12,7 +12,7 @@
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
     "skip_file_check": "yes", 
-    "version": "1.5"
+    "version": "1_1.0_224_2018_08_02"
   }, 
   "deps": {
     "lib-python-numpy": {
@@ -55,16 +55,16 @@
   "end_full_path_universal": "mobilenet_v1_1.0_224.onnx", 
   "only_for_host_os_tags": [], 
   "only_for_target_os_tags": [], 
-  "package_extra_name": " (mobilenet_v1_1.0_224 in ONNX)", 
+  "package_extra_name": " (mobilenet_v1_1.0_224 conv> ONNX)", 
   "process_script": "install", 
   "soft_uoa": "bcaac306e9041879",
-  "suggested_path": "onnx-model-mobilenet_v1_1.0_224", 
+  "suggested_path": "model-onnx-mobilenet-mlperf-convert-from-tf",
   "tags": [
+    "onnx",
+    "model",
+    "mobilenet",
+    "mlperf",
     "converted",
-    "onnx", 
-    "model", 
-    "weights",
-    "mobilenet", 
-    "mlperf"
+    "converted-from-tf"
   ]
 }
