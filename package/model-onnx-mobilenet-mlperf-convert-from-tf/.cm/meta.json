@@ -55,7 +55,7 @@
   "end_full_path_universal": "mobilenet_v1_1.0_224.onnx", 
   "only_for_host_os_tags": [], 
   "only_for_target_os_tags": [], 
-  "package_extra_name": " (mobilenet_v1_1.0_224 conv> ONNX)", 
+  "package_extra_name": " (mobilenet_v1_1.0_224 from TF)", 
   "process_script": "install", 
   "soft_uoa": "bcaac306e9041879",
   "suggested_path": "model-onnx-mobilenet-mlperf-convert-from-tf",
