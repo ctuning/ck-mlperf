@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "onnx-model-converted-resnet50"
+  "data_name": "model-onnx-resnet50-mlperf-convert-from-tf"
 }

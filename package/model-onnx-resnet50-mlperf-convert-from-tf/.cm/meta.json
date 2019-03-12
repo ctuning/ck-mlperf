@@ -49,22 +49,24 @@
       "local": "yes", 
       "name": "original TF model", 
       "sort": 100, 
-      "tags": "tensorflowmodel,weights,mlperf,resnet"
+      "tags": "tf,model,resnet,mlperf"
     }
   }, 
   "end_full_path_universal": "resnet50_v1.onnx", 
   "only_for_host_os_tags": [], 
   "only_for_target_os_tags": [], 
-  "package_extra_name": " (resnet50-v1.5 in ONNX)", 
+  "package_extra_name": " (resnet50-v1.5)", 
   "process_script": "install", 
   "soft_uoa": "bcaac306e9041879", 
-  "suggested_path": "onnx-model-resnet50-v1.5", 
+  "suggested_path": "model-onnx-resnet50-mlperf-convert-from-tf",
   "tags": [
     "onnx", 
     "model", 
     "resnet", 
     "resnet50", 
     "resnet50-v1.5", 
-    "mlperf"
+    "mlperf",
+    "converted", 
+    "converted-from-tf"
   ]
 }
