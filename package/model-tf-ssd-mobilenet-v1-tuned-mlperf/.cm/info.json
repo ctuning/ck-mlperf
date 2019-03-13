@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "9e5de6f4f46b0da0", 
+  "backup_module_uid": "1dc07ee0f4742028", 
+  "backup_module_uoa": "package", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-03-13T09:06:41.321633", 
+    "version": [
+      "1", 
+      "9", 
+      "6", 
+      "1"
+    ]
+  }, 
+  "data_name": "model-tf-ssd-mobilenet-v1-tuned-mlperf"
+}
