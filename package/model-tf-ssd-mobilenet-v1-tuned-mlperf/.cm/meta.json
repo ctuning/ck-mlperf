@@ -18,13 +18,6 @@
     "no_ver_in_suggested_path": "yes", 
     "version": "20180128"
   }, 
-  "deps": {
-    "tensorflow-model-api": {
-      "local": "yes", 
-      "name": "Tensorflow models api", 
-      "tags": "tensorflow,model,api"
-    }
-  }, 
   "end_full_path": {
     "linux": "graph.pb"
   }, 
