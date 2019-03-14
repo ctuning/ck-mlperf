@@ -2,6 +2,7 @@
   "check_exit_status": "yes", 
   "customize": {
     "install_env": {
+      "CK_MODEL_DATA_LAYOUT": "NHWC",
       "MODEL_IMAGE_HEIGHT": "224", 
       "MODEL_IMAGE_WIDTH": "224", 
       "MODEL_INPUT_LAYER_NAME": "input_tensor", 
@@ -28,6 +29,7 @@
   "tags": [
     "model", 
     "tf", 
+    "nhwc",
     "resnet", 
     "resnet50", 
     "resnet50-v1.5", 

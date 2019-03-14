@@ -2,6 +2,7 @@
   "check_exit_status": "yes", 
   "customize": {
     "install_env": {
+      "CK_MODEL_DATA_LAYOUT": "NCHW",
       "MODEL_IMAGE_HEIGHT": "224", 
       "MODEL_IMAGE_WIDTH": "224", 
       "MODEL_INPUT_LAYER_NAME": "input_tensor:0", 
@@ -60,8 +61,9 @@
   "soft_uoa": "bcaac306e9041879", 
   "suggested_path": "model-onnx-resnet50-mlperf-convert-from-tf",
   "tags": [
-    "onnx", 
     "model", 
+    "onnx",
+    "nchw",
     "resnet", 
     "resnet50", 
     "resnet50-v1.5", 

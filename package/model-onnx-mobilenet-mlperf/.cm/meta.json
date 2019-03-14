@@ -2,6 +2,7 @@
   "check_exit_status": "yes", 
   "customize": {
     "install_env": {
+      "CK_MODEL_DATA_LAYOUT": "NCHW",
       "MODEL_IMAGE_HEIGHT": "224", 
       "MODEL_IMAGE_WIDTH": "224", 
       "MODEL_INPUT_LAYER_NAME": "input:0",
@@ -29,6 +30,7 @@
   "tags": [
     "model", 
     "onnx", 
+    "nchw",
     "mobilenet",
     "mlperf",
     "downloaded"
