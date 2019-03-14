@@ -12,10 +12,11 @@ from PIL import Image
 model_path          = os.environ['CK_ENV_ONNX_MODEL_ONNX_FILEPATH']
 input_layer_name    = os.environ['CK_ENV_ONNX_MODEL_INPUT_LAYER_NAME']
 output_layer_name   = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
+normalize_data      = os.environ['CK_ENV_ONNX_MODEL_NORMALIZE_DATA']
 imagenet_path       = os.environ['CK_ENV_DATASET_IMAGENET_VAL']
 labels_path         = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 
-
+normalize_data_bool = normalize_data in ('YES', 'yes', 'ON', 'on', '1')
 
 def load_labels(labels_filepath):
     my_labels = []
@@ -29,6 +30,10 @@ def load_and_resize_image_to_nchw(image_filepath, height, width):
     pillow_img = Image.open(image_filepath).resize((width, height)) # sic! The order of dimensions in resize is (W,H)
 
     input_data = np.float32(pillow_img)
+
+    if normalize_data_bool:
+        input_data = input_data/127.5 - 1.0
+
 #    print(np.array(pillow_img).shape)
     nhwc_data = np.expand_dims(input_data, axis=0)
 #    print(nhwc_data.shape)
@@ -59,6 +64,7 @@ print("Output layers: {}".format([ str(x) for x in sess.get_outputs()]))
 print("Input layer name: " + input_layer_name)
 print("Expected input shape: {}".format(model_input_shape))
 print("Output layer name: " + output_layer_name)
+print("Data normalization: {}".format(normalize_data_bool))
 print("")
 
 starting_index = 1
