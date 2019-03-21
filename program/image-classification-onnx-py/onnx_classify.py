@@ -15,8 +15,10 @@ output_layer_name   = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
 normalize_data      = os.environ['CK_ENV_ONNX_MODEL_NORMALIZE_DATA']
 imagenet_path       = os.environ['CK_ENV_DATASET_IMAGENET_VAL']
 labels_path         = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
+data_layout         = os.environ['CK_MODEL_DATA_LAYOUT']
 
 normalize_data_bool = normalize_data in ('YES', 'yes', 'ON', 'on', '1')
+
 
 def load_labels(labels_filepath):
     my_labels = []
@@ -26,7 +28,7 @@ def load_labels(labels_filepath):
     return my_labels
 
 
-def load_and_resize_image_to_nchw(image_filepath, height, width):
+def load_and_resize_image(image_filepath, height, width):
     pillow_img = Image.open(image_filepath).resize((width, height)) # sic! The order of dimensions in resize is (W,H)
 
     input_data = np.float32(pillow_img)
@@ -36,10 +38,14 @@ def load_and_resize_image_to_nchw(image_filepath, height, width):
 
 #    print(np.array(pillow_img).shape)
     nhwc_data = np.expand_dims(input_data, axis=0)
-#    print(nhwc_data.shape)
-    nchw_data = nhwc_data.transpose(0,3,1,2)
-#    print(nchw_data.shape)
-    return nchw_data
+
+    if data_layout == 'NHWC':
+        # print(nhwc_data.shape)
+        return nhwc_data
+    else:
+        nchw_data = nhwc_data.transpose(0,3,1,2)
+        # print(nchw_data.shape)
+        return nchw_data
 
 
 labels = load_labels(labels_path)
@@ -56,9 +62,12 @@ output_layer_name   = output_layer_name or output_layer_names[0]
 
 model_input_shape   = sess.get_inputs()[0].shape
 
-# assuming it is NCHW model:
-(samples, channels, height, width) = model_input_shape
+if data_layout == 'NHWC':
+    (samples, height, width, channels) = model_input_shape
+else:
+    (samples, channels, height, width) = model_input_shape
 
+print("Data layout: {}".format(data_layout) )
 print("Input layers: {}".format([ str(x) for x in sess.get_inputs()]))
 print("Output layers: {}".format([ str(x) for x in sess.get_outputs()]))
 print("Input layer name: " + input_layer_name)
@@ -77,7 +86,7 @@ for batch_idx in range(batch_count):
     unconcatenated_batch_data = []
     for image_filename in batch_filenames:
         image_filepath = imagenet_path + '/' + image_filename
-        nchw_data = load_and_resize_image_to_nchw( image_filepath, height, width )
+        nchw_data = load_and_resize_image( image_filepath, height, width )
         unconcatenated_batch_data.append( nchw_data )
 
     batch_data = np.concatenate(unconcatenated_batch_data, axis=0)
