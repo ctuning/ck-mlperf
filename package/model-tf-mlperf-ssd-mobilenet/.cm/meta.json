@@ -6,7 +6,7 @@
       "DATASET_TYPE": "coco", 
       "FROZEN_GRAPH": "frozen_inference_graph.pb", 
       "LABELMAP_FILE": "mscoco_label_map.pbtxt", 
-      "MODEL_NAME": "SSD-MobileNet-v1 for COCO", 
+      "MODEL_NAME": "MLPerf SSD-MobileNet", 
       "PACKAGE_NAME": "ssd_mobilenet_v1_coco_2018_01_28.tar.gz", 
       "PACKAGE_NAME1": "ssd_mobilenet_v1_coco_2018_01_28", 
       "PACKAGE_URL": "http://download.tensorflow.org/models/object_detection", 
@@ -20,7 +20,7 @@
   "deps": {
     "tensorflow-model-api": {
       "local": "yes", 
-      "name": "Tensorflow models api", 
+      "name": "TensorFlow model API", 
       "tags": "tensorflow,model,api"
     }
   }, 
@@ -33,12 +33,15 @@
   "only_for_target_os_tags": [
     "linux"
   ], 
-  "package_extra_name": " (SSD-MobileNet-v1, COCO)", 
+  "package_extra_name": " (MLPerf, SSD-MobileNet)", 
   "process_script": "install", 
   "soft_uoa": "3fc0c4b9ba63de2f", 
-  "suggested_path": "tensorflowmodel-object-detection-ssd_mobilenet_v1_coco", 
+  "suggested_path": "model-tf-mlperf-ssd-mobilenet", 
   "tags": [
-    "tensorflowmodel", 
+    "mlperf",
+    "model",
+    "tf", 
+    "tensorflow",
     "object-detection", 
     "ssd", 
     "mobilenet", 
