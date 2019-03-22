@@ -16,8 +16,15 @@
     "model_id": "mobilenet_v1", 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
-    "version": "quantized, finetuned"
+    "version": "finetuned"
   }, 
+  "deps": {
+    "tensorflow-object-detection-api": {
+      "local": "yes",
+      "name": "TensorFlow Object Detection API",
+      "tags": "tensorflow,model,api"
+    }
+  },
   "end_full_path": {
     "linux": "graph.pb"
   }, 

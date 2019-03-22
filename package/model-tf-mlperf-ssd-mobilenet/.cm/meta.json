@@ -18,9 +18,9 @@
     "version": "reference"
   }, 
   "deps": {
-    "tensorflow-model-api": {
+    "tensorflow-object-detection-api": {
       "local": "yes", 
-      "name": "TensorFlow model API", 
+      "name": "TensorFlow Object Detection API", 
       "tags": "tensorflow,model,api"
     }
   }, 
