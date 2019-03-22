@@ -6,7 +6,7 @@
       "DATASET_TYPE": "coco", 
       "FROZEN_GRAPH": "graph.pb", 
       "LABELMAP_FILE": "mscoco_label_map.pbtxt", 
-      "MODEL_NAME": "SSD-MobileNet-v1 tuned for COCO", 
+      "MODEL_NAME": "MLPerf SSD-MobileNet", 
       "PACKAGE_NAME": "mobilenet_v1_ssd_finetuned.tar.gz", 
       "PACKAGE_NAME1": "mobilenet_v1_ssd_finetuned", 
       "PACKAGE_URL": "https://www.dropbox.com/s/0qxw50yzfabo5q5", 
@@ -16,7 +16,7 @@
     "model_id": "mobilenet_v1", 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
-    "version": "20180128"
+    "version": "quantized, finetuned"
   }, 
   "end_full_path": {
     "linux": "graph.pb"
@@ -27,12 +27,15 @@
   "only_for_target_os_tags": [
     "linux"
   ], 
-  "package_extra_name": " (SSD-MobileNet-v1, tuned, COCO)", 
+  "package_extra_name": " (MLPerf SSD-MobileNet)", 
   "process_script": "install", 
   "soft_uoa": "3fc0c4b9ba63de2f", 
-  "suggested_path": "model-tf-ssd-mobilenet-v1-tuned-mlperf", 
+  "suggested_path": "model-tf-mlperf-ssd-mobilenet-quantized-finetuned", 
   "tags": [
-    "tensorflowmodel", 
+    "mlperf",
+    "model",
+    "tf",
+    "tensorflow", 
     "object-detection", 
     "ssd", 
     "mobilenet", 
@@ -40,8 +43,9 @@
     "ssd-mobilenet", 
     "ssd-mobilenet-v1", 
     "vcoco",
-    "mlperf",
-    "channel-stable"
+    "quantized",
+    "finetuned",
+    "habana"
   ], 
   "use_scripts_from_another_entry": {
     "data_uoa": "c412930408fb8271", 

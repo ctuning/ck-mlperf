@@ -15,7 +15,7 @@
     "model_id": "mobilenet_v1", 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
-    "version": "20180128"
+    "version": "reference"
   }, 
   "deps": {
     "tensorflow-model-api": {
@@ -33,7 +33,7 @@
   "only_for_target_os_tags": [
     "linux"
   ], 
-  "package_extra_name": " (MLPerf, SSD-MobileNet)", 
+  "package_extra_name": " (MLPerf SSD-MobileNet)", 
   "process_script": "install", 
   "soft_uoa": "3fc0c4b9ba63de2f", 
   "suggested_path": "model-tf-mlperf-ssd-mobilenet", 
