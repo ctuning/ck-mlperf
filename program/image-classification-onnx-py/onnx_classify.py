@@ -48,6 +48,17 @@ def load_and_resize_image(image_filepath, height, width):
         return nchw_data
 
 
+def load_a_batch(batch_filenames):
+    unconcatenated_batch_data = []
+    for image_filename in batch_filenames:
+        image_filepath = imagenet_path + '/' + image_filename
+        nchw_data = load_and_resize_image( image_filepath, height, width )
+        unconcatenated_batch_data.append( nchw_data )
+    batch_data = np.concatenate(unconcatenated_batch_data, axis=0)
+
+    return batch_data
+
+
 labels = load_labels(labels_path)
 
 #print("Device: " + rt.get_device())
@@ -83,13 +94,8 @@ batch_count = 2
 for batch_idx in range(batch_count):
     print("Batch {}/{}:".format(batch_idx+1,batch_count))
     batch_filenames = [ "ILSVRC2012_val_00000{:03d}.JPEG".format(starting_index + batch_idx*batch_size + i) for i in range(batch_size) ]
-    unconcatenated_batch_data = []
-    for image_filename in batch_filenames:
-        image_filepath = imagenet_path + '/' + image_filename
-        nchw_data = load_and_resize_image( image_filepath, height, width )
-        unconcatenated_batch_data.append( nchw_data )
 
-    batch_data = np.concatenate(unconcatenated_batch_data, axis=0)
+    batch_data = load_a_batch( batch_filenames )
     #print(batch_data.shape)
 
     batch_predictions = sess.run([output_layer_name], {input_layer_name: batch_data})[0]
