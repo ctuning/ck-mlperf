@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-tf-ssd-mobilenet-v1-tuned-mlperf"
+  "data_name": "model-tf-mlperf-mobilenet-quantized-tuned"
 }
