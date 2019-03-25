@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-tf-mobilenet-quantized-mlperf"
+  "data_name": "model-tf-mlperf-mobilenet-quantized"
 }
