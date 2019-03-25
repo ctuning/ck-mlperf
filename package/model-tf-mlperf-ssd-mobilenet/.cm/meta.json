@@ -44,8 +44,6 @@
     "tensorflow",
     "object-detection", 
     "ssd", 
-    "mobilenet", 
-    "mobilenet-v1", 
     "ssd-mobilenet", 
     "ssd-mobilenet-v1", 
     "vcoco", 
