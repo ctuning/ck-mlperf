@@ -31,6 +31,7 @@
   "suggested_path": "model-tf-mlperf-mobilenet-quantized-downloaded",
   "tags": [
     "model", 
+    "tensorflowmodel",
     "tf", 
     "tflite", 
     "nhwc",
@@ -38,9 +39,10 @@
     "mobilenet-v1", 
     "mobilenet-v1-1.0-224", 
     "2018_08_02", 
+    "mlperf",
     "quantized",
     "quantised",
-    "mlperf",
+    "frozen",
     "downloaded"
   ], 
   "use_scripts_from_another_entry": {
