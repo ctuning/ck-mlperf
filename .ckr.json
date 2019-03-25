@@ -8,7 +8,7 @@
     "url": "https://github.com/ctuning/ck-mlperf",
     "repo_deps": [
       {
-        "repo_uoa": "ck-autotuning"
+        "repo_uoa": "ck-tensorflow"
       }
     ] 
   }
