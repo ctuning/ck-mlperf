@@ -39,6 +39,7 @@
     "mobilenet-v1-1.0-224", 
     "2018_08_02", 
     "mlperf", 
+    "non-quantized",
     "downloaded"
   ], 
   "use_scripts_from_another_entry": {
