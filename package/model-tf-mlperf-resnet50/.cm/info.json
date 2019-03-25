@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-tf-resnet50-mlperf"
+  "data_name": "model-tf-mlperf-resnet50"
 }
