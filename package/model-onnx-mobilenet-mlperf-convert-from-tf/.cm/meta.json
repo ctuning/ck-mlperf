@@ -63,10 +63,21 @@
   "tags": [
     "model",
     "onnx",
-    "nchw",
     "mobilenet",
     "mlperf",
     "converted",
     "converted-from-tf"
-  ]
+  ],
+  "variations": {
+    "nchw": {
+        "extra_env": {
+            "CK_MODEL_DATA_LAYOUT": "NCHW"
+        }
+    },
+    "nhwc": {
+        "extra_env": {
+            "CK_MODEL_DATA_LAYOUT": "NHWC"
+        }
+    }
+  }
 }
