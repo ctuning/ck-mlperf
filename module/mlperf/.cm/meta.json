@@ -1,13 +1,13 @@
 {
   "actions": {
     "list_experiments": {
-      "desc": "Returns a list of all VQE-relevant CK experiment entries"
+      "desc": "List all MLPerf-relevant experiments (search by tags)"
     },
     "pick_an_experiment": {
-      "desc": "Select an experiment from the list (interactive helper function)"
+      "desc": "Select an experiment from the list (an interactive helper function)"
     },
     "compare": {
-      "desc": "Compare two experimental entries"
+      "desc": "Compare two experiments"
     }
   },
   "copyright": "See CK COPYRIGHT.txt for copyright details",
