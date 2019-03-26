@@ -21,7 +21,7 @@ from pprint import pprint
 
 def init(i):
     """
-    Not to be called directly. Sets the path to the vqe_plugin.
+    Not to be called directly.
     """
 
     return {'return':0}
@@ -39,6 +39,7 @@ def compare(i):
             }
     """
 
+    return {'return':0}
 
 def list_experiments(i):
     """
