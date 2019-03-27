@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "${CK_MODEL_DATA_LAYOUT}" == "NCHW" ]; then
+if [ "${ML_MODEL_DATA_LAYOUT}" == "NCHW" ]; then
     POSSIBLE_LAYOUT_CONVERSION="--inputs-as-nchw ${MODEL_INPUT_LAYER_NAME}"
 else
     POSSIBLE_LAYOUT_CONVERSION=""
