@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "ad9565c4d07b3d1d", 
+  "backup_module_uid": "1dc07ee0f4742028", 
+  "backup_module_uoa": "package", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-03-27T05:35:06.338183", 
+    "version": [
+      "1", 
+      "9", 
+      "6", 
+      "1"
+    ]
+  }, 
+  "data_name": "model-tflite-mlperf-ssd-mobilenet"
+}
