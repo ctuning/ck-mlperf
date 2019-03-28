@@ -3,7 +3,7 @@
   "customize": {
     "install_env": {
       "MODEL_TFLITE_GRAPH": "detect.tflite",
-      "CK_MODEL_DATA_LAYOUT": "NHWC", 
+      "ML_MODEL_DATA_LAYOUT": "NHWC", 
       "MODEL_DATASET_TYPE": "coco", 
       "MODEL_IMAGE_HEIGHT": "300",
       "MODEL_IMAGE_WIDTH": "300",
