@@ -50,7 +50,7 @@
       "local": "yes", 
       "name": "original TF model", 
       "sort": 100, 
-      "tags": "tf,model,resnet,mlperf"
+      "tags": "model,image-classification,tf,resnet,mlperf"
     }
   }, 
   "end_full_path_universal": "resnet50_v1.onnx", 
@@ -66,6 +66,7 @@
   "suggested_path": "model-onnx-resnet50-mlperf-convert-from-tf",
   "tags": [
     "model", 
+    "image-classification",
     "onnx",
     "resnet", 
     "resnet50", 

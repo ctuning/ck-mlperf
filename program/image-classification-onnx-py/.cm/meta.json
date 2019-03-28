@@ -55,7 +55,7 @@
       "local": "yes", 
       "name": "ONNX model", 
       "sort": 30, 
-      "tags": "onnx,model"
+      "tags": "model,image-classification,onnx"
     }, 
     "lib-python-numpy": {
       "local": "yes",

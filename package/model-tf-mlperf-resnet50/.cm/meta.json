@@ -29,6 +29,7 @@
   "suggested_path": "model-tf-mlperf-resnet-downloaded",
   "tags": [
     "model", 
+    "image-classification",
     "tf", 
     "nhwc",
     "resnet", 

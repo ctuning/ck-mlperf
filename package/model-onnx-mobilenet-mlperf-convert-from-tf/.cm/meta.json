@@ -50,7 +50,7 @@
       "local": "yes", 
       "name": "original TF model", 
       "sort": 100, 
-      "tags": "tf,model,mobilenet,mlperf"
+      "tags": "model,image-classification,tf,mobilenet,mlperf"
     }
   }, 
   "end_full_path_universal": "mobilenet_v1_1.0_224.onnx", 
@@ -62,6 +62,7 @@
   "suggested_path": "model-onnx-mobilenet-mlperf-convert-from-tf",
   "tags": [
     "model",
+    "image-classification",
     "onnx",
     "mobilenet",
     "mlperf",

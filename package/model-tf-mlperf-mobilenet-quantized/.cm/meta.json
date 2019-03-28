@@ -31,6 +31,7 @@
   "suggested_path": "model-tf-mlperf-mobilenet-quantized-downloaded",
   "tags": [
     "model", 
+    "image-classification",
     "tensorflowmodel",
     "tf", 
     "tflite", 
