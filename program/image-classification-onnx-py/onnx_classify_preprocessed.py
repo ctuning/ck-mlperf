@@ -50,8 +50,6 @@ def load_preprocessed_batch(image_list, image_index):
             else:
                 img = img - np.mean(img)
 
-#        img = np.expand_dims(img, axis=0)   # adding an extra dimension in front
-
         # Add img to batch
         batch_data.append( [img] )
         image_index += 1
@@ -140,9 +138,6 @@ def main():
 
         # Classify batch
         begin_time = time.time()
-        #print(batch_data)
-        print(batch_data.shape)
-
         batch_results = sess.run([output_layer_name], {input_layer_name: batch_data})[0]
         classification_time = time.time() - begin_time
         if FULL_REPORT:
