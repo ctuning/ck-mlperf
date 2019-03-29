@@ -40,10 +40,11 @@
   "suggested_path": "model-tf-mlperf-ssd-mobilenet-quantized-finetuned", 
   "tags": [
     "mlperf",
+    "object-detection",
+    "tensorflowmodel",
     "model",
     "tf",
     "tensorflow", 
-    "object-detection", 
     "ssd", 
     "ssd-mobilenet", 
     "ssd-mobilenet-v1", 
