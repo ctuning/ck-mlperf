@@ -37,6 +37,7 @@
     "resnet50-v1.5", 
     "v1.5",
     "mlperf",
+    "weights",
     "frozen",
     "downloaded"
   ], 
