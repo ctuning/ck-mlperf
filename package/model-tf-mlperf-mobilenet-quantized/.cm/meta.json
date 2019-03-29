@@ -43,6 +43,8 @@
     "mlperf",
     "quantized",
     "quantised",
+    "weights",
+    "python",
     "frozen",
     "downloaded"
   ], 

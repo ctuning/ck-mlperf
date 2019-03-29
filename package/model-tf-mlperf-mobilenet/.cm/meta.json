@@ -42,6 +42,8 @@
     "2018_08_02", 
     "mlperf", 
     "non-quantized",
+    "weights",
+    "python",
     "frozen",
     "downloaded"
   ], 
