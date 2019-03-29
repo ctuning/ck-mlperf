@@ -12,9 +12,11 @@
       "MODEL_NORMALIZE_DATA": "YES",
       "MODEL_NEED_BACKGROUND_CORRECTION": "YES",
       "PACKAGE_NAME": "tflite_ssd_mobilenet_v1_coco_2018_01_28.tar.gz", 
-      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
+      "PACKAGE_NAME1": "tflite_ssd_mobilenet_v1_coco_2018_01_28.tar", 
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "NO", 
       "PACKAGE_SKIP_LINUX_MAKE": "YES", 
       "PACKAGE_UNGZIP": "YES", 
+      "PACKAGE_UNTAR": "YES",
       "PACKAGE_URL": "https://www.dropbox.com/s/p28y9ll7dczpdu1/", 
       "PACKAGE_WGET": "YES"
     }, 
