@@ -27,9 +27,12 @@ def init(i):
     return {'return':0}
 
 
-def compare(i):
+def compare_experiments(i):
     """
     Input:  {
+                (cids[])            - up to 2 CIDs of entries to compare (interactive by default)
+                (repo_uoa)          - experiment repository ('*' by default)
+                (extra_tags)        - extra tags to search for CIDs
             }
 
     Output: {
@@ -38,13 +41,37 @@ def compare(i):
                 (error)             - error text if return > 0
             }
     """
+    cids = i.get('cids')
+    repo_uoa = i.get('repo_uoa', '*')
+    extra_tags = i.get('extra_tags', 'mlperf,accuracy')
+    # Return an error if more than 2 CIDs have been provided.
+    if len(cids) > 2:
+        return {'return':1, 'error': 'only support up to 2 CIDs'}
+
+    # Interactively select experiment entries if fewer than 2 CIDs have been provided.
+    for i in range(len(cids),2):
+        ck.out( 'Pick experiment #{} for comparison:'.format(i) )
+        pick_exp_adict = { 'action':       'pick_an_experiment',
+                           'module_uoa':   'mlperf',
+                           'repo_uoa':     repo_uoa,
+                           'extra_tags':   extra_tags,
+        }
+        r=ck.access( pick_exp_adict )
+        if r['return']>0: return r
+        cids.append( r['cid'] )
+
+    # Print the two CIDs to compare.
+    ck.out( '-----------------------------------' )
+    ck.out( 'The pair of experiments to compare:' )
+    for cid in cids:
+        ck.out( '- ' + cid )
 
     return {'return':0}
 
 def list_experiments(i):
     """
     Input:  {
-                (repo_uoa)          - experiment repository name (defaults to '*')
+                (repo_uoa)          - experiment repository name ('*' by default)
                 (extra_tags)        - extra tags to filter
                 (add_meta)          - request to return metadata with each experiment entry
             }
@@ -58,7 +85,7 @@ def list_experiments(i):
 
     repo_uoa        = i.get('repo_uoa', '*')
     extra_tags      = i.get('extra_tags')
-    all_tags        = 'qck' + ( ',' + extra_tags if extra_tags else '' )
+    all_tags        = 'mlperf' + ( ',' + extra_tags if extra_tags else '' )
     add_meta        = i.get('add_meta')
 
     search_adict    = { 'action':       'search',
@@ -95,7 +122,7 @@ def list_experiments(i):
 def pick_an_experiment(i):
     """
     Input:  {
-                (repo_uoa)          - experiment repository name (defaults to 'local', but can be overridden by '*')
+                (repo_uoa)          - experiment repository ('*' by default)
                 (extra_tags)        - extra tags to filter
             }
 
@@ -106,11 +133,11 @@ def pick_an_experiment(i):
             }
     """
 
-    repo_uoa        = i.get('repo_uoa', 'local')
+    repo_uoa        = i.get('repo_uoa', '*')
     extra_tags      = i.get('extra_tags')
 
     list_exp_adict  = { 'action':       'list_experiments',
-                        'module_uoa':   'vqe',
+                        'module_uoa':   'mlperf',
                         'repo_uoa':     repo_uoa,
                         'extra_tags':   extra_tags,
     }
@@ -127,7 +154,7 @@ def pick_an_experiment(i):
                     'module_uoa': 'misc',
                     'options': all_experiment_names,
                     'default': str(number_of_experiments-1),
-                    'question': 'Please select the experiment entry',
+                    'question': 'Please select one of the experiment entries',
     }
     r=ck.access( select_adict )
     if r['return']>0:

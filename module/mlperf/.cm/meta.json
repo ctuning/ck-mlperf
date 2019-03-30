@@ -1,20 +1,20 @@
 {
   "actions": {
+    "compare_experiments": {
+      "desc": "Compare two experiments"
+    },
     "list_experiments": {
-      "desc": "List all MLPerf-relevant experiments (search by tags)"
+      "desc": "List all MLPerf-related experiments (search by tags)"
     },
     "pick_an_experiment": {
       "desc": "Select an experiment from the list (an interactive helper function)"
-    },
-    "compare": {
-      "desc": "Compare two experiments"
     }
   },
   "copyright": "See CK COPYRIGHT.txt for copyright details",
-  "desc": "simplify running the vqe pipeline and recording the results",
-  "developer": "Leo Gordon",
-  "developer_email": "leo@dividiti.com",
-  "developer_webpage": "http://fursin.net",
+  "desc": "Validate MLPerf submission against reference",
+  "developer": "Leo Gordon; Anton Lokhmotov",
+  "developer_email": "leo@dividiti.com; anton@dividiti.com",
+  "developer_webpage": "http://dividiti.com",
   "license": "See CK LICENSE.txt for licensing details",
   "module_deps": {
     "env": "9b9b3208ac44b891"
