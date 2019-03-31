@@ -87,14 +87,54 @@ def compare_experiments(i):
         ck.out( '- {}: {} predictions'.format(cid, len(point0001_frame_predictions)) )
         frame_predictions.append(point0001_frame_predictions)
 
-    for (fp0, fp1) in zip(frame_predictions[0], frame_predictions[1]):
-        if fp0 != fp1:
-            ck.out( 'Mismatched predictions:' )
-            pprint( fp0 )
-            pprint( fp1 )
-            ck.out( ''  )
+    epsilon = 1e-5
+    max_delta = 0
+    num_mismatched_files = 0
+    num_mismatched_classes = 0
+    num_mismatched_probabilities = 0
+    num_mismatched_elementary_keys = 0
+    for file_name in frame_predictions[0]:
+        ck.out( 'Checking {}...'.format(file_name) )
+        fp0 = frame_predictions[0][file_name]
+        fp1 = frame_predictions[1][file_name]
+        # Check elementary keys.
+        for key in [ 'accuracy_top1', 'accuracy_top5', 'class_correct', 'class_topmost' ]:
+            fp0_value = fp0[key]
+            fp1_value = fp1[key]
+            if fp0_value != fp1_value:
+                ck.out( '- mismatched key {}: {} != {}'.format(key, fp0_value, fp1_value) )
+                num_mismatched_elementary_keys += 1
+        # Check topn.
+        index = 0
+        any_mismatched_classes = False
+        any_mismatched_probabilities = False
+        for (fp0_topn, fp1_topn) in zip(fp0['topn'], fp1['topn']):
+            if fp0_topn['index'] != fp1_topn['index']:
+                ck.out( '- mismatched classes at index {}: {} != {}'.format(index, fp0_topn['index'], fp1_topn['index']) )
+                num_mismatched_classes += 1
+                any_mismatched_classes = True
+            delta = abs(fp0_topn['prob'] - fp1_topn['prob'])
+            if delta > epsilon:
+                ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fp0_topn['prob'], fp1_topn['prob'], delta, epsilon) )
+                num_mismatched_probabilities += 1
+                any_mismatched_probabilities = True
+                if delta > max_delta:
+                    max_delta = delta
+            index += 1
+        if any_mismatched_classes or any_mismatched_probabilities:
+            num_mismatched_files += 1
 
-    return {'return':0}
+    rdict = { 'return':0,
+              'epsilon':epsilon,
+              'max_delta':max_delta,
+              'num_mismatched_files':num_mismatched_files,
+              'num_mismatched_classes':num_mismatched_classes,
+              'num_mismatched_probabilities':num_mismatched_probabilities,
+              'num_mismatched_elementary_keys':num_mismatched_elementary_keys
+    }
+    pprint( rdict )
+
+    return rdict
 
 def list_experiments(i):
     """
