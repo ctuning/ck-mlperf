@@ -44,13 +44,14 @@ def compare_experiments(i):
     cids = i.get('cids')
     repo_uoa = i.get('repo_uoa', '*')
     extra_tags = i.get('extra_tags', 'mlperf,accuracy')
+
     # Return an error if more than 2 CIDs have been provided.
     if len(cids) > 2:
         return {'return':1, 'error': 'only support up to 2 CIDs'}
 
-    # Interactively select experiment entries if fewer than 2 CIDs have been provided.
+    # Interactively select experiment entries if fewer than 2 CID have been provided.
     for i in range(len(cids),2):
-        ck.out( 'Pick experiment #{} for comparison:'.format(i) )
+        ck.out( 'Select experiment #{} for comparison:'.format(i) )
         pick_exp_adict = { 'action':       'pick_an_experiment',
                            'module_uoa':   'mlperf',
                            'repo_uoa':     repo_uoa,
@@ -60,11 +61,38 @@ def compare_experiments(i):
         if r['return']>0: return r
         cids.append( r['cid'] )
 
-    # Print the two CIDs to compare.
-    ck.out( '-----------------------------------' )
-    ck.out( 'The pair of experiments to compare:' )
+    # Collect frame predictions.
+    ck.out( '\nThe experiments to compare:' )
+    frame_predictions = []
     for cid in cids:
-        ck.out( '- ' + cid )
+        r=ck.parse_cid({'cid': cid})
+        if r['return']>0:
+            return { 'return': 1, 'error': "Cannot parse CID '{}'".format(cid) }
+        else:
+            repo_uoa    = r.get('repo_uoa','')
+            module_uoa  = r.get('module_uoa','')
+            data_uoa    = r.get('data_uoa','')
+
+        load_point_adict = {    'action':           'load_point',
+                                'repo_uoa':         repo_uoa,
+                                'module_uoa':       module_uoa,
+                                'data_uoa':         data_uoa,
+        }
+        r=ck.access( load_point_adict )
+        if r['return']>0: return r
+
+        point0001_characteristics_list = r['dict']['0001']['characteristics_list']
+        point0001_characteristics0_run = point0001_characteristics_list[0]['run']
+        point0001_frame_predictions    = point0001_characteristics0_run['frame_predictions']
+        ck.out( '- {}: {} predictions'.format(cid, len(point0001_frame_predictions)) )
+        frame_predictions.append(point0001_frame_predictions)
+
+    for (fp0, fp1) in zip(frame_predictions[0], frame_predictions[1]):
+        if fp0 != fp1:
+            ck.out( 'Mismatched predictions:' )
+            pprint( fp0 )
+            pprint( fp1 )
+            ck.out( ''  )
 
     return {'return':0}
 
@@ -149,11 +177,10 @@ def pick_an_experiment(i):
 
     all_experiment_names = [ '{repo_uoa}:{module_uoa}:{data_uoa}'.format(**entry_dict) for entry_dict in r['lst']]
 
-    number_of_experiments = len(all_experiment_names)
     select_adict = {'action': 'select_string',
                     'module_uoa': 'misc',
                     'options': all_experiment_names,
-                    'default': str(number_of_experiments-1),
+                    'default': '0',
                     'question': 'Please select one of the experiment entries',
     }
     r=ck.access( select_adict )
