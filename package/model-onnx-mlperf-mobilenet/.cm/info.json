@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-onnx-mobilenet-mlperf"
+  "data_name": "model-onnx-mlperf-mobilenet"
 }
