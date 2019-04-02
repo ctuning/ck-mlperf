@@ -35,7 +35,7 @@
   "package_extra_name": " (resnet50-v1.5-tflite-convert-from-tf)", 
   "process_script": "install", 
   "soft_uoa": "439b9f1757f27091", 
-  "suggested_path": "model-tflite-resnet50-mlperf-convert-from-tf",
+  "suggested_path": "model-tflite-mlperf-resnet-convert-from-tf",
   "tags": [
     "model",
     "image-classification",
