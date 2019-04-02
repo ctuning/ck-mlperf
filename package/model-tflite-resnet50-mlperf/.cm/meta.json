@@ -29,6 +29,7 @@
   "suggested_path": "model-tflite-resnet50-mlperf-downloaded",
   "tags": [
     "model", 
+    "image-classification",
     "tflite",
     "nhwc",
     "resnet", 

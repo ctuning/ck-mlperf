@@ -26,7 +26,7 @@
       "local": "yes", 
       "name": "TFlite model", 
       "sort": 20, 
-      "tags": "tf,model,resnet,mlperf"
+      "tags": "model,image-classification,tf,resnet,mlperf"
     }
   }, 
   "end_full_path_universal": "resnet50_v1.tflite", 
@@ -38,6 +38,7 @@
   "suggested_path": "model-tflite-resnet50-mlperf-convert-from-tf",
   "tags": [
     "model",
+    "image-classification",
     "tflite",
     "nhwc",
     "resnet",

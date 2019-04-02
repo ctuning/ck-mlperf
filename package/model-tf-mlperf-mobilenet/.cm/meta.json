@@ -31,6 +31,7 @@
   "suggested_path": "model-tf-mlperf-mobilenet-downloaded",
   "tags": [
     "model",
+    "image-classification",
     "tensorflowmodel", 
     "tf", 
     "tflite", 
@@ -41,6 +42,8 @@
     "2018_08_02", 
     "mlperf", 
     "non-quantized",
+    "weights",
+    "python",
     "frozen",
     "downloaded"
   ], 

@@ -29,6 +29,7 @@
   "suggested_path": "model-tf-mlperf-resnet-downloaded",
   "tags": [
     "model", 
+    "image-classification",
     "tf", 
     "nhwc",
     "resnet", 
@@ -36,6 +37,7 @@
     "resnet50-v1.5", 
     "v1.5",
     "mlperf",
+    "weights",
     "frozen",
     "downloaded"
   ], 

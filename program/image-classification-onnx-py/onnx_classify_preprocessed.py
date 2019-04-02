@@ -50,13 +50,19 @@ def load_preprocessed_batch(image_list, image_index):
             else:
                 img = img - np.mean(img)
 
-#        img = np.expand_dims(img, axis=0)   # adding an extra dimension in front
-
         # Add img to batch
         batch_data.append( [img] )
         image_index += 1
 
-    return np.concatenate(batch_data, axis=0), image_index
+    nhwc_data = np.concatenate(batch_data, axis=0)
+
+    if data_layout == 'NHWC':
+        #print(nhwc_data.shape)
+        return nhwc_data, image_index
+    else:
+        nchw_data = nhwc_data.transpose(0,3,1,2)
+        #print(nchw_data.shape)
+        return nchw_data, image_index
 
 
 def load_labels(labels_filepath):
@@ -140,9 +146,6 @@ def main():
 
         # Classify batch
         begin_time = time.time()
-        #print(batch_data)
-        print(batch_data.shape)
-
         batch_results = sess.run([output_layer_name], {input_layer_name: batch_data})[0]
         classification_time = time.time() - begin_time
         if FULL_REPORT:

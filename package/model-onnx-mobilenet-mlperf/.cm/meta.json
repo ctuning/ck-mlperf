@@ -29,6 +29,7 @@
   "suggested_path": "model-onnx-mobilenet-mlperf-downloaded",
   "tags": [
     "model", 
+    "image-classification",
     "onnx", 
     "nchw",
     "mobilenet",
