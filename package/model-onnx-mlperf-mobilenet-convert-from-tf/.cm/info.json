@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-onnx-mobilenet-mlperf-convert-from-tf"
+  "data_name": "model-onnx-mlperf-mobilenet-convert-from-tf"
 }
