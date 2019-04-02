@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-tflite-resnet50-mlperf"
+  "data_name": "model-tflite-mlperf-resnet"
 }
