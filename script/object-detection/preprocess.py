@@ -22,7 +22,7 @@ sys.path.append(SCRIPT_DIR)
 
 import ck_utils
 
-PYTHONPATH = os.environ['PYTHONPATH']
+PYTHONPATH = os.getenv('PYTHONPATH') or ''
 
 IMAGE_LIST_FILE = "processed_images_id.json"
 PREPROCESSED_FILES = "preprocessed_images_list.txt"
