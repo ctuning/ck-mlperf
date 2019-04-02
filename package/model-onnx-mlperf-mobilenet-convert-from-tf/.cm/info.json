@@ -1,10 +1,10 @@
 {
-  "backup_data_uid": "39aa18439d90c227", 
+  "backup_data_uid": "108cc2d0f04b666f", 
   "backup_module_uid": "1dc07ee0f4742028", 
   "backup_module_uoa": "package", 
   "control": {
     "engine": "CK", 
-    "iso_datetime": "2019-02-15T18:38:37.083956", 
+    "iso_datetime": "2019-03-11T12:58:14.138039", 
     "version": [
       "1", 
       "9", 
@@ -12,5 +12,5 @@
       "1"
     ]
   }, 
-  "data_name": "model-tf-mlperf-resnet50"
+  "data_name": "model-onnx-mlperf-mobilenet-convert-from-tf"
 }
