@@ -87,13 +87,13 @@ def compare_experiments(i):
         ck.out( '- {}: {} predictions'.format(cid, len(point0001_frame_predictions)) )
         frame_predictions.append(point0001_frame_predictions)
 
-    epsilon = 1e-5
+    epsilon = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
     max_delta = 0
     num_mismatched_files = 0
     num_mismatched_classes = 0
     num_mismatched_probabilities = 0
     num_mismatched_elementary_keys = 0
-    for file_name in frame_predictions[0]:
+    for file_name in sorted(frame_predictions[0]):
         ck.out( 'Checking {}...'.format(file_name) )
         fp0 = frame_predictions[0][file_name]
         fp1 = frame_predictions[1][file_name]
@@ -118,8 +118,8 @@ def compare_experiments(i):
                 ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fp0_topn['prob'], fp1_topn['prob'], delta, epsilon) )
                 num_mismatched_probabilities += 1
                 any_mismatched_probabilities = True
-                if delta > max_delta:
-                    max_delta = delta
+            if delta > max_delta:
+                max_delta = delta
             index += 1
         if any_mismatched_classes or any_mismatched_probabilities:
             num_mismatched_files += 1
