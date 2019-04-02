@@ -4,6 +4,7 @@
     "install_env": {
       "MODEL_TFLITE_GRAPH": "detect.tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC", 
+      "MODEL_LABELMAP_FILE": "mscoco_label_map.pbtxt",
       "MODEL_DATASET_TYPE": "coco", 
       "MODEL_IMAGE_HEIGHT": "300",
       "MODEL_IMAGE_WIDTH": "300",
@@ -12,9 +13,12 @@
       "MODEL_NORMALIZE_DATA": "YES",
       "MODEL_NEED_BACKGROUND_CORRECTION": "YES",
       "PACKAGE_NAME": "tflite_ssd_mobilenet_v1_coco_2018_01_28.tar.gz", 
-      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
+      "PACKAGE_NAME1": "tflite_ssd_mobilenet_v1_coco_2018_01_28.tar", 
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "NO", 
       "PACKAGE_SKIP_LINUX_MAKE": "YES", 
       "PACKAGE_UNGZIP": "YES", 
+      "PACKAGE_UNTAR": "YES",
+      "PACKAGE_UNTAR_EXTRA": "--strip=1",
       "PACKAGE_URL": "https://www.dropbox.com/s/p28y9ll7dczpdu1/", 
       "PACKAGE_WGET": "YES"
     }, 
@@ -22,6 +26,13 @@
     "no_ver_in_suggested_path": "yes", 
     "skip_file_check": "yes",
     "version": "reference"
+  },
+  "deps": {
+    "tensorflow-object-detection-api": {
+      "local": "yes",
+      "name": "TensorFlow Object Detection API",
+      "tags": "tensorflow,model,api"
+    }
   },
   "end_full_path_universal": "detect.tflite", 
   "only_for_host_os_tags": [], 
