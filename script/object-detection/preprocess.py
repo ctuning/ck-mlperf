@@ -139,9 +139,18 @@ def ck_preprocess(i):
   print('\n--------------------------------')
 
 
-  # TF-library path
-  if has_dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB'):
-    PYTHONPATH = dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB') + ':' + PYTHONPATH
+  # Add python libraries paths
+  PYTHONPATH = dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB') + ':' + PYTHONPATH
+  PYTHONPATH = dep_env('tool-coco', 'PYTHONPATH') + ':' + PYTHONPATH
+  PYTHONPATH = dep_env('tensorflowmodel-api', 'PYTHONPATH') + ':' + PYTHONPATH
+  PYTHONPATH = dep_env('lib-python-numpy', 'PYTHONPATH') + ':' + PYTHONPATH
+  PYTHONPATH = dep_env('lib-python-pillow', 'PYTHONPATH') + ':' + PYTHONPATH
+  splitted_path = set()
+  for p in PYTHONPATH.split(":"):
+    if p in ["${PYTHONPATH}", "$PYTHONPATH",""]:
+      continue
+    splitted_path.add(p)
+  PYTHONPATH = ":".join(splitted_path)
 
   # TF-model specific value
   if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR'):
