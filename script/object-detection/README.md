@@ -9,15 +9,15 @@ A client program has to reference scripts in its meta in the section `run_time`,
   "run_cmds": {
     "default": {
       "run_time": {
-        "post_process_cmds": [
-          "python $#ck_take_from_{script:24c98b0cee248d93}#$postprocess.py"
-        ],
-        "post_process_via_ck": "yes",
-        "pre_process_with_deps": {
+        "pre_process_via_ck": {
           "data_uoa":       "24c98b0cee248d93",
           "module_uoa":     "script",
-          "script_name":    "preprocess",
-          "function_name":  "ck_preprocess"
+          "script_name":    "preprocess"
+        },
+        "post_process_via_ck": {
+          "data_uoa":       "24c98b0cee248d93",
+          "module_uoa":     "script",
+          "script_name":    "postprocess"
         },
 
         "run_cmd_main": "$#BIN_FILE#$",
