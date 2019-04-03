@@ -8,12 +8,12 @@
 
 import inspect
 import json
-import numpy as np
 import os
-import PIL.Image
 import shutil
 import sys
 import time
+
+# NB: importing numpy, pillow, etc is delayed until we have loaded the PYTHONPATH from deps{}
 
 CUR_DIR = os.getcwd()
 
@@ -31,28 +31,34 @@ ENV_INI = "env.ini"
 
 OPENME = {}
 
-def load_pil_image_into_numpy_array(image, width, height):
-
-  # Check if not RGB and convert to RGB
-  if image.mode != 'RGB':
-    image = image.convert('RGB')
-
-  image = image.resize((width, height), resample=PIL.Image.BILINEAR)
-
-  # Conver to NumPy array
-  img_data = np.array(image.getdata())
-  img_data = img_data.astype(np.uint8)
-
-  # Make batch from single image
-  batch_shape = (1, height, width, 3)
-  batch_data = img_data.reshape(batch_shape)
-  return batch_data
 
 def save_preprocessed_image(file_name, image_data):
   image_data.tofile(file_name)
 
 ## preprocess(category_index):
 def preprocess():
+
+  import PIL.Image
+
+  def load_pil_image_into_numpy_array(image, width, height):
+
+      import numpy as np
+
+      # Check if not RGB and convert to RGB
+      if image.mode != 'RGB':
+        image = image.convert('RGB')
+
+      image = image.resize((width, height), resample=PIL.Image.BILINEAR)
+
+      # Conver to NumPy array
+      img_data = np.array(image.getdata())
+      img_data = img_data.astype(np.uint8)
+
+      # Make batch from single image
+      batch_shape = (1, height, width, 3)
+      batch_data = img_data.reshape(batch_shape)
+      return batch_data
+
   # Prepare directories
   ck_utils.prepare_dir(PREPROCESS_OUT_DIR)
   ck_utils.prepare_dir(ANNOTATIONS_OUT_DIR)
@@ -129,6 +135,7 @@ def ck_preprocess(i):
   global PREPROCESS_OUT_DIR
   global RESULTS_OUT_DIR
 
+
   global DATASET_TYPE
   global FULL_REPORT
   global IMAGE_COUNT
@@ -145,12 +152,14 @@ def ck_preprocess(i):
   PYTHONPATH = dep_env('tensorflowmodel-api', 'PYTHONPATH') + ':' + PYTHONPATH
   PYTHONPATH = dep_env('lib-python-numpy', 'PYTHONPATH') + ':' + PYTHONPATH
   PYTHONPATH = dep_env('lib-python-pillow', 'PYTHONPATH') + ':' + PYTHONPATH
-  splitted_path = set()
+  split_path = set()
   for p in PYTHONPATH.split(":"):
     if p in ["${PYTHONPATH}", "$PYTHONPATH",""]:
       continue
-    splitted_path.add(p)
-  PYTHONPATH = ":".join(splitted_path)
+    split_path.add(p)
+  PYTHONPATH = ":".join(split_path)
+
+  sys.path.extend(list(split_path))     # allow THIS SCRIPT to be able to use numpy, pillow, etc.
 
   # TF-model specific value
   if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR'):
