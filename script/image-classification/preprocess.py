@@ -6,14 +6,12 @@
 # See CK LICENSE.txt for licensing details.
 #
 
+import sys
 import imp
 import os
 import re
 import json
 import shutil
-import numpy as np
-import scipy.io
-from scipy.ndimage import zoom
 
 
 # Load list of images to be processed
@@ -35,6 +33,9 @@ def load_image_list(images_dir, images_count, skip_images):
 
 # Zoom to target size
 def resize_img(img, target_size):
+
+  from scipy.ndimage import zoom
+
   zoom_w = float(target_size)/float(img.shape[0])
   zoom_h = float(target_size)/float(img.shape[1])
   return zoom(img, [zoom_w, zoom_h, 1])
@@ -59,6 +60,9 @@ def load_image(image_path,            # Full path to processing image
                crop_percentage = 0,   # Crop to this percentage then scale to target size
                convert_to_bgr = False # Swap image channel RGB -> BGR
                ):
+
+  import scipy.io
+
   img = scipy.misc.imread(image_path)
 
   # check if grayscale and convert to RGB
@@ -93,6 +97,17 @@ def ck_preprocess(i):
   def my_env(var): return i['env'].get(var)
   def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
+
+  for dep_name, dep in i.get('deps', {}).items():
+    dep_tags = dep.get('tags', '')
+    if 'python-package' in dep_tags:
+        pp = dep_env(dep_name, 'PYTHONPATH')
+        for p in pp.split(':'):
+            if p not in ["${PYTHONPATH}", "$PYTHONPATH",""]:
+                sys.path.append(p)
+
+  print(sys.path)
+
 
   # Init variables from environment
 
