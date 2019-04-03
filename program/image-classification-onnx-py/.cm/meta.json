@@ -12,7 +12,7 @@
       "ignore_return_code": "no",
       "run_time": {
         "fine_grain_timer_file": "tmp-ck-timer.json",
-        "pre_process_with_deps": {
+        "pre_process_via_ck": {
           "data_uoa":       "b98ee24399ef4c3a",
           "module_uoa":     "script",
           "script_name":    "preprocess",
@@ -62,6 +62,12 @@
       "name": "NumPy python library",
       "sort": 40,
       "tags": "lib,python-package,numpy"
+    },
+    "lib-python-scipy": {
+      "local": "yes",
+      "name": "SciPy python library",
+      "sort": 45,
+      "tags": "lib,python-package,scipy"
     },
     "lib-python-pillow": {
       "local": "yes",
