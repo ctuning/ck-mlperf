@@ -148,10 +148,9 @@ def ck_preprocess(i):
 
   # Add python libraries paths
   PYTHONPATH = dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB') + ':' + PYTHONPATH
-  PYTHONPATH = dep_env('tool-coco', 'PYTHONPATH') + ':' + PYTHONPATH
-  PYTHONPATH = dep_env('tensorflowmodel-api', 'PYTHONPATH') + ':' + PYTHONPATH
-  PYTHONPATH = dep_env('lib-python-numpy', 'PYTHONPATH') + ':' + PYTHONPATH
-  PYTHONPATH = dep_env('lib-python-pillow', 'PYTHONPATH') + ':' + PYTHONPATH
+  for dep_name in ['tool-coco', 'tensorflowmodel-api', 'lib-python-numpy', 'lib-python-numpy', 'lib-python-pillow', 'lib-python-matplotlib']:
+      PYTHONPATH = dep_env(dep_name, 'PYTHONPATH') + ':' + PYTHONPATH
+
   split_path = set()
   for p in PYTHONPATH.split(":"):
     if p in ["${PYTHONPATH}", "$PYTHONPATH",""]:
