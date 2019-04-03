@@ -61,6 +61,7 @@ def load_image(image_path,            # Full path to processing image
                convert_to_bgr = False # Swap image channel RGB -> BGR
                ):
 
+  import numpy as np
   import scipy.io
 
   img = scipy.misc.imread(image_path)
