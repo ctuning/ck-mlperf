@@ -1,0 +1,112 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "install_env": {
+      "ML_MODEL_DATA_LAYOUT": "NCHW",
+      "MODEL_IMAGE_HEIGHT": "224",
+      "MODEL_IMAGE_WIDTH": "224",
+      "MODEL_INPUT_LAYER_NAME": "input:0",
+      "MODEL_NORMALIZE_DATA": "YES",
+      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0",
+      "PACKAGE_NAME": "converted_model.onnx",
+      "PACKAGE_VERSION": "1_1.0_224_2018_08_02",
+      "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224"
+    },
+    "package_extra_name": " MobileNet",
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "skip_file_check": "yes"
+  },
+  "deps": {
+    "python": {
+      "local": "yes",
+      "name": "Python",
+      "sort": 10,
+      "tags": "compiler,python"
+    },
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "NumPy python library",
+      "sort": 20,
+      "tags": "lib,python-package,numpy"
+    },
+    "lib-python-onnx": {
+      "local": "yes",
+      "name": "ONNX python library",
+      "sort": 40,
+      "tags": "lib,python-package,onnx"
+    },
+    "lib-python-tf2onnx": {
+      "local": "yes",
+      "name": "TF-2-ONNX model conversion library",
+      "sort": 50,
+      "tags": "lib,python-package,tf2onnx"
+    },
+    "lib-tensorflow": {
+      "local": "yes",
+      "name": "TensorFlow library",
+      "sort": 30,
+      "tags": "lib,tensorflow,vprebuilt"
+    },
+    "source-model": {
+      "local": "yes",
+      "name": "original TF model",
+      "sort": 100,
+      "tags": "model,image-classification,tf",
+      "update_tags_if_env" : {
+        "mlperf,mobilenet,non-quantized":  [ { "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224" } ],
+        "mlperf,resnet":                   [ { "ML_MODEL_TO_CONVERT": "resnet50_v1" } ]
+      }
+    }
+  },
+  "end_full_path_universal": "converted_model.onnx",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [],
+  "process_script": "install",
+  "soft_uoa": "bcaac306e9041879",
+  "suggested_path": "model-onnx-converted-from-tf",
+  "tags": [
+    "model",
+    "image-classification",
+    "onnx",
+    "mlperf",
+    "converted",
+    "converted-from-tf"
+  ],
+  "variations": {
+    "mobilenet": {
+      "extra_env": {
+            "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224",
+            "MODEL_INPUT_LAYER_NAME": "input:0", 
+            "MODEL_NORMALIZE_DATA": "YES", 
+            "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0", 
+            "PACKAGE_VERSION": "1_1.0_224_2018_08_02"
+      },
+      "extra_customize": {
+            "package_extra_name": " MobileNet"
+      }
+    },
+    "resnet": {
+      "extra_env": {
+            "ML_MODEL_TO_CONVERT": "resnet50_v1",
+            "MODEL_INPUT_LAYER_NAME": "input_tensor:0", 
+            "MODEL_NORMALIZE_DATA": "0",
+            "MODEL_OUTPUT_LAYER_NAME": "softmax_tensor:0", 
+            "PACKAGE_VERSION": "1.5"
+      },
+      "extra_customize": {
+            "package_extra_name": " ResNet50"
+      }
+    },
+    "nchw": {
+      "extra_env": {
+            "ML_MODEL_DATA_LAYOUT": "NCHW"
+      }
+    },
+    "nhwc": {
+      "extra_env": {
+            "ML_MODEL_DATA_LAYOUT": "NHWC"
+      }
+    }
+  }
+}
