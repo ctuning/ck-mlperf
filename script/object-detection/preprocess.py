@@ -126,6 +126,7 @@ def ck_preprocess(i):
   def my_env(var): return i['env'].get(var)
   def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
+  def has_dep(dep): return dep in i['deps']
 
   global PYTHONPATH
   global ANNOTATIONS_OUT_DIR
@@ -145,11 +146,11 @@ def ck_preprocess(i):
 
   print('\n--------------------------------')
 
-
-  # Add python libraries paths
-  PYTHONPATH = dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB') + ':' + PYTHONPATH
-  for dep_name in ['tool-coco', 'tensorflowmodel-api', 'lib-python-numpy', 'lib-python-numpy', 'lib-python-pillow', 'lib-python-matplotlib']:
-      PYTHONPATH = dep_env(dep_name, 'PYTHONPATH') + ':' + PYTHONPATH
+  # NB: importing numpy, pillow, etc is delayed until we have loaded the PYTHONPATH from deps{}
+  if has_dep('lib-tensorflow') and has_dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB'):
+    PYTHONPATH = dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB') + ':' + PYTHONPATH
+  for dep_name in ['tool-coco', 'tensorflowmodel-api', 'lib-python-numpy', 'lib-python-pillow', 'lib-python-matplotlib']:
+    PYTHONPATH = dep_env(dep_name, 'PYTHONPATH') + ':' + PYTHONPATH
 
   split_path = set()
   for p in PYTHONPATH.split(":"):
@@ -234,6 +235,9 @@ def ck_preprocess(i):
   SAVE_IMAGES = my_env("CK_SAVE_IMAGES") == "YES"
   METRIC_TYPE = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
 
+  USE_NEON = my_env("USE_NEON") == "YES"
+  USE_OPENCL = my_env("USE_OPENCL") == "YES"
+
   ANNOTATIONS_OUT_DIR = os.path.join(CUR_DIR, "annotations")
   DETECTIONS_OUT_DIR = os.path.join(CUR_DIR, "detections")
   IMAGES_OUT_DIR = os.path.join(CUR_DIR, "images")
@@ -303,6 +307,9 @@ def ck_preprocess(i):
   ENV["SAVE_IMAGES"] = SAVE_IMAGES
   ENV["SKIP_IMAGES"] = SKIP_IMAGES
   ENV["SKIP_DETECTION"] = SKIP_DETECTION
+
+  ENV["USE_NEON"] = USE_NEON
+  ENV["USE_OPENCL"] = USE_OPENCL
 
   ENV["FULL_REPORT"] = FULL_REPORT
   ENV["NUMBER_OF_PROCESSORS"] = NUMBER_OF_PROCESSORS
