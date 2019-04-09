@@ -47,6 +47,7 @@
     "ssd", 
     "ssd-mobilenet", 
     "ssd-mobilenet-v1", 
+    "non-quantized",
     "vcoco", 
     "channel-stable"
   ], 
