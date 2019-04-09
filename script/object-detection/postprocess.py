@@ -36,13 +36,6 @@ import ck_utils
 import converter_annotations
 import converter_results
 
-import calc_metrics_coco
-import calc_metrics_kitti
-import calc_metrics_oid
-
-from object_detection.utils import label_map_util
-
-
 ANNOTATIONS_PATH = ENV['ANNOTATIONS_PATH']
 
 ANNOTATIONS_OUT_DIR = ENV['ANNOTATIONS_OUT_DIR']
@@ -59,6 +52,14 @@ MODEL_DATASET_TYPE = ENV['MODEL_DATASET_TYPE']
 
 FULL_REPORT = ENV['FULL_REPORT']
 TIMER_JSON = ENV['TIMER_JSON']
+
+if METRIC_TYPE != ck_utils.COCO:
+  import calc_metrics_coco_tf
+  import calc_metrics_kitti
+  import calc_metrics_oid
+  from object_detection.utils import label_map_util
+else:
+  import calc_metrics_coco_pycocotools
 
 def ck_postprocess(i):
 
@@ -85,9 +86,9 @@ def ck_postprocess(i):
     # Run evaluation tool
     print('\nEvaluate metrics as {} ...'.format(METRIC_TYPE))
     if METRIC_TYPE == ck_utils.COCO:
-      mAP, recall, all_metrics = calc_metrics_coco.evaluate_via_pycocotools(processed_image_ids, results, annotations)
+      mAP, recall, all_metrics = calc_metrics_coco_pycocotools.evaluate(processed_image_ids, results, annotations)
     elif METRIC_TYPE == ck_utils.COCO_TF:
-      mAP, recall, all_metrics = calc_metrics_coco.evaluate_via_tf(categories_list, results, annotations, FULL_REPORT)
+      mAP, recall, all_metrics = calc_metrics_coco_tf.evaluate(categories_list, results, annotations, FULL_REPORT)
     elif METRIC_TYPE == ck_utils.OID:
       mAP, _, all_metrics = calc_metrics_oid.evaluate(results, annotations, LABELMAP_FILE, FULL_REPORT)
       recall = 'N/A'
@@ -112,8 +113,13 @@ def ck_postprocess(i):
 
   # Run evaluation
   ck_utils.print_header('Process results')
-  category_index = label_map_util.create_category_index_from_labelmap(LABELMAP_FILE, use_display_name=True)
-  categories_list = category_index.values()
+  
+  if METRIC_TYPE != ck_utils.COCO:
+    category_index = label_map_util.create_category_index_from_labelmap(LABELMAP_FILE, use_display_name=True)
+    categories_list = category_index.values()
+  else:
+    categories_list = []
+
   evaluate(processed_image_ids, categories_list)
 
   # Store benchmark results
