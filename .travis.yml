@@ -67,8 +67,8 @@ install:
     - ck install package --tags=lib,python-package,scipy                            # avoid detection by force-installing the package
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
-    - ck install package:model-onnx-mlperf-mobilenet                                # just download the dataset for now
-    - # ck install package --tags=model,image-classification,onnx,resnet,converted  # install an ONNX model by converting a MobileNet model from TF
+    - # ck install package:model-onnx-mlperf-mobilenet                              # just download the dataset (an easier test)
+    - ck install package --tags=model,image-classification,onnx,resnet,converted    # install an ONNX model by converting a MobileNet model from TF
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
