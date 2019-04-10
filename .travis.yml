@@ -5,10 +5,16 @@ os:         linux
 language:   python
 
 python:
+    - 2.7
     - 3.6
 
 matrix:
     include:
+        - os: osx
+          osx_image: xcode9.2
+          language: generic
+          python:   2.7
+          env:      WANTED_PYTHON_VERSION=2.7
         - os: osx
           osx_image: xcode9.2
           language: generic
@@ -54,7 +60,12 @@ install:
     - ck install package --tags=lib,python-package,numpy                            # avoid detection by force-installing the package
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
-    - ck install package --tags=model,image-classification,onnx,resnet,converted    # install an ONNX model by converting a MobileNet model from TF
+    - |
+        if [ "$WANTED_PYTHON_VERSION" == "2.7" ]; then
+            ck install package:model-onnx-mlperf-mobilenet                              # cannot run tf2onnx under Python 2.7
+        else
+            ck install package --tags=model,image-classification,onnx,resnet,converted  # install an ONNX model by converting a MobileNet model from TF
+        fi
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
