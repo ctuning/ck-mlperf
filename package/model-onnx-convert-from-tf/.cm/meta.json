@@ -26,19 +26,19 @@
     },
     "lib-python-numpy": {
       "local": "yes",
-      "name": "NumPy python library",
+      "name": "Python NumPy library",
       "sort": 20,
       "tags": "lib,python-package,numpy"
     },
     "lib-python-onnx": {
       "local": "yes",
-      "name": "ONNX python library",
+      "name": "Python ONNX library",
       "sort": 40,
       "tags": "lib,python-package,onnx"
     },
     "lib-python-tf2onnx": {
       "local": "yes",
-      "name": "TF-2-ONNX model conversion library",
+      "name": "Python TF-to-ONNX model conversion library",
       "sort": 50,
       "tags": "lib,python-package,tf2onnx"
     },
@@ -48,9 +48,9 @@
       "sort": 30,
       "tags": "lib,tensorflow,vprebuilt"
     },
-    "source-model": {
+    "model-source": {
       "local": "yes",
-      "name": "original TF model",
+      "name": "Original TensorFlow model",
       "sort": 100,
       "tags": "model,image-classification,tf",
       "update_tags_if_env" : {
@@ -76,36 +76,36 @@
   "variations": {
     "mobilenet": {
       "extra_env": {
-            "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224",
-            "MODEL_INPUT_LAYER_NAME": "input:0", 
-            "MODEL_NORMALIZE_DATA": "YES", 
-            "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0", 
-            "PACKAGE_VERSION": "1_1.0_224_2018_08_02"
+        "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224",
+        "MODEL_INPUT_LAYER_NAME": "input:0",
+        "MODEL_NORMALIZE_DATA": "YES",
+        "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0",
+        "PACKAGE_VERSION": "1_1.0_224_2018_08_02"
       },
       "extra_customize": {
-            "package_extra_name": " MobileNet"
+        "package_extra_name": " MobileNet"
       }
     },
     "resnet": {
       "extra_env": {
-            "ML_MODEL_TO_CONVERT": "resnet50_v1",
-            "MODEL_INPUT_LAYER_NAME": "input_tensor:0", 
-            "MODEL_NORMALIZE_DATA": "0",
-            "MODEL_OUTPUT_LAYER_NAME": "softmax_tensor:0", 
-            "PACKAGE_VERSION": "1.5"
+        "ML_MODEL_TO_CONVERT": "resnet50_v1",
+        "MODEL_INPUT_LAYER_NAME": "input_tensor:0",
+        "MODEL_NORMALIZE_DATA": "0",
+        "MODEL_OUTPUT_LAYER_NAME": "softmax_tensor:0",
+        "PACKAGE_VERSION": "1.5"
       },
       "extra_customize": {
-            "package_extra_name": " ResNet50"
+        "package_extra_name": " ResNet50"
       }
     },
     "nchw": {
       "extra_env": {
-            "ML_MODEL_DATA_LAYOUT": "NCHW"
+        "ML_MODEL_DATA_LAYOUT": "NCHW"
       }
     },
     "nhwc": {
       "extra_env": {
-            "ML_MODEL_DATA_LAYOUT": "NHWC"
+        "ML_MODEL_DATA_LAYOUT": "NHWC"
       }
     }
   }
