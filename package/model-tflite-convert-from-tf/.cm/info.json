@@ -12,5 +12,5 @@
       "1"
     ]
   },
-  "data_name": "model-converter-tf-to-tflite"
+  "data_name": "model-tflite-convert-from-tf"
 }
