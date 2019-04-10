@@ -5,6 +5,8 @@
 [![DOI](https://zenodo.org/badge/149591037.svg)](https://zenodo.org/badge/latestdoi/149591037)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
+Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg?branch=master)](https://travis-ci.org/ctuning/ck-mlperf)
+
 # Candidate Collective Knowledge benchmarks for MLPerf Inference
 - [MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications](https://arxiv.org/abs/1704.04861) (Howard et al., 2017)
 - [MobileNetV2: Inverted Residuals and Linear Bottlenecks ](https://arxiv.org/abs/1801.04381) (Sandler et al., 2018)
