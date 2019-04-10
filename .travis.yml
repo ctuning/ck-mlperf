@@ -2,6 +2,7 @@
 #   http://lint.travis-ci.org/
 
 os:         linux
+sudo:       false
 language:   python
 
 python:
@@ -15,6 +16,14 @@ matrix:
           language: generic
           python:   3.6
           env:      WANTED_PYTHON_VERSION=3.6
+
+addons:
+    apt:
+        packages:
+            - g++-6                                                             # For C++14 we need at least gcc-6
+            - python-pip
+        sources:
+            - ubuntu-toolchain-r-test
 
 before_install:
     - |
@@ -34,7 +43,6 @@ before_install:
 
             export CK_PLATFORM_NAME="generic-macos "                            # used later by CK
         else
-            sudo apt-get install python-pip
             export WANTED_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION                 # since Python is supported in Linux, get it from Travis
             export PYTHON_EXE=python
             export CK_PLATFORM_NAME="generic-linux "                            # used later by CK (note the trailing space to make the choice unique)
