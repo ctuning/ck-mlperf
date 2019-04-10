@@ -63,6 +63,6 @@ install:
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
-    - ck run program:image-classification-onnx-py --cmd=barebones                   # run the ONNX classification program with internal preprocessing
+    - ck run program:image-classification-onnx-py --cmd_key=barebones               # run the ONNX classification program with internal preprocessing
     - ck run program:image-classification-onnx-py --cmd_key=preprocessed            # run the ONNX classification program with external preprocessing
 
