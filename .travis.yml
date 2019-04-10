@@ -5,7 +5,7 @@ os:         linux
 language:   python
 
 python:
-    - 2.7
+    - 3.5
     - 3.6
 
 matrix:
@@ -13,13 +13,8 @@ matrix:
         - os: osx
           osx_image: xcode9.2
           language: generic
-          python:   2.7
-          env:      WANTED_PYTHON_VERSION=2.7
-        - os: osx
-          osx_image: xcode9.2
-          language: generic
-          python:   3.7
-          env:      WANTED_PYTHON_VERSION=3.7
+          python:   3.6
+          env:      WANTED_PYTHON_VERSION=3.6
 
 before_install:
     - |
@@ -31,7 +26,8 @@ before_install:
                 export PATH=/usr/local/opt/python\@2/bin:$PATH
                 export PYTHON_EXE=python
             else
-                brew reinstall python                                           # install and link python3 and pip3 to /usr/local/bin
+                brew unlink python
+                brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb
                 export PATH=/usr/local/opt/python/bin:$PATH
                 export PYTHON_EXE=python3
             fi
@@ -60,12 +56,8 @@ install:
     - ck install package --tags=lib,python-package,numpy                            # avoid detection by force-installing the package
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
-    - |
-        if [ "$WANTED_PYTHON_VERSION" == "2.7" ]; then
-            ck install package:model-onnx-mlperf-mobilenet                              # cannot run tf2onnx under Python 2.7
-        else
-            ck install package --tags=model,image-classification,onnx,resnet,converted  # install an ONNX model by converting a MobileNet model from TF
-        fi
+    - ck install package:model-onnx-mlperf-mobilenet                                # just download the dataset for now
+    - # ck install package --tags=model,image-classification,onnx,resnet,converted  # install an ONNX model by converting a MobileNet model from TF
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
