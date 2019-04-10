@@ -37,8 +37,7 @@ before_install:
                 export PYTHON_EXE=python
             else
                 brew unlink python
-                brew tap DannyKong12/formulae
-                brew install DannyKong12/formulae/python --ignore-dependencies
+                brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb --ignore-dependencies
                 brew switch python 3.6.5_1
                 export PATH=/usr/local/opt/python/bin:$PATH
                 export PYTHON_EXE=python3
