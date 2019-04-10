@@ -2,6 +2,7 @@
 #   http://lint.travis-ci.org/
 
 os:         linux
+dist:       xenial
 sudo:       false
 language:   python
 
