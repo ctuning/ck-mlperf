@@ -1,0 +1,65 @@
+# After changing this file, check it on:
+#   http://lint.travis-ci.org/
+
+os:         linux
+language:   python
+
+python:
+    - 2.7
+    - 3.6
+
+matrix:
+    include:
+        - os: osx
+          osx_image: xcode9.2
+          language: generic
+          python:   2.7
+          env:      WANTED_PYTHON_VERSION=2.7
+        - os: osx
+          osx_image: xcode9.2
+          language: generic
+          python:   3.7
+          env:      WANTED_PYTHON_VERSION=3.7
+
+before_install:
+    - |
+        if [ $TRAVIS_OS_NAME == "osx" ]; then
+            brew update                                                         # this swaps python versions and makes 3 the default one
+
+            if [ "$WANTED_PYTHON_VERSION" == "2.7" ]; then
+                brew reinstall python\@2 || brew link --overwrite python\@2     # install and link python2 and pip2 to /usr/local/bin
+                export PATH=/usr/local/opt/python\@2/bin:$PATH
+                export PYTHON_EXE=python
+            else
+                brew reinstall python                                           # install and link python3 and pip3 to /usr/local/bin
+                export PATH=/usr/local/opt/python/bin:$PATH
+                export PYTHON_EXE=python3
+            fi
+
+            export CK_PLATFORM_NAME="generic-macos "                            # used later by CK
+        else
+            sudo apt-get install python-pip
+            export WANTED_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION                 # since Python is supported in Linux, get it from Travis
+            export PYTHON_EXE=python
+            export CK_PLATFORM_NAME="generic-linux "                            # used later by CK (note the trailing space to make the choice unique)
+        fi
+
+install:
+    - CWD=`pwd`
+    - THIS_REPO_NAME=`basename $CWD`
+    - echo "TRAVIS_OS_NAME=${TRAVIS_OS_NAME}, WANTED_PYTHON_VERSION=${WANTED_PYTHON_VERSION}"
+    - echo "CWD=${CWD}, THIS_REPO_NAME=${THIS_REPO_NAME}, PATH=${PATH}"
+    - which ${PYTHON_EXE}
+    - ${PYTHON_EXE} --version
+    - rm -f `which pip`                                                             # the file is removable, but not writeable
+    - ${PYTHON_EXE} -m pip install --ignore-installed --verbose pip setuptools      # make sure pip is also up to date no matter what
+    - ${PYTHON_EXE} -m pip install -r requirements.txt                              # ck kernel itself and some essential components
+    - ck pull repo:${THIS_REPO_NAME}                                                # ...also trigger pulling dependent repositories
+    - echo "$CK_PLATFORM_NAME" | ck detect platform.os --update_platform_init       # set the platform to generic-linux (1) or generic-macos (2)
+    - ck install package --tags=model,image-classification,onnx,resnet,converted    # install an ONNX model by converting a MobileNet model from TF
+
+script:
+    - ck show env                                                                   # show everything that has been detected or installed
+    - ck run program:image-classification-onnx-py --cmd=barebones                   # run the ONNX classification program with internal preprocessing
+    - ck run program:image-classification-onnx-py --cmd_key=preprocessed            # run the ONNX classification program with external preprocessing
+
