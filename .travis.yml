@@ -12,7 +12,8 @@ python:
 
 matrix:
     include:
-        - os: osx
+        - name: "Python 3.6 on OSX"
+          os: osx
           osx_image: xcode9.2
           language: generic
           python:   3.6
@@ -21,9 +22,7 @@ matrix:
 addons:
     apt:
         packages:
-            - g++-6                                                             # For C++14 we need at least gcc-6
             - python-pip
-            - python3-pybind11
         sources:
             - ubuntu-toolchain-r-test
 
@@ -38,10 +37,11 @@ before_install:
                 export PYTHON_EXE=python
             else
                 brew unlink python
-                brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb
+                brew tap DannyKong12/formulae
+                brew install DannyKong12/formulae/python --ignore-dependencies
+                brew switch python 3.6.5_1
                 export PATH=/usr/local/opt/python/bin:$PATH
                 export PYTHON_EXE=python3
-                ls -l /usr/local/opt/python/bin
             fi
 
             export CK_PLATFORM_NAME="generic-macos "                            # used later by CK
