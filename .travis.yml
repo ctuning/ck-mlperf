@@ -23,6 +23,7 @@ addons:
     apt:
         packages:
             - python-pip
+            - jq
         sources:
             - ubuntu-toolchain-r-test
 
@@ -68,10 +69,13 @@ install:
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
     - # ck install package:model-onnx-mlperf-mobilenet                              # just download the dataset (an easier test)
-    - ck install package --tags=model,image-classification,onnx,resnet,converted    # install an ONNX model by converting a MobileNet model from TF
+    - export MODEL_MOBILENET_UID=`ck install package --tags=model,image-classification,onnx,mobilenet,converted --out=json_with_sep | tail -6 | jq -r .env_data_uid`
+    - export MODEL_RESNET_UID=`ck install package --tags=model,image-classification,onnx,resnet,converted --out=json_with_sep | tail -6 | jq -r .env_data_uid`
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
-    - ck run program:image-classification-onnx-py --cmd_key=barebones               # run the ONNX classification program with internal preprocessing
-    - ck run program:image-classification-onnx-py --cmd_key=preprocessed            # run the ONNX classification program with external preprocessing
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_UID --cmd_key=barebones  # internal preprocessing
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_UID --cmd_key=preprocessed  # external preprocessing
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_RESNET_UID --cmd_key=barebones  # internal preprocessing
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_RESNET_UID --cmd_key=preprocessed  # external preprocessing
 
