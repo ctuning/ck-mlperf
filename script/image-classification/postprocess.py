@@ -103,7 +103,7 @@ def ck_postprocess(i):
     class_correct = VALUES_MAP[img_file]
     classes = [c[1] for c in topn]
     is_top1 = class_correct == classes[0]
-    is_top5 = class_correct in classes[0:4]
+    is_top5 = class_correct in classes[0:5]
     is_topn = class_correct in classes
     if is_top1:
       global TOP1
