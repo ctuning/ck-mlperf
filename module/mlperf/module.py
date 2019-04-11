@@ -98,7 +98,7 @@ def compare_experiments(i):
         fp0 = frame_predictions[0][file_name]
         fp1 = frame_predictions[1][file_name]
         # Check elementary keys.
-        for key in [ 'accuracy_top1', 'accuracy_top5', 'class_correct', 'class_topmost' ]:
+        for key in [ 'accuracy_top1', 'accuracy_top5', 'accuracy_topn', 'class_correct', 'class_topmost' ]:
             fp0_value = fp0[key]
             fp1_value = fp1[key]
             if fp0_value != fp1_value:
