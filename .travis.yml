@@ -67,16 +67,13 @@ install:
     - ck install package --tags=lib,python-package,scipy                            # avoid detection by force-installing the package
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
-    - ck install package:model-onnx-mlperf-mobilenet                                # just download the dataset (an easier test)
-    - ck install package --tags=model,image-classification,onnx,mobilenet,converted # MobileNet ONNX model
-    - ck install package --tags=model,image-classification,onnx,resnet,converted    # ResNet50 ONNX model
+    - ck install package --tags=model,image-classification,onnx,mobilenet,downloaded    # MobileNet ONNX model, downloaded
+    - ck install package --tags=model,image-classification,onnx,mobilenet,converted     # MobileNet ONNX model, converted from TF
+    - ck install package --tags=model,image-classification,onnx,resnet,converted        # ResNet50 ONNX model, converted from TF
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
-    - export MODEL_MOBILENET_CID=`ck search --tags=model,image-classification,onnx,mobilenet,converted`
-    - export MODEL_RESNET_CID=`ck search --tags=model,image-classification,onnx,resnet,converted`
-    - export MODEL_MOBILENET_CID_DL=`ck search --tags=model,image-classification,onnx,mobilenet,downloaded`
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_CID --cmd_key=barebones  # external preprocessing
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_RESNET_CID --cmd_key=preprocessed  # internal preprocessing
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_CID_DL --cmd_key=preprocessed
+    - ck run program:image-classification-onnx-py --dep_add_tags.weights=mobilenet,converted --cmd_key=barebones  # external preprocessing
+    - ck run program:image-classification-onnx-py --dep_add_tags.weights=resnet,converted --cmd_key=preprocessed  # internal preprocessing
+    - ck run program:image-classification-onnx-py --dep_add_tags.weights=mobilenet,downloaded --cmd_key=preprocessed
 
