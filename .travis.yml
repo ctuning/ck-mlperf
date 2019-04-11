@@ -23,7 +23,6 @@ addons:
     apt:
         packages:
             - python-pip
-            - jq
         sources:
             - ubuntu-toolchain-r-test
 
@@ -68,14 +67,16 @@ install:
     - ck install package --tags=lib,python-package,scipy                            # avoid detection by force-installing the package
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
-    - # ck install package:model-onnx-mlperf-mobilenet                              # just download the dataset (an easier test)
-    - export MODEL_MOBILENET_UID=`ck install package --tags=model,image-classification,onnx,mobilenet,converted --out=json_with_sep | tail -6 | jq -r .env_data_uid`
-    - export MODEL_RESNET_UID=`ck install package --tags=model,image-classification,onnx,resnet,converted --out=json_with_sep | tail -6 | jq -r .env_data_uid`
+    - ck install package:model-onnx-mlperf-mobilenet                                # just download the dataset (an easier test)
+    - ck install package --tags=model,image-classification,onnx,mobilenet,converted # MobileNet ONNX model
+    - ck install package --tags=model,image-classification,onnx,resnet,converted    # ResNet50 ONNX model
 
 script:
     - ck show env                                                                   # show everything that has been detected or installed
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_UID --cmd_key=barebones  # internal preprocessing
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_UID --cmd_key=preprocessed  # external preprocessing
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_RESNET_UID --cmd_key=barebones  # internal preprocessing
-    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_RESNET_UID --cmd_key=preprocessed  # external preprocessing
+    - export MODEL_MOBILENET_CID=`ck search --tags=model,image-classification,onnx,mobilenet,converted`
+    - export MODEL_RESNET_CID=`ck search --tags=model,image-classification,onnx,resnet,converted`
+    - export MODEL_MOBILENET_CID_DL=`ck search --tags=model,image-classification,onnx,mobilenet,downloaded`
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_CID --cmd_key=barebones  # external preprocessing
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_RESNET_CID --cmd_key=preprocessed  # internal preprocessing
+    - ck run program:image-classification-onnx-py --deps.weights=$MODEL_MOBILENET_CID_DL --cmd_key=preprocessed
 
