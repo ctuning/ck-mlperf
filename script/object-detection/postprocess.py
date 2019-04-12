@@ -122,6 +122,8 @@ def ck_postprocess(i):
 
   evaluate(processed_image_ids, categories_list)
 
+  OPENME['frame_predictions'] = converter_results.convert_to_frame_predictions(DETECTIONS_OUT_DIR)
+ 
   # Store benchmark results
   with open(TIMER_JSON, 'w') as o:
     json.dump(OPENME, o, indent=2, sort_keys=True)

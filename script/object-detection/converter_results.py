@@ -109,3 +109,30 @@ def detection_to_coco_object(det, model_dataset_type, file_id):
     "bbox" : [x, y, w, h],
     "score" : det.score,
   }
+
+
+def convert_to_frame_predictions(detections_dir):
+  result = {}
+  detection_files = helper.get_files(detections_dir)
+
+  for file_name in detection_files:
+    read_file = os.path.join(detections_dir, file_name)
+
+    with open(read_file, 'r') as rf:
+      file_info = {}
+      width, height = [int(i) for i in rf.readline().split()] # first line is image size
+      file_info["image_height"] = height
+      file_info["image_width"] = width
+      file_info["detections"] = []
+
+      for line in rf:
+        det = helper.Detection(line)
+        detection = {}
+        detection["bbox"] = [det.x1, det.y1, det.x2, det.y2]
+        detection["prob"] = det.score
+        detection["class"] = str(det.class_id) + " " + det.class_name
+        file_info["detections"].append(detection)
+      
+      result[file_name] = file_info
+  
+  return result
