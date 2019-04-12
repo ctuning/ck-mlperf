@@ -6,29 +6,36 @@ import os
 import numpy as np
 import onnxruntime as rt
 
+## Model properties:
+#
+MODEL_PATH              = os.environ['CK_ENV_ONNX_MODEL_ONNX_FILEPATH']
+INPUT_LAYER_NAME        = os.environ['CK_ENV_ONNX_MODEL_INPUT_LAYER_NAME']
+OUTPUT_LAYER_NAME       = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
+MODEL_DATA_LAYOUT       = os.environ['ML_MODEL_DATA_LAYOUT']
 
-model_path          = os.environ['CK_ENV_ONNX_MODEL_ONNX_FILEPATH']
-input_layer_name    = os.environ['CK_ENV_ONNX_MODEL_INPUT_LAYER_NAME']
-output_layer_name   = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
-imagenet_path       = os.environ['CK_ENV_DATASET_IMAGENET_VAL']
-labels_path         = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
-data_layout         = os.environ['ML_MODEL_DATA_LAYOUT']
+## Image normalization:
+#
+MODEL_NORMALIZE_DATA    = os.getenv("CK_ENV_ONNX_MODEL_NORMALIZE_DATA") in ('YES', 'yes', 'ON', 'on', '1')
+SUBTRACT_MEAN           = os.getenv("CK_SUBTRACT_MEAN") == "YES"
+USE_MODEL_MEAN          = os.getenv("CK_USE_MODEL_MEAN") == "YES"
+MODEL_MEAN_VALUE        = np.array([0, 0, 0], dtype=np.float32) # to be populated
 
-normalize_data      = os.environ['CK_ENV_ONNX_MODEL_NORMALIZE_DATA']
-normalize_data_bool = normalize_data in ('YES', 'yes', 'ON', 'on', '1')
+## Input image properties:
+#
+IMAGE_DIR               = os.getenv('RUN_OPT_IMAGE_DIR')
+IMAGE_LIST_FILE         = os.getenv('RUN_OPT_IMAGE_LIST')
+IMAGE_SIZE              = int(os.getenv('RUN_OPT_IMAGE_SIZE'))
+LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 
+## Processing in batches:
+#
+BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', 1))
+BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
 
-MODEL_NORMALIZE_DATA = os.getenv("CK_ENV_ONNX_MODEL_NORMALIZE_DATA") == "YES"
-MODEL_MEAN_VALUE = np.array([0, 0, 0], dtype=np.float32) # to be populated
-BATCH_COUNT = int(os.getenv('CK_BATCH_COUNT', 1))
-BATCH_SIZE = int(os.getenv('CK_BATCH_SIZE', 1))
-IMAGE_LIST = os.getenv('RUN_OPT_IMAGE_LIST')
-IMAGE_DIR = os.getenv('RUN_OPT_IMAGE_DIR')
-RESULT_DIR = os.getenv('RUN_OPT_RESULT_DIR')
-SUBTRACT_MEAN = os.getenv("CK_SUBTRACT_MEAN") == "YES"
-USE_MODEL_MEAN = os.getenv("CK_USE_MODEL_MEAN") == "YES"
-IMAGE_SIZE = int(os.getenv('RUN_OPT_IMAGE_SIZE'))
-FULL_REPORT = int(os.getenv('RUN_OPT_SILENT_MODE', '0')) == 0
+## Writing the results out:
+#
+RESULT_DIR              = os.getenv('RUN_OPT_RESULT_DIR')
+FULL_REPORT             = int(os.getenv('RUN_OPT_SILENT_MODE', '0')) == 0
 
 
 def load_preprocessed_batch(image_list, image_index):
@@ -56,7 +63,7 @@ def load_preprocessed_batch(image_list, image_index):
 
     nhwc_data = np.concatenate(batch_data, axis=0)
 
-    if data_layout == 'NHWC':
+    if MODEL_DATA_LAYOUT == 'NHWC':
         #print(nhwc_data.shape)
         return nhwc_data, image_index
     else:
@@ -74,51 +81,51 @@ def load_labels(labels_filepath):
 
 
 def main():
-    global input_layer_name
-    global output_layer_name
+    global INPUT_LAYER_NAME
+    global OUTPUT_LAYER_NAME
 
     print('Images dir: ' + IMAGE_DIR)
-    print('Image list: ' + IMAGE_LIST)
+    print('Image list file: ' + IMAGE_LIST_FILE)
     print('Image size: {}'.format(IMAGE_SIZE))
     print('Batch size: {}'.format(BATCH_SIZE))
     print('Batch count: {}'.format(BATCH_COUNT))
-    print('Result dir: ' + RESULT_DIR);
+    print('Results dir: ' + RESULT_DIR);
     print('Normalize: {}'.format(MODEL_NORMALIZE_DATA))
     print('Subtract mean: {}'.format(SUBTRACT_MEAN))
     print('Use model mean: {}'.format(USE_MODEL_MEAN))
 
-    labels = load_labels(labels_path)
+    labels = load_labels(LABELS_PATH)
     num_labels = len(labels)
 
     # Load preprocessed image filenames:
-    with open(IMAGE_LIST, 'r') as f:
+    with open(IMAGE_LIST_FILE, 'r') as f:
         image_list = [ s.strip() for s in f ]
 
     setup_time_begin = time.time()
 
     # Load the ONNX model from file
-    sess = rt.InferenceSession(model_path)
+    sess = rt.InferenceSession(MODEL_PATH)
 
-    input_layer_names   = [ x.name for x in sess.get_inputs() ]     # FIXME: check that input_layer_name belongs to this list
-    input_layer_name    = input_layer_name or input_layer_names[0]
+    input_layer_names   = [ x.name for x in sess.get_inputs() ]     # FIXME: check that INPUT_LAYER_NAME belongs to this list
+    INPUT_LAYER_NAME    = INPUT_LAYER_NAME or input_layer_names[0]
 
-    output_layer_names  = [ x.name for x in sess.get_outputs() ]    # FIXME: check that output_layer_name belongs to this list
-    output_layer_name   = output_layer_name or output_layer_names[0]
+    output_layer_names  = [ x.name for x in sess.get_outputs() ]    # FIXME: check that OUTPUT_LAYER_NAME belongs to this list
+    OUTPUT_LAYER_NAME   = OUTPUT_LAYER_NAME or output_layer_names[0]
 
     model_input_shape   = sess.get_inputs()[0].shape
 
-    if data_layout == 'NHWC':
+    if MODEL_DATA_LAYOUT == 'NHWC':
         (samples, height, width, channels) = model_input_shape
     else:
         (samples, channels, height, width) = model_input_shape
 
-    print("Data layout: {}".format(data_layout) )
+    print("Data layout: {}".format(MODEL_DATA_LAYOUT) )
     print("Input layers: {}".format([ str(x) for x in sess.get_inputs()]))
     print("Output layers: {}".format([ str(x) for x in sess.get_outputs()]))
-    print("Input layer name: " + input_layer_name)
+    print("Input layer name: " + INPUT_LAYER_NAME)
     print("Expected input shape: {}".format(model_input_shape))
-    print("Output layer name: " + output_layer_name)
-    print("Data normalization: {}".format(normalize_data_bool))
+    print("Output layer name: " + OUTPUT_LAYER_NAME)
+    print("Data normalization: {}".format(MODEL_NORMALIZE_DATA))
     print("")
 
     setup_time = time.time() - setup_time_begin
@@ -146,7 +153,7 @@ def main():
 
         # Classify batch
         begin_time = time.time()
-        batch_results = sess.run([output_layer_name], {input_layer_name: batch_data})[0]
+        batch_results = sess.run([OUTPUT_LAYER_NAME], {INPUT_LAYER_NAME: batch_data})[0]
         classification_time = time.time() - begin_time
         if FULL_REPORT:
             print("Batch classified in %fs" % (classification_time))
