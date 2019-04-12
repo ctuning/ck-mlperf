@@ -12,6 +12,8 @@ MODEL_PATH              = os.environ['CK_ENV_ONNX_MODEL_ONNX_FILEPATH']
 INPUT_LAYER_NAME        = os.environ['CK_ENV_ONNX_MODEL_INPUT_LAYER_NAME']
 OUTPUT_LAYER_NAME       = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
 MODEL_DATA_LAYOUT       = os.environ['ML_MODEL_DATA_LAYOUT']
+MODEL_IMAGE_HEIGHT      = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_HEIGHT'])
+MODEL_IMAGE_WIDTH       = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
 
 ## Image normalization:
 #
@@ -24,7 +26,6 @@ MODEL_MEAN_VALUE        = np.array([0, 0, 0], dtype=np.float32) # to be populate
 #
 IMAGE_DIR               = os.getenv('RUN_OPT_IMAGE_DIR')
 IMAGE_LIST_FILE         = os.getenv('RUN_OPT_IMAGE_LIST')
-IMAGE_SIZE              = int(os.getenv('RUN_OPT_IMAGE_SIZE'))
 LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 
 ## Processing in batches:
@@ -43,7 +44,7 @@ def load_preprocessed_batch(image_list, image_index):
     for _ in range(BATCH_SIZE):
         img_file = os.path.join(IMAGE_DIR, image_list[image_index])
         img = np.fromfile(img_file, np.uint8)
-        img = img.reshape((IMAGE_SIZE, IMAGE_SIZE, 3))
+        img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
         img = img.astype(np.float32)
 
         # Normalize
@@ -86,7 +87,8 @@ def main():
 
     print('Images dir: ' + IMAGE_DIR)
     print('Image list file: ' + IMAGE_LIST_FILE)
-    print('Image size: {}'.format(IMAGE_SIZE))
+    print('Model image height: {}'.format(MODEL_IMAGE_HEIGHT))
+    print('Model image width: {}'.format(MODEL_IMAGE_WIDTH))
     print('Batch size: {}'.format(BATCH_SIZE))
     print('Batch count: {}'.format(BATCH_COUNT))
     print('Results dir: ' + RESULT_DIR);
