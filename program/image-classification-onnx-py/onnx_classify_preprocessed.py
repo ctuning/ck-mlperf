@@ -41,7 +41,7 @@ BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
 
 ## Writing the results out:
 #
-RESULT_DIR              = os.getenv('CK_RESULTS_DIR')
+RESULTS_DIR             = os.getenv('CK_RESULTS_DIR')
 FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
 
@@ -97,7 +97,7 @@ def main():
     print('Model image width: {}'.format(MODEL_IMAGE_WIDTH))
     print('Batch size: {}'.format(BATCH_SIZE))
     print('Batch count: {}'.format(BATCH_COUNT))
-    print('Results dir: ' + RESULT_DIR);
+    print('Results dir: ' + RESULTS_DIR);
     print('Normalize: {}'.format(MODEL_NORMALIZE_DATA))
     print('Subtract mean: {}'.format(SUBTRACT_MEAN))
     print('Use model mean: {}'.format(USE_MODEL_MEAN))
@@ -110,6 +110,11 @@ def main():
         image_list = [ s.strip() for s in f ]
 
     setup_time_begin = time.time()
+
+    # Cleanup results directory
+    if os.path.isdir(RESULTS_DIR):
+        shutil.rmtree(RESULTS_DIR)
+    os.mkdir(RESULTS_DIR)
 
     # Load the ONNX model from file
     sess = rt.InferenceSession(MODEL_PATH)
@@ -175,7 +180,7 @@ def main():
         for index_in_batch in range(BATCH_SIZE):
             softmax_vector = batch_results[index_in_batch][:num_labels]
             global_index = batch_index * BATCH_SIZE + index_in_batch
-            res_file = os.path.join(RESULT_DIR, image_list[global_index])
+            res_file = os.path.join(RESULTS_DIR, image_list[global_index])
             with open(res_file + '.txt', 'w') as f:
                 for prob in softmax_vector:
                     f.write('{}\n'.format(prob))
