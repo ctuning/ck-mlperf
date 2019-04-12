@@ -24,8 +24,14 @@ MODEL_MEAN_VALUE        = np.array([0, 0, 0], dtype=np.float32) # to be populate
 
 ## Input image properties:
 #
-IMAGE_DIR               = os.getenv('RUN_OPT_IMAGE_DIR')
-IMAGE_LIST_FILE         = os.getenv('RUN_OPT_IMAGE_LIST')
+IMAGE_DIR               = os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
+IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF'))
+
+## Old perprocessor:
+#
+# IMAGE_DIR               = os.getenv('RUN_OPT_IMAGE_DIR')
+# IMAGE_LIST_FILE         = os.getenv('RUN_OPT_IMAGE_LIST')
+
 LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 
 ## Processing in batches:
