@@ -12,20 +12,20 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 
 | Task | Model | Framework | CK workflow |
 |-|-|-|-|
-| Object Classification | MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite/README.md) | yes |
-|                       |           | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp/README.md) | yes |
-|                       |           | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py/README.md) | yes |
-|                       |           | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx/README.md) | yes |
+| Object Classification | MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite) | yes |
+|                       |           | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | yes |
+|                       |           | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | yes |
+|                       |           | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx) | yes |
 | Object Classification | ResNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite#install-the-resnet50-model) | yes |
 |                       |        | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet50-model) | yes |
-|                       |        | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification/README.md) | no |
-|                       |        | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification/README.md) | no |
+|                       |        | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
+|                       |        | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
 | Object Detection | SSD-MobileNet | TFLite | yes |
 |                  |               | TF (Python) | yes |
 |                  |               | PyTorch | no |
-| Object Detection | SSD-ResNet | PyTorch | no |
-| Machine Translation | GNMT | TF (Python) | no |
-|                     |      | PyTorch | no |
+| Object Detection | SSD-ResNet | [PyTorch](https://github.com/mlperf/inference/tree/master/cloud/single_stage_detector/pytorch) | no |
+| Machine Translation | GNMT | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/tensorflow) | no |
+|                     |      | [PyTorch](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/pytorch) | no |
 
 ## MLPerf Training v0.6
 **TODO**
