@@ -105,11 +105,11 @@ def main():
     labels = load_labels(LABELS_PATH)
     num_labels = len(labels)
 
+    setup_time_begin = time.time()
+
     # Load preprocessed image filenames:
     with open(IMAGE_LIST_FILE, 'r') as f:
         image_list = [ s.strip() for s in f ]
-
-    setup_time_begin = time.time()
 
     # Cleanup results directory
     if os.path.isdir(RESULTS_DIR):
