@@ -12,10 +12,10 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 
 | Task | Model | Framework | CK workflow |
 |-|-|-|-|
-| Object Classification | MobileNet | TFLite | yes |
-|                       |           | TF (C++) | yes |
-|                       |           | TF (Python) | yes |
-|                       |           | ONNX | yes |
+| Object Classification | MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite/README.md) | yes |
+|                       |           | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp/README.md) | yes |
+|                       |           | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py/README.md) | yes |
+|                       |           | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx/README.md) | yes |
 | Object Classification | ResNet | TFLite | yes |
 |                       |        | TF (C++) | yes |
 |                       |        | TF (Python) | no |
