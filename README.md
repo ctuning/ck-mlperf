@@ -15,15 +15,16 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 | Object Classification | MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite) | yes |
 |                       |           | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | yes |
 |                       |           | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | yes |
-|                       |           | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx) | yes |
+|                       |           | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets) | **coming soon!** |
 | Object Classification | ResNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite#install-the-resnet50-model) | yes |
 |                       |        | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet50-model) | yes |
 |                       |        | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
 |                       |        | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
-| Object Detection | SSD-MobileNet | TFLite | yes |
-|                  |               | TF (Python) | yes |
-|                  |               | PyTorch | no |
-| Object Detection | SSD-ResNet | [PyTorch](https://github.com/mlperf/inference/tree/master/cloud/single_stage_detector/pytorch) | no |
+| Object Detection | SSD-MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet) | **coming soon!** |
+|                  |               | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tf-py) | yes |
+|                  |               | [PyTorch](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/pytorch) | no |
+| Object Detection | SSD-ResNet | TF | **coming soon!** |
+|                  |            | [PyTorch](https://github.com/mlperf/inference/tree/master/cloud/single_stage_detector/pytorch) | no |
 | Machine Translation | GNMT | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/tensorflow) | no |
 |                     |      | [PyTorch](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/pytorch) | no |
 
