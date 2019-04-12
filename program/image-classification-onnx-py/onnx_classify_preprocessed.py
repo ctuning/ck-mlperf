@@ -34,8 +34,8 @@ BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
 
 ## Writing the results out:
 #
-RESULT_DIR              = os.getenv('RUN_OPT_RESULT_DIR')
-FULL_REPORT             = int(os.getenv('RUN_OPT_SILENT_MODE', '0')) == 0
+RESULT_DIR              = os.getenv('CK_RESULTS_DIR')
+FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
 
 def load_preprocessed_batch(image_list, image_index):
