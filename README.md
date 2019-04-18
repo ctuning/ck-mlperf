@@ -11,7 +11,7 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 ## MLPerf Inference v0.5
 
 | Task | Model | Owner | Contributors | Implementation | CK workflow |
-|-|-|-|-|
+|-|-|-|-|-|-|
 | Object Classification | MobileNet     | dividiti  | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite) | yes |
 |                       |               |           |           | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | yes |
 |                       |               |           |           | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | yes |
