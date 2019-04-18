@@ -179,7 +179,10 @@ def main():
 
         # Process results
         for index_in_batch in range(BATCH_SIZE):
-            softmax_vector = batch_results[index_in_batch][:num_labels]
+            # Ignore the background class.
+            # FIXME: What happens to class 999 (toilet tissue)? Check on
+            # e.g. ILSVRC2012_val_00002916.JPEG (74% probability).
+            softmax_vector = batch_results[index_in_batch][1:num_labels+1]
             global_index = batch_index * BATCH_SIZE + index_in_batch
             res_file = os.path.join(RESULTS_DIR, image_list[global_index])
             with open(res_file + '.txt', 'w') as f:
