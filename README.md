@@ -20,7 +20,7 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 |                       |        | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet50-model) | yes |
 |                       |        | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
 |                       |        | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
-| Object Detection | SSD-MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet) | [**coming soon!**](https://github.com/mlperf/inference/pull/72) |
+| Object Detection | SSD-MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tflite) | yes |
 |                  |               | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tf-py) | yes |
 |                  |               | [PyTorch](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/pytorch) | no |
 | Object Detection | SSD-ResNet | TF | **coming soon!** |
