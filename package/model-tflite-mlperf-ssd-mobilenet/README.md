@@ -3,6 +3,25 @@
 This model was converted to TFLite from the [original](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz) TF model in two steps,
 by adapting instructions from [Google's blog](https://medium.com/tensorflow/training-and-serving-a-realtime-mobile-object-detector-in-30-minutes-with-cloud-tpus-b78971cf1193).
 
+```
+$ wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz
+$ tar xvzf ssd_mobilenet_v1_coco_2018_01_28.tar.gz
+$ ls -la ssd_mobilenet_v1_coco_2018_01_28/*
+-rw-r--r-- 1 anton dvdt       77 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/checkpoint
+-rw-r--r-- 1 anton dvdt 29103956 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/frozen_inference_graph.pb
+-rw-r--r-- 1 anton dvdt 27380740 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.data-00000-of-00001
+-rw-r--r-- 1 anton dvdt     8937 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.index
+-rw-r--r-- 1 anton dvdt  3006546 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.meta
+-rw-r--r-- 1 anton dvdt     4138 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/pipeline.config
+
+ssd_mobilenet_v1_coco_2018_01_28/saved_model:
+total 29020
+drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 .
+drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 ..
+-rw-r--r-- 1 anton dvdt 29700424 Feb  1  2018 saved_model.pb
+drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
+```
+
 **TODO:** Need to move to Zenodo.
 
 As explained below, we used both TensorFlow v1.13 and v1.11 built from source as follows:
@@ -16,16 +35,16 @@ $ ck install package:lib-tensorflow-1.11.0-src-cpu
 $ ck install package:lib-tensorflow-1.12.2-src-cpu
 ```
 
-### Step 1: `model.ckpt` to `tflite_graph.pb`
+### Step 1: `model.ckpt.*` to `tflite_graph.pb`
 
 In this step, we used the [TensorFlow Model API](https://github.com/tensorflow/models) and TensorFlow v1.11:
 
 ```bash
 $ python object_detection/export_tflite_ssd_graph.py \
     --input_type image_tensor \
-    --pipeline_config_path  <PATH_TO_TF_MODEL>/ssd_mobilenet_v1_coco_2018_01_28/pipeline.config \
-    --trained_checkpoint_prefix <PATH_TO_TF_MODEL>/ssd_mobilenet_v1_coco_2018_01_28/model.ckpt \
-    --output_directory <PATH_TO_TFLITE_MODEL_DIR> \
+    --pipeline_config_path <TF_MODEL_DIR>/pipeline.config \
+    --trained_checkpoint_prefix <TF_MODEL_DIR>/model.ckpt \
+    --output_directory <TFLITE_MODEL_DIR> \
     --add_postprocessing_op=true \
     --config_override " \
             model { \
@@ -77,8 +96,8 @@ In this step, we used TensorFlow v1.13:
 
 ```bazel
 $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
-    --input_file=<PATH_TO_TFLITE_MODEL_DIR>/tflite_graph.pb \
-    --output_file=<PATH_TO_TFLITE_MODEL_DIR>/detect.tflite \
+    --input_file=<TFLITE_MODEL_DIR>/tflite_graph.pb \
+    --output_file=<TFLITE_MODEL_DIR>/detect.tflite \
     --input_shapes=1,300,300,3 \
     --input_arrays=normalized_input_image_tensor \
     --output_arrays='TFLite_Detection_PostProcess','TFLite_Detection_PostProcess:1','TFLite_Detection_PostProcess:2','TFLite_Detection_PostProcess:3'  \
