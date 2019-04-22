@@ -21,9 +21,6 @@ drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 ..
 -rw-r--r-- 1 anton dvdt 29700424 Feb  1  2018 saved_model.pb
 drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
 ```
-
-**TODO:** Need to move to Zenodo.
-
 As explained below, we used both TensorFlow v1.13 and v1.11 built from source as follows:
 ```
 $ ck pull repo:ck-tensorflow
@@ -148,3 +145,5 @@ INFO: Running command line: bazel-bin/tensorflow/contrib/lite/toco/toco '--input
 2019-04-22 08:56:09.348102: I tensorflow/contrib/lite/toco/toco_tooling.cc:388] Estimated count of arithmetic ops: 2.49483 billion (note that a multiply-add is counted as 2 ops).
 2019-04-22 08:56:09.348390: W tensorflow/contrib/lite/toco/tflite/operator.cc:1219] Ignoring unsupported type in list attribute with key '_output_types'
 ```
+
+### TODO: [Move to Zenodo](https://github.com/ctuning/ck-mlperf/issues/9)
