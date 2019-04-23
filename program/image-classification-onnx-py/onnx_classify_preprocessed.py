@@ -27,6 +27,7 @@ MODEL_MEAN_VALUE        = np.array([0, 0, 0], dtype=np.float32) # to be populate
 #
 IMAGE_DIR               = os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
 IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF'))
+IMAGE_FILE              = os.getenv('CK_IMAGE_FILE')
 
 ## Old perprocessor:
 #
@@ -91,9 +92,12 @@ def load_labels(labels_filepath):
 def main():
     global INPUT_LAYER_NAME
     global OUTPUT_LAYER_NAME
+    global BATCH_SIZE
+    global BATCH_COUNT
 
     print('Images dir: ' + IMAGE_DIR)
     print('Image list file: ' + IMAGE_LIST_FILE)
+    print('Image file: ' + IMAGE_FILE)
     print('Model image height: {}'.format(MODEL_IMAGE_HEIGHT))
     print('Model image width: {}'.format(MODEL_IMAGE_WIDTH))
     print('Batch size: {}'.format(BATCH_SIZE))
@@ -108,9 +112,14 @@ def main():
 
     setup_time_begin = time.time()
 
-    # Load preprocessed image filenames:
-    with open(IMAGE_LIST_FILE, 'r') as f:
-        image_list = [ s.strip() for s in f ]
+    if IMAGE_FILE:
+        image_list  = [ IMAGE_FILE ]
+        BATCH_SIZE  = 1
+        BATCH_COUNT = 1
+    else:
+        # Load preprocessed image filenames:
+        with open(IMAGE_LIST_FILE, 'r') as f:
+            image_list = [ s.strip() for s in f ]
 
     # Cleanup results directory
     if os.path.isdir(RESULTS_DIR):
