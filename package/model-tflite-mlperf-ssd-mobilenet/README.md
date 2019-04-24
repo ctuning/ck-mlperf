@@ -97,7 +97,7 @@ ModuleNotFoundError: No module named 'tensorflow_estimator'
 ```
 
 <a name="step_2"></a>
-### Step 2
+### Step 2: from `tflite_graph.pb` to `detect*.tflite`
 In this step, we used TensorFlow v1.13.
 
 <a name="step_2_option_1"></a>
@@ -159,7 +159,7 @@ INFO: Running command line: bazel-bin/tensorflow/contrib/lite/toco/toco '--input
 ```
 
 <a name="step_2_option_2"></a>
-### Option 2: from `tflite_graph.pb` to `detect_cut.tflite`
+#### Option 2: from `tflite_graph.pb` to `detect_cut.tflite`
 
 ```bash
 $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
