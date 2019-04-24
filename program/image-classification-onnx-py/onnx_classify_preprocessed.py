@@ -107,9 +107,6 @@ def main():
     print('Subtract mean: {}'.format(SUBTRACT_MEAN))
     print('Use model mean: {}'.format(USE_MODEL_MEAN))
 
-    labels = load_labels(LABELS_PATH)
-    num_labels = len(labels)
-
     setup_time_begin = time.time()
 
     if IMAGE_FILE:
@@ -137,6 +134,10 @@ def main():
 
     model_input_shape   = sess.get_inputs()[0].shape
 
+    model_classes       = sess.get_outputs()[0].shape[1]
+    labels              = load_labels(LABELS_PATH)
+    bg_class_offset     = model_classes-len(labels)  # 1 means the labels represent classes 1..1000 and the background class 0 has to be skipped
+
     if MODEL_DATA_LAYOUT == 'NHWC':
         (samples, height, width, channels) = model_input_shape
     else:
@@ -149,6 +150,7 @@ def main():
     print("Expected input shape: {}".format(model_input_shape))
     print("Output layer name: " + OUTPUT_LAYER_NAME)
     print("Data normalization: {}".format(MODEL_NORMALIZE_DATA))
+    print("Background/unlabelled classes to skip: {}".format(bg_class_offset))
     print("")
 
     setup_time = time.time() - setup_time_begin
@@ -188,10 +190,7 @@ def main():
 
         # Process results
         for index_in_batch in range(BATCH_SIZE):
-            # Ignore the background class.
-            # FIXME: What happens to class 999 (toilet tissue)? Check on
-            # e.g. ILSVRC2012_val_00002916.JPEG (74% probability).
-            softmax_vector = batch_results[index_in_batch][1:num_labels+1]
+            softmax_vector = batch_results[index_in_batch][bg_class_offset:]    # skipping the background class on the left (if present)
             global_index = batch_index * BATCH_SIZE + index_in_batch
             res_file = os.path.join(RESULTS_DIR, image_list[global_index])
             with open(res_file + '.txt', 'w') as f:
