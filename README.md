@@ -16,11 +16,13 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 |                       |               |           | dividiti  | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | yes |
 |                       |               |           | dividiti  | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | yes |
 |                       |               |           | dividiti, NVIDIA, Microsoft | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx) | yes |
+|                       |               |           | dividiti, Arm               | [ArmNN](https://github.com/arm-software/armnn-mlperf) | yes |
 |                       | ResNet        | Microsoft | Microsoft | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
 |                       |               |           | Microsoft | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
 |                       |               |           | dividiti  | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet-model) | yes |
 |                       |               |           | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite#install-the-resnet-model) | yes |
 |                       |               |           | dividiti  | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx#install-the-resnet-model) | yes |
+|                       |               |           | dividiti, Arm | [ArmNN](https://github.com/arm-software/armnn-mlperf) | yes |
 | Object Detection      | SSD-MobileNet | dividiti  | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tflite) | yes |
 |                       |               |           | dividiti, Habana | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tf-py) | yes |
 |                       |               |           | Facebook  | [PyTorch](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/pytorch) | no |
