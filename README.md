@@ -10,23 +10,26 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 
 ## MLPerf Inference v0.5
 
-| Task | Model | Framework | CK workflow |
-|-|-|-|-|
-| Object Classification | MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite) | yes |
-|                       |           | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | yes |
-|                       |           | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | yes |
-|                       |           | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets) | **coming soon!** |
-| Object Classification | ResNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite#install-the-resnet50-model) | yes |
-|                       |        | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet50-model) | yes |
-|                       |        | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
-|                       |        | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
-| Object Detection | SSD-MobileNet | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet) | [**coming soon!**](https://github.com/mlperf/inference/pull/72) |
-|                  |               | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tf-py) | yes |
-|                  |               | [PyTorch](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/pytorch) | no |
-| Object Detection | SSD-ResNet | TF | **coming soon!** |
-|                  |            | [PyTorch](https://github.com/mlperf/inference/tree/master/cloud/single_stage_detector/pytorch) | no |
-| Machine Translation | GNMT | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/tensorflow) | no |
-|                     |      | [PyTorch](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/pytorch) | no |
+| Task | Model | Owner | Contributors | Implementation | CK workflow |
+|-|-|-|-|-|-|
+| Object Classification | MobileNet     | dividiti  | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite) | yes |
+|                       |               |           | dividiti  | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | yes |
+|                       |               |           | dividiti  | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | yes |
+|                       |               |           | dividiti, NVIDIA, Microsoft | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx) | [**coming soon!**](https://github.com/mlperf/inference/pull/76) |
+|                       | ResNet        | Microsoft | Microsoft | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
+|                       |               |           | Microsoft | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | no |
+|                       |               |           | dividiti  | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet-model) | yes |
+|                       |               |           | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite#install-the-resnet-model) | yes |
+|                       |               |           | dividiti  | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx#install-the-resnet-model) | [**coming soon!**](https://github.com/mlperf/inference/pull/76) |
+| Object Detection      | SSD-MobileNet | dividiti  | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tflite) | yes |
+|                       |               |           | dividiti, Habana | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tf-py) | yes |
+|                       |               |           | Facebook  | [PyTorch](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/pytorch) | no |
+|                       | SSD-ResNet    | Habana    | NVIDIA    | [PyTorch](https://github.com/mlperf/inference/tree/master/cloud/single_stage_detector/pytorch) | no |
+|                       |               |           | GM, dividiti | TF | **coming soon!** |
+| Machine Translation   | GNMT          | Intel     | Intel     | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/tensorflow) | no |
+|                       |               |           | Intel     | [PyTorch](https://github.com/mlperf/inference/blob/master/cloud/translation/gnmt/pytorch) | no |
+
+**NB:** We generally acknowledge Google for making many pretrained [TF models](https://github.com/tensorflow/models) available (e.g. for [Object Detection](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md)).
 
 ## MLPerf Training v0.6
 **TODO**

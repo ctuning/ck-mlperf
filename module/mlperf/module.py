@@ -27,66 +27,7 @@ def init(i):
     return {'return':0}
 
 
-def compare_experiments(i):
-    """
-    Input:  {
-                (cids[])            - up to 2 CIDs of entries to compare (interactive by default)
-                (repo_uoa)          - experiment repository ('*' by default)
-                (extra_tags)        - extra tags to search for CIDs
-            }
-
-    Output: {
-                return              - return code =  0, if successful
-                                                  >  0, if error
-                (error)             - error text if return > 0
-            }
-    """
-    cids = i.get('cids')
-    repo_uoa = i.get('repo_uoa', '*')
-    extra_tags = i.get('extra_tags', 'mlperf,accuracy')
-
-    # Return an error if more than 2 CIDs have been provided.
-    if len(cids) > 2:
-        return {'return':1, 'error': 'only support up to 2 CIDs'}
-
-    # Interactively select experiment entries if fewer than 2 CID have been provided.
-    for i in range(len(cids),2):
-        ck.out( 'Select experiment #{} for comparison:'.format(i) )
-        pick_exp_adict = { 'action':       'pick_an_experiment',
-                           'module_uoa':   'mlperf',
-                           'repo_uoa':     repo_uoa,
-                           'extra_tags':   extra_tags,
-        }
-        r=ck.access( pick_exp_adict )
-        if r['return']>0: return r
-        cids.append( r['cid'] )
-
-    # Collect frame predictions.
-    ck.out( '\nThe experiments to compare:' )
-    frame_predictions = []
-    for cid in cids:
-        r=ck.parse_cid({'cid': cid})
-        if r['return']>0:
-            return { 'return': 1, 'error': "Cannot parse CID '{}'".format(cid) }
-        else:
-            repo_uoa    = r.get('repo_uoa','')
-            module_uoa  = r.get('module_uoa','')
-            data_uoa    = r.get('data_uoa','')
-
-        load_point_adict = {    'action':           'load_point',
-                                'repo_uoa':         repo_uoa,
-                                'module_uoa':       module_uoa,
-                                'data_uoa':         data_uoa,
-        }
-        r=ck.access( load_point_adict )
-        if r['return']>0: return r
-
-        point0001_characteristics_list = r['dict']['0001']['characteristics_list']
-        point0001_characteristics0_run = point0001_characteristics_list[0]['run']
-        point0001_frame_predictions    = point0001_characteristics0_run['frame_predictions']
-        ck.out( '- {}: {} predictions'.format(cid, len(point0001_frame_predictions)) )
-        frame_predictions.append(point0001_frame_predictions)
-
+def compare_experiments_image_classification(frame_predictions):
     epsilon = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
     max_delta = 0
     num_mismatched_files = 0
@@ -135,6 +76,115 @@ def compare_experiments(i):
     pprint( rdict )
 
     return rdict
+
+
+def compare_experiments_object_detection(frame_predictions):
+    # TODO: implement pairwise comparison of object detection experiments.
+
+    rdict = { 'return':0,
+              'epsilon':epsilon,
+              'max_delta':max_delta,
+              'num_mismatched_files':num_mismatched_files,
+              'num_mismatched_classes':num_mismatched_classes,
+              'num_mismatched_probabilities':num_mismatched_probabilities,
+              'num_mismatched_elementary_keys':num_mismatched_elementary_keys
+    }
+    pprint( rdict )
+
+    return rdict
+
+
+def compare_experiments(i):
+    """
+    Input:  {
+                (cids[])            - up to 2 CIDs of entries to compare (interactive by default)
+                (repo_uoa)          - experiment repository ('*' by default)
+                (extra_tags)        - extra tags to search for CIDs
+            }
+
+    Output: {
+                return              - return code =  0, if successful
+                                                  >  0, if error
+                (error)             - error text if return > 0
+            }
+    """
+    cids = i.get('cids')
+    repo_uoa = i.get('repo_uoa', '*')
+    extra_tags = i.get('extra_tags', 'mlperf,accuracy')
+
+    # Return an error if more than 2 CIDs have been provided.
+    if len(cids) > 2:
+        return {'return':1, 'error': 'only support up to 2 CIDs'}
+
+    # Interactively select experiment entries if fewer than 2 CID have been provided.
+    for i in range(len(cids),2):
+        ck.out( 'Select experiment #{} for comparison:'.format(i) )
+        pick_exp_adict = { 'action':       'pick_an_experiment',
+                           'module_uoa':   'mlperf',
+                           'repo_uoa':     repo_uoa,
+                           'extra_tags':   extra_tags,
+        }
+        r=ck.access( pick_exp_adict )
+        if r['return']>0: return r
+        cids.append( r['cid'] )
+
+    # Collect frame predictions.
+    ck.out( '\nExperiments to compare:' )
+    experiment_types = []
+    frame_predictions = []
+    for cid in cids:
+        r=ck.parse_cid({'cid': cid})
+        if r['return']>0:
+            return { 'return': 1, 'error': "Cannot parse CID '{}'".format(cid) }
+        else:
+            repo_uoa    = r.get('repo_uoa','')
+            module_uoa  = r.get('module_uoa','')
+            data_uoa    = r.get('data_uoa','')
+
+        # Load experimental point.
+        load_point_adict = {    'action':           'load_point',
+                                'repo_uoa':         repo_uoa,
+                                'module_uoa':       module_uoa,
+                                'data_uoa':         data_uoa,
+        }
+        r=ck.access( load_point_adict )
+        if r['return']>0: return r
+
+        point0001_characteristics_list = r['dict']['0001']['characteristics_list']
+        point0001_characteristics0_run = point0001_characteristics_list[0]['run']
+        point0001_frame_predictions    = point0001_characteristics0_run['frame_predictions']
+        ck.out( '- {}: {} predictions'.format(cid, len(point0001_frame_predictions)) )
+        frame_predictions.append(point0001_frame_predictions)
+
+        # Load pipeline to determine experiment type from tags.
+        load_pipeline_adict = { 'action':           'load_pipeline',
+                                'repo_uoa':         repo_uoa,
+                                'module_uoa':       module_uoa,
+                                'data_uoa':         data_uoa,
+        }
+        r=ck.access( load_pipeline_adict )
+        if r['return']>0: return r
+
+        tags = r['pipeline']['tags'].split(',')
+        if 'image-classification' in tags:
+            experiment_types.append('image-classification')
+        if 'object-detection' in tags:
+            experiment_types.append('object-detection')
+
+    unique_experiment_types = list(set(experiment_types))
+    if len(unique_experiment_types)!=1:
+        return { 'return': 2, 'error': "Mixed experiment types: '{}'".format(str(unique_experiment_types)) }
+    experiment_type = unique_experiment_types[0]
+    ck.out('Experiment type: {}'.format(experiment_type))
+    if experiment_type=='image-classification':
+        rdict = compare_experiments_image_classification(frame_predictions)
+    elif experiment_type=='object-detection':
+        rdict = compare_experiments_object_detection(frame_predictions)
+    else:
+        return { 'return': 3, 'error': "Unknown experiment type: '{}'".format(experiment_type) }
+
+    return rdict
+
 
 def list_experiments(i):
     """

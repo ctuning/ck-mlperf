@@ -79,4 +79,5 @@ script:
     - ck run program:image-classification-onnx-py --dep_add_tags.weights=mobilenet,downloaded --cmd_key=preprocessed --env.CK_BATCH_COUNT=2 # external preprocessing
     - ck run program:image-classification-onnx-py --dep_add_tags.weights=resnet,nchw,converted --cmd_key=preprocessed                       # channels-first layout
     - ck run program:image-classification-onnx-py --dep_add_tags.weights=resnet,nhwc,converted --cmd_key=preprocessed                       # channels-last layout
+    - ck run program:image-classification-onnx-py --cmd_key=preprocessed --dep_add_tags.weights=resnet,nchw,converted --env.CK_IMAGE_FILE=ILSVRC2012_val_00000003.JPEG  # classify specific file
 

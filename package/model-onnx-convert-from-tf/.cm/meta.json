@@ -12,7 +12,7 @@
       "PACKAGE_VERSION": "1_1.0_224_2018_08_02",
       "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224"
     },
-    "package_extra_name": " (MLPerf MobileNet)",
+    "package_name": "ONNX-from-TF model (MLPerf MobileNet)",
     "no_os_in_suggested_path": "yes",
     "no_ver_in_suggested_path": "yes",
     "skip_file_check": "yes"
@@ -83,7 +83,7 @@
         "PACKAGE_VERSION": "1_1.0_224_2018_08_02"
       },
       "extra_customize": {
-        "package_extra_name": " (MLPerf MobileNet)"
+        "package_name": "ONNX-from-TF model (MLPerf MobileNet)"
       }
     },
     "resnet": {
@@ -95,7 +95,7 @@
         "PACKAGE_VERSION": "1.5"
       },
       "extra_customize": {
-        "package_extra_name": " (MLPerf ResNet)"
+        "package_name": "ONNX-from-TF model (MLPerf ResNet)"
       }
     },
     "nchw": {
