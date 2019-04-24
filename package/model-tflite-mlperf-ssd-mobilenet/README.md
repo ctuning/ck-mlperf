@@ -1,5 +1,8 @@
 ## MLPerf Inference - Object Detection - SSD-MobileNet (TFLite)
 
+**TODO:** [Move model files to Zenodo](https://github.com/ctuning/ck-mlperf/issues/9).
+
+
 This model was converted to TFLite from the [original](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz) TF model in two steps,
 by adapting instructions from [Google's blog](https://medium.com/tensorflow/training-and-serving-a-realtime-mobile-object-detector-in-30-minutes-with-cloud-tpus-b78971cf1193).
 
@@ -32,6 +35,12 @@ $ ck install package:lib-tensorflow-1.11.0-src-cpu
 $ ck install package:lib-tensorflow-1.12.2-src-cpu
 ```
 
+1. [Creating TFLite graph from TF checkpoint](#step_1)
+2. [Creating TFLite model from TFLite graph](#step_2)
+    1. [with the postprocessing layer](#step_2_option_1)
+    2. [without the postprocessing layer](#step_2_option_2)
+
+<a href="step_1"></a>
 ### Step 1: `model.ckpt.*` to `tflite_graph.pb`
 
 In this step, we used the [TensorFlow Model API](https://github.com/tensorflow/models) and TensorFlow v1.11:
@@ -87,11 +96,15 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'tensorflow_estimator'
 ```
 
-### Step 2: from `tflite_graph.pb` to `detect.tflite`
+<a href="step_2"></a>
+### Step 2
+In this step, we used TensorFlow v1.13.
 
-In this step, we used TensorFlow v1.13:
+<a href="step_2_option_1"></a>
+#### Option 1: from `tflite_graph.pb` to `detect.tflite`
 
-```bazel
+
+```bash
 $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
     --input_file=<TFLITE_MODEL_DIR>/tflite_graph.pb \
     --output_file=<TFLITE_MODEL_DIR>/detect.tflite \
@@ -146,17 +159,16 @@ INFO: Running command line: bazel-bin/tensorflow/contrib/lite/toco/toco '--input
 2019-04-22 08:56:09.348390: W tensorflow/contrib/lite/toco/tflite/operator.cc:1219] Ignoring unsupported type in list attribute with key '_output_types'
 ```
 
-### TODO: [Move to Zenodo](https://github.com/ctuning/ck-mlperf/issues/9)
+<a href="step_2_option_2"></a>
+### Option 2: from `tflite_graph.pb` to `detect_cut.tflite`
 
-**UPDATE:**
-Creating model without postprocessing layer:
-```
-bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
---input_file=<PATH_TO_TFLITE_MODEL>/tflite_ssd_mobilenet_v1_coco_2018_01_28/tflite_graph.pb \
---output_file=<PATH_TO_TFLITE_MODEL>/tflite_ssd_mobilenet_v1_coco_2018_01_28/detect_cut.tflite \
---input_shapes=1,300,300,3 \
---input_arrays=normalized_input_image_tensor \
---output_arrays='raw_outputs/box_encodings','raw_outputs/class_predictions' \
---inference_type=FLOAT \
---allow_custom_ops
+```bash
+$ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
+    --input_file=<TFLITE_MODEL_DIR>/tflite_graph.pb \
+    --output_file=<TFLITE_MODEL_DIR>/detect_cut.tflite \
+    --input_shapes=1,300,300,3 \
+    --input_arrays=normalized_input_image_tensor \
+    --output_arrays='raw_outputs/box_encodings','raw_outputs/class_predictions' \
+    --inference_type=FLOAT \
+    --allow_custom_ops
 ```
