@@ -25,3 +25,14 @@ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
     --inference_type=FLOAT \
     --allow_custom_ops
 ```
+and for model without postprocessing layer:
+```
+bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
+--input_file=<PATH_TO_TFLITE_MODEL>/tflite_ssd_mobilenet_v1_coco_2018_01_28/tflite_graph.pb \
+--output_file=<PATH_TO_TFLITE_MODEL>/tflite_ssd_mobilenet_v1_coco_2018_01_28/detect_cut.tflite \
+--input_shapes=1,300,300,3 \
+--input_arrays=normalized_input_image_tensor \
+--output_arrays='raw_outputs/box_encodings','raw_outputs/class_predictions' \
+--inference_type=FLOAT \
+--allow_custom_ops
+```
