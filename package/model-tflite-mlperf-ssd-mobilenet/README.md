@@ -40,7 +40,7 @@ $ ck install package:lib-tensorflow-1.12.2-src-cpu
     1. [with the postprocessing layer](#step_2_option_1)
     2. [without the postprocessing layer](#step_2_option_2)
 
-<a href="step_1"></a>
+<a name="step_1"></a>
 ### Step 1: `model.ckpt.*` to `tflite_graph.pb`
 
 In this step, we used the [TensorFlow Model API](https://github.com/tensorflow/models) and TensorFlow v1.11:
@@ -96,13 +96,12 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'tensorflow_estimator'
 ```
 
-<a href="step_2"></a>
+<a name="step_2"></a>
 ### Step 2
 In this step, we used TensorFlow v1.13.
 
-<a href="step_2_option_1"></a>
+<a name="step_2_option_1"></a>
 #### Option 1: from `tflite_graph.pb` to `detect.tflite`
-
 
 ```bash
 $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
@@ -159,7 +158,7 @@ INFO: Running command line: bazel-bin/tensorflow/contrib/lite/toco/toco '--input
 2019-04-22 08:56:09.348390: W tensorflow/contrib/lite/toco/tflite/operator.cc:1219] Ignoring unsupported type in list attribute with key '_output_types'
 ```
 
-<a href="step_2_option_2"></a>
+<a name="step_2_option_2"></a>
 ### Option 2: from `tflite_graph.pb` to `detect_cut.tflite`
 
 ```bash
