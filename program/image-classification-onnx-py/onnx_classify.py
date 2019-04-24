@@ -16,6 +16,8 @@ normalize_data      = os.environ['CK_ENV_ONNX_MODEL_NORMALIZE_DATA']
 imagenet_path       = os.environ['CK_ENV_DATASET_IMAGENET_VAL']
 labels_path         = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 data_layout         = os.environ['ML_MODEL_DATA_LAYOUT']
+batch_size          = int( os.environ['CK_BATCH_SIZE'] )
+batch_count         = int( os.environ['CK_BATCH_COUNT'] )
 
 normalize_data_bool = normalize_data in ('YES', 'yes', 'ON', 'on', '1')
 
@@ -88,8 +90,6 @@ print("Data normalization: {}".format(normalize_data_bool))
 print("")
 
 starting_index = 1
-batch_size = 5
-batch_count = 2
 
 for batch_idx in range(batch_count):
     print("Batch {}/{}:".format(batch_idx+1,batch_count))
