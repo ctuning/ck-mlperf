@@ -27,6 +27,7 @@ MODEL_MEAN_VALUE        = np.array([0, 0, 0], dtype=np.float32) # to be populate
 #
 IMAGE_DIR               = os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
 IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF'))
+IMAGE_DATA_TYPE         = np.dtype( os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DATA_TYPE', 'uint8') )
 IMAGE_FILE              = os.getenv('CK_IMAGE_FILE')
 
 ## Old perprocessor:
@@ -51,7 +52,7 @@ def load_preprocessed_batch(image_list, image_index):
     batch_data = []
     for _ in range(BATCH_SIZE):
         img_file = os.path.join(IMAGE_DIR, image_list[image_index])
-        img = np.fromfile(img_file, np.uint8)
+        img = np.fromfile(img_file, IMAGE_DATA_TYPE)
         img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
         img = img.astype(np.float32)
 
