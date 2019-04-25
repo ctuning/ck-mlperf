@@ -24,16 +24,6 @@ drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 ..
 -rw-r--r-- 1 anton dvdt 29700424 Feb  1  2018 saved_model.pb
 drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
 ```
-As explained below, we used both TensorFlow v1.13 and v1.11 built from source as follows:
-```
-$ ck pull repo:ck-tensorflow
-$ ck install package:lib-tensorflow-1.13.1-src-cpu
-$ ck install package:lib-tensorflow-1.11.0-src-cpu
-```
-**TODO:** We should try with TensorFlow v1.12 (now that we have a new package):
-```
-$ ck install package:lib-tensorflow-1.12.2-src-cpu
-```
 
 1. [Creating TFLite graph from TF checkpoint](#step_1)
 2. [Creating TFLite model from TFLite graph](#step_2)
@@ -43,62 +33,84 @@ $ ck install package:lib-tensorflow-1.12.2-src-cpu
 <a name="step_1"></a>
 ### Step 1: `model.ckpt.*` to `tflite_graph.pb`
 
-In this step, we used the [TensorFlow Model API](https://github.com/tensorflow/models) and TensorFlow v1.11:
+We tested this step with TensorFlow v1.11-v1.13, either prebuilt or built from source.
+
+#### Manual instructions
 
 ```bash
+$ cd /tmp
+$ wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz
+$ tar xvzf ssd_mobilenet_v1_coco_2018_01_28.tar.gz
+$ export TF_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
+$ export TFLITE_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
+
+$ export TF_MODEL_API=...
+$ cd ${TF_MODEL_API}/research
+$ export PYTHONPATH=.:./slim:$PYTHONPATH
 $ python object_detection/export_tflite_ssd_graph.py \
-    --input_type image_tensor \
-    --pipeline_config_path <TF_MODEL_DIR>/pipeline.config \
-    --trained_checkpoint_prefix <TF_MODEL_DIR>/model.ckpt \
-    --output_directory <TFLITE_MODEL_DIR> \
-    --add_postprocessing_op=true \
-    --config_override " \
-            model { \
-            ssd { \
-              post_processing { \
-                batch_non_max_suppression { \
-                  score_threshold: 0.3 \
-                  iou_threshold: 0.6 \
-                  max_detections_per_class: 100 \
-                  max_total_detections: 100 \
-                } \
-             } \
-          } \
-       } \
-       "
+--input_type image_tensor \
+--pipeline_config_path ${TF_MODEL_DIR}/pipeline.config \
+--trained_checkpoint_prefix ${TF_MODEL_DIR}/model.ckpt \
+--output_directory ${TFLITE_MODEL_DIR} \
+--add_postprocessing_op=true \
+--use_regular_nms=true \
+--config_override " \
+  model { \
+    ssd { \
+      post_processing { \
+        batch_non_max_suppression { \
+          score_threshold: 0.3 \
+          iou_threshold: 0.6 \
+          max_detections_per_class: 100 \
+          max_total_detections: 100 \
+        } \
+      } \
+    } \
+  } \
+"
+**NB:** On 25/Apr/2019 we informed Google of a bug in their converter, which can be fixed e.g. as follows:
 ```
-**NB:** With TensorFlow v1.13, we observed the following error:
+anton@diviniti:~/CK_TOOLS/tensorflowmodel-api-master/models/research$ git diff
+diff --git a/research/object_detection/export_tflite_ssd_graph.py b/research/object_detection/export_tflite_ssd_graph.py
+index b7ed428d..300fb744 100644
+--- a/research/object_detection/export_tflite_ssd_graph.py
++++ b/research/object_detection/export_tflite_ssd_graph.py
+@@ -136,7 +136,7 @@ def main(argv):
+   export_tflite_ssd_graph_lib.export_tflite_graph(
+       pipeline_config, FLAGS.trained_checkpoint_prefix, FLAGS.output_directory,
+       FLAGS.add_postprocessing_op, FLAGS.max_detections,
+-      FLAGS.max_classes_per_detection, FLAGS.use_regular_nms)
++      FLAGS.max_classes_per_detection, use_regular_nms=FLAGS.use_regular_nms)
+ 
+ 
+ if __name__ == '__main__':
+```
+
+#### CK instructions
+
+Install TensorFlow e.g.:
 
 ```bash
-Traceback (most recent call last):
-  File "object_detection/export_tflite_ssd_graph.py", line 96, in <module>
-    from object_detection import export_tflite_ssd_graph_lib
-  File "/home/ivan/CK-TOOLS/tensorflowmodel-api-master/models/research/object_detection/export_tflite_ssd_graph_lib.py", line 27, in <module>
-    from object_detection import exporter
-  File "/home/ivan/CK-TOOLS/tensorflowmodel-api-master/models/research/object_detection/exporter.py", line 20, in <module>
-    from tensorflow.contrib.quantize.python import graph_matcher
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/__init__.py", line 40, in <module>
-    from tensorflow.contrib import distribute
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/distribute/__init__.py", line 33, in <module>
-    from tensorflow.contrib.distribute.python.tpu_strategy import TPUStrategy
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/distribute/python/tpu_strategy.py", line 27, in <module>
-    from tensorflow.contrib.tpu.python.ops import tpu_ops
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/tpu/__init__.py", line 73, in <module>
-    from tensorflow.contrib.tpu.python.tpu.keras_support import tpu_model as keras_to_tpu_model
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/tpu/python/tpu/keras_support.py", line 62, in <module>
-    from tensorflow.contrib.tpu.python.tpu import tpu
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/tpu/python/tpu/tpu.py", line 24, in <module>
-    from tensorflow.contrib.compiler import xla
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/contrib/compiler/xla.py", line 28, in <module>
-    from tensorflow.python.estimator import model_fn as model_fn_lib
-  File "/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.13.1-compiler.python-3.6.7-linux-64/lib/tensorflow/python/estimator/__init__.py", line 26, in <module>
-    from tensorflow_estimator.python import estimator
-ModuleNotFoundError: No module named 'tensorflow_estimator'
+$ ck install package --tags=lib,tensorflow,v1.13,vcpu
+
+More than one package or version found:
+
+ 0) lib-tensorflow-1.13.1-src-cpu  Version 1.13.1  (333b554fb5b0e443)
+ 1) lib-tensorflow-1.13.1-cpu  Version 1.13.1  (88ad16f0bcfb4ae2)
+
+Please select the package to install [ hit return for "0" ]: 
 ```
+
+Install the [TensorFlow Model API](https://github.com/tensorflow/models):
+```bash
+$ ck install package --tags=model,tensorflow,api
+```
+**To be continued...**
 
 <a name="step_2"></a>
 ### Step 2: from `tflite_graph.pb` to `detect*.tflite`
-In this step, we used TensorFlow v1.13.
+
+We tested this step with (the source of) TensorFlow v1.11-v1.13 and Bazel v0.20.0.
 
 <a name="step_2_option_1"></a>
 #### Option 1: from `tflite_graph.pb` to `detect.tflite`
@@ -130,32 +142,6 @@ INFO: Running command line: bazel-bin/tensorflow/lite/toco/toco '--input_file=/h
 2019-04-22 09:11:44.405046: I tensorflow/lite/toco/allocate_transient_arrays.cc:345] Total transient array allocated size: 11520000 bytes, theoretical optimal value: 8640000 bytes.
 2019-04-22 09:11:44.405323: I tensorflow/lite/toco/toco_tooling.cc:399] Estimated count of arithmetic ops: 2.49483 billion (note that a multiply-add is counted as 2 ops).
 2019-04-22 09:11:44.405706: W tensorflow/lite/toco/tflite/operator.cc:1407] Ignoring unsupported type in list attribute with key '_output_types'
-```
-
-**NB:** With TensorFlow v1.11, we observed more warnings:
-```
-...
-WARNING: The following rc files are no longer being read, please transfer their contents or import their path into one of the standard rc files:
-/home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.11.0-compiler.python-3.6.7-linux-64/src/tools/bazel.rc
-Starting local Bazel server and connecting to it...
-INFO: Invocation ID: d348f3c7-0031-430f-af13-a24d406c5be2
-WARNING: /home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.11.0-compiler.python-3.6.7-linux-64/src/tensorflow/core/BUILD:2463:1: in includes attribute of cc_library rule //tensorflow/core:framework_internal_headers_lib: '../../external/com_google_absl' resolves to 'external/com_google_absl' not below the relative path of its package 'tensorflow/core'. This will be an error in the future. Since this rule was created by the macro 'cc_header_only_library', the error might have been caused by the macro implementation in /home/ivan/CK-TOOLS/lib-tensorflow-src-cpu-1.11.0-compiler.python-3.6.7-linux-64/src/tensorflow/tensorflow.bzl:1373:20
-INFO: Analysed target //tensorflow/contrib/lite/toco:toco (58 packages loaded, 3088 targets configured).
-INFO: Found 1 target...
-Target //tensorflow/contrib/lite/toco:toco up-to-date:
-  bazel-bin/tensorflow/contrib/lite/toco/toco
-INFO: Elapsed time: 7.240s, Critical Path: 0.32s
-INFO: 0 processes.
-INFO: Build completed successfully, 1 total action
-INFO: Running command line: bazel-bin/tensorflow/contrib/lite/toco/toco '--input_file=/home/ivan/Downloads/tflite_ssd_mobilenet_v1_coco_2018_01_28/tflite_graph.pb' '--output_file=/home/ivan/Downloads/tflite_ssd_mobilenet_v1_coco_2018_01_28/_n_detect.tflite' '--input_shapes=1,300,300,3' '--input_arrays=normalized_input_image_tensor' '--output_arrays=TFLite_Detection_PostProcess,TFLite_Detection_PostProcess:1,TFLite_Detection_PostProcess:2,TFLite_Detection_PostProcess:3' INFO: Build completed successfully, 1 total action
-2019-04-22 08:56:09.292247: I tensorflow/contrib/lite/toco/import_tensorflow.cc:1055] Converting unsupported operation: TFLite_Detection_PostProcess
-2019-04-22 08:56:09.296418: I tensorflow/contrib/lite/toco/graph_transformations/graph_transformations.cc:39] Before Removing unused ops: 500 operators, 754 arrays (0 quantized)
-2019-04-22 08:56:09.308100: I tensorflow/contrib/lite/toco/graph_transformations/graph_transformations.cc:39] Before general graph transformations: 500 operators, 754 arrays (0 quantized)
-2019-04-22 08:56:09.345671: I tensorflow/contrib/lite/toco/graph_transformations/graph_transformations.cc:39] After general graph transformations pass 1: 64 operators, 176 arrays (0 quantized)
-2019-04-22 08:56:09.346852: I tensorflow/contrib/lite/toco/graph_transformations/graph_transformations.cc:39] Before dequantization graph transformations: 64 operators, 176 arrays (0 quantized)
-2019-04-22 08:56:09.347843: I tensorflow/contrib/lite/toco/allocate_transient_arrays.cc:345] Total transient array allocated size: 11520000 bytes, theoretical optimal value: 8640000 bytes.
-2019-04-22 08:56:09.348102: I tensorflow/contrib/lite/toco/toco_tooling.cc:388] Estimated count of arithmetic ops: 2.49483 billion (note that a multiply-add is counted as 2 ops).
-2019-04-22 08:56:09.348390: W tensorflow/contrib/lite/toco/tflite/operator.cc:1219] Ignoring unsupported type in list attribute with key '_output_types'
 ```
 
 <a name="step_2_option_2"></a>
