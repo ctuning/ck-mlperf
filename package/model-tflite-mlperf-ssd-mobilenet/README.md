@@ -35,6 +35,26 @@ drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
 
 We tested this step with TensorFlow v1.11-v1.13, either prebuilt or built from source.
 
+**NB:** On 25/Apr/2019 we informed Google of a bug in their converter, which can be fixed e.g. as follows:
+```
+anton@diviniti:~/CK_TOOLS/tensorflowmodel-api-master/models/research$ git diff
+diff --git a/research/object_detection/export_tflite_ssd_graph.py b/research/object_detection/export_tflite_ssd_graph.py
+index b7ed428..1b52335 100644
+--- a/research/object_detection/export_tflite_ssd_graph.py
++++ b/research/object_detection/export_tflite_ssd_graph.py
+@@ -136,7 +136,7 @@ def main(argv):
+   export_tflite_ssd_graph_lib.export_tflite_graph(
+       pipeline_config, FLAGS.trained_checkpoint_prefix, FLAGS.output_directory,
+       FLAGS.add_postprocessing_op, FLAGS.max_detections,
+-      FLAGS.max_classes_per_detection, FLAGS.use_regular_nms)
++      FLAGS.max_classes_per_detection, FLAGS.detections_per_class, FLAGS.use_regular_nms)
+
+
+ if __name__ == '__main__':
+```
+Until this bug is fixed upstream (perhaps in a more elegant way), please modify
+`export_tflite_ssd_graph.py` by hand.
+
 #### Manual instructions
 
 ```bash
@@ -69,27 +89,10 @@ $ python object_detection/export_tflite_ssd_graph.py \
   } \
 "
 ```
-**NB:** On 25/Apr/2019 we informed Google of a bug in their converter, which can be fixed e.g. as follows:
-```
-anton@diviniti:~/CK_TOOLS/tensorflowmodel-api-master/models/research$ git diff
-diff --git a/research/object_detection/export_tflite_ssd_graph.py b/research/object_detection/export_tflite_ssd_graph.py
-index b7ed428d..300fb744 100644
---- a/research/object_detection/export_tflite_ssd_graph.py
-+++ b/research/object_detection/export_tflite_ssd_graph.py
-@@ -136,7 +136,7 @@ def main(argv):
-   export_tflite_ssd_graph_lib.export_tflite_graph(
-       pipeline_config, FLAGS.trained_checkpoint_prefix, FLAGS.output_directory,
-       FLAGS.add_postprocessing_op, FLAGS.max_detections,
--      FLAGS.max_classes_per_detection, FLAGS.use_regular_nms)
-+      FLAGS.max_classes_per_detection, use_regular_nms=FLAGS.use_regular_nms)
- 
- 
- if __name__ == '__main__':
-```
 
-#### CK instructions
+#### Semi-automated instructions
 
-Install TensorFlow e.g.:
+#### Install TensorFlow
 ```bash
 $ ck install package --tags=lib,tensorflow,v1.13,vcpu
 
@@ -102,11 +105,71 @@ Please select the package to install [ hit return for "0" ]:
 ```
 Option 1 is faster, but option 0 can be used for [Step 2](#step_2) (where source code is needed).
 
-Install the [TensorFlow Model API](https://github.com/tensorflow/models):
+##### Install [TensorFlow Model API](https://github.com/tensorflow/models)
 ```bash
 $ ck install package --tags=model,tensorflow,api
 ```
-**To be continued...**
+
+##### Install [TensorFlow SSD-MobileNet model](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz)
+```bash
+$ ck install package --tags=model,tensorflow,mlperf,ssd-mobilenet,non-quantized
+```
+
+##### Descend into virtual environments one by one
+```
+$ ck virtual env --tags=lib,tensorflow,v1.13,vcpu
+$ ${CK_ENV_COMPILER_PYTHON_FILE} -c "import tensorflow as tf; print(tf.__version__)"
+```
+**NB:** Using `${CK_ENV_COMPILER_PYTHON_FILE}` should ensure that the same version of
+Python that was used to install TensorFlow and its dependencies (e.g. `/usr/bin/python3.6`)
+will be used to run the conversion script.
+
+```
+$ ck virtual env --tags=model,tensorflow,api
+$ echo ${CK_ENV_TENSORFLOW_MODELS_OBJ_DET_DIR}
+/home/anton/CK_TOOLS/tensorflowmodel-api-master/models/research/object_detection
+```
+
+```
+$ ck virtual env --tags=model,tensorflow,mlperf,ssd-mobilenet,non-quantized
+$ echo ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE}
+/home/anton/CK_TOOLS/model-tf-mlperf-ssd-mobilenet/model.ckpt
+$ echo "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})"
+/home/anton/CK_TOOLS/model-tf-mlperf-ssd-mobilenet
+```
+**TODO:** Need to introduce an environment variable for the model directory,
+so not having to use the `$(dirname ...)` idiom all the time.
+
+##### Convert
+```
+$ ${CK_ENV_COMPILER_PYTHON_FILE} \
+${CK_ENV_TENSORFLOW_MODELS_OBJ_DET_DIR}/export_tflite_ssd_graph.py \
+--input_type image_tensor \
+--pipeline_config_path "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})"/pipeline.config \
+--trained_checkpoint_prefix "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})"/model.ckpt \
+--output_directory "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})" \
+--add_postprocessing_op=true \
+--use_regular_nms=true \
+--config_override " \
+  model { \
+    ssd { \
+      post_processing { \
+        batch_non_max_suppression { \
+          score_threshold: 0.3 \
+          iou_threshold: 0.6 \
+          max_detections_per_class: 100 \
+          max_total_detections: 100 \
+        } \
+      } \
+    } \
+  } \
+"
+$ grep -A 3 use_regular_nms "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})"/tflite_graph.pbtxt
+    key: "use_regular_nms"
+    value {
+      b: true
+    }
+```
 
 <a name="step_2"></a>
 ### Step 2: from `tflite_graph.pb` to `detect*.tflite`
