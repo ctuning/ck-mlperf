@@ -68,6 +68,7 @@ $ python object_detection/export_tflite_ssd_graph.py \
     } \
   } \
 "
+```
 **NB:** On 25/Apr/2019 we informed Google of a bug in their converter, which can be fixed e.g. as follows:
 ```
 anton@diviniti:~/CK_TOOLS/tensorflowmodel-api-master/models/research$ git diff
@@ -89,7 +90,6 @@ index b7ed428d..300fb744 100644
 #### CK instructions
 
 Install TensorFlow e.g.:
-
 ```bash
 $ ck install package --tags=lib,tensorflow,v1.13,vcpu
 
@@ -100,6 +100,7 @@ More than one package or version found:
 
 Please select the package to install [ hit return for "0" ]: 
 ```
+Option 1 is faster, but option 0 can be used for [Step 2](#step_2) (where source code is needed).
 
 Install the [TensorFlow Model API](https://github.com/tensorflow/models):
 ```bash
