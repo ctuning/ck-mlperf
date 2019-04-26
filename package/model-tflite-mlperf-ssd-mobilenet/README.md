@@ -1,4 +1,4 @@
-## MLPerf Inference - Object Detection - SSD-MobileNet (TFLite)
+# MLPerf Inference - Object Detection - SSD-MobileNet (TFLite)
 
 **TODO:** [Move model files to Zenodo](https://github.com/ctuning/ck-mlperf/issues/9).
 
@@ -6,32 +6,13 @@
 This model was converted to TFLite from the [original](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz) TF model in two steps,
 by adapting instructions from [Google's blog](https://medium.com/tensorflow/training-and-serving-a-realtime-mobile-object-detector-in-30-minutes-with-cloud-tpus-b78971cf1193).
 
-```
-$ wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz
-$ tar xvzf ssd_mobilenet_v1_coco_2018_01_28.tar.gz
-$ ls -la ssd_mobilenet_v1_coco_2018_01_28/*
--rw-r--r-- 1 anton dvdt       77 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/checkpoint
--rw-r--r-- 1 anton dvdt 29103956 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/frozen_inference_graph.pb
--rw-r--r-- 1 anton dvdt 27380740 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.data-00000-of-00001
--rw-r--r-- 1 anton dvdt     8937 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.index
--rw-r--r-- 1 anton dvdt  3006546 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.meta
--rw-r--r-- 1 anton dvdt     4138 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/pipeline.config
-
-ssd_mobilenet_v1_coco_2018_01_28/saved_model:
-total 29020
-drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 .
-drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 ..
--rw-r--r-- 1 anton dvdt 29700424 Feb  1  2018 saved_model.pb
-drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
-```
-
 1. [Creating TFLite graph from TF checkpoint](#step_1)
 2. [Creating TFLite model from TFLite graph](#step_2)
     1. [with the postprocessing layer](#step_2_option_1)
     2. [without the postprocessing layer](#step_2_option_2)
 
 <a name="step_1"></a>
-### Step 1: `model.ckpt.*` to `tflite_graph.pb`
+## Step 1: `model.ckpt.*` to `tflite_graph.pb`
 
 We tested this step with TensorFlow v1.11-v1.13, either prebuilt or built from source.
 
@@ -55,16 +36,45 @@ index b7ed428..1b52335 100644
 Until this bug is fixed upstream (perhaps in a more elegant way), please modify
 `export_tflite_ssd_graph.py` by hand.
 
-#### Manual instructions
+### Manual instructions
 
+#### Install TensorFlow
+```
+$ python -m pip install tensorflow --user
+$ python -c "import tensorflow as tf; print(tf.__version__)"
+1.13.1
+```
+
+#### Install [TensorFlow Object Detection API](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md)
+```
+$ export TF_MODEL_API=...
+```
+
+#### Install [TensorFlow SSD-MobileNet model](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz)
 ```bash
 $ cd /tmp
 $ wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz
 $ tar xvzf ssd_mobilenet_v1_coco_2018_01_28.tar.gz
 $ export TF_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
-$ export TFLITE_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
+$ ls -la ${TF_MODEL_DIR}
+-rw-r--r-- 1 anton dvdt       77 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/checkpoint
+-rw-r--r-- 1 anton dvdt 29103956 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/frozen_inference_graph.pb
+-rw-r--r-- 1 anton dvdt 27380740 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.data-00000-of-00001
+-rw-r--r-- 1 anton dvdt     8937 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.index
+-rw-r--r-- 1 anton dvdt  3006546 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.meta
+-rw-r--r-- 1 anton dvdt     4138 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/pipeline.config
 
-$ export TF_MODEL_API=...
+ssd_mobilenet_v1_coco_2018_01_28/saved_model:
+total 29020
+drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 .
+drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 ..
+-rw-r--r-- 1 anton dvdt 29700424 Feb  1  2018 saved_model.pb
+drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
+$ export TFLITE_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
+```
+
+#### Convert
+```
 $ cd ${TF_MODEL_API}/research
 $ export PYTHONPATH=.:./slim:$PYTHONPATH
 $ python object_detection/export_tflite_ssd_graph.py \
@@ -90,7 +100,7 @@ $ python object_detection/export_tflite_ssd_graph.py \
 "
 ```
 
-#### Semi-automated instructions
+### Semi-automated instructions
 
 #### Install TensorFlow
 ```bash
@@ -105,18 +115,19 @@ Please select the package to install [ hit return for "0" ]:
 ```
 Option 1 is faster, but option 0 can be used for [Step 2](#step_2) (where source code is needed).
 
-##### Install [TensorFlow Model API](https://github.com/tensorflow/models)
+#### Install [TensorFlow Object Detection API](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md)
 ```bash
 $ ck install package --tags=model,tensorflow,api
 ```
 
-##### Install [TensorFlow SSD-MobileNet model](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz)
+#### Install [TensorFlow SSD-MobileNet model](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz)
 ```bash
 $ ck install package --tags=model,tensorflow,mlperf,ssd-mobilenet,non-quantized
 ```
 
-##### Descend into virtual environments one by one
-```
+#### Descend into virtual environments one by one
+##### TensorFlow
+```bash
 $ ck virtual env --tags=lib,tensorflow,v1.13,vcpu
 $ ${CK_ENV_COMPILER_PYTHON_FILE} -c "import tensorflow as tf; print(tf.__version__)"
 ```
@@ -124,12 +135,14 @@ $ ${CK_ENV_COMPILER_PYTHON_FILE} -c "import tensorflow as tf; print(tf.__version
 Python that was used to install TensorFlow and its dependencies (e.g. `/usr/bin/python3.6`)
 will be used to run the conversion script.
 
+##### TensorFlow Object Detection API
 ```
 $ ck virtual env --tags=model,tensorflow,api
 $ echo ${CK_ENV_TENSORFLOW_MODELS_OBJ_DET_DIR}
 /home/anton/CK_TOOLS/tensorflowmodel-api-master/models/research/object_detection
 ```
 
+##### TensorFlow SSD-MobileNet model
 ```
 $ ck virtual env --tags=model,tensorflow,mlperf,ssd-mobilenet,non-quantized
 $ echo ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE}
@@ -140,7 +153,7 @@ $ echo "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})"
 **TODO:** Need to introduce an environment variable for the model directory,
 so not having to use the `$(dirname ...)` idiom all the time.
 
-##### Convert
+#### Convert
 ```
 $ ${CK_ENV_COMPILER_PYTHON_FILE} \
 ${CK_ENV_TENSORFLOW_MODELS_OBJ_DET_DIR}/export_tflite_ssd_graph.py \
@@ -172,17 +185,19 @@ $ grep -A 3 use_regular_nms "$(dirname ${CK_ENV_TENSORFLOW_MODEL_WEIGHTS_FILE})"
 ```
 
 <a name="step_2"></a>
-### Step 2: from `tflite_graph.pb` to `detect*.tflite`
+## Step 2: from `tflite_graph.pb` to `detect*.tflite`
+
+**TODO:** Update with manual and semi-automatic instructions.
 
 We tested this step with (the source of) TensorFlow v1.11-v1.13 and Bazel v0.20.0.
 
 <a name="step_2_option_1"></a>
-#### Option 1: from `tflite_graph.pb` to `detect.tflite`
+### Option 1: from `tflite_graph.pb` to `detect.tflite`
 
 ```bash
 $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
-    --input_file=<TFLITE_MODEL_DIR>/tflite_graph.pb \
-    --output_file=<TFLITE_MODEL_DIR>/detect.tflite \
+    --input_file=${TFLITE_MODEL_DIR}/tflite_graph.pb \
+    --output_file=${TFLITE_MODEL_DIR}/detect.tflite \
     --input_shapes=1,300,300,3 \
     --input_arrays=normalized_input_image_tensor \
     --output_arrays='TFLite_Detection_PostProcess','TFLite_Detection_PostProcess:1','TFLite_Detection_PostProcess:2','TFLite_Detection_PostProcess:3'  \
@@ -209,12 +224,12 @@ INFO: Running command line: bazel-bin/tensorflow/lite/toco/toco '--input_file=/h
 ```
 
 <a name="step_2_option_2"></a>
-#### Option 2: from `tflite_graph.pb` to `detect_cut.tflite`
+### Option 2: from `tflite_graph.pb` to `detect_cut.tflite`
 
 ```bash
 $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
-    --input_file=<TFLITE_MODEL_DIR>/tflite_graph.pb \
-    --output_file=<TFLITE_MODEL_DIR>/detect_cut.tflite \
+    --input_file=${TFLITE_MODEL_DIR}/tflite_graph.pb \
+    --output_file=${TFLITE_MODEL_DIR}/detect_cut.tflite \
     --input_shapes=1,300,300,3 \
     --input_arrays=normalized_input_image_tensor \
     --output_arrays='raw_outputs/box_encodings','raw_outputs/class_predictions' \
