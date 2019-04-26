@@ -2,8 +2,9 @@
   "check_exit_status": "yes", 
   "customize": {
     "install_env": {
-      "MODEL_TFLITE_GRAPH": "detect.tflite",
-      "MODEL_TFLITE_GRAPH_NO_POSTPROCESSING": "detect_cut.tflite",
+      "MODEL_TFLITE_GRAPH": "detect_regular_nms.tflite",
+      "MODEL_TFLITE_GRAPH_FAST_NMS": "detect_fast_nms.tflite",
+      "MODEL_TFLITE_GRAPH_NO_POSTPROCESSING": "detect_no_nms.tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC", 
       "MODEL_ANCHORS": "flatanchors.txt",
       "MODEL_CLASSES": "flatlabels.txt",
@@ -19,7 +20,7 @@
       "MODEL_NMS_SCORE_THRESHOLD": "0.3",
       "MODEL_NMS_IOU_THRESHOLD": "0.6",
       "MODEL_MAX_CLASSES_PER_DETECTION": "1",
-      "MODEL_MAX_DETECTIONS": "10",
+      "MODEL_MAX_DETECTIONS": "100",
       "MODEL_Y_SCALE": "10.0",
       "MODEL_X_SCALE": "10.0",
       "MODEL_H_SCALE": "5.0",
