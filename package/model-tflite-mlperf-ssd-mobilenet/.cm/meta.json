@@ -2,9 +2,9 @@
   "check_exit_status": "yes", 
   "customize": {
     "install_env": {
-      "MODEL_TFLITE_GRAPH": "detect_regular_nms.tflite",
+      "MODEL_TFLITE_GRAPH_REGULAR_NMS": "detect_regular_nms.tflite",
       "MODEL_TFLITE_GRAPH_FAST_NMS": "detect_fast_nms.tflite",
-      "MODEL_TFLITE_GRAPH_NO_POSTPROCESSING": "detect_no_nms.tflite",
+      "MODEL_TFLITE_GRAPH_NO_NMS": "detect_no_nms.tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC", 
       "MODEL_ANCHORS": "flatanchors.txt",
       "MODEL_CLASSES": "flatlabels.txt",
