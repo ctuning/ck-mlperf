@@ -52,31 +52,28 @@ $ export TF_MODEL_API=...
 
 #### Install [TensorFlow SSD-MobileNet model](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz)
 ```bash
-$ cd /tmp
+$ export $TMP_DIR=/tmp && cd ${TMD_DIR}
 $ wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz
 $ tar xvzf ssd_mobilenet_v1_coco_2018_01_28.tar.gz
-$ export TF_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
+$ export TF_MODEL_DIR=${PWD}/ssd_mobilenet_v1_coco_2018_01_28
 $ ls -la ${TF_MODEL_DIR}
--rw-r--r-- 1 anton dvdt       77 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/checkpoint
--rw-r--r-- 1 anton dvdt 29103956 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/frozen_inference_graph.pb
--rw-r--r-- 1 anton dvdt 27380740 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.data-00000-of-00001
--rw-r--r-- 1 anton dvdt     8937 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.index
--rw-r--r-- 1 anton dvdt  3006546 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/model.ckpt.meta
--rw-r--r-- 1 anton dvdt     4138 Feb  1  2018 ssd_mobilenet_v1_coco_2018_01_28/pipeline.config
-
-ssd_mobilenet_v1_coco_2018_01_28/saved_model:
-total 29020
-drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 .
-drwxr-xr-x 3 anton dvdt     4096 Feb  1  2018 ..
--rw-r--r-- 1 anton dvdt 29700424 Feb  1  2018 saved_model.pb
-drwxr-xr-x 2 anton dvdt     4096 Feb  1  2018 variables
-$ export TFLITE_MODEL_DIR=/tmp/ssd_mobilenet_v1_coco_2018_01_28
+total 58176
+drwxr-xr-x  3 anton anton     4096 Feb  1  2018 .
+drwxrwxrwt 18 root  root     36864 Apr 26 11:42 ..
+-rw-r--r--  1 anton anton       77 Feb  1  2018 checkpoint
+-rw-r--r--  1 anton anton 29103956 Feb  1  2018 frozen_inference_graph.pb
+-rw-r--r--  1 anton anton 27380740 Feb  1  2018 model.ckpt.data-00000-of-00001
+-rw-r--r--  1 anton anton     8937 Feb  1  2018 model.ckpt.index
+-rw-r--r--  1 anton anton  3006546 Feb  1  2018 model.ckpt.meta
+-rw-r--r--  1 anton anton     4138 Feb  1  2018 pipeline.config
+drwxr-xr-x  3 anton anton     4096 Feb  1  2018 saved_model
 ```
 
 #### Convert
 ```
 $ cd ${TF_MODEL_API}/research
 $ export PYTHONPATH=.:./slim:$PYTHONPATH
+$ export TFLITE_MODEL_DIR=${TF_MODEL_DIR}
 $ python object_detection/export_tflite_ssd_graph.py \
 --input_type image_tensor \
 --pipeline_config_path ${TF_MODEL_DIR}/pipeline.config \
