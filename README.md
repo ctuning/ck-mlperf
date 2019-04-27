@@ -15,13 +15,13 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 | Object Classification | MobileNet     | dividiti  | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite) | Linux, Android (Windows, Mac) | yes |
 |                       |               |           | dividiti  | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp) | Linux, Android (Windows, Mac) | yes |
 |                       |               |           | dividiti  | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-py) | Linux (Windows, Mac) | yes |
-|                       |               |           | dividiti, NVIDIA, Microsoft | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx) | Linux (Windows, Mac) | yes |
+|                       |               |           | dividiti, NVIDIA, Microsoft | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx) | Linux, Mac (Windows) | yes |
 |                       |               |           | dividiti, Arm               | [ArmNN](https://github.com/arm-software/armnn-mlperf) | Linux (Android) | yes |
 |                       | ResNet        | Microsoft | Microsoft | [ONNX](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | Linux (?) | no |
 |                       |               |           | Microsoft | [TF (Python)](https://github.com/mlperf/inference/blob/master/cloud/image_classification) | Linux (?) | no |
 |                       |               |           | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tflite#install-the-resnet-model) | Linux, Android (Windows, Mac) | yes |
 |                       |               |           | dividiti  | [TF (C++)](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet-model) | Linux, Android (Windows, Mac) | yes |
-|                       |               |           | dividiti  | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx#install-the-resnet-model) | Linux (Windows, Mac) | yes |
+|                       |               |           | dividiti  | [ONNX](https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/onnx#install-the-resnet-model) | Linux, Mac (Windows) | yes |
 |                       |               |           | dividiti, Arm | [ArmNN](https://github.com/arm-software/armnn-mlperf) | Linux (Android) | yes |
 | Object Detection      | SSD-MobileNet | dividiti  | dividiti  | [TFLite](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tflite) | Linux (Android, Windows, Mac) | yes |
 |                       |               |           | dividiti, Habana | [TF (Python)](https://github.com/mlperf/inference/tree/master/edge/object_detection/ssd_mobilenet/tf-py) | Linux (?) | yes |
