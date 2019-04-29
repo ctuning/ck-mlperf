@@ -181,11 +181,8 @@ def ck_preprocess(i):
     return {'return': 1, 'error': 'Only TensorFlow model packages are currently supported.'}
 
   if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_ROOT') \
-     and has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_TFLITE_GRAPH') \
      and has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE'):
     MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
-    MODEL_TFLITE_GRAPH = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_TFLITE_GRAPH")
-    MODEL_TFLITE_GRAPH = os.path.join(MODEL_ROOT, MODEL_TFLITE_GRAPH)
     MODEL_DATASET_TYPE = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
     LABELMAP_FILE = dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or ""
     LABELMAP_FILE = os.path.join(MODEL_ROOT, LABELMAP_FILE)
@@ -200,7 +197,6 @@ def ck_preprocess(i):
   else:
     print("LABELMAP_FILE = ",dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE'))
     print("MODEL_ROOT = ", dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT"))
-    print("MODEL_TFLITE_GRAPH = ", dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_TFLITE_GRAPH"))
     print("MODEL_DATASET_TYPE = ", dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE"))
 
     return {'return': 1, 'error': 'Only TensorFlow model packages are currently supported.'}
@@ -297,7 +293,6 @@ def ck_preprocess(i):
   ENV["MODEL_NORMALIZE_DATA"] = MODEL_NORMALIZE_DATA
   ENV["MODEL_ROOT"] = MODEL_ROOT
   ENV["MODEL_SUBTRACT_MEAN"] = MODEL_SUBTRACT_MEAN
-  ENV["MODEL_TFLITE_GRAPH"] = MODEL_TFLITE_GRAPH
 
   ENV["DATASET_TYPE"] = DATASET_TYPE
   ENV["METRIC_TYPE"] = METRIC_TYPE
