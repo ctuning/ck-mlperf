@@ -109,7 +109,7 @@ More than one package or version found:
  0) lib-tensorflow-1.13.1-src-cpu  Version 1.13.1  (333b554fb5b0e443)
  1) lib-tensorflow-1.13.1-cpu  Version 1.13.1  (88ad16f0bcfb4ae2)
 
-Please select the package to install [ hit return for "0" ]: 
+Please select the package to install [ hit return for "0" ]:
 ```
 Option 1 is faster, but option 0 can be used for [Step 2](#step_2) (where source code is needed).
 
@@ -246,6 +246,16 @@ $ ck benchmark program:object-detection-tflite --env.USE_NMS=regular \
 --record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
 --tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
+...
+Summary:
+-------------------------------
+Graph loaded in 0.000000s
+All images loaded in 0.000000s
+All images detected in 0.000000s
+Average detection time: 0.000000s
+mAP: 0.22349680978666922
+Recall: 0.2550505369422975
+--------------------------------
 ```
 
 ### Fast NMS
@@ -255,13 +265,48 @@ $ ck benchmark program:object-detection-tflite --env.USE_NMS=fast \
 --record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
 --tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
+...
+Summary:
+-------------------------------
+Graph loaded in 0.000000s
+All images loaded in 0.000000s
+All images detected in 0.000000s
+Average detection time: 0.000000s
+mAP: 0.21859688835124763
+Recall: 0.24801510024502602
+--------------------------------
 ```
 
 ### Fast NMS graph with custom model settings
+
+You can reproduce the regular NMS behaviour even with the fast NMS graph by requesting to use
+custom model settings:
 ```
-$ ck benchmark program:object-detection-tflite --env.USE_NMS=fast --use.CUSTOM_MODEL_SETTINGS=yes \
+$ ck benchmark program:object-detection-tflite --env.USE_NMS=fast --env.CUSTOM_MODEL_SETTINGS=yes \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5000 --env.CK_METRIC_TYPE=COCO \
+--record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
+--tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
+...
+Summary:
+-------------------------------
+Graph loaded in 0.000000s
+All images loaded in 0.000000s
+All images detected in 0.000000s
+Average detection time: 0.000000s
+mAP: 0.22349680978666922
+Recall: 0.2550505369422975
+--------------------------------
+```
+
+For example, you can lower the NMS score threshold for more accurate albeit slower detection:
+```
+$ ck benchmark program:object-detection-tflite --env.USE_NMS=fast \
+--env.CUSTOM_MODEL_SETTINGS=yes --env.NMS_SCORE_THRESHOLD=0.00001 \
 --repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5000 --env.CK_METRIC_TYPE=COCO \
 --record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
 --tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 ```
+
+See [here](https://github.com/ctuning/ck-tensorflow/tree/master/program/object-detection-tflite#custom_model_settings) for more details on custom model settings.
