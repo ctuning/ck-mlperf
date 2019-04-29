@@ -7,9 +7,10 @@ This model was converted to TFLite from the [original](http://download.tensorflo
 by adapting instructions from [Google's blog](https://medium.com/tensorflow/training-and-serving-a-realtime-mobile-object-detector-in-30-minutes-with-cloud-tpus-b78971cf1193).
 
 1. [Creating TFLite graph from TF checkpoint](#step_1)
-2. [Creating TFLite model from TFLite graph](#step_2)
+1. [Creating TFLite model from TFLite graph](#step_2)
     1. [with the postprocessing layer](#step_2_option_1)
-    2. [without the postprocessing layer](#step_2_option_2)
+    1. [without the postprocessing layer](#step_2_option_2)
+1. [Reference accuracy](#accuracy)
 
 <a name="step_1"></a>
 ## Step 1: `model.ckpt.*` to `tflite_graph.pb`
@@ -232,4 +233,35 @@ $ bazel run -c opt tensorflow/contrib/lite/toco:toco -- \
     --output_arrays='raw_outputs/box_encodings','raw_outputs/class_predictions' \
     --inference_type=FLOAT \
     --allow_custom_ops
+```
+
+
+<a name="accuracy"></a>
+## Reference accuracy
+
+### Regular NMS
+```
+$ ck benchmark program:object-detection-tflite --env.USE_NMS=regular \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5000 --env.CK_METRIC_TYPE=COCO \
+--record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
+--tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
+```
+
+### Fast NMS
+```
+$ ck benchmark program:object-detection-tflite --env.USE_NMS=fast \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5000 --env.CK_METRIC_TYPE=COCO \
+--record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
+--tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
+```
+
+### Fast NMS graph with custom model settings
+```
+$ ck benchmark program:object-detection-tflite --env.USE_NMS=fast --use.CUSTOM_MODEL_SETTINGS=yes \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5000 --env.CK_METRIC_TYPE=COCO \
+--record --record_repo=local --record_uoa=mlperf-object-detection-ssd-mobilenet-tflite-accuracy \
+--tags=mlperf,object-detection,ssd-mobilenet,tflite,accuracy \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
 ```
