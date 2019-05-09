@@ -38,7 +38,8 @@
     "resnet50-v1.5", 
     "v1.5", 
     "mlperf", 
-    "downloaded"
+    "downloaded",
+    "no-argmax"
   ], 
   "use_scripts_from_another_entry": {
     "data_uoa": "download-and-install-package", 
