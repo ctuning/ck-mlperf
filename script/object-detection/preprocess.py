@@ -125,6 +125,8 @@ def preprocess():
 def ck_preprocess(i):
   def my_env(var): return i['env'].get(var)
   def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
+  def set_in_my_env(var): return my_env(var) and my_env(var).lower() in [ 'yes', 'true', '1' ]
+  def set_in_dep_env(dep, var): return dep_env(dep, var) and dep_env(dep, var).lower() in [ 'yes', 'true', '1' ]
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
   def has_dep(dep): return dep in i['deps']
 
@@ -163,7 +165,7 @@ def ck_preprocess(i):
 
   # TF-model specific value
   if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR'):
-    MODEL_CONVERT_TO_BGR = dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR') == 'YES'
+    MODEL_CONVERT_TO_BGR = set_in_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR')
   else:
     MODEL_CONVERT_TO_BGR = False
 
@@ -191,9 +193,9 @@ def ck_preprocess(i):
       MODEL_IMAGE_CHANNELS = 3
     else:
       MODEL_IMAGE_CHANNELS = int(MODEL_IMAGE_CHANNELS)
-    MODEL_NORMALIZE_DATA = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA") == "YES"
-    MODEL_SUBTRACT_MEAN = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN") == "YES"
-    MODEL_NEED_BACKGROUND_CORRECTION = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_NEED_BACKGROUND_CORRECTION") == "YES"
+    MODEL_NORMALIZE_DATA = set_in_dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA")
+    MODEL_SUBTRACT_MEAN = set_in_dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN")
+    MODEL_NEED_BACKGROUND_CORRECTION = set_in_dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_NEED_BACKGROUND_CORRECTION")
   else:
     print("LABELMAP_FILE = ",dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE'))
     print("MODEL_ROOT = ", dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT"))
@@ -228,11 +230,11 @@ def ck_preprocess(i):
     SKIP_IMAGES = 0
   else:
     SKIP_IMAGES = int(SKIP_IMAGES)
-  SAVE_IMAGES = my_env("CK_SAVE_IMAGES") == "YES"
+  SAVE_IMAGES = set_in_my_env("CK_SAVE_IMAGES")
   METRIC_TYPE = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
 
-  USE_NEON = my_env("USE_NEON") == "YES"
-  USE_OPENCL = my_env("USE_OPENCL") == "YES"
+  USE_NEON = set_in_my_env("USE_NEON")
+  USE_OPENCL = set_in_my_env("USE_OPENCL")
 
   ANNOTATIONS_OUT_DIR = os.path.join(CUR_DIR, "annotations")
   DETECTIONS_OUT_DIR = os.path.join(CUR_DIR, "detections")
@@ -240,9 +242,9 @@ def ck_preprocess(i):
   PREPROCESS_OUT_DIR = os.path.join(CUR_DIR, "preprocessed")
   RESULTS_OUT_DIR = os.path.join(CUR_DIR, "results")
 
-  FULL_REPORT = my_env("CK_SILENT_MODE") == "NO"
-  SKIP_DETECTION = my_env("CK_SKIP_DETECTION") == "YES"
-  VERBOSE = my_env("VERBOSE") == "YES"
+  FULL_REPORT = not set_in_my_env("CK_SILENT_MODE")
+  SKIP_DETECTION = set_in_my_env("CK_SKIP_DETECTION")
+  VERBOSE = set_in_my_env("VERBOSE")
 
   # Print settings
   print("Model label map file: " + LABELMAP_FILE)
