@@ -98,6 +98,8 @@ def ck_preprocess(i):
   def my_env(var): return i['env'].get(var)
   def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
+  def set_in_my_env(var): return my_env(var) and my_env(var).lower() in [ 'yes', 'true', 'on', '1' ]
+  def set_in_dep_env(dep, var): return dep_env(dep, var) and dep_env(dep, var).lower() in [ 'yes', 'true', 'on' '1' ]
 
   for dep_name, dep in i.get('deps', {}).items():
     dep_tags = dep.get('tags', '')
@@ -114,7 +116,7 @@ def ck_preprocess(i):
 
   # TF-model specific value
   if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR'):
-    MODEL_CONVERT_TO_BGR = dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR') == 'YES'
+    MODEL_CONVERT_TO_BGR = set_in_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR')
   else:
     MODEL_CONVERT_TO_BGR = False
 
@@ -138,7 +140,7 @@ def ck_preprocess(i):
   IMAGE_LIST_FILE = 'image_list.txt'
   TMP_IMAGE_SIZE = int(my_env('CK_TMP_IMAGE_SIZE'))
   CROP_PERCENT = float(my_env('CK_CROP_PERCENT'))
-  SUBTRACT_MEAN = my_env('CK_SUBTRACT_MEAN') == "YES"
+  SUBTRACT_MEAN = set_in_my_env('CK_SUBTRACT_MEAN')
 
   # Full path of dir for caching prepared images.
   # Store preprocessed images in sources directory, not in `tmp`, as
@@ -163,7 +165,7 @@ def ck_preprocess(i):
     print('Single file mode')
     print('Input image file: {}'.format(IMAGE_FILE))
   else:
-    RECREATE_CACHE = my_env("CK_RECREATE_CACHE") == "YES"
+    RECREATE_CACHE = set_in_my_env("CK_RECREATE_CACHE")
     CACHE_DIR = os.path.join(CACHE_DIR_ROOT, '{}-{}-{}'.format(IMAGE_SIZE, TMP_IMAGE_SIZE, CROP_PERCENT))
 
   print('Input images dir: {}'.format(IMAGE_DIR))
@@ -239,7 +241,7 @@ def ck_preprocess(i):
     files_to_push.append('$<<RUN_OPT_IMAGE_LIST_PATH>>$')
 
   def to_flag(val):
-    return 1 if val and (str(val).upper() == "YES" or int(val) == 1) else 0
+    return 1 if val and (str(val).lower() in [ 'yes', 'true', 'on', '1' ]) else 0
 
   # model-specific variable
   normalize = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA") or dep_env('weights', "CK_ENV_ONNX_MODEL_NORMALIZE_DATA")
