@@ -37,7 +37,7 @@ def ck_postprocess(i):
 
   # Loads ImageNet classes and correct predictions
   def load_ImageNet_classes():
-    classes_list = []  
+    classes_list = []
     with open(CLASSES_FILE, 'r') as classes_file:
       classes_list = classes_file.read().splitlines()
 
@@ -80,7 +80,7 @@ def ck_postprocess(i):
       print(img_file)
     for prob, class_index in top5:
       print('%.2f - %s' % (prob, get_class_str(class_index)))
-    print('---------------------------------------')       
+    print('---------------------------------------')
 
 
   # Returns list of pairs (prob, class_index)
@@ -134,15 +134,15 @@ def ck_postprocess(i):
         for line in f:
           s = line.strip()
           if s: probes.append(float(s))
-      return probes 
+      return probes
 
     checked_files = 0
 
     for res_file in sorted(os.listdir(RESULTS_DIR)):
       # remove trailing suffix .txt
-      img_file = res_file[:-4] 
+      img_file = res_file[:-4]
       checked_files += 1
-      
+
       all_probes = load_probes(res_file)
       if len(all_probes) != NUM_CLASSES:
         print('WARNING: {} is invalid probes count in file {}, results ignored'.format(len(all_probes), res_file))
@@ -185,7 +185,7 @@ def ck_postprocess(i):
 
   # Store benchmark results
   openme = {}
-  
+
   # Preserve values stored by program
   with open('tmp-ck-timer.json', 'r') as o:
     old_values = json.load(o)
@@ -227,5 +227,5 @@ def ck_postprocess(i):
     json.dump(openme, o, indent=2, sort_keys=True)
 
   print('--------------------------------\n')
-  return {'return': 0}  
+  return {'return': 0}
 
