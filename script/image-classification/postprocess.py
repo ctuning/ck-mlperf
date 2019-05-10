@@ -139,8 +139,10 @@ def ck_postprocess(i):
     checked_files = 0
 
     for res_file in sorted(os.listdir(RESULTS_DIR)):
-      # remove trailing suffix .txt
+      # remove trailing suffix '.txt'
       img_file = res_file[:-4]
+      # replace preprocesed extension '.rgb8' with original '.JPEG'
+      img_file = img_file.replace('rgb8', 'JPEG')
       checked_files += 1
 
       all_probes = load_probes(res_file)
