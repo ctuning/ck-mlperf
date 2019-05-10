@@ -99,7 +99,7 @@ def ck_preprocess(i):
   def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
   def set_in_my_env(var): return my_env(var) and my_env(var).lower() in [ 'yes', 'true', 'on', '1' ]
-  def set_in_dep_env(dep, var): return dep_env(dep, var) and dep_env(dep, var).lower() in [ 'yes', 'true', 'on' '1' ]
+  def set_in_dep_env(dep, var): return dep_env(dep, var) and dep_env(dep, var).lower() in [ 'yes', 'true', 'on', '1' ]
 
   for dep_name, dep in i.get('deps', {}).items():
     dep_tags = dep.get('tags', '')
