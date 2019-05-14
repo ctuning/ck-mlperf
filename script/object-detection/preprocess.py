@@ -158,10 +158,7 @@ def ck_preprocess(i):
 
   if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_ROOT') \
      and has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE'):
-    MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
     MODEL_DATASET_TYPE = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
-    LABELMAP_FILE = dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or ""
-    LABELMAP_FILE = os.path.join(MODEL_ROOT, LABELMAP_FILE)
     MODEL_IMAGE_CHANNELS = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_IMAGE_CHANNELS")
     if not MODEL_IMAGE_CHANNELS:
       MODEL_IMAGE_CHANNELS = 3
@@ -218,7 +215,6 @@ def ck_preprocess(i):
   VERBOSE = set_in_my_env("VERBOSE")
 
   # Print settings
-  print("Model label map file: " + LABELMAP_FILE)
   print("Model is for dataset: " + MODEL_DATASET_TYPE)
 
   print("Dataset images: " + IMAGES_DIR)
@@ -249,7 +245,6 @@ def ck_preprocess(i):
   ENV["PREPROCESS_OUT_DIR"] = PREPROCESS_OUT_DIR
   ENV["RESULTS_OUT_DIR"] = RESULTS_OUT_DIR
 
-  ENV["LABELMAP_FILE"] = LABELMAP_FILE
   ENV["PREPROCESSED_FILES"] = PREPROCESSED_FILES
 
   ENV["MODEL_DATASET_TYPE"] = MODEL_DATASET_TYPE

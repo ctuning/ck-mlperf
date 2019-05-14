@@ -38,6 +38,10 @@ def ck_postprocess(i):
 
   sys.path.extend(list(split_path))     # allow THIS SCRIPT to be able to use numpy, pillow, etc.
 
+  # get some parameters directly from the deps' environment:
+  #
+  MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
+  LABELMAP_FILE = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
 
   import ck_utils
 
@@ -59,8 +63,6 @@ def ck_postprocess(i):
   ANNOTATIONS_OUT_DIR = ENV['ANNOTATIONS_OUT_DIR']
   DETECTIONS_OUT_DIR = ENV['DETECTIONS_OUT_DIR']
   RESULTS_OUT_DIR = ENV['RESULTS_OUT_DIR']
-
-  LABELMAP_FILE = ENV['LABELMAP_FILE']
 
   DATASET_TYPE = ENV['DATASET_TYPE']
   METRIC_TYPE = ENV['METRIC_TYPE']
