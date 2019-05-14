@@ -267,7 +267,7 @@ def ck_preprocess(i):
   ENV["TIMER_JSON"] = TIMER_JSON
   ENV["VERBOSE"] = VERBOSE
 
-  with open("env.ini", "w") as o:
+  with open(ENV_INI, "w") as o:
     for i in ENV:
       o.write('{}={}\n'.format(i,ENV[i]))
   return {
