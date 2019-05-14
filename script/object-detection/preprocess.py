@@ -22,7 +22,6 @@ sys.path.append(SCRIPT_DIR)
 
 import ck_utils
 
-IMAGE_LIST_FILE = "processed_images_id.json"
 PREPROCESSED_FILES = "preprocessed_images_list.txt"
 TIMER_JSON = "tmp-ck-timer.json"
 ENV_INI = "env.ini"
@@ -70,7 +69,6 @@ def preprocess():
   # Process images
   load_time_total = 0
   images_processed = 0
-  processed_image_ids = []
   preprocessed_list = []
   for file_counter, image_file in enumerate(image_files):
     if FULL_REPORT or (file_counter+1) % 10 == 0:
@@ -81,9 +79,6 @@ def preprocess():
     image = PIL.Image.open(os.path.join(IMAGES_DIR, image_file))
     original_width, original_height = image.size
     
-    image_id = ck_utils.filename_to_id(image_file, DATASET_TYPE)
-    processed_image_ids.append(image_id)
-
     # The array based representation of the image will be used later 
     # in order to prepare the result image with boxes and labels on it.
     image_data = load_pil_image_into_numpy_array(image, MODEL_IMAGE_WIDTH, MODEL_IMAGE_HEIGHT)
@@ -91,7 +86,6 @@ def preprocess():
     # NOTE: Insert additional preprocessing here if needed
     preprocessed_file_name = os.path.join(PREPROCESS_OUT_DIR, image_file)
     save_preprocessed_image(preprocessed_file_name, image_data)
-    #preprocessed_list.append([preprocessed_file_name, original_width, original_height])
     preprocessed_list.append([image_file, original_width, original_height])
 
     load_time = time.time() - load_time_begin
@@ -101,16 +95,11 @@ def preprocess():
     if file_counter > 0 or IMAGE_COUNT == 1:
       images_processed += 1
 
-  # Save processed images ids list to be able to run
-  # evaluation without repeating detections (CK_SKIP_DETECTION=YES)
-  with open(IMAGE_LIST_FILE, "w") as f:
-    f.write(json.dumps(processed_image_ids))
-
   with open(PREPROCESSED_FILES, "w") as f:
     for row in preprocessed_list:
       f.write("{};{};{}\n".format(row[0], row[1], row[2]))
 
-  load_avg_time = load_time_total / len(processed_image_ids)
+  load_avg_time = load_time_total / len(preprocessed_list)
 
   OPENME["images_load_time_s"] = load_time_total
   OPENME["images_load_time_avg_s"] = load_avg_time
@@ -118,7 +107,6 @@ def preprocess():
   with open(TIMER_JSON, "w") as o:
     json.dump(OPENME, o, indent=2, sort_keys=True)
 
-  #return processed_image_ids
 
 def ck_preprocess(i):
   def my_env(var): return i['env'].get(var)
@@ -273,7 +261,6 @@ def ck_preprocess(i):
   ENV["PREPROCESS_OUT_DIR"] = PREPROCESS_OUT_DIR
   ENV["RESULTS_OUT_DIR"] = RESULTS_OUT_DIR
 
-  ENV["IMAGE_LIST_FILE"] = IMAGE_LIST_FILE
   ENV["LABELMAP_FILE"] = LABELMAP_FILE
   ENV["PREPROCESSED_FILES"] = PREPROCESSED_FILES
 

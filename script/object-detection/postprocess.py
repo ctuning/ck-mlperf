@@ -64,7 +64,6 @@ def ck_postprocess(i):
   IMAGES_OUT_DIR = ENV['IMAGES_OUT_DIR']
   RESULTS_OUT_DIR = ENV['RESULTS_OUT_DIR']
 
-  IMAGE_LIST_FILE = ENV['IMAGE_LIST_FILE']
   LABELMAP_FILE = ENV['LABELMAP_FILE']
 
   DATASET_TYPE = ENV['DATASET_TYPE']
@@ -73,6 +72,8 @@ def ck_postprocess(i):
 
   FULL_REPORT = ENV['FULL_REPORT']
   TIMER_JSON = ENV['TIMER_JSON']
+
+  PREPROCESSED_FILES = ENV['PREPROCESSED_FILES']
 
   if METRIC_TYPE != ck_utils.COCO:
     import calc_metrics_coco_tf
@@ -123,8 +124,10 @@ def ck_postprocess(i):
 
   OPENME = {}
 
-  with open(IMAGE_LIST_FILE, 'r') as f:
-    processed_image_ids = json.load(f)
+  with open(PREPROCESSED_FILES, 'r') as f:
+    processed_image_filenames = [x.split(';')[0] for x in f.readlines()]
+
+  processed_image_ids = [ ck_utils.filename_to_id(image_filename, DATASET_TYPE) for image_filename in processed_image_filenames ]
 
   if os.path.isfile(TIMER_JSON):
     with open(TIMER_JSON, 'r') as f:
