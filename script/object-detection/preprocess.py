@@ -145,11 +145,6 @@ def ck_preprocess(i):
 
   sys.path.extend(list(split_path))     # allow THIS SCRIPT to be able to use numpy, pillow, etc.
 
-  # TF-model specific value
-  if has_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR'):
-    MODEL_CONVERT_TO_BGR = set_in_dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_CONVERT_TO_BGR')
-  else:
-    MODEL_CONVERT_TO_BGR = False
 
   # TODO: all weights packages should provide common vars to reveal its 
   # input image size: https://github.com/ctuning/ck-tensorflow/issues/67
@@ -256,7 +251,6 @@ def ck_preprocess(i):
 
   ENV["ANNOTATIONS_OUT_DIR"] = ANNOTATIONS_OUT_DIR
   ENV["DETECTIONS_OUT_DIR"] = DETECTIONS_OUT_DIR
-  ENV["IMAGES_DIR"] = IMAGES_DIR
   ENV["IMAGES_OUT_DIR"] = IMAGES_OUT_DIR
   ENV["PREPROCESS_OUT_DIR"] = PREPROCESS_OUT_DIR
   ENV["RESULTS_OUT_DIR"] = RESULTS_OUT_DIR
