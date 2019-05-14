@@ -22,8 +22,6 @@ sys.path.append(SCRIPT_DIR)
 
 import ck_utils
 
-PYTHONPATH = os.getenv('PYTHONPATH') or ''
-
 IMAGE_LIST_FILE = "processed_images_id.json"
 PREPROCESSED_FILES = "preprocessed_images_list.txt"
 TIMER_JSON = "tmp-ck-timer.json"
@@ -130,14 +128,12 @@ def ck_preprocess(i):
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
   def has_dep(dep): return dep in i['deps']
 
-  global PYTHONPATH
   global ANNOTATIONS_OUT_DIR
   global DETECTIONS_OUT_DIR
   global IMAGES_DIR
   global IMAGES_OUT_DIR
   global PREPROCESS_OUT_DIR
   global RESULTS_OUT_DIR
-
 
   global DATASET_TYPE
   global FULL_REPORT
@@ -148,10 +144,9 @@ def ck_preprocess(i):
 
   print('\n--------------------------------')
 
+  PYTHONPATH = os.getenv('PYTHONPATH') or ''
   # NB: importing numpy, pillow, etc is delayed until we have loaded the PYTHONPATH from deps{}
-  if has_dep('lib-tensorflow') and has_dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB'):
-    PYTHONPATH = dep_env('lib-tensorflow', 'CK_ENV_LIB_TF_LIB') + ':' + PYTHONPATH
-  for dep_name in ['tool-coco', 'tensorflowmodel-api', 'lib-python-numpy', 'lib-python-pillow', 'lib-python-matplotlib']:
+  for dep_name in ['lib-python-numpy', 'lib-python-pillow']:
     PYTHONPATH = dep_env(dep_name, 'PYTHONPATH') + ':' + PYTHONPATH
 
   split_path = set()
@@ -159,7 +154,6 @@ def ck_preprocess(i):
     if p in ["${PYTHONPATH}", "$PYTHONPATH",""]:
       continue
     split_path.add(p)
-  PYTHONPATH = ":".join(split_path)
 
   sys.path.extend(list(split_path))     # allow THIS SCRIPT to be able to use numpy, pillow, etc.
 
@@ -269,8 +263,6 @@ def ck_preprocess(i):
     preprocess()
 
   ENV={}
-
-  ENV["PYTHONPATH"] = PYTHONPATH
 
   ENV["ANNOTATIONS_PATH"] = ANNOTATIONS_PATH
 
