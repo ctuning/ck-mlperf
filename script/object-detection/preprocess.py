@@ -59,7 +59,6 @@ def preprocess():
   # Prepare directories
   ck_utils.prepare_dir(PREPROCESS_OUT_DIR)
   ck_utils.prepare_dir(ANNOTATIONS_OUT_DIR)
-  ck_utils.prepare_dir(IMAGES_OUT_DIR)
   ck_utils.prepare_dir(DETECTIONS_OUT_DIR)
   ck_utils.prepare_dir(RESULTS_OUT_DIR)
 
@@ -118,7 +117,6 @@ def ck_preprocess(i):
   global ANNOTATIONS_OUT_DIR
   global DETECTIONS_OUT_DIR
   global IMAGES_DIR
-  global IMAGES_OUT_DIR
   global PREPROCESS_OUT_DIR
   global RESULTS_OUT_DIR
 
@@ -212,7 +210,6 @@ def ck_preprocess(i):
 
   ANNOTATIONS_OUT_DIR = os.path.join(CUR_DIR, "annotations")
   DETECTIONS_OUT_DIR = os.path.join(CUR_DIR, "detections")
-  IMAGES_OUT_DIR = os.path.join(CUR_DIR, "images")
   PREPROCESS_OUT_DIR = os.path.join(CUR_DIR, "preprocessed")
   RESULTS_OUT_DIR = os.path.join(CUR_DIR, "results")
 
@@ -233,7 +230,6 @@ def ck_preprocess(i):
   print("Results directory: {}".format(RESULTS_OUT_DIR))
   print("Temporary annotations directory: " + ANNOTATIONS_OUT_DIR)
   print("Detections directory: " + DETECTIONS_OUT_DIR)
-  print("Result images directory: " + IMAGES_OUT_DIR)
   print("Save result images: {}".format(SAVE_IMAGES))
   print("Save preprocessed images: {}".format(PREPROCESSED_FILES))
 
@@ -250,7 +246,6 @@ def ck_preprocess(i):
 
   ENV["ANNOTATIONS_OUT_DIR"] = ANNOTATIONS_OUT_DIR
   ENV["DETECTIONS_OUT_DIR"] = DETECTIONS_OUT_DIR
-  ENV["IMAGES_OUT_DIR"] = IMAGES_OUT_DIR
   ENV["PREPROCESS_OUT_DIR"] = PREPROCESS_OUT_DIR
   ENV["RESULTS_OUT_DIR"] = RESULTS_OUT_DIR
 
