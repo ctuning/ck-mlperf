@@ -177,8 +177,6 @@ def ck_preprocess(i):
   # Dataset parameters
   IMAGES_DIR = dep_env('dataset', "CK_ENV_DATASET_IMAGE_DIR")
   DATASET_TYPE = dep_env('dataset', "CK_ENV_DATASET_TYPE")
-  # Annotations can be a directory or a single file, depending on dataset type
-  ANNOTATIONS_PATH = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
 
   # Program parameters
   NUMBER_OF_PROCESSORS = my_env("CK_HOST_CPU_NUMBER_OF_PROCESSORS")
@@ -218,7 +216,6 @@ def ck_preprocess(i):
   print("Model is for dataset: " + MODEL_DATASET_TYPE)
 
   print("Dataset images: " + IMAGES_DIR)
-  print("Dataset annotations: " + ANNOTATIONS_PATH)
   print("Dataset type: " + DATASET_TYPE)
 
   print("Image count: {}".format(IMAGE_COUNT))
@@ -237,8 +234,6 @@ def ck_preprocess(i):
     preprocess()
 
   ENV={}
-
-  ENV["ANNOTATIONS_PATH"] = ANNOTATIONS_PATH
 
   ENV["ANNOTATIONS_OUT_DIR"] = ANNOTATIONS_OUT_DIR
   ENV["DETECTIONS_OUT_DIR"] = DETECTIONS_OUT_DIR

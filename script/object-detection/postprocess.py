@@ -43,8 +43,11 @@ def ck_postprocess(i):
   MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
   LABELMAP_FILE = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
 
-  import ck_utils
+  # Annotations can be a directory or a single file, depending on dataset type:
+  ANNOTATIONS_PATH = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
 
+
+  import ck_utils
   import converter_annotations
   import converter_results
 
@@ -57,8 +60,6 @@ def ck_postprocess(i):
     for i in f:
       key, value = i.strip().split('=', 1)
       ENV[key] = value == 'True' if key in boolean_keys else value
-
-  ANNOTATIONS_PATH = ENV['ANNOTATIONS_PATH']
 
   ANNOTATIONS_OUT_DIR = ENV['ANNOTATIONS_OUT_DIR']
   DETECTIONS_OUT_DIR = ENV['DETECTIONS_OUT_DIR']
