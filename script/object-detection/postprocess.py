@@ -48,14 +48,11 @@ def ck_postprocess(i):
   ENV_INI = 'env.ini'
   ENV = {}
 
+  boolean_keys = ['FULL_REPORT']
   with open(ENV_INI, 'r') as f:
     for i in f:
       key, value = i.strip().split('=', 1)
-      ENV[key] = value
-    for key in ['MODEL_IMAGE_WIDTH', 'MODEL_IMAGE_HEIGHT', 'MODEL_IMAGE_CHANNELS', 'IMAGE_COUNT', 'SKIP_IMAGES']:
-      ENV[key] = int(ENV[key])
-    for key in ['MODEL_NORMALIZE_DATA', 'SAVE_IMAGES', 'FULL_REPORT', 'SKIP_DETECTION', 'VERBOSE']:
-      ENV[key] = ENV[key] == 'True'
+      ENV[key] = value == 'True' if key in boolean_keys else value
 
   ANNOTATIONS_PATH = ENV['ANNOTATIONS_PATH']
 

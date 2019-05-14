@@ -114,7 +114,6 @@ def ck_preprocess(i):
   def set_in_my_env(var): return my_env(var) and my_env(var).lower() in [ 'yes', 'true', 'on', '1' ]
   def set_in_dep_env(dep, var): return dep_env(dep, var) and dep_env(dep, var).lower() in [ 'yes', 'true', 'on', '1' ]
   def has_dep_env(dep, var): return var in i['deps'][dep]['dict']['env']
-  def has_dep(dep): return dep in i['deps']
 
   global ANNOTATIONS_OUT_DIR
   global DETECTIONS_OUT_DIR
@@ -264,7 +263,6 @@ def ck_preprocess(i):
   ENV["MODEL_IMAGE_WIDTH"] = MODEL_IMAGE_WIDTH
   ENV["MODEL_NEED_BACKGROUND_CORRECTION"] = MODEL_NEED_BACKGROUND_CORRECTION
   ENV["MODEL_NORMALIZE_DATA"] = MODEL_NORMALIZE_DATA
-  ENV["MODEL_ROOT"] = MODEL_ROOT
   ENV["MODEL_SUBTRACT_MEAN"] = MODEL_SUBTRACT_MEAN
 
   ENV["DATASET_TYPE"] = DATASET_TYPE
