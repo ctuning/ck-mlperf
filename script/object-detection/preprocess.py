@@ -197,7 +197,6 @@ def ck_preprocess(i):
     SKIP_IMAGES = 0
   else:
     SKIP_IMAGES = int(SKIP_IMAGES)
-  SAVE_IMAGES = set_in_my_env("CK_SAVE_IMAGES")
   METRIC_TYPE = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
 
   USE_NEON = set_in_my_env("USE_NEON")
@@ -223,13 +222,12 @@ def ck_preprocess(i):
   print("Results directory: {}".format(RESULTS_OUT_DIR))
   print("Temporary annotations directory: " + ANNOTATIONS_OUT_DIR)
   print("Detections directory: " + DETECTIONS_OUT_DIR)
-  print("Save result images: {}".format(SAVE_IMAGES))
   print("Save preprocessed images: {}".format(PREPROCESSED_FILES))
 
   # Run detection if needed
   ck_utils.print_header("Process images")
   if SKIP_DETECTION:
-    print("\nSkip detection, evaluate previous results")
+    print("\nSkip detection, evaluate previous results") # actually, this is about skipping the preprocessing
   else:
     preprocess()
 
@@ -255,9 +253,7 @@ def ck_preprocess(i):
 
   ENV["BATCH_SIZE"] = BATCH_SIZE
   ENV["IMAGE_COUNT"] = IMAGE_COUNT
-  ENV["SAVE_IMAGES"] = SAVE_IMAGES
   ENV["SKIP_IMAGES"] = SKIP_IMAGES
-  ENV["SKIP_DETECTION"] = SKIP_DETECTION
 
   ENV["USE_NEON"] = USE_NEON
   ENV["USE_OPENCL"] = USE_OPENCL
