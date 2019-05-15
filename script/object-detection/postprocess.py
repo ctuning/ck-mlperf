@@ -44,11 +44,15 @@ def ck_postprocess(i):
   LABELMAP_FILE = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
 
   # Annotations can be a directory or a single file, depending on dataset type:
-  ANNOTATIONS_PATH = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
+  ANNOTATIONS_PATH      = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
 
-  TIMER_JSON = my_env('CK_TIMER_FILE')
+  TIMER_JSON            = my_env('CK_TIMER_FILE')
 
-  PREPROCESSED_FILES = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
+  PREPROCESSED_FILES    = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
+
+  # model properties:
+  MODEL_DATASET_TYPE    = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
+
 
   import ck_utils
   import converter_annotations
@@ -70,7 +74,6 @@ def ck_postprocess(i):
 
   DATASET_TYPE = ENV['DATASET_TYPE']
   METRIC_TYPE = ENV['METRIC_TYPE']
-  MODEL_DATASET_TYPE = ENV['MODEL_DATASET_TYPE']
 
   FULL_REPORT = ENV['FULL_REPORT']
 
