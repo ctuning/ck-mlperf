@@ -4,24 +4,34 @@
 
 ### Build image
 ```
-# docker build -t ubuntu-18.04 .
+# docker build . -f Dockerfile -t image-classification-tflite-ubuntu-18.04
+```
+
+### Check image 
+#### View layer-by-layer build history
+```
+# docker history image-classification-tflite-ubuntu-18.04
+```
+#### View space usage
+```
+# docker system df -v
 ```
 
 ### Run image
 
 #### Image Classification (default)
 ```
-# docker run --rm ubuntu-18.04
+# docker run --rm image-classification-tflite-ubuntu-18.04
 ```
 **NB:** Equivalent to:
 ```
-# docker run --rm ubuntu-18.04 \
+# docker run --rm image-classification-tflite-ubuntu-18.04 \
 ck run program:image-classification-tflite
 ```
 
 #### Image Classification (custom)
 ```
-# docker run --rm ubuntu-18.04 \
+# docker run --rm image-classification-tflite-ubuntu-18.04 \
 ck run program:image-classification-tflite --env.CK_BATCH_COUNT=10
 ```
 
@@ -38,5 +48,5 @@ CMD ["ck run program:image-classification-tflite"]
 ```
 and run as:
 ```
-# docker run --rm ubuntu-18.04 bash
+# docker run --rm image-classification-tflite-ubuntu-18.04 bash
 ```

@@ -2,51 +2,65 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
-## Install all packages and immediately clean up to make the image smaller
-#
+# Install known system dependencies and immediately clean up to make the image smaller.
+# CK needs: git, zip, wget.
+# TF needs: curl.
 RUN apt-get update -y \
-    && apt-get install -y python3 python3-pip git zip bzip2 sudo wget vim curl \
-    libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev python-pillow build-essential
+ && apt-get install -y \
+        sudo build-essential \
+        git zip bzip2 \
+        wget curl \
+        python3 python3-pip \
+        libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev \
+ && apt-get clean
 
-# Install the core Collective Knowledge (CK) module.
-ENV CK_ROOT=/ck-master \
-    CK_REPOS=/CK \
-    CK_TOOLS=/CK-TOOLS \
+# Install Collective Knowledge (CK).
+ENV CK_ROOT=/CK \
+    CK_REPOS=/CK_REPOS \
+    CK_TOOLS=/CK_TOOLS \
     PATH=${CK_ROOT}/bin:${PATH} \
     CK_PYTHON=python3 \
-    LANG=C.UTF-8 \
-    CK_PLATFORM_NAME="generic-linux " \
-    CPP_COMPILER=gcc
-
-RUN mkdir -p ${CK_ROOT} ${CK_REPOS} ${CK_TOOLS}Ы
-RUN git config --global user.name "Dividiti" && git config --global user.email "info@dividiti.com"
+    CK_CC=gcc \
+    LANG=C.UTF-8
+RUN mkdir -p ${CK_ROOT} ${CK_REPOS} ${CK_TOOLS}
+RUN git config --global user.name "dividiti" && git config --global user.email "info@dividiti.com"
 RUN git clone https://github.com/ctuning/ck.git ${CK_ROOT}
-RUN cd ${CK_ROOT} && ${CK_PYTHON} setup.py install && ${CK_PYTHON} -c "import ck.kernel as ck"
+RUN cd ${CK_ROOT} \
+ && ${CK_PYTHON} setup.py install \
+ && ${CK_PYTHON} -c "import ck.kernel as ck; print ('Collective Knowledge v%s' % ck.__version__)"
 
-# Install other CK modules.
-RUN ck pull repo:ck-tensorflow
+# Pull CK repositories (including ck-env, ck-autotuning and ck-tensorflow).
 RUN ck pull repo:ck-mlperf
 
-RUN echo "$CK_PLATFORM_NAME" | ck detect platform.os --update_platform_init
-# Dependencies of this particular Hackathon.
+# Use generic Linux settings.
+RUN ck detect platform.os --platform_init_uoa=generic-linux
+
+# Install Python dependencies.
 RUN rm -f `which pip` && ${CK_PYTHON} -m pip install --ignore-installed pip setuptools
 RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 RUN ck install package --tags=lib,python-package,numpy
 RUN ck install package --tags=lib,python-package,scipy
 RUN ck install package --tags=lib,python-package,pillow
-RUN ck detect soft:compiler.gcc --full_path=`which ${CPP_COMPILER}`
-RUN ck install package --tags=tool,cmake,v3.14.3
 
-# Maybe flatbuffers is unneeded
+# Install C/C++ dependencies.
+RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+RUN ck install package --tags=tool,cmake,v3.14.3
+RUN ck install package --tags=lib,xopenme
+# FIXME: Maybe don't need FlatBuffers?
 RUN ck install package --tags=lib,flatbuffers
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
-RUN ck install package --tags=lib,xopenme
 
-RUN ck install package:imagenet-2012-val-min
-RUN ck install package:imagenet-2012-aux
-RUN ck install package:model-tf-mlperf-mobilenet
+# Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
+RUN ck install package --tags=imagenet,aux
+RUN ck install package --tags=imagenet,val,small_dataset --no_tags=resized
+RUN ck install package --tags=imagenet,preprocessed
 
+# Download MobileNet TF/TFLite model.
+RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized
+
+# Compile Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
 
+# Run Image Classification TFLite program once.
 ENTRYPOINT ["/bin/bash"]
 CMD ["ck run program:image-classification-tflite"]
