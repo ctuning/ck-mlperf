@@ -6,6 +6,7 @@ LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 # CK needs: git, zip, wget.
 # TF needs: curl.
 RUN apt-get update -y \
+ && apt-get install -y apt-utils \
  && apt-get install -y \
         sudo build-essential \
         git zip bzip2 \
