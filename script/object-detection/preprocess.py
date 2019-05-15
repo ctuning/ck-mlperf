@@ -22,12 +22,8 @@ sys.path.append(SCRIPT_DIR)
 
 import ck_utils
 
-PREPROCESSED_FILES = "preprocessed_images_list.txt"
-TIMER_JSON = "tmp-ck-timer.json"
 ENV_INI = "env.ini"
-
 OPENME = {}
-
 
 def save_preprocessed_image(file_name, image_data):
   image_data.tofile(file_name)
@@ -126,6 +122,8 @@ def ck_preprocess(i):
   global MODEL_IMAGE_HEIGHT
   global MODEL_IMAGE_WIDTH
   global SKIP_IMAGES
+  global TIMER_JSON
+  global PREPROCESSED_FILES
 
   print('\n--------------------------------')
 
@@ -142,6 +140,9 @@ def ck_preprocess(i):
 
   sys.path.extend(list(split_path))     # allow THIS SCRIPT to be able to use numpy, pillow, etc.
 
+  TIMER_JSON = my_env('CK_TIMER_FILE')
+
+  PREPROCESSED_FILES = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
 
   # TODO: all weights packages should provide common vars to reveal its 
   # input image size: https://github.com/ctuning/ck-tensorflow/issues/67
@@ -238,8 +239,6 @@ def ck_preprocess(i):
   ENV["PREPROCESS_OUT_DIR"] = PREPROCESS_OUT_DIR
   ENV["RESULTS_OUT_DIR"] = RESULTS_OUT_DIR
 
-  ENV["PREPROCESSED_FILES"] = PREPROCESSED_FILES
-
   ENV["MODEL_DATASET_TYPE"] = MODEL_DATASET_TYPE
   ENV["MODEL_IMAGE_CHANNELS"] = MODEL_IMAGE_CHANNELS
   ENV["MODEL_IMAGE_HEIGHT"] = MODEL_IMAGE_HEIGHT
@@ -260,7 +259,6 @@ def ck_preprocess(i):
 
   ENV["FULL_REPORT"] = FULL_REPORT
   ENV["NUMBER_OF_PROCESSORS"] = NUMBER_OF_PROCESSORS
-  ENV["TIMER_JSON"] = TIMER_JSON
   ENV["VERBOSE"] = VERBOSE
 
   with open(ENV_INI, "w") as o:

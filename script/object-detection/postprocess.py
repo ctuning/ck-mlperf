@@ -46,6 +46,9 @@ def ck_postprocess(i):
   # Annotations can be a directory or a single file, depending on dataset type:
   ANNOTATIONS_PATH = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
 
+  TIMER_JSON = my_env('CK_TIMER_FILE')
+
+  PREPROCESSED_FILES = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
 
   import ck_utils
   import converter_annotations
@@ -70,9 +73,6 @@ def ck_postprocess(i):
   MODEL_DATASET_TYPE = ENV['MODEL_DATASET_TYPE']
 
   FULL_REPORT = ENV['FULL_REPORT']
-  TIMER_JSON = ENV['TIMER_JSON']
-
-  PREPROCESSED_FILES = ENV['PREPROCESSED_FILES']
 
   if METRIC_TYPE != ck_utils.COCO:
     import calc_metrics_coco_tf
