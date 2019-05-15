@@ -123,7 +123,8 @@ def ck_postprocess(i):
   evaluate(processed_image_ids, categories_list)
 
   OPENME['frame_predictions'] = converter_results.convert_to_frame_predictions(DETECTIONS_OUT_DIR)
- 
+  OPENME['execution_time'] = OPENME['run_time_state']['test_time_s'] + OPENME['run_time_state']['setup_time_s']
+
   # Store benchmark results
   with open(TIMER_JSON, 'w') as o:
     json.dump(OPENME, o, indent=2, sort_keys=True)
@@ -131,10 +132,10 @@ def ck_postprocess(i):
   # Print metrics
   print('\nSummary:')
   print('-------------------------------')
-  print('Graph loaded in {:.6f}s'.format(OPENME.get('graph_load_time_s', 0)))
-  print('All images loaded in {:.6f}s'.format(OPENME.get('images_load_time_s', 0)))
-  print('All images detected in {:.6f}s'.format(OPENME.get('detection_time_total_s', 0)))
-  print('Average detection time: {:.6f}s'.format(OPENME.get('detection_time_avg_s', 0)))
+  print('Graph setted up in {:.6f}s'.format(OPENME.get('setup_time_s', 0)))
+  print('All images loaded in {:.6f}s'.format(OPENME.get('load_images_time_total_s', 0)))
+  print('All images detected in {:.6f}s'.format(OPENME.get('prediction_time_total_s', 0)))
+  print('Average detection time: {:.6f}s'.format(OPENME.get('prediction_time_avg_s', 0)))
   print('mAP: {}'.format(OPENME['mAP']))
   print('Recall: {}'.format(OPENME['recall']))
   print('--------------------------------\n')
