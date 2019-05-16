@@ -152,10 +152,11 @@ def main():
     # Run batched mode
     test_time_begin = time.time()
     image_index = 0
-    load_total_time = 0
-    classification_total_time = 0
+    total_load_time = 0
+    total_classification_time = 0
+    first_classification_time = 0
     images_loaded = 0
-    images_processed = 0
+
     for batch_index in range(BATCH_COUNT):
         batch_number = batch_index+1
         if FULL_REPORT or (batch_number % 10 == 0):
@@ -165,7 +166,7 @@ def main():
         batch_data, image_index = load_preprocessed_batch(image_list, image_index)
 
         load_time = time.time() - begin_time
-        load_total_time += load_time
+        total_load_time += load_time
         images_loaded += BATCH_SIZE
         if FULL_REPORT:
             print("Batch loaded in %fs" % (load_time))
@@ -176,11 +177,11 @@ def main():
         classification_time = time.time() - begin_time
         if FULL_REPORT:
             print("Batch classified in %fs" % (classification_time))
-      
-        # Exclude first batch from averaging
-        if batch_index > 0 or BATCH_COUNT == 1:
-            classification_total_time += classification_time
-            images_processed += BATCH_SIZE
+
+        total_classification_time += classification_time
+        # Remember first batch prediction time
+        if batch_index == 0:
+            first_classification_time = classification_time
 
         # Process results
         for index_in_batch in range(BATCH_SIZE):
@@ -192,22 +193,26 @@ def main():
                     f.write('{}\n'.format(prob))
             
     test_time = time.time() - test_time_begin
-    classification_avg_time = classification_total_time / images_processed
-    load_avg_time = load_total_time / images_loaded
+ 
+    if BATCH_COUNT > 1:
+        avg_classification_time = (total_classification_time - first_classification_time) / (images_loaded - BATCH_SIZE)
+    else:
+        avg_classification_time = total_classification_time / images_loaded
 
+    avg_load_time = total_load_time / images_loaded
 
     # Store benchmarking results:
     output_dict = {
         'setup_time_s': setup_time,
         'test_time_s': test_time,
-        'images_load_time_s': load_total_time,
-        'images_load_time_avg_s': load_avg_time,
-        'prediction_time_total_s': classification_total_time,
-        'prediction_time_avg_s': classification_avg_time,
+        'images_load_time_s': total_load_time,
+        'images_load_time_avg_s': avg_load_time,
+        'prediction_time_total_s': total_classification_time,
+        'prediction_time_avg_s': avg_classification_time,
 
-        'avg_time_ms': classification_avg_time * 1000,
-        'avg_fps': 1.0 / classification_avg_time,
-        'batch_time_ms': classification_avg_time * 1000 * BATCH_SIZE,
+        'avg_time_ms': avg_classification_time * 1000,
+        'avg_fps': 1.0 / avg_classification_time,
+        'batch_time_ms': avg_classification_time * 1000 * BATCH_SIZE,
         'batch_size': BATCH_SIZE,
     }
     with open('tmp-ck-timer.json', 'w') as out_file:
