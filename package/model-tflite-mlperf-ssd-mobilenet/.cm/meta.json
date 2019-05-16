@@ -15,6 +15,7 @@
       "MODEL_IMAGE_CHANNELS": "3",
       "MODEL_INPUT_LAYER_NAME": "normalized_input_image_tensor", 
       "MODEL_NORMALIZE_DATA": "YES",
+      "MODEL_SUBTRACT_MEAN": "0",
       "MODEL_NEED_BACKGROUND_CORRECTION": "YES",
       "MODEL_NUM_CLASSES": "90",
       "MODEL_NMS_SCORE_THRESHOLD": "0.3",
