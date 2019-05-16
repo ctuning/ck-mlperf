@@ -114,7 +114,7 @@ def preprocess():
 
   load_avg_time = load_time_total / len(processed_image_ids)
 
-  OPENME["images_load_time_s"] = load_time_total
+  OPENME["images_load_time_total_s"] = load_time_total
   OPENME["images_load_time_avg_s"] = load_avg_time
 
   with open(TIMER_JSON, "w") as o:
