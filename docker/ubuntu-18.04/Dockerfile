@@ -45,16 +45,16 @@ RUN ck install package --tags=lib,python-package,pillow
 
 # Install C/C++ dependencies.
 RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
-RUN ck install package --tags=tool,cmake,v3.14.3
-RUN ck install package --tags=lib,xopenme
-# FIXME: Maybe don't need FlatBuffers?
-RUN ck install package --tags=lib,flatbuffers
+## Probably don't need to install CMake, xOpenME and FlatBuffers explicitly.
+# RUN ck install package --tags=tool,cmake,v3.14.3
+# RUN ck install package --tags=lib,xopenme
+# RUN ck install package --tags=lib,flatbuffers
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
-RUN ck install package --tags=imagenet,aux
-RUN ck install package --tags=imagenet,val,small_dataset --no_tags=resized
-RUN ck install package --tags=imagenet,preprocessed
+RUN ck install package --tags=dataset,imagenet,aux
+RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
+RUN ck install package --tags=dataset,imagenet,val,preprocessed
 
 # Download MobileNet TF/TFLite model.
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized
