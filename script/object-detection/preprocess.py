@@ -15,14 +15,12 @@ import time
 
 # NB: importing numpy, pillow, etc is delayed until we have loaded the PYTHONPATH from deps{}
 
-CUR_DIR = os.getcwd()
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 sys.path.append(SCRIPT_DIR)
 
 import ck_utils
 
-ENV_INI = "env.ini"
 OPENME = {}
 
 def save_preprocessed_image(file_name, image_data):
@@ -142,7 +140,12 @@ def ck_preprocess(i):
 
   TIMER_JSON = my_env('CK_TIMER_FILE')
 
-  PREPROCESSED_FILES = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
+  PREPROCESSED_FILES  = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
+
+  PREPROCESS_OUT_DIR  = my_env('CK_PREPROCESSED_OUT_DIR')
+  DETECTIONS_OUT_DIR  = my_env('CK_DETECTIONS_OUT_DIR')
+  RESULTS_OUT_DIR     = my_env('CK_RESULTS_OUT_DIR')
+  ANNOTATIONS_OUT_DIR = my_env('CK_ANNOTATIONS_OUT_DIR')
 
   # TODO: all weights packages should provide common vars to reveal its 
   # input image size: https://github.com/ctuning/ck-tensorflow/issues/67
@@ -197,14 +200,9 @@ def ck_preprocess(i):
     SKIP_IMAGES = int(SKIP_IMAGES)
   METRIC_TYPE = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
 
-  ANNOTATIONS_OUT_DIR = os.path.join(CUR_DIR, "annotations")
-  DETECTIONS_OUT_DIR = os.path.join(CUR_DIR, "detections")
-  PREPROCESS_OUT_DIR = os.path.join(CUR_DIR, "preprocessed")
-  RESULTS_OUT_DIR = os.path.join(CUR_DIR, "results")
-
-  FULL_REPORT = not set_in_my_env("CK_SILENT_MODE")
-  SKIP_DETECTION = set_in_my_env("CK_SKIP_DETECTION")
-  VERBOSE = set_in_my_env("VERBOSE")
+  SKIP_DETECTION  = set_in_my_env("CK_SKIP_DETECTION")  # actually, this is about skipping the preprocessing
+  FULL_REPORT     = not set_in_my_env("CK_SILENT_MODE")
+  VERBOSE         = set_in_my_env("VERBOSE")
 
   # Print settings
   print("Model is for dataset: " + MODEL_DATASET_TYPE)
@@ -222,30 +220,10 @@ def ck_preprocess(i):
   # Run detection if needed
   ck_utils.print_header("Process images")
   if SKIP_DETECTION:
-    print("\nSkip detection, evaluate previous results") # actually, this is about skipping the preprocessing
+    print("\nSkip detection, evaluate previous results")
   else:
     preprocess()
 
-  ENV={}
-
-  ENV["ANNOTATIONS_OUT_DIR"] = ANNOTATIONS_OUT_DIR
-  ENV["DETECTIONS_OUT_DIR"] = DETECTIONS_OUT_DIR
-  ENV["PREPROCESS_OUT_DIR"] = PREPROCESS_OUT_DIR
-  ENV["RESULTS_OUT_DIR"] = RESULTS_OUT_DIR
-
-  ENV["DATASET_TYPE"] = DATASET_TYPE
-  ENV["METRIC_TYPE"] = METRIC_TYPE
-
-  ENV["BATCH_SIZE"] = BATCH_SIZE
-  ENV["IMAGE_COUNT"] = IMAGE_COUNT
-  ENV["SKIP_IMAGES"] = SKIP_IMAGES
-
-  ENV["FULL_REPORT"] = FULL_REPORT
-  ENV["VERBOSE"] = VERBOSE
-
-  with open(ENV_INI, "w") as o:
-    for i in ENV:
-      o.write('{}={}\n'.format(i,ENV[i]))
   return {
     'return': 0
   }

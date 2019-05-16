@@ -50,32 +50,23 @@ def ck_postprocess(i):
 
   PREPROCESSED_FILES    = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
 
+  DETECTIONS_OUT_DIR    = my_env('CK_DETECTIONS_OUT_DIR')
+  RESULTS_OUT_DIR       = my_env('CK_RESULTS_OUT_DIR')
+  ANNOTATIONS_OUT_DIR   = my_env('CK_ANNOTATIONS_OUT_DIR')
+
   # model properties:
   MODEL_DATASET_TYPE    = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
+
+  DATASET_TYPE          = dep_env('dataset', "CK_ENV_DATASET_TYPE")
+  METRIC_TYPE           = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
+
+  FULL_REPORT           = not set_in_my_env("CK_SILENT_MODE")
 
 
   import ck_utils
   import converter_annotations
   import converter_results
 
-
-  ENV_INI = 'env.ini'
-  ENV = {}
-
-  boolean_keys = ['FULL_REPORT']
-  with open(ENV_INI, 'r') as f:
-    for i in f:
-      key, value = i.strip().split('=', 1)
-      ENV[key] = value == 'True' if key in boolean_keys else value
-
-  ANNOTATIONS_OUT_DIR = ENV['ANNOTATIONS_OUT_DIR']
-  DETECTIONS_OUT_DIR = ENV['DETECTIONS_OUT_DIR']
-  RESULTS_OUT_DIR = ENV['RESULTS_OUT_DIR']
-
-  DATASET_TYPE = ENV['DATASET_TYPE']
-  METRIC_TYPE = ENV['METRIC_TYPE']
-
-  FULL_REPORT = ENV['FULL_REPORT']
 
   if METRIC_TYPE != ck_utils.COCO:
     import calc_metrics_coco_tf
