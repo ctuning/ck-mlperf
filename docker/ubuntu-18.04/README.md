@@ -48,5 +48,5 @@ CMD ["ck run program:image-classification-tflite"]
 ```
 and run as:
 ```
-# docker run --rm image-classification-tflite-ubuntu-18.04 bash
+# docker run -it --rm image-classification-tflite-ubuntu-18.04 bash
 ```
