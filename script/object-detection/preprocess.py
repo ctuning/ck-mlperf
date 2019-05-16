@@ -51,10 +51,10 @@ def preprocess():
       return batch_data
 
   # Prepare directories
-  ck_utils.prepare_dir(PREPROCESS_OUT_DIR)
-  ck_utils.prepare_dir(ANNOTATIONS_OUT_DIR)
-  ck_utils.prepare_dir(DETECTIONS_OUT_DIR)
-  ck_utils.prepare_dir(RESULTS_OUT_DIR)
+  ck_utils.prepare_dir(PREPROCESS_OUT_DIR)  # used by the preprocessor
+  ck_utils.prepare_dir(DETECTIONS_OUT_DIR)  # used by the main program
+  ck_utils.prepare_dir(RESULTS_OUT_DIR)     # used by the postprocessor
+  ck_utils.prepare_dir(ANNOTATIONS_OUT_DIR) # used by the postprocessor
 
    # Load processing image filenames
   image_files = ck_utils.load_image_list(IMAGES_DIR, IMAGE_COUNT, SKIP_IMAGES)
