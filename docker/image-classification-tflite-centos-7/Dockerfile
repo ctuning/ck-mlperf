@@ -7,12 +7,12 @@ SHELL ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, zip, wget, unzip.
 # TF needs: curl.
-# Python 3: open-ssl-devel, bzip2-devel, libffi-devel 
+# Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel
 RUN yum update -y \
  && yum install -y \
        sudo git vim \
        gcc make patch gcc-c++ \
-       openssl-devel bzip2-devel libffi-devel\
+       openssl-devel bzip2-devel libffi-devel \
        wget which zip unzip \
  && yum clean all
 
@@ -39,9 +39,11 @@ ENV CK_ROOT=/home/dvdt/CK \
     PATH=${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
     CK_PYTHON=python3.7 \
     CK_CC=gcc \
+    GIT_USER="dividiti" \
+    GIT_EMAIL="info@dividiti.com" \
     LANG=C.UTF-8
 RUN mkdir -p ${CK_ROOT} ${CK_REPOS} ${CK_TOOLS}
-RUN git config --global user.name "dividiti" && git config --global user.email "info@dividiti.com"
+RUN git config --global user.name ${GIT_USER} && git config --global user.email ${GIT_EMAIL}
 RUN git clone https://github.com/ctuning/ck.git ${CK_ROOT}
 RUN cd ${CK_ROOT} \
  && ${CK_PYTHON} setup.py install --user \
@@ -50,8 +52,8 @@ RUN cd ${CK_ROOT} \
 # Pull CK repositories (including ck-env, ck-autotuning and ck-tensorflow).
 RUN ck pull repo:ck-mlperf
 
-# Use generic Linux settings.
-RUN ck detect platform.os --update_platform_init --platform_init_uoa=generic-linux-dummy
+# Use generic Linux settings with dummy frequency setting scripts.
+RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
 
 # Install Python dependencies.
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
@@ -62,7 +64,6 @@ RUN ck install package --tags=lib,python-package,scipy
 RUN ck install package --tags=lib,python-package,pillow
 
 # Install C/C++ dependencies.
-
 RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
@@ -72,7 +73,7 @@ RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resize
 RUN ck install package --tags=dataset,imagenet,val,preprocessed
 
 # Download MobileNet TF/TFLite model.
-RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized
+RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-google
 
 # Compile Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
