@@ -10,7 +10,7 @@ SHELL ["/bin/bash", "-c"]
 # Python 3: open-ssl-devel, bzip2-devel, libffi-devel 
 RUN yum update -y \
  && yum install -y \
-       sudo git \
+       sudo git vim \
        gcc make patch gcc-c++ \
        openssl-devel bzip2-devel libffi-devel\
        wget which zip unzip \
@@ -51,7 +51,7 @@ RUN cd ${CK_ROOT} \
 RUN ck pull repo:ck-mlperf
 
 # Use generic Linux settings.
-RUN ck detect platform.os --platform_init_uoa=generic-linux
+RUN ck detect platform.os --update_platform_init --platform_init_uoa=generic-linux-dummy
 
 # Install Python dependencies.
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user

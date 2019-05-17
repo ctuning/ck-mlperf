@@ -11,7 +11,7 @@ RUN apt-get update -y \
  && apt-get install -y apt-utils \
  && apt upgrade -y \
  && apt-get install -y \
-       sudo git \
+       sudo git vim \
        python3 python3-pip \
        wget curl zip libz-dev\
  && apt-get clean
@@ -40,7 +40,7 @@ RUN cd ${CK_ROOT} \
 RUN ck pull repo:ck-mlperf
 
 # Use generic Linux settings.
-RUN ck detect platform.os --platform_init_uoa=generic-linux
+RUN ck detect platform.os --update_platform_init --platform_init_uoa=generic-linux-dummy
 
 # Install Python dependencies.
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
