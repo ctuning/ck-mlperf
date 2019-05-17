@@ -2,6 +2,8 @@ FROM centos:centos7
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
+SHELL ["/bin/bash", "-c"]
+
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, zip, wget, unzip.
 # TF needs: curl.
@@ -65,9 +67,9 @@ RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
-RUN ck install package --tags=imagenet,aux
-RUN ck install package --tags=imagenet,val,small_dataset --no_tags=resized
-RUN ck install package --tags=imagenet,preprocessed
+RUN ck install package --tags=dataset,imagenet,aux
+RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
+RUN ck install package --tags=dataset,imagenet,val,preprocessed
 
 # Download MobileNet TF/TFLite model.
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized
