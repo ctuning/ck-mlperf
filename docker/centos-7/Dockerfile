@@ -1,18 +1,29 @@
-FROM ubuntu:18.04
+FROM centos:centos7
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
 # Install known system dependencies and immediately clean up to make the image smaller.
-# CK needs: git, zip, wget.
+# CK needs: git, zip, wget, unzip.
 # TF needs: curl.
-RUN apt-get update -y \
- && apt-get install -y apt-utils \
- && apt upgrade -y \
- && apt-get install -y \
+# Python 3: open-ssl-devel, bzip2-devel, libffi-devel 
+RUN yum update -y \
+ && yum install -y \
        sudo git \
-       python3 python3-pip \
-       wget curl zip libz-dev\
- && apt-get clean
+       gcc make patch gcc-c++ \
+       openssl-devel bzip2-devel libffi-devel\
+       wget which zip unzip \
+ && yum clean all
+
+# Install Python 3
+RUN cd /usr/src \
+ && wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz \
+ && tar xzf Python-3.7.3.tgz \
+ && rm Python-3.7.3.tgz \
+ && cd Python-3.7.3 \
+ && ./configure --enable-optimizations \
+ && make altinstall \
+ && cd /usr/src \
+ && rm -rf Python-3.7.3*
 
 # Create non-root user
 RUN useradd --create-home --user-group  --shell /bin/bash dvdt
@@ -24,7 +35,7 @@ ENV CK_ROOT=/home/dvdt/CK \
     CK_REPOS=/home/dvdt/CK_REPOS \
     CK_TOOLS=/home/dvdt/CK_TOOLS \
     PATH=${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
-    CK_PYTHON=python3 \
+    CK_PYTHON=python3.7 \
     CK_CC=gcc \
     LANG=C.UTF-8
 RUN mkdir -p ${CK_ROOT} ${CK_REPOS} ${CK_TOOLS}

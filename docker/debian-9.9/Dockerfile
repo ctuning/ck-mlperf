@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM debian:9.9
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
