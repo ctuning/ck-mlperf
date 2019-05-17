@@ -51,5 +51,17 @@
   "use_scripts_from_another_entry": {
     "data_uoa": "6b1b2b254718b69a", 
     "module_uoa": "script"
+  },
+  "variations": {
+    "from-zenodo": {
+      "extra_env": {
+        "PACKAGE_URL": "https://zenodo.org/record/2269307/files"
+      }
+    },
+    "from-google": {
+      "extra_env": {
+        "PACKAGE_URL": "http://download.tensorflow.org/models/mobilenet_v1_2018_08_02"
+      }
+    }
   }
 }
