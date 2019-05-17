@@ -80,14 +80,59 @@ def compare_experiments_image_classification(frame_predictions):
 
 def compare_experiments_object_detection(frame_predictions):
     # TODO: implement pairwise comparison of object detection experiments.
+    epsilon_score = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
+    epsilon_bbox = [1.0, 1.0, 1,0, 1.0]
+    max_delta_score = 0
+    num_mismatched_bboxes = 0
+    num_mismatched_files = 0
+    num_mismatched_classes = 0
+    num_mismatched_probabilities = 0
+
+    for file_name in sorted(frame_predictions[0]):
+        ck.out( 'Checking {}...'.format(file_name) )
+        fp0 = frame_predictions[0][file_name]
+        fp1 = frame_predictions[1][file_name] 
+        if len(fp0['detections']) == len(fp1['detections']):
+            mismatch_detected_objects_count = False
+        else:
+            ck.out( '- mismatch detected objects count: {} != {}'.format(len(fp0['detections']), len(fp1['detections'])) )
+            mismatch_detected_objects_count = True
+
+        index = 0
+        any_mismatched_classes = False
+        any_mismatched_probabilities = False
+        any_mismatched_bbox = False
+        for (fpa, fpb) in zip(fp0['detections'], fp1['detections']):
+            if fpa['class'] != fpb['class']:
+                ck.out( '- mismatched classes at index {}: [{}] != [{}]'.format(index, fpa['class'], fpb['class']) )
+                num_mismatched_classes += 1
+                any_mismatched_classes = True
+            delta = abs(fpa['prob'] - fpb['prob'])
+            if delta > epsilon_score:
+                ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fpa['prob'], fpb['prob'], delta, epsilon_score) )
+                num_mismatched_probabilities += 1
+                any_mismatched_probabilities = True
+            if delta > max_delta_score:
+                max_delta_score = delta
+            delta_x1 = abs(fpa['bbox'][0] - fpb['bbox'][0])
+            delta_y1 = abs(fpa['bbox'][1] - fpb['bbox'][1])
+            delta_x2 = abs(fpa['bbox'][2] - fpb['bbox'][2])
+            delta_y2 = abs(fpa['bbox'][3] - fpb['bbox'][3])
+            if delta_x1 > epsilon_bbox[0] or delta_y1 > epsilon_bbox[1] or delta_x2 > epsilon_bbox[2] or delta_y2 > epsilon_bbox[3]:
+                ck.out( '- mismatched bbox at index {}: [{}] != [{}]'.format(index, fpa['bbox'], fpb['bbox']) )
+                any_mismatched_bbox = True
+                num_mismatched_bboxes += 1
+            index += 1
+
+        if mismatch_detected_objects_count or any_mismatched_probabilities or any_mismatched_bbox:
+            num_mismatched_files +=1
 
     rdict = { 'return':0,
-              'epsilon':epsilon,
-              'max_delta':max_delta,
+              'epsilon_score':epsilon_score,
+              'max_delta_score':max_delta_score,
               'num_mismatched_files':num_mismatched_files,
               'num_mismatched_classes':num_mismatched_classes,
-              'num_mismatched_probabilities':num_mismatched_probabilities,
-              'num_mismatched_elementary_keys':num_mismatched_elementary_keys
+              'num_mismatched_probabilities':num_mismatched_probabilities
     }
     pprint( rdict )
 
