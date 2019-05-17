@@ -1,6 +1,11 @@
-## Debian 9.9
+## [Debian](https://hub.docker.com/_/debian/) 9.9 ("stretch")
 
 **NB:** `#` means execution under root or with `sudo`.
+
+### Change directory
+```
+$ cd `ck find docker:image-classification-tflite-debian-9.9`
+```
 
 ### Build image
 ```
@@ -26,27 +31,16 @@
 **NB:** Equivalent to:
 ```
 # docker run --rm image-classification-tflite-debian-9.9 \
-ck run program:image-classification-tflite
+"ck run program:image-classification-tflite"
 ```
 
 #### Image Classification (custom)
 ```
 # docker run --rm image-classification-tflite-debian-9.9 \
-ck run program:image-classification-tflite --env.CK_BATCH_COUNT=10
+"ck run program:image-classification-tflite --env.CK_BATCH_COUNT=10"
 ```
 
-#### Shell (needs changing Dockerfile)
-To allow running shell, in `Dockerfile` change:
-```
-ENTRYPOINT ["/bin/bash"]
-CMD ["ck run program:image-classification-tflite"]
-```
-to:
-```
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["ck run program:image-classification-tflite"]
-```
-and run as:
+#### Bash
 ```
 # docker run -it --rm image-classification-tflite-debian-9.9 bash
 ```
