@@ -1,1 +1,8 @@
-{}
+{
+  "cmd": {
+    "default": {
+      "build": "-f Dockerfile -t $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$ $#CK_PATH#$",
+      "run": "--rm $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$"
+    }
+  }
+}
