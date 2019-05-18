@@ -16,8 +16,8 @@ RUN apt-get update -y \
        wget curl zip libz-dev \
  && apt-get clean
 
-# Create non-root user
-RUN useradd --create-home --user-group  --shell /bin/bash dvdt
+# Create non-root user.
+RUN useradd --create-home --user-group --shell /bin/bash dvdt
 USER dvdt:dvdt
 WORKDIR /home/dvdt
 

@@ -28,7 +28,7 @@ RUN cd /usr/src \
  && rm -rf Python-3.7.3*
 
 # Create non-root user
-RUN useradd --create-home --user-group  --shell /bin/bash dvdt
+RUN useradd --create-home --user-group --shell /bin/bash dvdt
 USER dvdt:dvdt
 WORKDIR /home/dvdt
 
