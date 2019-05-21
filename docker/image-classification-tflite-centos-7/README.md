@@ -27,7 +27,7 @@ $ ck build docker:image-classification-tflite.centos-7
 ```
 **NB:** Equivalent to:
 ```bash
-$ docker build . -f Dockerfile -t image-classification-tflite.centos-7
+$ docker build -f Dockerfile -t image-classification-tflite.centos-7 .
 ```
 
 <a name="image_default_run"></a>
@@ -64,7 +64,7 @@ $ docker run -it --rm image-classification-tflite.centos-7 bash
 <a name="image_stable_build"></a>
 ### Build
 ```bash
-$ docker build . -f Dockerfile.stable -t image-classification-tflite.centos-7.stable
+$ docker build -f Dockerfile.stable -t image-classification-tflite.centos-7.stable .
 ```
 
 <a name="image_default_run"></a>

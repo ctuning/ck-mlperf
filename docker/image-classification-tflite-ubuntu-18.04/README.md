@@ -9,7 +9,7 @@ $ cd `ck find docker:image-classification-tflite-ubuntu-18.04`
 
 ### Build image
 ```
-# docker build . -f Dockerfile -t image-classification-tflite-ubuntu-18.04
+# docker build -f Dockerfile -t image-classification-tflite-ubuntu-18.04 .
 ```
 
 ### Check image 

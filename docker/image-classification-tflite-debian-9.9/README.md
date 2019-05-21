@@ -9,7 +9,7 @@ $ cd `ck find docker:image-classification-tflite-debian-9.9`
 
 ### Build image
 ```
-# docker build . -f Dockerfile -t image-classification-tflite-debian-9.9
+# docker build -f Dockerfile -t image-classification-tflite-debian-9.9 .
 ```
 
 ### Check image 
