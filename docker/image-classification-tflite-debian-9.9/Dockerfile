@@ -49,7 +49,7 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 
 RUN ck install package --tags=lib,python-package,numpy
-RUN ck install package --tags=lib,python-package,scipy
+RUN ck install package --tags=lib,python-package,scipy --force_version=1.2.1
 RUN ck install package --tags=lib,python-package,pillow
 
 # Install C/C++ dependencies.
