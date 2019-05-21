@@ -1,0 +1,89 @@
+FROM ubuntu:18.04
+
+LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
+
+SHELL ["/bin/bash", "-c"]
+
+ADD cuda.tar /
+
+# Install known system dependencies and immediately clean up to make the image smaller.
+# CK needs: git, zip, wget.
+# TF needs: curl.
+# DEBUG: pciutils
+RUN apt-get update -y \
+ && apt-get install -y apt-utils \
+ && apt upgrade -y \
+ && apt-get install -y \
+       sudo git vim \
+       python3 python3-pip \
+       wget curl zip libz-dev \
+       linux-headers-generic \
+ && apt-get clean
+
+RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb \
+ && dpkg -i cuda-repo-ubuntu1804_10.0.130-1_amd64.deb \
+ && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub \
+ && apt-get update -y \
+ && apt-get install -y cuda-10-0 \
+ && apt install -y `ls /cuda/lib/*.deb` \
+ && apt install -y `ls /cuda/lib-dev/*.deb` \
+ && apt-get clean
+
+# Create non-root user.
+RUN useradd --create-home --user-group --shell /bin/bash dvdt
+USER dvdt:dvdt
+WORKDIR /home/dvdt
+
+# Install Collective Knowledge (CK).
+ENV CK_ROOT=/home/dvdt/CK \
+    CK_REPOS=/home/dvdt/CK_REPOS \
+    CK_TOOLS=/home/dvdt/CK_TOOLS \
+    PATH=/home/dvdt/CK/bin:/home/dvdt/.local/bin:/usr/local/cuda-10.0/bin:${PATH} \
+    LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64:/usr/lib/x86_64-linux-gnu \
+    CK_PYTHON=python3 \
+    CK_CC=gcc \
+    GIT_USER="dividiti" \
+    GIT_EMAIL="info@dividiti.com" \
+    LANG=C.UTF-8
+RUN mkdir -p ${CK_ROOT} ${CK_REPOS} ${CK_TOOLS}
+RUN git config --global user.name ${GIT_USER} && git config --global user.email ${GIT_EMAIL}
+RUN git clone https://github.com/ctuning/ck.git ${CK_ROOT}
+RUN cd ${CK_ROOT} \
+ && ${CK_PYTHON} setup.py install --user \
+ && ${CK_PYTHON} -c "import ck.kernel as ck; print ('Collective Knowledge v%s' % ck.__version__)"
+
+# Pull CK repositories (including ck-env, ck-autotuning and ck-tensorflow).
+RUN ck pull repo:ck-mlperf
+
+# Use generic Linux settings with dummy frequency setting scripts.
+RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
+
+# Install Python dependencies.
+RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
+RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
+
+RUN ck install package --tags=lib,python-package,numpy
+#RUN ck install package --tags=lib,python-package,scipy
+RUN ${CK_PYTHON} -m pip install scipy==1.2.1 --user && ck detect soft:lib.python.scipy
+RUN ck install package --tags=lib,python-package,pillow
+
+# Install C/C++ dependencies.
+RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+
+# Install CK packages for tensorflow
+RUN ck detect soft:compiler.cuda --full_path=/usr/local/cuda-10.0/bin/nvcc \
+ && ck detect soft:lib.cudnn \
+ && ck detect soft:lib.cublas --full_path=/usr/local/cuda-10.0/lib64/libcublas.so
+RUN ck install package --tags=lib,tensorflow-cuda,vprebuilt,vcuda,v1.13.1
+
+# Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
+RUN ck install package --tags=dataset,imagenet,aux
+RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
+RUN ck install package --tags=dataset,imagenet,val,preprocessed
+
+# Download MobileNet TF model.
+RUN ck install package --tags=image-classification,model,tf,mlperf,mobilenet,non-quantized
+
+# Run Image Classification TFLite program once.
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["ck run program:image-classification-tf-py"]
