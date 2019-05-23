@@ -40,15 +40,15 @@ def ck_postprocess(i):
 
   # get some parameters directly from the deps' environment:
   #
-  MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
-  LABELMAP_FILE = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
+  MODEL_ROOT            = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
+  LABELMAP_FILE         = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
 
   # Annotations can be a directory or a single file, depending on dataset type:
   ANNOTATIONS_PATH      = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
 
   TIMER_JSON            = my_env('CK_TIMER_FILE')
 
-  PREPROCESSED_FILES    = my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
+  PREPROCESSED_FILES    = dep_env('dataset', 'CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_SUBSET_FOF') or my_env('CK_PREPROCESSED_FOF_WITH_ORIGINAL_DIMENSIONS')
 
   DETECTIONS_OUT_DIR    = my_env('CK_DETECTIONS_OUT_DIR')
   RESULTS_OUT_DIR       = my_env('CK_RESULTS_OUT_DIR')
