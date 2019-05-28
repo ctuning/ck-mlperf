@@ -4,8 +4,7 @@
     "install_env": {
       "PIP_INSTALL_OPTIONS": "--ignore-installed", 
       "PYTHON_PACKAGE_NAME": "onnxruntime"
-    },
-    "version" : "master"
+    }
   }, 
   "deps": {
     "python": {
@@ -28,8 +27,7 @@
   "tags": [
     "lib", 
     "python-package", 
-    "onnxruntime", 
-    "vmaster"
+    "onnxruntime"
   ], 
   "use_scripts_from_another_entry": {
     "data_uoa": "e4d8d3d2c4c67902", 

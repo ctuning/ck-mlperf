@@ -8,7 +8,8 @@
       "win": 5
     }, 
     "soft_file_universal": "onnxruntime$#sep#$__init__.py", 
-    "version_module_name": "__init__", 
+    "version_recursive_import": "yes",
+    "version_module_name": "__init__",
     "version_variable_name": "__version__"
   }, 
   "soft_name": "Python ONNX runtime", 
