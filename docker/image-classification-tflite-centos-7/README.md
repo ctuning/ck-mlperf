@@ -67,10 +67,10 @@ $ docker run -it --rm image-classification-tflite.centos-7 bash
 $ docker build -f Dockerfile.stable -t image-classification-tflite.centos-7.stable .
 ```
 
-<a name="image_default_run"></a>
+<a name="image_stable_run"></a>
 ### Run
 
-<a name="image_default_run_default"></a>
+<a name="image_stable_run_default"></a>
 #### Image Classification (default command)
 ```bash
 $ docker run --rm image-classification-tflite.centos-7.stable \
