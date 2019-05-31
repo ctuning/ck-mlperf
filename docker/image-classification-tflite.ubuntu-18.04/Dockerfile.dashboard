@@ -55,9 +55,6 @@ RUN ck install package --tags=lib,python-package,pillow
 RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
-# Reduce the image size by removing the TF source.
-RUN rm -rf `ck locate env --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1`/src
-
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
 RUN ck install package --tags=dataset,imagenet,aux
 RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
@@ -109,6 +106,9 @@ RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,do
 
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
+
+# Reduce the image size by removing the TF source.
+#RUN rm -rf `ck locate env --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1`/src
 
 ENTRYPOINT ["/bin/bash", "-c"]
 
