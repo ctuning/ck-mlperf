@@ -11,7 +11,7 @@ RUN apt update -y \
  && apt install -y apt-utils \
  && apt upgrade -y \
  && apt install -y \
-        git wget zip libz-dev curl vim \
+        git wget zip libz-dev curl vim daemonize \
         python3 python3-pip \
  && apt clean
 
@@ -54,6 +54,9 @@ RUN ck install package --tags=lib,python-package,pillow
 # Install C/C++ dependencies.
 RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
+
+# Reduce the image size by removing the TF source.
+RUN rm -rf `ck locate env --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1`/src
 
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
 RUN ck install package --tags=dataset,imagenet,aux
@@ -100,14 +103,15 @@ RUN ck benchmark program:image-classification-tflite \
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,with-argmax
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,no-argmax
 
+#
 # TODO: benchmark the performance and accuracy of the ResNet TFLite models.
+#
 
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
 
-# Reduce the image size by removing the TF source.
-RUN rm -rf `ck locate env --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1`/src
-
-# Run the Image Classification TFLite program once with the non-quantized MobileNet model.
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"]
+
+# This command spawns the server in the background (daemon) mode, while
+# also brings up an interactive shell in the same container.
+CMD daemonize -o ${HOME}/ck_server.out -e ${HOME}/ck_server.err ck display dashboard --scenario=mlperf.mobilenets --host=0.0.0.0 --wfe_host=localhost --wfe_port=3355 && /bin/bash

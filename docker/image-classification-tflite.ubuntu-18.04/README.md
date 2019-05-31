@@ -9,6 +9,7 @@
 1. [Dashboard image](#image_dashboard) (18.04 latest)
     - [Build](#image_dashboard_build)
     - [Run](#image_dashboard_run)
+        - [Interactive dashboard](#image_dashboard_run_dashboard)
         - [Image Classification (default command)](#image_dashboard_run_default)
         - [Image Classification (custom command)](#image_dashboard_run_custom)
         - [Bash](#image_dashboard_run_bash)
@@ -70,6 +71,12 @@ $ docker build -f Dockerfile.dashboard -t image-classification-tflite.ubuntu-18.
 
 <a name="image_dashboard_run"></a>
 ### Run
+
+<a name="image_dashboard_run_dashboard"></a>
+#### Dashboard
+```bash
+$ docker run -it --publish 3355:3344 --rm image-classification-tflite.ubuntu-18.04.dashboard
+```
 
 <a name="image_dashboard_run_default"></a>
 #### Image Classification (default command)
