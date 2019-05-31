@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM centos:7.6.1810
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
@@ -8,12 +8,11 @@ SHELL ["/bin/bash", "-c"]
 # CK needs: git, zip, wget, unzip.
 # TF needs: curl.
 # Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel
-RUN yum update -y \
- && yum install -y \
-       sudo git vim \
-       gcc make patch gcc-c++ \
-       openssl-devel bzip2-devel libffi-devel \
-       wget which zip unzip \
+RUN yum install -y \
+        sudo git vim \
+        gcc make patch gcc-c++ \
+        openssl-devel bzip2-devel libffi-devel \
+        wget which zip unzip \
  && yum clean all
 
 # Install Python 3
