@@ -5,16 +5,15 @@ LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 SHELL ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
-# CK needs: git, zip, wget.
+# CK needs: git, wget, zip.
 # TF needs: curl.
 RUN apt update -y \
  && apt install -y apt-utils \
  && apt upgrade -y \
  && apt install -y \
-        git vim \
-        wget curl zip libz-dev \
+        git wget zip libz-dev curl vim \
         python3 python3-pip \
- && apt-get clean
+ && apt clean
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt

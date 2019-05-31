@@ -7,16 +7,18 @@
         - [Image Classification (custom command)](#image_default_run_custom)
         - [Bash](#image_default_run_bash)
 
-
 **NB:** You may need to run commands below with `sudo`, unless you
 [manage Docker as a non-root user](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user).
-
 
 <a name="image_default"></a>
 ## Default image
 
 <a name="image_default_build"></a>
 ### Build
+```bash
+$ ck build docker:image-classification-tflite.ubuntu-18.04
+```
+**NB:** Equivalent to:
 ```bash
 $ cd `ck find docker:image-classification-tflite.ubuntu-18.04`
 $ docker build -f Dockerfile -t image-classification-tflite.ubuntu-18.04 .
@@ -28,7 +30,7 @@ $ docker build -f Dockerfile -t image-classification-tflite.ubuntu-18.04 .
 <a name="image_default_run_default"></a>
 #### Image Classification (default command)
 ```bash
-$ docker run --rm image-classification-tflite.ubuntu-18.04
+$ ck run docker:image-classification-tflite.ubuntu-18.04
 ```
 **NB:** Equivalent to:
 ```bash
