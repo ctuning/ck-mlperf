@@ -8,7 +8,7 @@ SHELL ["/bin/bash", "-c"]
 # CK needs: git, zip, wget, unzip.
 # TF needs: curl.
 # Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel
-RUN yum update -y \
+RUN yum upgrade -y \
  && yum install -y \
        sudo git vim \
        gcc make patch gcc-c++ \
