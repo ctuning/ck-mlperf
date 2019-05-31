@@ -11,7 +11,7 @@ RUN apt update -y \
  && apt install -y apt-utils \
  && apt upgrade -y \
  && apt install -y \
-        git wget zip libz-dev curl vim \
+        git wget zip libz-dev curl vim daemonize \
         python3 python3-pip \
  && apt clean
 
