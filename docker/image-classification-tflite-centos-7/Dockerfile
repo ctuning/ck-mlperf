@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM centos:7
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
@@ -7,13 +7,13 @@ SHELL ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, zip, wget, unzip.
 # TF needs: curl.
-# Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel
+# Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel.
 RUN yum upgrade -y \
  && yum install -y \
-       sudo git vim \
-       gcc make patch gcc-c++ \
-       openssl-devel bzip2-devel libffi-devel \
-       wget which zip unzip \
+        sudo git vim \
+        wget which zip unzip \
+        gcc make patch gcc-c++ \
+        openssl-devel bzip2-devel libffi-devel \
  && yum clean all
 
 # Install Python 3
@@ -72,12 +72,18 @@ RUN ck install package --tags=dataset,imagenet,aux
 RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
 RUN ck install package --tags=dataset,imagenet,val,preprocessed
 
-# Download MobileNet TF/TFLite model.
-RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-google
+# Download the MobileNet TF/TFLite models (non-quantized and quantized).
+# https://github.com/mlperf/inference/blob/master/edge/object_classification/mobilenets/tflite/README.md#install-the-mobilenet-models-for-tflite
+RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-zenodo
+RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-google
+# Download the ResNet TFLite models (with and without the ArgMax operator).
+# https://github.com/mlperf/inference/blob/master/edge/object_classification/mobilenets/tflite/README.md#install-the-resnet-model
+RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,with-argmax
+RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,no-argmax
 
-# Compile Image Classification TFLite program.
+# Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
 
-# Run Image Classification TFLite program once.
+# Run the Image Classification TFLite program once.
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["ck run program:image-classification-tflite"]
+CMD ["ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"]
