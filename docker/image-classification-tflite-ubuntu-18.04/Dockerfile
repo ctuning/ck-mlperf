@@ -7,13 +7,13 @@ SHELL ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, zip, wget.
 # TF needs: curl.
-RUN apt-get update -y \
- && apt-get install -y apt-utils \
+RUN apt update -y \
+ && apt install -y apt-utils \
  && apt upgrade -y \
- && apt-get install -y \
-       sudo git vim \
-       python3 python3-pip \
-       wget curl zip libz-dev \
+ && apt install -y \
+        git vim \
+        wget curl zip libz-dev \
+        python3 python3-pip \
  && apt-get clean
 
 # Create non-root user.

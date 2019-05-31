@@ -1,6 +1,6 @@
 # [Ubuntu](https://hub.docker.com/_/ubuntu/) 18.04
 
-1. [Default image](#image_default)
+1. [Default image](#image_default) (18.04 latest)
     - [Build](#image_default_build)
     - [Run](#image_default_run)
         - [Image Classification (default command)](#image_default_run_default)
@@ -11,8 +11,6 @@
 **NB:** You may need to run commands below with `sudo`, unless you
 [manage Docker as a non-root user](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user).
 
-**NB:** We currently use the `ubuntu:18.04` base image.
-You may wish to switch to a stable image e.g. `ubuntu:bionic-20190515`.
 
 <a name="image_default"></a>
 ## Default image
@@ -20,7 +18,7 @@ You may wish to switch to a stable image e.g. `ubuntu:bionic-20190515`.
 <a name="image_default_build"></a>
 ### Build
 ```bash
-$ cd `ck find docker:image-classification-tflite-ubuntu-18.04`
+$ cd `ck find docker:image-classification-tflite.ubuntu-18.04`
 $ docker build -f Dockerfile -t image-classification-tflite.ubuntu-18.04 .
 ```
 
