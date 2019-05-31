@@ -74,9 +74,12 @@ $ docker build -f Dockerfile.dashboard -t image-classification-tflite.ubuntu-18.
 
 <a name="image_dashboard_run_dashboard"></a>
 #### Dashboard
+Run a dashboard container with an interactive shell:
 ```bash
 $ docker run -it --publish 3355:3344 --rm image-classification-tflite.ubuntu-18.04.dashboard
 ```
+Point your browser to http://localhost:3355/?template=dashboard&scenario=mlperf.mobilenets to
+listen to the server.
 
 <a name="image_dashboard_run_default"></a>
 #### Image Classification (default command)
