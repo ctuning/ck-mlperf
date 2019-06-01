@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "92486c8d2ee8ebfe", 
+  "backup_module_uid": "88eef0cd8c43b68a", 
+  "backup_module_uoa": "docker", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-06-01T10:00:51.427282", 
+    "version": [
+      "1", 
+      "9", 
+      "8", 
+      "1"
+    ]
+  }, 
+  "data_name": "object-detection-tflite.debian-9"
+}
