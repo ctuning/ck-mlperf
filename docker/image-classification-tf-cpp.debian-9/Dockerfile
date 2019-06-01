@@ -75,7 +75,7 @@ RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobile
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-google
 # Download the ResNet TF model.
 # https://github.com/mlperf/inference/tree/master/edge/object_classification/mobilenets/tf-cpp#install-the-resnet-model
-RUN ck install package --tags=image-classification,model,tf,mlperf,resnet,downloaded
+RUN ck install package --tags=image-classification,model,tf,mlperf,resnet,downloaded,from-zenodo
 
 # Compile the Image Classification TF-C++ program.
 RUN ck compile program:image-classification-tf-cpp
