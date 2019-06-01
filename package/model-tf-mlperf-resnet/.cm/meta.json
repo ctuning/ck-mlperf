@@ -13,13 +13,14 @@
       "PACKAGE_NAME": "resnet50_v1.pb",
       "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
       "PACKAGE_SKIP_LINUX_MAKE": "YES", 
+      "PACKAGE_UNGZIP": "NO", 
       "PACKAGE_URL": "https://zenodo.org/record/2535873/files", 
       "PACKAGE_WGET": "YES"
     }, 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
     "skip_file_check": "yes", 
-    "version": "reference"
+    "version": "v1.5"
   }, 
   "end_full_path_universal": "resnet50_v1.pb", 
   "only_for_host_os_tags": [], 
@@ -45,5 +46,17 @@
   "use_scripts_from_another_entry": {
     "data_uoa": "download-and-install-package", 
     "module_uoa": "script"
+  },
+  "variations": {
+    "from-zenodo": {
+      "extra_env": {
+        "PACKAGE_URL": "https://zenodo.org/record/2535873/files"
+      }
+    },
+    "from-dropbox": {
+      "extra_env": {
+        "PACKAGE_URL": "https://www.dropbox.com/s/jo92dsoted1ha5q"
+      }
+    }
   }
 }
