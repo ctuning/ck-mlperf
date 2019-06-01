@@ -81,4 +81,4 @@ RUN ck install package --tags=image-classification,model,tf,mlperf,resnet,downlo
 RUN ck compile program:image-classification-tf-cpp
 
 # Run the Image Classification TF-C++ program once with the non-quantized MobileNet model.
-CMD ["ck run program:image-classification-tf-cpp --dep_add_tags.weights=mobilenet,non-quantized"]
+CMD ["ck run program:image-classification-tf-cpp --dep_add_tags.weights=mobilenet,non-quantized --env.CK_BATCH_COUNT=2"]
