@@ -28,7 +28,7 @@ $ ck build docker:image-classification-tflite.centos-7
 **NB:** Equivalent to:
 ```bash
 $ cd `ck find docker:image-classification-tflite.centos-7`
-$ docker build -f Dockerfile -t image-classification-tflite.centos-7 .
+$ docker build -f Dockerfile -t ctuning/image-classification-tflite.centos-7 .
 ```
 
 <a name="image_default_run"></a>
@@ -41,21 +41,21 @@ $ ck run docker:image-classification-tflite.centos-7
 ```
 **NB:** Equivalent to:
 ```bash
-$ docker run --rm image-classification-tflite.centos-7 \
+$ docker run --rm ctuning/image-classification-tflite.centos-7 \
 "ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
 ```
 
 <a name="image_default_run_custom"></a>
 #### Image Classification (custom command)
 ```bash
-$ docker run --rm image-classification-tflite.centos-7 \
+$ docker run --rm ctuning/image-classification-tflite.centos-7 \
 "ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=10"
 ```
 
 <a name="image_default_run_bash"></a>
 #### Bash
 ```bash
-$ docker run -it --rm image-classification-tflite.centos-7 bash
+$ docker run -it --rm ctuning/image-classification-tflite.centos-7 bash
 ```
 
 
@@ -66,7 +66,7 @@ $ docker run -it --rm image-classification-tflite.centos-7 bash
 ### Build
 ```bash
 $ cd `ck find docker:image-classification-tflite.centos-7`
-$ docker build -f Dockerfile.stable -t image-classification-tflite.centos-7.stable .
+$ docker build -f Dockerfile.stable -t ctuning/image-classification-tflite.centos-7.stable .
 ```
 
 <a name="image_stable_run"></a>
@@ -75,19 +75,19 @@ $ docker build -f Dockerfile.stable -t image-classification-tflite.centos-7.stab
 <a name="image_stable_run_default"></a>
 #### Image Classification (default command)
 ```bash
-$ docker run --rm image-classification-tflite.centos-7.stable \
+$ docker run --rm ctuning/image-classification-tflite.centos-7.stable \
 "ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
 ```
 
 <a name="image_stable_run_custom"></a>
 #### Image Classification (custom command)
 ```bash
-$ docker run --rm image-classification-tflite.centos-7.stable \
+$ docker run --rm ctuning/image-classification-tflite.centos-7.stable \
 "ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=10"
 ```
 
 <a name="image_stable_run_bash"></a>
 #### Bash
 ```bash
-$ docker run -it --rm image-classification-tflite.centos-7.stable bash
+$ docker run -it --rm ctuning/image-classification-tflite.centos-7.stable bash
 ```

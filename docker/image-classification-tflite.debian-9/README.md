@@ -21,7 +21,7 @@ $ ck build docker:image-classification-tflite.debian-9
 **NB:** Equivalent to:
 ```bash
 $ cd `ck find docker:image-classification-tflite.debian-9`
-$ docker build -f Dockerfile -t image-classification-tflite.debian-9 .
+$ docker build -f Dockerfile -t ctuning/image-classification-tflite.debian-9 .
 ```
 
 <a name="image_default_run"></a>
@@ -34,19 +34,19 @@ $ ck run docker:image-classification-tflite.debian-9
 ```
 **NB:** Equivalent to:
 ```bash
-$ docker run --rm image-classification-tflite.debian-9 \
+$ docker run --rm ctuning/image-classification-tflite.debian-9 \
 "ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
 ```
 
 <a name="image_default_run_custom"></a>
 #### Image Classification (custom command)
 ```bash
-$ docker run --rm image-classification-tflite.debian-9 \
+$ docker run --rm ctuning/image-classification-tflite.debian-9 \
 "ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=10"
 ```
 
 <a name="image_default_run_bash"></a>
 #### Bash
 ```bash
-$ docker run -it --rm image-classification-tflite.debian-9 bash
+$ docker run -it --rm ctuning/image-classification-tflite.debian-9 bash
 ```

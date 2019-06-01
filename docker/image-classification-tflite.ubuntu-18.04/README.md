@@ -28,7 +28,7 @@ $ ck build docker:image-classification-tflite.ubuntu-18.04
 **NB:** Equivalent to:
 ```bash
 $ cd `ck find docker:image-classification-tflite.ubuntu-18.04`
-$ docker build -f Dockerfile -t image-classification-tflite.ubuntu-18.04 .
+$ docker build -f Dockerfile -t ctuning/image-classification-tflite.ubuntu-18.04 .
 ```
 
 <a name="image_default_run"></a>
@@ -41,21 +41,21 @@ $ ck run docker:image-classification-tflite.ubuntu-18.04
 ```
 **NB:** Equivalent to:
 ```bash
-$ docker run --rm image-classification-tflite.ubuntu-18.04 \
+$ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04 \
 "ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
 ```
 
 <a name="image_default_run_custom"></a>
 #### Image Classification (custom command)
 ```bash
-$ docker run --rm image-classification-tflite.ubuntu-18.04 \
+$ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04 \
 "ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=10"
 ```
 
 <a name="image_default_run_bash"></a>
 #### Bash
 ```bash
-$ docker run -it --rm image-classification-tflite.ubuntu-18.04 bash
+$ docker run -it --rm ctuning/image-classification-tflite.ubuntu-18.04 bash
 ```
 
 
@@ -66,7 +66,7 @@ $ docker run -it --rm image-classification-tflite.ubuntu-18.04 bash
 ### Build
 ```bash
 $ cd `ck find docker:image-classification-tflite.ubuntu-18.04`
-$ docker build -f Dockerfile.dashboard -t image-classification-tflite.ubuntu-18.04.dashboard .
+$ docker build -f Dockerfile.dashboard -t ctuning/image-classification-tflite.ubuntu-18.04.dashboard .
 ```
 
 <a name="image_dashboard_run"></a>
@@ -76,7 +76,7 @@ $ docker build -f Dockerfile.dashboard -t image-classification-tflite.ubuntu-18.
 #### Dashboard
 Run a dashboard container with an interactive shell:
 ```bash
-$ docker run -it --publish 3355:3344 --rm image-classification-tflite.ubuntu-18.04.dashboard
+$ docker run -it --publish 3355:3344 --rm ctuning/image-classification-tflite.ubuntu-18.04.dashboard
 ```
 Point your browser to http://localhost:3355/?template=dashboard&scenario=mlperf.mobilenets to
 listen to the server.
@@ -84,19 +84,19 @@ listen to the server.
 <a name="image_dashboard_run_default"></a>
 #### Image Classification (default command)
 ```bash
-$ docker run --rm image-classification-tflite.ubuntu-18.04.dashboard \
+$ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04.dashboard \
 "ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
 ```
 
 <a name="image_dashboard_run_custom"></a>
 #### Image Classification (custom command)
 ```bash
-$ docker run --rm image-classification-tflite.ubuntu-18.04.dashboard \
+$ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04.dashboard \
 "ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=10"
 ```
 
 <a name="image_dashboard_run_bash"></a>
 #### Bash
 ```bash
-$ docker run -it --rm image-classification-tflite.ubuntu-18.04.dashboard bash
+$ docker run -it --rm ctuning/image-classification-tflite.ubuntu-18.04.dashboard bash
 ```
