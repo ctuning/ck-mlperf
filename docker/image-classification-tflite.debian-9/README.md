@@ -35,7 +35,7 @@ $ ck run docker:image-classification-tflite.debian-9
 **NB:** Equivalent to:
 ```bash
 $ docker run --rm ctuning/image-classification-tflite.debian-9 \
-"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
+"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized --env.CK_BATCH_COUNT=2"
 ```
 
 <a name="image_default_run_custom"></a>
