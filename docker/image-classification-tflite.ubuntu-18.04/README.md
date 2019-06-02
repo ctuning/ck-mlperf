@@ -42,7 +42,7 @@ $ ck run docker:image-classification-tflite.ubuntu-18.04
 **NB:** Equivalent to:
 ```bash
 $ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04 \
-"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
+"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized --env.CK_BATCH_COUNT=2"
 ```
 
 <a name="image_default_run_custom"></a>

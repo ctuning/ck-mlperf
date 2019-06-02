@@ -2,7 +2,11 @@ FROM ubuntu:18.04
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
+# Use the Bash shell.
 SHELL ["/bin/bash", "-c"]
+
+# Allow stepping into the Bash shell interactively.
+ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
@@ -11,9 +15,12 @@ RUN apt update -y \
  && apt install -y apt-utils \
  && apt upgrade -y \
  && apt install -y \
-        git wget zip libz-dev curl vim daemonize \
+        git wget zip libz-dev curl vim \
         python3 python3-pip \
  && apt clean
+
+# Upgrade pip.
+RUN python3 -m pip install --upgrade pip
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -72,6 +79,7 @@ RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,do
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
 
-# Run the Image Classification TFLite program once with the non-quantized MobileNet model.
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"]
+# Run the Image Classification TFLite program with the non-quantized MobileNet model.
+CMD ["ck run program:image-classification-tflite \
+--dep_add_tags.weights=mobilenet,non-quantized \
+--env.CK_BATCH_COUNT=2"]
