@@ -2,7 +2,11 @@ FROM debian:9
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
+# Use the Bash shell.
 SHELL ["/bin/bash", "-c"]
+
+# Allow stepping into the Bash shell interactively.
+ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
@@ -12,8 +16,9 @@ RUN apt update -y \
  && apt install -y apt-utils \
  && apt upgrade -y \
  && apt install -y \
-        git wget zip libz-dev curl cmake \
-        python3 python3-pip vim \
+        git wget zip libz-dev curl vim \
+        cmake \
+        python3 python3-pip \
  && apt clean
 
 # Upgrade pip.
@@ -81,13 +86,9 @@ RUN ck install package --tags=tool,coco,api
 # Compile the Object Detection TFLite program.
 RUN ck compile program:object-detection-tflite
 
-# Enable stepping into interactive Bash shell.
-ENTRYPOINT ["/bin/bash", "-c"]
-
 # Run the Object Detection TFLite program
 # with the non-quantized SSD-MobileNet model with regular non-max-suppression
 # on the first 50 images of the COCO 2017 validation dataset.
 CMD ["ck run program:object-detection-tflite \
-        --dep_add_tags.weights=ssd-mobilenet,non-quantized --env.USE_NMS=regular \
-        --dep_add_tags.dataset=coco.2017,first.50 --env.CK_BATCH_COUNT=50 \
-    "]
+--dep_add_tags.weights=ssd-mobilenet,non-quantized --env.USE_NMS=regular \
+--dep_add_tags.dataset=coco.2017,first.50 --env.CK_BATCH_COUNT=50"]

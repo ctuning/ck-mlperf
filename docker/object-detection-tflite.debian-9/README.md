@@ -30,7 +30,7 @@ $ docker build -f Dockerfile -t ctuning/object-detection-tflite.debian-9 .
 <a name="image_default_run_default"></a>
 #### Object Detection (default command)
 
-##### 50 images; regular NMS
+##### Regular NMS; 50 images
 ```bash
 $ ck run docker:object-detection-tflite.debian-9
 ```
@@ -41,7 +41,7 @@ $ docker run --rm ctuning/object-detection-tflite.debian-9 \
         --dep_add_tags.weights=ssd-mobilenet,non-quantized --env.USE_NMS=regular \
         --dep_add_tags.dataset=coco.2017,first.50 --env.CK_BATCH_COUNT=50 \
     "
-<...>
+...
 Summary:
 -------------------------------
 Graph loaded in 0.000000s
@@ -56,7 +56,7 @@ Recall: 0.3050474339529269
 <a name="image_default_run_custom"></a>
 #### Object Detection (custom command)
 
-##### 50 images; fast NMS
+##### Fast NMS; 50 images
 ```bash
 $ docker run --rm ctuning/object-detection-tflite.debian-9 \
     "ck run program:object-detection-tflite \
@@ -75,7 +75,7 @@ Recall: 0.30501085304815917
 --------------------------------
 ```
 
-##### 5,000 images; regular NMS
+##### Regular NMS; 5000 images
 ```bash
 $ docker run --rm ctuning/object-detection-tflite.debian-9 \
     "ck run program:object-detection-tflite \
@@ -94,7 +94,7 @@ Recall: 0.2550505369422975
 --------------------------------
 ```
 
-##### 5,000 images; fast NMS
+##### Fast NMS; 5000 images
 ```bash
 $ docker run --rm ctuning/object-detection-tflite.debian-9 \
     "ck run program:object-detection-tflite \
