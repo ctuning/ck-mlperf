@@ -2,7 +2,11 @@ FROM centos:7
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
+# Configure Bash shell.
 SHELL ["/bin/bash", "-c"]
+
+# Allow stepping into interactive Bash shell.
+ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, zip, wget, unzip.
@@ -16,7 +20,7 @@ RUN yum upgrade -y \
         openssl-devel bzip2-devel libffi-devel \
  && yum clean all
 
-# Install Python 3
+# Install Python 3.
 RUN cd /usr/src \
  && wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tgz \
  && tar xzf Python-3.7.3.tgz \
@@ -26,6 +30,9 @@ RUN cd /usr/src \
  && make altinstall \
  && cd /usr/src \
  && rm -rf Python-3.7.3*
+
+# Upgrade pip.
+RUN python3.7 -m pip install --upgrade pip
 
 # Create non-root user
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -84,6 +91,7 @@ RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,do
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
 
-# Run the Image Classification TFLite program once.
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"]
+# Run the Image Classification TFLite program with the non-quantized MobileNet model.
+CMD ["ck run program:image-classification-tflite \
+--dep_add_tags.weights=mobilenet,non-quantized \
+--env.CK_BATCH_COUNT=2"]

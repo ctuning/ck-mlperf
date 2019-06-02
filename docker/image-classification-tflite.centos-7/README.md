@@ -42,7 +42,7 @@ $ ck run docker:image-classification-tflite.centos-7
 **NB:** Equivalent to:
 ```bash
 $ docker run --rm ctuning/image-classification-tflite.centos-7 \
-"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
+"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized --env.CK_BATCH_COUNT=2"
 ```
 
 <a name="image_default_run_custom"></a>
@@ -76,7 +76,7 @@ $ docker build -f Dockerfile.stable -t ctuning/image-classification-tflite.cento
 #### Image Classification (default command)
 ```bash
 $ docker run --rm ctuning/image-classification-tflite.centos-7.stable \
-"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
+"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized --env.CK_BATCH_COUNT=2"
 ```
 
 <a name="image_stable_run_custom"></a>
