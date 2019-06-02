@@ -2,10 +2,10 @@ FROM centos:7
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
-# Configure Bash shell.
+# Use the Bash shell.
 SHELL ["/bin/bash", "-c"]
 
-# Allow stepping into interactive Bash shell.
+# Allow stepping into the Bash shell interactively.
 ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
