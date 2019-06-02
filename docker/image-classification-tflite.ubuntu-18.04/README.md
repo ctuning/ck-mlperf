@@ -83,9 +83,17 @@ listen to the server.
 
 <a name="image_dashboard_run_default"></a>
 #### Image Classification (default command)
+This command spawns the server in the background (daemon) mode, while also brings up an interactive shell in the same container.
+```
+$ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04.dashboard
+```
+**NB:** Equivalent to:
 ```bash
 $ docker run --rm ctuning/image-classification-tflite.ubuntu-18.04.dashboard \
-"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized"
+"daemonize -o ${HOME}/ck_server.out -e ${HOME}/ck_server.err \
+`which ck` display dashboard --scenario=mlperf.mobilenets \
+--host=0.0.0.0 --wfe_host=localhost --wfe_port=3355 && \
+/bin/bash"
 ```
 
 <a name="image_dashboard_run_custom"></a>
