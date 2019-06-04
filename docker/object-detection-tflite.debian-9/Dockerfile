@@ -71,7 +71,7 @@ RUN ck install package --tags=tool,coco,api
 # Install TensorFlow Object Detection API.
 RUN ck install package --tags=tensorflow,model,api
 
-# Install C/C++ dependencies.
+# Install TFLite.
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
 # Download the SSD-MobileNet TF/TFLite models (non-quantized and quantized).
