@@ -50,17 +50,18 @@ def compare_experiments_image_classification(frame_predictions):
         any_mismatched_classes = False
         any_mismatched_probabilities = False
         for (fp0_topn, fp1_topn) in zip(fp0['topn'], fp1['topn']):
+            # Compare classes.
             if fp0_topn['index'] != fp1_topn['index']:
                 ck.out( '- mismatched classes at index {}: {} != {}'.format(index, fp0_topn['index'], fp1_topn['index']) )
                 num_mismatched_classes += 1
                 any_mismatched_classes = True
+            # Compare probabilities.
             delta = abs(fp0_topn['prob'] - fp1_topn['prob'])
             if delta > epsilon:
                 ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fp0_topn['prob'], fp1_topn['prob'], delta, epsilon) )
                 num_mismatched_probabilities += 1
                 any_mismatched_probabilities = True
-            if delta > max_delta:
-                max_delta = delta
+            if delta > max_delta: max_delta = delta
             index += 1
         if any_mismatched_classes or any_mismatched_probabilities:
             num_mismatched_files += 1
@@ -73,16 +74,15 @@ def compare_experiments_image_classification(frame_predictions):
               'num_mismatched_probabilities':num_mismatched_probabilities,
               'num_mismatched_elementary_keys':num_mismatched_elementary_keys
     }
-    pprint( rdict )
 
     return rdict
 
 
 def compare_experiments_object_detection(frame_predictions):
-    # TODO: implement pairwise comparison of object detection experiments.
     epsilon_score = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
-    epsilon_bbox = [1.0, 1.0, 1.0, 1.0]
-    max_delta_score = 0
+    max_delta_score = 0.0
+    epsilon_bbox   = [1.0, 1.0, 1.0, 1.0] # 1 pixel in any direction
+    max_delta_bbox = [0.0, 0.0, 0.0, 0.0]
     num_mismatched_bboxes = 0
     num_mismatched_files = 0
     num_mismatched_classes = 0
@@ -103,17 +103,19 @@ def compare_experiments_object_detection(frame_predictions):
         any_mismatched_probabilities = False
         any_mismatched_bbox = False
         for (fpa, fpb) in zip(fp0['detections'], fp1['detections']):
+            # Compare classes.
             if fpa['class'] != fpb['class']:
                 ck.out( '- mismatched classes at index {}: [{}] != [{}]'.format(index, fpa['class'], fpb['class']) )
                 num_mismatched_classes += 1
                 any_mismatched_classes = True
+            # Compare probabilities.
             delta = abs(fpa['prob'] - fpb['prob'])
             if delta > epsilon_score:
                 ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fpa['prob'], fpb['prob'], delta, epsilon_score) )
                 num_mismatched_probabilities += 1
                 any_mismatched_probabilities = True
-            if delta > max_delta_score:
-                max_delta_score = delta
+            if delta > max_delta_score: max_delta_score = delta
+            # Compare coordinates.
             delta_x1 = abs(fpa['bbox'][0] - fpb['bbox'][0])
             delta_y1 = abs(fpa['bbox'][1] - fpb['bbox'][1])
             delta_x2 = abs(fpa['bbox'][2] - fpb['bbox'][2])
@@ -122,6 +124,10 @@ def compare_experiments_object_detection(frame_predictions):
                 ck.out( '- mismatched bbox at index {}: [{}] != [{}]'.format(index, fpa['bbox'], fpb['bbox']) )
                 any_mismatched_bbox = True
                 num_mismatched_bboxes += 1
+            if delta_x1 > max_delta_bbox[0]: max_delta_bbox[0] = delta_x1
+            if delta_y1 > max_delta_bbox[1]: max_delta_bbox[1] = delta_y1
+            if delta_x2 > max_delta_bbox[2]: max_delta_bbox[2] = delta_x2
+            if delta_y2 > max_delta_bbox[3]: max_delta_bbox[3] = delta_y2
             index += 1
 
         if mismatch_detected_objects_count or any_mismatched_probabilities or any_mismatched_bbox:
@@ -130,11 +136,12 @@ def compare_experiments_object_detection(frame_predictions):
     rdict = { 'return':0,
               'epsilon_score':epsilon_score,
               'max_delta_score':max_delta_score,
+              'epsilon_bbox':epsilon_bbox,
+              'max_delta_bbox':max_delta_bbox,
               'num_mismatched_files':num_mismatched_files,
               'num_mismatched_classes':num_mismatched_classes,
               'num_mismatched_probabilities':num_mismatched_probabilities
     }
-    pprint( rdict )
 
     return rdict
 
@@ -175,8 +182,12 @@ def compare_experiments(i):
 
     # Collect frame predictions.
     ck.out( '\nExperiments to compare:' )
-    experiment_types = []
+    experiment_types  = []
     frame_predictions = []
+    accuracy_top1     = []
+    accuracy_top5     = []
+    accuracy_mAP      = []
+    accuracy_recall   = []
     for cid in cids:
         r=ck.parse_cid({'cid': cid})
         if r['return']>0:
@@ -213,8 +224,12 @@ def compare_experiments(i):
         tags = r['pipeline']['tags'].split(',')
         if 'image-classification' in tags:
             experiment_types.append('image-classification')
+            accuracy_top1.append(point0001_characteristics0_run['accuracy_top1'])
+            accuracy_top5.append(point0001_characteristics0_run['accuracy_top5'])
         if 'object-detection' in tags:
             experiment_types.append('object-detection')
+            accuracy_mAP.append(point0001_characteristics0_run['mAP'])
+            accuracy_recall.append(point0001_characteristics0_run['recall'])
 
     unique_experiment_types = list(set(experiment_types))
     if len(unique_experiment_types)!=1:
@@ -223,10 +238,16 @@ def compare_experiments(i):
     ck.out('Experiment type: {}'.format(experiment_type))
     if experiment_type=='image-classification':
         rdict = compare_experiments_image_classification(frame_predictions)
+        rdict['delta_top1']   = accuracy_top1[0] - accuracy_top1[1]
+        rdict['delta_top5']   = accuracy_top5[0] - accuracy_top1[1]
     elif experiment_type=='object-detection':
         rdict = compare_experiments_object_detection(frame_predictions)
+        rdict['delta_mAP']    = accuracy_mAP[0] - accuracy_mAP[1]
+        rdict['delta_recall'] = accuracy_recall[0] - accuracy_recall[1]
     else:
         return { 'return': 3, 'error': "Unknown experiment type: '{}'".format(experiment_type) }
+
+    pprint( rdict )
 
     return rdict
 
