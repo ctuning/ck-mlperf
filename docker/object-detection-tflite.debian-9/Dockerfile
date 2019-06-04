@@ -12,17 +12,16 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # CK needs: git, wget, zip.
 # TF needs: curl.
 # TensorFlow Object Detection API needs ProtoBuf 3.0 which needs CMake.
-RUN apt update -y \
- && apt install -y apt-utils \
- && apt upgrade -y \
- && apt install -y \
-        git wget zip libz-dev curl vim \
-        cmake \
-        python3 python3-pip \
+RUN apt update -y\
+ && apt install -y apt-utils\
+ && apt upgrade -y\
+ && apt install -y\
+ git wget zip libz-dev\
+ curl\
+ cmake\
+ python3 python3-pip\
+ vim\
  && apt clean
-
-# Upgrade pip.
-RUN python3 -m pip install --upgrade pip
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -52,36 +51,44 @@ RUN ck pull repo:ck-mlperf
 # Use generic Linux settings with dummy frequency setting scripts.
 RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
 
-# Install Python dependencies.
-RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
+# Detect Python.
 RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 
+# Detect C/C++ compiler (gcc).
+RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+
+# Install the latest Python package installer (pip).
+RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
+# Install Python dependencies.
 RUN ck install package --tags=lib,python-package,numpy
 RUN ck install package --tags=lib,python-package,scipy --force_version=1.2.1
 RUN ck install package --tags=lib,python-package,pillow
 RUN ck install package --tags=lib,python-package,matplotlib
 RUN ck install package --tags=lib,python-package,cython
-
 RUN ck show env --tags=python-package
-
-# Install C/C++ dependencies.
-RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
-RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
+# Install Python COCO API.
+RUN ck install package --tags=tool,coco,api
+# Install TensorFlow Object Detection API.
+RUN ck install package --tags=tensorflow,model,api
 
 # Download the SSD-MobileNet TF/TFLite models (non-quantized and quantized).
 # https://github.com/mlperf/inference/blob/master/edge/object_detection/ssd_mobilenet/tflite/README.md#install-the-ssd-mobilenet-models-for-tflite
-# NB: Pulls TensorFlow Object Detection API. TODO: Make this explicit?
 RUN ck install package --tags=model,tflite,object-detection,mlperf,ssd-mobilenet,non-quantized
 
-# Download the COCO 2017 validation dataset (5,000 images). Accept the default path.
-RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full
-# Preprocess the first 50 images.
-RUN ck install package --tags=object-detection,dataset,coco.2017,preprocessed,first.50
-# Preprocess all the 5,000 images.
-RUN ck install package --tags=object-detection,dataset,coco.2017,preprocessed,full
+# Download the COCO 2017 validation dataset (5,000 images) to the default path;
+# preprocess all the 5000 images (as the user may want to run full evaluation);
+# remove the original images and training annotations while taking care to preserve
+# 'val2017/000000000139.jpg' used to detect COCO 2017 (ck-env:soft:dataset.coco.2017.val).
+RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full \
+ && ck install package --tags=object-detection,dataset,coco.2017,preprocessed,full \
+ && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
+'mv $CK_ENV_DATASET_IMAGE_DIR/000000000139.jpg $CK_ENV_DATASET_COCO/;\
+ rm $CK_ENV_DATASET_IMAGE_DIR/*;\
+ mv $CK_ENV_DATASET_COCO/000000000139.jpg $CK_ENV_DATASET_IMAGE_DIR/;\
+ rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
 
-# Install the Python COCO API.
-RUN ck install package --tags=tool,coco,api
+# Install C/C++ dependencies.
+RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
 # Compile the Object Detection TFLite program.
 RUN ck compile program:object-detection-tflite
@@ -91,4 +98,4 @@ RUN ck compile program:object-detection-tflite
 # on the first 50 images of the COCO 2017 validation dataset.
 CMD ["ck run program:object-detection-tflite \
 --dep_add_tags.weights=ssd-mobilenet,non-quantized --env.USE_NMS=regular \
---dep_add_tags.dataset=coco.2017,first.50 --env.CK_BATCH_COUNT=50"]
+--dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=50"]
