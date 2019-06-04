@@ -81,7 +81,7 @@ def compare_experiments_image_classification(frame_predictions):
 def compare_experiments_object_detection(frame_predictions):
     # TODO: implement pairwise comparison of object detection experiments.
     epsilon_score = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
-    epsilon_bbox = [1.0, 1.0, 1,0, 1.0]
+    epsilon_bbox = [1.0, 1.0, 1.0, 1.0]
     max_delta_score = 0
     num_mismatched_bboxes = 0
     num_mismatched_files = 0
