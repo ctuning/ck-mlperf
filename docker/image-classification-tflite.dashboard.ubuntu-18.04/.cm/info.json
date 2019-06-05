@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "34b17b135b623246", 
+  "backup_module_uid": "88eef0cd8c43b68a", 
+  "backup_module_uoa": "docker", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-06-05T10:52:56.732783", 
+    "version": [
+      "1", 
+      "9", 
+      "8", 
+      "1"
+    ]
+  }, 
+  "data_name": "image-classification-tflite.dashboard.ubuntu-18.04"
+}
