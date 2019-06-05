@@ -48,6 +48,9 @@ RUN cd ${CK_ROOT} \
 # Pull CK repositories (including ck-env, ck-autotuning and ck-tensorflow).
 RUN ck pull repo:ck-mlperf
 
+# Create a repository for benchmarking results.
+RUN ck create repo:mlperf-mobilenets --quiet
+
 # Use generic Linux settings with dummy frequency setting scripts.
 RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
 
@@ -79,9 +82,6 @@ RUN ck install package --tags=dataset,imagenet,val,preprocessed
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-zenodo
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-google
 
-# Create a repository for benchmarking results.
-RUN ck create repo:mlperf-mobilenets --quiet
-
 # Benchmark the performance of the non-quantized MobileNet model.
 RUN ck benchmark program:image-classification-tflite \
 --repetitions=10 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=2 \
@@ -91,7 +91,7 @@ RUN ck benchmark program:image-classification-tflite \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 # Benchmark the accuracy of the non-quantized MobileNet model.
 RUN ck benchmark program:image-classification-tflite \
---repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=500 \
 --dep_add_tags.weights=mlperf,image-classification,mobilenet,non-quantized,tflite \
 --record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-mobilenet-non-quantized-tflite-accuracy \
 --tags=mlperf,image-classification,mobilenet,non-quantized,tflite,accuracy \
@@ -106,7 +106,7 @@ RUN ck benchmark program:image-classification-tflite \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 # Benchmark the accuracy of the quantized MobileNet model.
 RUN ck benchmark program:image-classification-tflite \
---repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=500 \
 --dep_add_tags.weights=mlperf,image-classification,mobilenet,quantized,tflite \
 --record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-mobilenet-quantized-tflite-accuracy \
 --tags=mlperf,image-classification,mobilenet,quantized,tflite,accuracy \
@@ -126,7 +126,7 @@ RUN ck benchmark program:image-classification-tflite \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 # Benchmark the accuracy of the ResNet model with the ArgMax operator.
 RUN ck benchmark program:image-classification-tflite \
---repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=500 \
 --dep_add_tags.weights=mlperf,image-classification,resnet,with-argmax,tflite \
 --record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-resnet-with-argmax-tflite-accuracy \
 --tags=mlperf,image-classification,resnet,with-argmax,tflite,accuracy \
@@ -141,7 +141,7 @@ RUN ck benchmark program:image-classification-tflite \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 # Benchmark the accuracy of the ResNet model without the ArgMax operator.
 RUN ck benchmark program:image-classification-tflite \
---repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=500 \
 --dep_add_tags.weights=mlperf,image-classification,resnet,no-argmax,tflite \
 --record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-resnet-no-argmax-tflite-accuracy \
 --tags=mlperf,image-classification,resnet,no-argmax,tflite,accuracy \
