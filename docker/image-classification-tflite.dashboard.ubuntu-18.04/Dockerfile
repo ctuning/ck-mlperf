@@ -12,17 +12,16 @@ SHELL ["/bin/bash", "-c"]
 # CK needs: git, wget, zip.
 # TF needs: curl.
 # Running the dashboard in the background needs: daemonize.
-RUN apt update -y \
- && apt install -y apt-utils \
- && apt upgrade -y \
- && apt install -y \
-        git wget zip libz-dev curl vim \
-        daemonize \
-        python3 python3-pip \
+RUN apt update -y\
+ && apt install -y apt-utils\
+ && apt upgrade -y\
+ && apt install -y\
+ git wget zip libz-dev\
+ curl\
+ vim\
+ daemonize\
+ python3 python3-pip\
  && apt clean
-
-# Upgrade pip.
-RUN python3 -m pip install --upgrade pip
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -52,16 +51,22 @@ RUN ck pull repo:ck-mlperf
 # Use generic Linux settings with dummy frequency setting scripts.
 RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
 
-# Install Python dependencies.
-RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
+# Detect Python.
 RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 
+# Detect C/C++ compiler (gcc).
+RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+
+# Install the latest Python package installer (pip).
+RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --upgrade --user
+# Install Python dependencies.
 RUN ck install package --tags=lib,python-package,numpy
 RUN ck install package --tags=lib,python-package,scipy --force_version=1.2.1
 RUN ck install package --tags=lib,python-package,pillow
+# Install pandas for dashboard.
+RUN ${CK_PYTHON} -m pip install pandas --user
 
-# Install C/C++ dependencies.
-RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+# Install TFLite.
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
@@ -74,18 +79,21 @@ RUN ck install package --tags=dataset,imagenet,val,preprocessed
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-zenodo
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-google
 
+# Create a repository for benchmarking results.
+RUN ck create repo:mlperf-mobilenets --quiet
+
 # Benchmark the performance of the non-quantized MobileNet model.
 RUN ck benchmark program:image-classification-tflite \
 --repetitions=10 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=2 \
 --dep_add_tags.weights=mlperf,image-classification,mobilenet,non-quantized,tflite \
---record --record_repo=local --record_uoa=mlperf-image-classification-mobilenet-non-quantized-tflite-performance \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-mobilenet-non-quantized-tflite-performance \
 --tags=mlperf,image-classification,mobilenet,non-quantized,tflite,performance \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 # Benchmark the accuracy of the non-quantized MobileNet model.
 RUN ck benchmark program:image-classification-tflite \
---repetitions=1  --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=500 \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
 --dep_add_tags.weights=mlperf,image-classification,mobilenet,non-quantized,tflite \
---record --record_repo=local --record_uoa=mlperf-image-classification-mobilenet-non-quantized-tflite-accuracy \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-mobilenet-non-quantized-tflite-accuracy \
 --tags=mlperf,image-classification,mobilenet,non-quantized,tflite,accuracy \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 
@@ -93,14 +101,14 @@ RUN ck benchmark program:image-classification-tflite \
 RUN ck benchmark program:image-classification-tflite \
 --repetitions=10 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=2 \
 --dep_add_tags.weights=mlperf,image-classification,mobilenet,quantized,tflite \
---record --record_repo=local --record_uoa=mlperf-image-classification-mobilenet-quantized-tflite-performance \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-mobilenet-quantized-tflite-performance \
 --tags=mlperf,image-classification,mobilenet,quantized,tflite,performance \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 # Benchmark the accuracy of the quantized MobileNet model.
 RUN ck benchmark program:image-classification-tflite \
---repetitions=1  --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=500 \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
 --dep_add_tags.weights=mlperf,image-classification,mobilenet,quantized,tflite \
---record --record_repo=local --record_uoa=mlperf-image-classification-mobilenet-quantized-tflite-accuracy \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-mobilenet-quantized-tflite-accuracy \
 --tags=mlperf,image-classification,mobilenet,quantized,tflite,accuracy \
 --skip_print_timers --skip_stat_analysis --process_multi_keys
 
@@ -109,18 +117,35 @@ RUN ck benchmark program:image-classification-tflite \
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,with-argmax
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,no-argmax
 
-#
-# TODO: benchmark the performance and accuracy of the ResNet TFLite models.
-#
+# Benchmark the performance of the ResNet model with the ArgMax operator.
+RUN ck benchmark program:image-classification-tflite \
+--repetitions=10 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=2 \
+--dep_add_tags.weights=mlperf,image-classification,resnet,with-argmax,tflite \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-resnet-with-argmax-tflite-performance \
+--tags=mlperf,image-classification,resnet,with-argmax,tflite,performance \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
+# Benchmark the accuracy of the ResNet model with the ArgMax operator.
+RUN ck benchmark program:image-classification-tflite \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
+--dep_add_tags.weights=mlperf,image-classification,resnet,with-argmax,tflite \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-resnet-with-argmax-tflite-accuracy \
+--tags=mlperf,image-classification,resnet,with-argmax,tflite,accuracy \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
 
-# Compile the Image Classification TFLite program.
-RUN ck compile program:image-classification-tflite
-
-# Reduce the image size by removing the TF source.
-#RUN rm -rf `ck locate env --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1`/src
-
-# Install pandas for dashboard.
-RUN ${CK_PYTHON} -m pip install pandas --user
+# Benchmark the performance of the ResNet model without the ArgMax operator.
+RUN ck benchmark program:image-classification-tflite \
+--repetitions=10 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=2 \
+--dep_add_tags.weights=mlperf,image-classification,resnet,no-argmax,tflite \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-resnet-no-argmax-tflite-performance \
+--tags=mlperf,image-classification,resnet,no-argmax,tflite,performance \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
+# Benchmark the accuracy of the ResNet model without the ArgMax operator.
+RUN ck benchmark program:image-classification-tflite \
+--repetitions=1 --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=5 \
+--dep_add_tags.weights=mlperf,image-classification,resnet,no-argmax,tflite \
+--record --record_repo=mlperf-mobilenets --record_uoa=mlperf-image-classification-resnet-no-argmax-tflite-accuracy \
+--tags=mlperf,image-classification,resnet,no-argmax,tflite,accuracy \
+--skip_print_timers --skip_stat_analysis --process_multi_keys
 
 # This command spawns the server in the background (daemon) mode, while
 # also brings up an interactive shell in the same container.
