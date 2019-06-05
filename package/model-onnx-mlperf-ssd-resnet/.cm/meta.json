@@ -3,12 +3,13 @@
   "customize": {
     "extra_dir": "",
     "install_env": {
+      "DATASET_TYPE": "coco",
       "ML_MODEL_DATA_LAYOUT": "NCHW",
       "MODEL_IMAGE_HEIGHT": "1200", 
       "MODEL_IMAGE_WIDTH": "1200", 
       "MODEL_INPUT_LAYER_NAME": "image",
       "MODEL_NORMALIZE_DATA": "YES", 
-      "MODEL_NAME": "MLPerf SSD-Resnet34",
+      "MODEL_NAME": "MLPerf SSD-Resnet",
       "MODEL_OUTPUT_LAYER_BBOXES": "bboxes",
       "MODEL_OUTPUT_LAYER_LABELS": "labels",
       "MODEL_OUTPUT_LAYER_SCORES": "scores",
@@ -32,19 +33,20 @@
   "only_for_target_os_tags": [
     "linux"
   ],
-  "package_extra_name": " (MLPerf SSD-Resnet34)",
+  "package_extra_name": " (MLPerf SSD-ResNet)",
   "process_script": "install",
   "soft_uoa": "bcaac306e9041879",
-  "suggested_path": "model-onnx-mlperf-ssd-resnet34",
+  "suggested_path": "model-onnx-mlperf-ssd-resnet",
   "tags": [
     "mlperf",
-    "nchw",
     "object-detection",
-    "onnx",
     "model",
+    "onnx",
     "ssd",
     "ssd-resnet",
     "ssd-resnet34",
+    "non-quantized",
+    "nchw",
     "vcoco",
     "channel-stable"
   ],
