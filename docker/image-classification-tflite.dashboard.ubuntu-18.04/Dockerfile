@@ -149,7 +149,8 @@ RUN ck benchmark program:image-classification-tflite \
 
 # This command spawns the server in the background (daemon) mode, while
 # also brings up an interactive shell in the same container.
-CMD daemonize -o ${HOME}/ck_server.out -e ${HOME}/ck_server.err \
-`which ck` display dashboard --scenario=mlperf.mobilenets \
---host=0.0.0.0 --wfe_host=localhost --wfe_port=3355 && \
-/bin/bash
+CMD echo -e "Point your browser to: http://localhost:3355/?template=dashboard&scenario=mlperf.mobilenets"\
+ && daemonize -o ${HOME}/ck_server.out -e ${HOME}/ck_server.err\
+ `which ck` display dashboard --scenario=mlperf.mobilenets\
+ --host=0.0.0.0 --wfe_host=localhost --wfe_port=3355\
+ && /bin/bash
