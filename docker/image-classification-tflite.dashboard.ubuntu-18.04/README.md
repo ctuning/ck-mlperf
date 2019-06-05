@@ -22,7 +22,7 @@ $ ck build docker:image-classification-tflite.dashboard.ubuntu-18.04
 **NB:** Equivalent to:
 ```bash
 $ cd `ck find docker:image-classification-tflite.dashboard.ubuntu-18.04`
-$ docker build -f Dockerfile.dashboard -t ctuning/image-classification-tflite.dashboard.ubuntu-18.04 .
+$ docker build -f Dockerfile -t ctuning/image-classification-tflite.dashboard.ubuntu-18.04 .
 ```
 
 
