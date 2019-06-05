@@ -68,8 +68,6 @@ RUN ck install package --tags=lib,python-package,cython
 RUN ck show env --tags=python-package
 # Install Python COCO API.
 RUN ck install package --tags=tool,coco,api
-# Install TensorFlow Object Detection API.
-RUN ck install package --tags=tensorflow,model,api
 
 # Install TFLite.
 RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1

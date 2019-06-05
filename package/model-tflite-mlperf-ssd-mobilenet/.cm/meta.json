@@ -42,11 +42,6 @@
     "version": "reference"
   },
   "deps": {
-    "tensorflow-object-detection-api": {
-      "local": "yes",
-      "name": "TensorFlow Object Detection API",
-      "tags": "tensorflow,model,api"
-    }
   },
   "end_full_path_universal": "detect.tflite", 
   "only_for_host_os_tags": [], 
