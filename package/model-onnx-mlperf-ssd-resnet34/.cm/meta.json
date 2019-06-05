@@ -1,0 +1,55 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "extra_dir": "",
+    "install_env": {
+      "ML_MODEL_DATA_LAYOUT": "NCHW",
+      "MODEL_IMAGE_HEIGHT": "1200", 
+      "MODEL_IMAGE_WIDTH": "1200", 
+      "MODEL_INPUT_LAYER_NAME": "image",
+      "MODEL_NORMALIZE_DATA": "YES", 
+      "MODEL_NAME": "MLPerf SSD-Resnet34",
+      "MODEL_OUTPUT_LAYER_BBOXES": "bboxes",
+      "MODEL_OUTPUT_LAYER_LABELS": "labels",
+      "MODEL_OUTPUT_LAYER_SCORES": "scores",
+      "PACKAGE_NAME": "resnet34-ssd1200.onnx",
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
+      "PACKAGE_SKIP_LINUX_MAKE": "YES", 
+      "PACKAGE_URL": "https://zenodo.org/record/3228411/files/",
+      "PACKAGE_WGET": "YES"
+    }, 
+    "no_os_in_suggested_path": "yes", 
+    "no_ver_in_suggested_path": "yes", 
+    "skip_file_check": "yes", 
+    "version": "reference"
+  },
+  "end_full_path": {
+    "linux": "resnet34-ssd1200.onnx"
+  },
+  "only_for_host_os_tags": [
+    "linux"
+  ],
+  "only_for_target_os_tags": [
+    "linux"
+  ],
+  "package_extra_name": " (MLPerf SSD-Resnet34)",
+  "process_script": "install",
+  "soft_uoa": "bcaac306e9041879",
+  "suggested_path": "model-onnx-mlperf-ssd-resnet34",
+  "tags": [
+    "mlperf",
+    "nchw",
+    "object-detection",
+    "onnx",
+    "model",
+    "ssd",
+    "ssd-resnet",
+    "ssd-resnet34",
+    "vcoco",
+    "channel-stable"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "download-and-install-package", 
+    "module_uoa": "script"
+  }
+}
