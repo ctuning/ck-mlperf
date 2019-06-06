@@ -1,6 +1,6 @@
 # [MLPerf Inference - Image Classification - TFLite (Ubuntu 18.04)](https://hub.docker.com/r/ctuning/image-classification-tflite.ubuntu-18.04)
 
-1. [Default image](#image_default) (based [Ubuntu](https://hub.docker.com/_/ubuntu/) 18.04 latest)
+1. [Default image](#image_default) (based on [Ubuntu](https://hub.docker.com/_/ubuntu/) 18.04 latest)
     - [Download](#image_default_download) or [Build](#image_default_build)
     - [Run](#image_default_run)
         - [Image Classification (default command)](#image_default_run_default)
