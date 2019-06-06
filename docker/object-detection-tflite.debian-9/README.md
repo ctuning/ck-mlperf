@@ -1,7 +1,7 @@
-# [Debian](https://hub.docker.com/_/debian/) 9
+# [MLPerf Inference - Object Detection - TFLite (Debian 9)](https://hub.docker.com/r/ctuning/object-detection-tflite.debian-9)
 
-1. [Default image](#image_default) (9 latest)
-    - [Build](#image_default_build)
+1. [Default image](#image_default) (based on [Debian](https://hub.docker.com/_/debian/) 9 latest)
+    - [Download](#image_default_download) or [Build](#image_default_build)
     - [Run](#image_default_run)
         - [Object Detection (default command)](#image_default_run_default)
         - [Object Detection (custom command)](#image_default_run_custom)
@@ -12,6 +12,12 @@
 
 <a name="image_default"></a>
 ## Default image
+
+<a name="image_default_download"></a>
+### Download
+```
+$ docker pull ctuning/object-detection-tflite.debian-9
+```
 
 <a name="image_default_build"></a>
 ### Build
