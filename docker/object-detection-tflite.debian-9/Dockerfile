@@ -51,12 +51,13 @@ RUN ck pull repo:ck-mlperf
 # Use generic Linux settings with dummy frequency setting scripts.
 RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
 
-# Detect Python.
-RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
-
 # Detect C/C++ compiler (gcc).
 RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+# Install TFLite.
+RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
+# Detect Python.
+RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 # Install the latest Python package installer (pip).
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 # Install Python dependencies.
@@ -68,9 +69,6 @@ RUN ck install package --tags=lib,python-package,cython
 RUN ck show env --tags=python-package
 # Install Python COCO API.
 RUN ck install package --tags=tool,coco,api
-
-# Install TFLite.
-RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
 # Download the SSD-MobileNet TF/TFLite models (non-quantized and quantized).
 # https://github.com/mlperf/inference/blob/master/edge/object_detection/ssd_mobilenet/tflite/README.md#install-the-ssd-mobilenet-models-for-tflite
