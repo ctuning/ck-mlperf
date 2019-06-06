@@ -1,13 +1,13 @@
-# [Centos](https://hub.docker.com/_/centos/) 7
+# [MLPerf Inference - Image Classification - TFLite (CentOS 7)](https://hub.docker.com/r/ctuning/image-classification-tflite.centos-7)
 
-1. [Default image](#image_default) (7 latest)
-    - [Build](#image_default_build)
+1. [Default image](#image_default) (based on [Centos](https://hub.docker.com/_/centos/) 7 latest)
+    - [Download](#image_default_download) or [Build](#image_default_build)
     - [Run](#image_default_run)
         - [Image Classification (default command)](#image_default_run_default)
         - [Image Classification (custom command)](#image_default_run_custom)
         - [Bash](#image_default_run_bash)
 
-1. [Stable image](#image_stable) (7.6.1810, no updates)
+1. [Stable image](#image_stable) (based on [Centos](https://hub.docker.com/_/centos/) 7.6.1810, no updates)
     - [Build](#image_stable_build)
     - [Run](#image_stable_run)
         - [Image Classification (default command)](#image_stable_run_default)
@@ -19,6 +19,12 @@
 
 <a name="image_default"></a>
 ## Default image
+
+<a name="image_default_download"></a>
+### Download
+```
+$ docker pull ctuning/image-classification-tflite.centos-7
+```
 
 <a name="image_default_build"></a>
 ### Build
