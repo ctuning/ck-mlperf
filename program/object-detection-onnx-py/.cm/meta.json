@@ -1,0 +1,102 @@
+{
+  "backup_data_uid": "4bc385394b7a9350",
+  "data_name": "object-detection-onnx-py",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "fine_grain_timer_file": "tmp-ck-timer.json",
+        "_post_process_via_ck": {
+          "script_name": "postprocess"
+        },
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../detect.py",
+        "run_make_directories": [
+          "detections",
+          "results"
+        ],
+        "run_output_files": [
+          "detections",
+          "tmp-ck-timer.json"
+        ]
+      }
+    }
+  },
+  "run_deps": {
+    "dataset": {
+      "local": "yes",
+      "name": "Preprocessed images",
+      "sort": 20,
+      "tags": "dataset,object-detection,preprocessed"
+    },
+    "lib-python-matplotlib": {
+      "local": "yes",
+      "name": "Python Matplotlib library",
+      "sort": 45,
+      "tags": "lib,python-package,matplotlib"
+    },
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 60,
+      "tags": "lib,python-package,numpy"
+    },
+    "lib-python-pillow": {
+      "local": "yes",
+      "name": "Python Pillow library",
+      "sort": 50,
+      "tags": "lib,python-package,pillow"
+    },
+    "lib-python-onnx": {
+      "local": "yes",
+      "name": "Python ONNX library",
+      "sort": 70,
+      "tags": "lib,python-package,onnx"
+    },
+    "lib-python-onnxruntime": {
+      "local": "yes",
+      "name": "Python ONNX runtime",
+      "sort": 80,
+      "tags": "lib,python-package,onnxruntime"
+    },
+    "python": {
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 5,
+      "tags": "compiler,python"
+    },
+    "tool-coco": {
+      "local": "yes",
+      "name": "Python API for COCO",
+      "sort": 40,
+      "tags": "tool,coco"
+    },
+    "weights": {
+      "local": "yes",
+      "name": "TensorFlow Object Detection model",
+      "sort": 30,
+      "tags": "model,object-detection,onnx"
+    }
+  },
+  "run_vars": {
+    "CK_TIMER_FILE": "tmp-ck-timer.json",
+    "CK_PREPROCESSED_OUT_DIR": "preprocessed",
+    "CK_DETECTIONS_OUT_DIR": "detections",
+    "CK_RESULTS_OUT_DIR": "results",
+    "CK_ANNOTATIONS_OUT_DIR": "annotations",
+    "CK_BATCH_COUNT": 1,
+    "CK_BATCH_SIZE": 1,
+    "CK_SKIP_IMAGES": 0,
+    "CK_SILENT_MODE": 0
+  },
+  "tags": [
+    "object-detection",
+    "tf",
+    "lang-python"
+  ],
+  "template": "yes",
+  "template_type": "Object Detection via TensorFlow (Python)"
+}

@@ -6,6 +6,7 @@
       "DATASET_TYPE": "coco",
       "ML_MODEL_DATA_LAYOUT": "NCHW",
       "MODEL_IMAGE_HEIGHT": "1200", 
+      "MODEL_CLASSES_LABELS": "flatlabels.txt",
       "MODEL_IMAGE_WIDTH": "1200", 
       "MODEL_INPUT_LAYER_NAME": "image",
       "MODEL_NORMALIZE_DATA": "YES", 
