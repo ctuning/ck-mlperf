@@ -103,6 +103,14 @@ def compare_experiments_object_detection(frame_predictions):
         any_mismatched_probabilities = False
         any_mismatched_bbox = False
         for (fpa, fpb) in zip(fp0['detections'], fp1['detections']):
+            fpa_x1 = fpa['bbox'][0]
+            fpa_y1 = fpa['bbox'][1]
+            fpa_x2 = fpa['bbox'][2]
+            fpa_y2 = fpa['bbox'][3]
+            fpb_x1 = fpb['bbox'][0]
+            fpb_y1 = fpb['bbox'][1]
+            fpb_x2 = fpb['bbox'][2]
+            fpb_y2 = fpb['bbox'][3]
             # Compare classes.
             if fpa['class'] != fpb['class']:
                 ck.out( '- mismatched classes at index {}: [{}] != [{}]'.format(index, fpa['class'], fpb['class']) )
@@ -116,10 +124,10 @@ def compare_experiments_object_detection(frame_predictions):
                 any_mismatched_probabilities = True
             if delta > max_delta_score: max_delta_score = delta
             # Compare coordinates.
-            delta_x1 = abs(fpa['bbox'][0] - fpb['bbox'][0])
-            delta_y1 = abs(fpa['bbox'][1] - fpb['bbox'][1])
-            delta_x2 = abs(fpa['bbox'][2] - fpb['bbox'][2])
-            delta_y2 = abs(fpa['bbox'][3] - fpb['bbox'][3])
+            delta_x1 = abs(fpa_x1 - fpb_x1)
+            delta_y1 = abs(fpa_y1 - fpb_y1)
+            delta_x2 = abs(fpa_x2 - fpb_x2)
+            delta_y2 = abs(fpa_y2 - fpb_y2)
             if delta_x1 > epsilon_bbox[0] or delta_y1 > epsilon_bbox[1] or delta_x2 > epsilon_bbox[2] or delta_y2 > epsilon_bbox[3]:
                 ck.out( '- mismatched bbox at index {}: [{}] != [{}]'.format(index, fpa['bbox'], fpb['bbox']) )
                 any_mismatched_bbox = True
