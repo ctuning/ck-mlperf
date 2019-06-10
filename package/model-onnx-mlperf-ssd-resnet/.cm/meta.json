@@ -3,10 +3,10 @@
   "customize": {
     "extra_dir": "",
     "install_env": {
-      "DATASET_TYPE": "coco",
       "ML_MODEL_DATA_LAYOUT": "NCHW",
       "MODEL_IMAGE_HEIGHT": "1200", 
       "MODEL_CLASSES_LABELS": "flatlabels.txt",
+      "MODEL_DATASET_TYPE": "coco",
       "MODEL_IMAGE_WIDTH": "1200", 
       "MODEL_INPUT_LAYER_NAME": "image",
       "MODEL_NORMALIZE_DATA": "YES", 
@@ -17,7 +17,7 @@
       "PACKAGE_NAME": "resnet34-ssd1200.onnx",
       "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
       "PACKAGE_SKIP_LINUX_MAKE": "YES", 
-      "PACKAGE_URL": "https://zenodo.org/record/3228411/files/",
+      "PACKAGE_URL": "https://zenodo.org/record/3228411/files",
       "PACKAGE_WGET": "YES"
     }, 
     "no_os_in_suggested_path": "yes", 

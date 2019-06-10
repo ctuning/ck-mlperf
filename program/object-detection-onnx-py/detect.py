@@ -51,7 +51,8 @@ MODEL_MEAN_VALUE = np.array([0, 0, 0], dtype=np.float32)  # to be populated
 ## Input image properties:
 #
 IMAGE_DIR = os.getenv('CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_DIR')
-IMAGE_LIST_FILE = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_SUBSET_FOF'))
+IMAGE_LIST_FILE_NAME = os.getenv('CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_SUBSET_FOF')
+IMAGE_LIST_FILE = os.path.join(IMAGE_DIR, IMAGE_LIST_FILE_NAME)
 
 
 DATASET_TYPE = os.getenv("CK_ENV_DATASET_TYPE")
@@ -81,35 +82,6 @@ RESULTS_DIR = os.getenv('CK_RESULTS_DIR')
 ## Writing the results out:
 #
 FULL_REPORT = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
-
-# def make_tf_config():
-#  mem_percent = float(os.getenv('CK_TF_GPU_MEMORY_PERCENT', 33))
-#  num_processors = int(os.getenv('CK_TF_CPU_NUM_OF_PROCESSORS', 0))
-#
-#  config = tf.ConfigProto()
-#  config.gpu_options.allow_growth = True
-#  config.gpu_options.allocator_type = 'BFC'
-#  config.gpu_options.per_process_gpu_memory_fraction = mem_percent / 100.0
-#  if num_processors > 0:
-#    config.device_count["CPU"] = num_processors
-#  return config
-
-
-def load_pil_image_into_numpy_array(image):
-    # Check if not RGB and convert to RGB
-    if image.mode != 'RGB':
-        image = image.convert('RGB')
-
-    # Conver to NumPy array
-    img_data = np.array(image.getdata())
-    img_data = img_data.astype(np.uint8)
-
-    # Make batch from single image
-    (im_width, im_height) = image.size
-    batch_shape = (1, 3, im_height, im_width)
-    batch_data = img_data.reshape(batch_shape)
-    return batch_data
-
 
 def load_labels(labels_filepath):
     my_labels = []
@@ -149,63 +121,42 @@ def load_preprocessed_file(image_file):
         # print(nchw_data.shape)
         return nchw_data
 
-
-def save_detection_txt(image_file, image_size, output_dict, category_index):
-    (im_width, im_height) = image_size
-    file_name = os.path.splitext(image_file)[0]
-    res_file = os.path.join(DETECTIONS_OUT_DIR, file_name) + '.txt'
-    with open(res_file, 'w') as f:
-        f.write('{:d} {:d}\n'.format(im_width, im_height))
-        for i in range(output_dict['num_detections']):
-            class_id = output_dict['detection_classes'][i]
-            if 'display_name' in category_index[class_id]:
-                class_name = category_index[class_id]['display_name']
-            else:
-                class_name = category_index[class_id]['name']
-            y1, x1, y2, x2 = output_dict['detection_boxes'][i]
-            score = output_dict['detection_scores'][i]
-            f.write('{:.2f} {:.2f} {:.2f} {:.2f} {:.3f} {:d} {}\n' \
-                    .format(x1 * im_width, y1 * im_height, x2 * im_width, y2 * im_height, score, class_id, class_name))
-
-
-# def save_detection_img(image_file, image_np, output_dict, category_index):
-#  if not SAVE_IMAGES: return
-#
-#  vis_util.visualize_boxes_and_labels_on_image_array(
-#      image_np,
-#      output_dict['detection_boxes'],
-#      output_dict['detection_classes'],
-#      output_dict['detection_scores'],
-#      category_index,
-#      use_normalized_coordinates=True,
-#      line_thickness=2)
-#  image = PIL.Image.fromarray(image_np)
-#  image.save(os.path.join(IMAGES_OUT_DIR, image_file))
-
-
 def detect():
     global INPUT_LAYER_NAME
     OPENME = {}
-
-    #  # Prepare TF config options
-    #  tf_config = make_tf_config()
-
-    #  # Prepare directories
-    #  ck_utils.prepare_dir(RESULTS_OUT_DIR)
-    #  ck_utils.prepare_dir(ANNOTATIONS_OUT_DIR)
-    #  ck_utils.prepare_dir(IMAGES_OUT_DIR)
-    #  ck_utils.prepare_dir(DETECTIONS_OUT_DIR)
-
-    # Load processing image filenames
 
     setup_time_begin = time.time()
 
     # Load preprocessed image filenames:
     with open(IMAGE_LIST_FILE, 'r') as f:
         image_list = [s.strip() for s in f]
+    
+    images_total_count = len(image_list)
+    first_index = SKIP_IMAGES
+    last_index = BATCH_COUNT * BATCH_SIZE + first_index
+
+    if first_index > images_total_count or last_index > images_total_count:
+        print('********************************************')
+        print('')
+        print('DATASET SIZE EXCEEDED !!!')
+        print('Dataset size  : {}'.format(images_total_count))
+        print('CK_SKIP_IMAGES: {}'.format(SKIP_IMAGES))
+        print('CK_BATCH_COUNT: {}'.format(BATCH_COUNT))
+        print('CK_BATCH_SIZE : {}'.format(BATCH_SIZE))
+        print('')
+        print('********************************************')
+
+    image_list = image_list[SKIP_IMAGES: BATCH_COUNT * BATCH_SIZE + SKIP_IMAGES]
+
+    # Local list of processed files
+    with open(IMAGE_LIST_FILE_NAME, 'w') as f:
+        for line in image_list:
+            f.write('{}\n'.format(line))
 
     # Load the ONNX model from file
-    sess = rt.InferenceSession(MODEL_PATH)
+    sess_options = rt.SessionOptions()
+    # sess_options.session_log_verbosity_level = 0
+    sess = rt.InferenceSession(MODEL_PATH,sess_options)
 
     input_layer_names = [x.name for x in sess.get_inputs()]     # FIXME: check that INPUT_LAYER_NAME belongs to this list
     INPUT_LAYER_NAME = INPUT_LAYER_NAME or input_layer_names[0]
@@ -263,7 +214,9 @@ def detect():
 
         # Detect batch
         begin_time = time.time()
-        batch_results = sess.run(['bboxes', 'labels', 'scores'], {INPUT_LAYER_NAME: batch_data})
+        run_options = rt.RunOptions()
+        # run_options.run_log_verbosity_level = 0
+        batch_results = sess.run(['bboxes', 'labels', 'scores'], {INPUT_LAYER_NAME: batch_data}, run_options)
         detection_time = time.time() - begin_time
         if FULL_REPORT:
             print("Batch classified in %fs" % detection_time)
@@ -276,9 +229,9 @@ def detect():
         # Process results
         # res_name = file.with.some.name.ext -> file.with.some.name.txt
         res_name = ".".join(file_name.split(".")[:-1]) + ".txt"
-        res_file = os.path.join(RESULTS_OUT_DIR, res_name)
+        res_file = os.path.join(DETECTIONS_OUT_DIR, res_name)
         with open(res_file, 'w') as f:
-            f.write('{} {}\n'.format(width, height))
+            f.write('{:d} {:d}\n'.format(int(width), int(height)))
             for i in range(len(batch_results[2])):
                 score = batch_results[2][0][i]
                 if score > 0.5:

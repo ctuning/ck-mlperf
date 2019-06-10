@@ -10,8 +10,10 @@
       "ignore_return_code": "no",
       "run_time": {
         "fine_grain_timer_file": "tmp-ck-timer.json",
-        "_post_process_via_ck": {
-          "script_name": "postprocess"
+        "post_process_via_ck": {
+          "data_uoa":       "24c98b0cee248d93",
+          "module_uoa":     "script",
+          "script_name":    "iniless_postprocess"
         },
         "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../detect.py",
         "run_make_directories": [
