@@ -10,18 +10,9 @@
 import os
 import json
 import numpy as np
-# import shutil
 import time
-# import PIL
 import onnxruntime as rt
 
-#import ck_utils
-
-# import tensorflow as tf
-
-# from object_detection.utils import label_map_util
-# from object_detection.utils import visualization_utils as vis_util
-# from object_detection.utils import ops as utils_ops
 
 CUR_DIR = os.getcwd()
 
@@ -64,15 +55,11 @@ BATCH_SIZE = int(os.getenv('CK_BATCH_SIZE', 1))
 BATCH_COUNT = int(os.getenv('CK_BATCH_COUNT', 1))
 IMAGE_COUNT = int(os.getenv('CK_BATCH_COUNT', 1))
 SKIP_IMAGES = int(os.getenv('CK_SKIP_IMAGES', 0))
-# SAVE_IMAGES = os.getenv("CK_SAVE_IMAGES") == "YES"
-# METRIC_TYPE = (os.getenv("CK_METRIC_TYPE") or DATASET_TYPE).lower()
-# IMAGES_OUT_DIR = os.path.join(CUR_DIR, "images")
 DETECTIONS_OUT_DIR = os.path.join(CUR_DIR, os.environ['CK_DETECTIONS_OUT_DIR'])
 ANNOTATIONS_OUT_DIR = os.path.join(CUR_DIR, os.environ['CK_ANNOTATIONS_OUT_DIR'])
 RESULTS_OUT_DIR = os.path.join(CUR_DIR, os.environ['CK_RESULTS_OUT_DIR'])
 FULL_REPORT = os.getenv('CK_SILENT_MODE') == 'NO'
 SKIP_DETECTION = os.getenv('CK_SKIP_DETECTION') == 'YES'
-#IMAGE_LIST_FILE = 'processed_images_id.json'
 TIMER_JSON = 'tmp-ck-timer.json'
 ENV_JSON = 'env.json'
 
