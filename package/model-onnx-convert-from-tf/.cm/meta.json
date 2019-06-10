@@ -52,10 +52,11 @@
       "local": "yes",
       "name": "Original TensorFlow model",
       "sort": 100,
-      "tags": "model,image-classification,tf",
+      "tags": "model,tf",
       "update_tags_if_env" : {
-        "mlperf,mobilenet,non-quantized":  [ { "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224" } ],
-        "mlperf,resnet":                   [ { "ML_MODEL_TO_CONVERT": "resnet50_v1" } ]
+        "object-detection,mlperf,ssd-mobilenet":                [ { "ML_MODEL_TO_CONVERT": "ssd-mobilenet" } ],
+        "image-classification,mlperf,mobilenet,non-quantized":  [ { "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224" } ],
+        "image-classification,mlperf,resnet":                   [ { "ML_MODEL_TO_CONVERT": "resnet50_v1" } ]
       }
     }
   },
@@ -67,7 +68,6 @@
   "suggested_path": "model-onnx-converted-from-tf",
   "tags": [
     "model",
-    "image-classification",
     "onnx",
     "mlperf",
     "converted",
@@ -96,6 +96,18 @@
       },
       "extra_customize": {
         "package_name": "ONNX-from-TF model (MLPerf ResNet)"
+      }
+    },
+    "ssd-mobilenet": {
+      "extra_env": {
+        "ML_MODEL_TO_CONVERT": "ssd-mobilenet",
+        "MODEL_INPUT_LAYER_NAME": "image_tensor:0",
+        "MODEL_NORMALIZE_DATA": "0",
+        "MODEL_OUTPUT_LAYER_NAME": "num_detections:0,detection_classes:0,detection_boxes:0,detection_scores:0",
+        "PACKAGE_VERSION": "1"
+      },
+      "extra_customize": {
+        "package_name": "ONNX-from-TF model (MLPerf SSD-MobileNet)"
       }
     },
     "nchw": {
