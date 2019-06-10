@@ -2,7 +2,7 @@
   "check_exit_status": "yes",
   "customize": {
     "install_env": {
-      "ML_MODEL_DATA_LAYOUT": "NCHW",
+      "CONVERSION_OPSET": "8",
       "MODEL_IMAGE_HEIGHT": "224",
       "MODEL_IMAGE_WIDTH": "224",
       "MODEL_INPUT_LAYER_NAME": "input:0",
@@ -10,7 +10,8 @@
       "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0",
       "PACKAGE_NAME": "converted_model.onnx",
       "PACKAGE_VERSION": "1_1.0_224_2018_08_02",
-      "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224"
+      "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224",
+      "ML_MODEL_DATA_LAYOUT": "NCHW"
     },
     "package_name": "ONNX-from-TF model (MLPerf MobileNet)",
     "no_os_in_suggested_path": "yes",
@@ -100,11 +101,21 @@
     },
     "ssd-mobilenet": {
       "extra_env": {
+        "CONVERSION_OPSET": "10",
         "ML_MODEL_TO_CONVERT": "ssd-mobilenet",
         "MODEL_INPUT_LAYER_NAME": "image_tensor:0",
-        "MODEL_NORMALIZE_DATA": "0",
+        "MODEL_NAME": "MLPerf SSD-MobileNet",
+        "MODEL_NORMALIZE_DATA": "YES",
         "MODEL_OUTPUT_LAYER_NAME": "num_detections:0,detection_classes:0,detection_boxes:0,detection_scores:0",
-        "PACKAGE_VERSION": "1"
+        "ML_MODEL_DATA_LAYOUT": "NHWC",
+        "PACKAGE_VERSION": "1",
+        "MODEL_DATASET_TYPE": "coco",
+        "MODEL_IMAGE_HEIGHT": "300",
+        "MODEL_IMAGE_WIDTH": "300",
+        "MODEL_OUTPUT_LAYER_BBOXES": "detection_boxes:0",
+        "MODEL_OUTPUT_LAYER_LABELS": "detection_classes:0",
+        "MODEL_OUTPUT_LAYER_SCORES": "detection_scores:0",
+        "MODEL_CLASSES_LABELS": "flatlabels.txt"
       },
       "extra_customize": {
         "package_name": "ONNX-from-TF model (MLPerf SSD-MobileNet)"
