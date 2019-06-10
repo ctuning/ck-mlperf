@@ -184,7 +184,7 @@ def detect():
     for image_index in range(BATCH_COUNT):
 
         if FULL_REPORT or (image_index % 10 == 0):
-            print("\nBatch {} of {}".format(image_index, BATCH_COUNT))
+            print("\nBatch {} of {}".format(image_index + 1, BATCH_COUNT))
 
         begin_time = time.time()
         file_name, width, height = image_list[image_index].split(";")
@@ -219,9 +219,9 @@ def detect():
         res_file = os.path.join(DETECTIONS_OUT_DIR, res_name)
         with open(res_file, 'w') as f:
             f.write('{:d} {:d}\n'.format(int(width), int(height)))
-            for i in range(len(batch_results[2])):
+            for i in range(len(batch_results[2][0])):
                 score = batch_results[2][0][i]
-                if score > 0.5:
+                if score > 0.3:
                     class_num = batch_results[1][0][i] + bg_class_offset
                     class_name = labels[batch_results[1][0][i]]
                     box = batch_results[0][0][i]
@@ -262,8 +262,10 @@ def detect():
     OPENME['avg_time_ms'] = avg_detection_time * 1000
     OPENME['avg_fps'] = 1.0 / avg_detection_time if avg_detection_time > 0 else 0
 
+    run_time_state = {"run_time_state": OPENME}
+
     with open(TIMER_JSON, 'w') as o:
-        json.dump(OPENME, o, indent=2, sort_keys=True)
+        json.dump(run_time_state, o, indent=2, sort_keys=True)
 
     return
 
