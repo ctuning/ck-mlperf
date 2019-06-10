@@ -31,7 +31,6 @@ MODEL_DATA_LAYOUT = os.environ['ML_MODEL_DATA_LAYOUT']
 MODEL_IMAGE_HEIGHT = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_HEIGHT'])
 MODEL_IMAGE_WIDTH = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
 
-
 ## Image normalization:
 #
 MODEL_NORMALIZE_DATA = os.getenv("CK_ENV_ONNX_MODEL_NORMALIZE_DATA") in ('YES', 'yes', 'ON', 'on', '1')
@@ -152,8 +151,14 @@ def detect():
     output_layer_names = [x.name for x in sess.get_outputs()]    # FIXME: check that OUTPUT_LAYER_NAME belongs to this list
 
     model_input_shape = sess.get_inputs()[0].shape
+    model_input_type  = sess.get_inputs()[0].type
+    model_input_type  = np.uint8 if model_input_type == 'tensor(uint8)' else np.float32     # FIXME: there must be a more humane way!
 
-    model_classes = sess.get_outputs()[0].shape[1]
+        # a more portable way to detect the number of classes
+    for output in sess.get_outputs():
+        if output.name == OUTPUT_LAYER_LABELS:
+            model_classes = output.shape[1]
+
     labels = load_labels(LABELS_PATH)
     #bg_class_offset = model_classes-len(labels)  # 1 means the labels represent classes 1..1000 and the background class 0 has to be skipped
     bg_class_offset = 1
@@ -168,6 +173,7 @@ def detect():
     print("Output layers: {}".format(output_layer_names))
     print("Input layer name: " + INPUT_LAYER_NAME)
     print("Expected input shape: {}".format(model_input_shape))
+    print("Expected input type: {}".format(model_input_type))
     print("Output layer names: " + ", ".join([OUTPUT_LAYER_BBOXES, OUTPUT_LAYER_LABELS, OUTPUT_LAYER_SCORES]))
     print("Data normalization: {}".format(MODEL_NORMALIZE_DATA))
     print("Background/unlabelled classes to skip: {}".format(bg_class_offset))
@@ -192,7 +198,7 @@ def detect():
         width = float(width)
         height = float(height)
         img_file = os.path.join(IMAGE_DIR, file_name)
-        batch_data = load_preprocessed_file(img_file)
+        batch_data = load_preprocessed_file(img_file).astype(model_input_type)
 
         load_time = time.time() - begin_time
         total_load_time += load_time
@@ -204,7 +210,7 @@ def detect():
         begin_time = time.time()
         run_options = rt.RunOptions()
         # run_options.run_log_verbosity_level = 0
-        batch_results = sess.run(['bboxes', 'labels', 'scores'], {INPUT_LAYER_NAME: batch_data}, run_options)
+        batch_results = sess.run([OUTPUT_LAYER_BBOXES, OUTPUT_LAYER_LABELS, OUTPUT_LAYER_SCORES], {INPUT_LAYER_NAME: batch_data}, run_options)
         detection_time = time.time() - begin_time
         if FULL_REPORT:
             print("Batch classified in %fs" % detection_time)
