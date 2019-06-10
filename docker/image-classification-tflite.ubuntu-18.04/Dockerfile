@@ -11,16 +11,17 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
 # TF needs: curl.
-RUN apt update -y \
- && apt install -y apt-utils \
- && apt upgrade -y \
- && apt install -y \
-        git wget zip libz-dev curl vim \
-        python3 python3-pip \
+# Install to share with other images: cmake.
+RUN apt update -y\
+ && apt install -y apt-utils\
+ && apt upgrade -y\
+ && apt install -y\
+ git wget zip libz-dev\
+ curl\
+ cmake\
+ python3 python3-pip\
+ vim\
  && apt clean
-
-# Upgrade pip.
-RUN python3 -m pip install --upgrade pip
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -50,22 +51,19 @@ RUN ck pull repo:ck-mlperf
 # Use generic Linux settings with dummy frequency setting scripts.
 RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
 
-# Install Python dependencies.
-RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
-RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
+# Detect C/C++ compiler (gcc).
+RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+# Install TFLite.
+RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
 
+# Detect Python.
+RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
+# Install the latest Python package installer (pip).
+RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
+# Install Python dependencies.
 RUN ck install package --tags=lib,python-package,numpy
 RUN ck install package --tags=lib,python-package,scipy --force_version=1.2.1
 RUN ck install package --tags=lib,python-package,pillow
-
-# Install C/C++ dependencies.
-RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
-RUN ck install package --tags=lib,tensorflow-lite,tensorflow-static,v1.13.1
-
-# Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
-RUN ck install package --tags=dataset,imagenet,aux
-RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
-RUN ck install package --tags=dataset,imagenet,val,preprocessed
 
 # Download the MobileNet TF/TFLite models (non-quantized and quantized).
 # https://github.com/mlperf/inference/blob/master/edge/object_classification/mobilenets/tflite/README.md#install-the-mobilenet-models-for-tflite
@@ -76,10 +74,16 @@ RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobile
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,with-argmax
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,no-argmax
 
+# Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
+RUN ck install package --tags=dataset,imagenet,aux
+RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
+RUN ck install package --tags=dataset,imagenet,val,preprocessed
+
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
 
-# Run the Image Classification TFLite program with the non-quantized MobileNet model.
+# Run the Image Classification TFLite program
+# with the non-quantized MobileNet model twice.
 CMD ["ck run program:image-classification-tflite \
 --dep_add_tags.weights=mobilenet,non-quantized \
 --env.CK_BATCH_COUNT=2"]

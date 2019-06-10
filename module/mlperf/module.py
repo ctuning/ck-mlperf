@@ -79,14 +79,21 @@ def compare_experiments_image_classification(frame_predictions):
 
 
 def compare_experiments_object_detection(frame_predictions):
-    epsilon_score = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
-    max_delta_score = 0.0
+    # Probabilities.
+    epsilon_prob   = 1e-5 # 1/1000th of a percent (1e-3 * 1e-2)
+    max_delta_prob = 0.0
+    num_mismatched_probabilities = 0
+    # Bounding boxes.
     epsilon_bbox   = [1.0, 1.0, 1.0, 1.0] # 1 pixel in any direction
     max_delta_bbox = [0.0, 0.0, 0.0, 0.0]
     num_mismatched_bboxes = 0
+    # Squared distances of the centre of mass.
+    epsilon_dist   = 100.0 # 10.0 squared
+    max_delta_dist = 0.0
+    num_mismatched_distances = 0
+    # Files and classes.
     num_mismatched_files = 0
     num_mismatched_classes = 0
-    num_mismatched_probabilities = 0
 
     for file_name in sorted(frame_predictions[0]):
         ck.out( 'Checking {}...'.format(file_name) )
@@ -103,23 +110,41 @@ def compare_experiments_object_detection(frame_predictions):
         any_mismatched_probabilities = False
         any_mismatched_bbox = False
         for (fpa, fpb) in zip(fp0['detections'], fp1['detections']):
+            # Extract the coordinates.
+            fpa_x1 = fpa['bbox'][0]
+            fpa_y1 = fpa['bbox'][1]
+            fpa_x2 = fpa['bbox'][2]
+            fpa_y2 = fpa['bbox'][3]
+            fpb_x1 = fpb['bbox'][0]
+            fpb_y1 = fpb['bbox'][1]
+            fpb_x2 = fpb['bbox'][2]
+            fpb_y2 = fpb['bbox'][3]
+            # Compute the distance to the centre of mass.
+            fpa_dist = ((fpa_x2-fpa_x1)*(fpa_x2-fpa_x1) + (fpa_y2-fpa_y1)*(fpa_y2-fpa_y1))/4
+            fpb_dist = ((fpb_x2-fpb_x1)*(fpb_x2-fpb_x1) + (fpb_y2-fpb_y1)*(fpb_y2-fpb_y1))/4
+            # Compare the distances.
+            delta_dist = abs(fpa_dist - fpb_dist)
+            if delta_dist > epsilon_dist:
+                ck.out( '- mismatched distances at index {}: [{}] != [{}]'.format(index, fpa_dist, fpb_dist) )
+                num_mismatched_distances += 1
+            if delta_dist > max_delta_dist: max_delta_dist = delta_dist
             # Compare classes.
             if fpa['class'] != fpb['class']:
                 ck.out( '- mismatched classes at index {}: [{}] != [{}]'.format(index, fpa['class'], fpb['class']) )
                 num_mismatched_classes += 1
                 any_mismatched_classes = True
             # Compare probabilities.
-            delta = abs(fpa['prob'] - fpb['prob'])
-            if delta > epsilon_score:
-                ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fpa['prob'], fpb['prob'], delta, epsilon_score) )
+            delta_prob = abs(fpa['prob'] - fpb['prob'])
+            if delta_prob > epsilon_prob:
+                ck.out( '- mismatched probabilities at index {}: | {:.5f} - {:.5f} | = {:.5f} > {:.5f}'.format(index, fpa['prob'], fpb['prob'], delta_prob, epsilon_prob) )
                 num_mismatched_probabilities += 1
                 any_mismatched_probabilities = True
-            if delta > max_delta_score: max_delta_score = delta
+            if delta_prob > max_delta_prob: max_delta_prob = delta_prob
             # Compare coordinates.
-            delta_x1 = abs(fpa['bbox'][0] - fpb['bbox'][0])
-            delta_y1 = abs(fpa['bbox'][1] - fpb['bbox'][1])
-            delta_x2 = abs(fpa['bbox'][2] - fpb['bbox'][2])
-            delta_y2 = abs(fpa['bbox'][3] - fpb['bbox'][3])
+            delta_x1 = abs(fpa_x1 - fpb_x1)
+            delta_y1 = abs(fpa_y1 - fpb_y1)
+            delta_x2 = abs(fpa_x2 - fpb_x2)
+            delta_y2 = abs(fpa_y2 - fpb_y2)
             if delta_x1 > epsilon_bbox[0] or delta_y1 > epsilon_bbox[1] or delta_x2 > epsilon_bbox[2] or delta_y2 > epsilon_bbox[3]:
                 ck.out( '- mismatched bbox at index {}: [{}] != [{}]'.format(index, fpa['bbox'], fpb['bbox']) )
                 any_mismatched_bbox = True
@@ -134,12 +159,15 @@ def compare_experiments_object_detection(frame_predictions):
             num_mismatched_files +=1
 
     rdict = { 'return':0,
-              'epsilon_score':epsilon_score,
-              'max_delta_score':max_delta_score,
+              'epsilon_prob':epsilon_prob,
+              'max_delta_prob':max_delta_prob,
               'epsilon_bbox':epsilon_bbox,
               'max_delta_bbox':max_delta_bbox,
+              'epsilon_dist':epsilon_dist,
+              'max_delta_dist':max_delta_dist,
               'num_mismatched_files':num_mismatched_files,
               'num_mismatched_classes':num_mismatched_classes,
+              'num_mismatched_distances':num_mismatched_distances,
               'num_mismatched_probabilities':num_mismatched_probabilities
     }
 
