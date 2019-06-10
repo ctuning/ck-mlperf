@@ -23,7 +23,7 @@ $ ck install package --tags=model,object-detection,onnx
 
 ### Datasets
 ```bash
-$ ck install package --tags=dataset,object-detection,preprocessed
+$ ck install package --tags=dataset,object-detection,preprocessed,side.1200
 ```
 
 ## Running

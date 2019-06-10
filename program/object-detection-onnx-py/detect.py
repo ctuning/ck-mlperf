@@ -55,6 +55,7 @@ BATCH_SIZE = int(os.getenv('CK_BATCH_SIZE', 1))
 BATCH_COUNT = int(os.getenv('CK_BATCH_COUNT', 1))
 IMAGE_COUNT = int(os.getenv('CK_BATCH_COUNT', 1))
 SKIP_IMAGES = int(os.getenv('CK_SKIP_IMAGES', 0))
+SCORE_THRESHOLD = float(os.getenv('CK_DETECTION_THRESHOLD', 0.3))
 DETECTIONS_OUT_DIR = os.path.join(CUR_DIR, os.environ['CK_DETECTIONS_OUT_DIR'])
 ANNOTATIONS_OUT_DIR = os.path.join(CUR_DIR, os.environ['CK_ANNOTATIONS_OUT_DIR'])
 RESULTS_OUT_DIR = os.path.join(CUR_DIR, os.environ['CK_RESULTS_OUT_DIR'])
@@ -221,7 +222,7 @@ def detect():
             f.write('{:d} {:d}\n'.format(int(width), int(height)))
             for i in range(len(batch_results[2][0])):
                 score = batch_results[2][0][i]
-                if score > 0.3:
+                if score > SCORE_THRESHOLD:
                     class_num = batch_results[1][0][i] + bg_class_offset
                     class_name = labels[batch_results[1][0][i]]
                     box = batch_results[0][0][i]

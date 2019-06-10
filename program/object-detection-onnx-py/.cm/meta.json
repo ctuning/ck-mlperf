@@ -89,6 +89,7 @@
     "CK_DETECTIONS_OUT_DIR": "detections",
     "CK_RESULTS_OUT_DIR": "results",
     "CK_ANNOTATIONS_OUT_DIR": "annotations",
+    "CK_DETECTION_THRESHOLD": 0.3,
     "CK_BATCH_COUNT": 1,
     "CK_BATCH_SIZE": 1,
     "CK_SKIP_IMAGES": 0,
