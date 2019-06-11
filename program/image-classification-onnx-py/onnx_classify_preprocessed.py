@@ -40,6 +40,7 @@ LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 #
 BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', 1))
 BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
+CPU_THREADS             = int(os.getenv('CK_HOST_CPU_NUMBER_OF_PROCESSORS',0))
 
 ## Writing the results out:
 #
@@ -118,7 +119,12 @@ def main():
     os.mkdir(RESULTS_DIR)
 
     # Load the ONNX model from file
-    sess = rt.InferenceSession(MODEL_PATH)
+    sess_options = rt.SessionOptions()
+    if CPU_THREADS > 0:
+        sess_options.enable_sequential_execution = False
+        sess_options.session_thread_pool_size = CPU_THREADS
+    sess = rt.InferenceSession(MODEL_PATH,sess_options)
+
 
     input_layer_names   = [ x.name for x in sess.get_inputs() ]     # FIXME: check that INPUT_LAYER_NAME belongs to this list
     INPUT_LAYER_NAME    = INPUT_LAYER_NAME or input_layer_names[0]

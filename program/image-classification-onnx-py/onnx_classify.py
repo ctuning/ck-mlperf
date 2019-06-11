@@ -18,6 +18,7 @@ labels_path         = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 data_layout         = os.environ['ML_MODEL_DATA_LAYOUT']
 batch_size          = int( os.environ['CK_BATCH_SIZE'] )
 batch_count         = int( os.environ['CK_BATCH_COUNT'] )
+CPU_THREADS         = int(os.getenv('CK_HOST_CPU_NUMBER_OF_PROCESSORS',0))
 
 normalize_data_bool = normalize_data in ('YES', 'yes', 'ON', 'on', '1')
 
@@ -65,7 +66,11 @@ labels = load_labels(labels_path)
 
 #print("Device: " + rt.get_device())
 
-sess = rt.InferenceSession(model_path)
+sess_options = rt.SessionOptions()
+if CPU_THREADS > 0:
+    sess_options.enable_sequential_execution = False
+    sess_options.session_thread_pool_size = CPU_THREADS
+sess = rt.InferenceSession(model_path, sess_options)
 
 input_layer_names   = [ x.name for x in sess.get_inputs() ]     # FIXME: check that input_layer_name belongs to this list
 input_layer_name    = input_layer_name or input_layer_names[0]
