@@ -30,6 +30,7 @@ OUTPUT_LAYER_SCORES = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_SCORES']
 MODEL_DATA_LAYOUT = os.environ['ML_MODEL_DATA_LAYOUT']
 MODEL_IMAGE_HEIGHT = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_HEIGHT'])
 MODEL_IMAGE_WIDTH = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
+CPU_THREADS = int(os.getenv('CK_HOST_CPU_NUMBER_OF_PROCESSORS',0))
 
 ## Image normalization:
 #
@@ -143,6 +144,9 @@ def detect():
     # Load the ONNX model from file
     sess_options = rt.SessionOptions()
     # sess_options.session_log_verbosity_level = 0
+    sess_options.enable_sequential_execution = False
+    if CPU_THREADS > 0:
+        sess_options.session_thread_pool_size = CPU_THREADS
     sess = rt.InferenceSession(MODEL_PATH,sess_options)
 
     input_layer_names = [x.name for x in sess.get_inputs()]     # FIXME: check that INPUT_LAYER_NAME belongs to this list
