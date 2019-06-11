@@ -25,6 +25,14 @@
     "skip_file_check": "yes", 
     "version": "reference"
   },
+  "deps": {
+    "lib-python-onnx": {
+      "local": "yes",
+      "name": "Python ONNX library",
+      "sort": 10,
+      "tags": "lib,python-package,onnx"
+    }
+  },
   "end_full_path": {
     "linux": "resnet34-ssd1200.onnx"
   },
