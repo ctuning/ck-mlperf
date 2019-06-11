@@ -188,6 +188,16 @@ def detect():
     first_detection_time = 0
     images_loaded = 0
 
+    ## Due to error in ONNX Resnet34 model
+    class_map = [   
+                     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 13, 14, 15, \
+                    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, \
+                    34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49, \
+                    50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, \
+                    65, 67, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 84, \
+                    85, 86, 87, 88, 89
+                ]
+
     for image_index in range(BATCH_COUNT):
 
         if FULL_REPORT or (image_index % 10 == 0):
@@ -230,7 +240,8 @@ def detect():
                 score = batch_results[2][0][i]
                 if score > SCORE_THRESHOLD:
                     class_num = batch_results[1][0][i] + bg_class_offset
-                    class_name = labels[batch_results[1][0][i]]
+                    class_num = class_map[batch_results[1][0][i]]
+                    class_name = labels[class_num - 1]
                     box = batch_results[0][0][i]
                     x1 = box[0] * width
                     y1 = box[1] * height
