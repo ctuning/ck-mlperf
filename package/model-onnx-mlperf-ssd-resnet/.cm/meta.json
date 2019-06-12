@@ -45,7 +45,7 @@
   "package_extra_name": " (MLPerf SSD-ResNet)",
   "process_script": "install",
   "soft_uoa": "bcaac306e9041879",
-  "suggested_path": "model-onnx-mlperf-ssd-resnet",
+  "suggested_path": "model-onnx-mlperf-ssd-resnet-downloaded",
   "tags": [
     "mlperf",
     "object-detection",
@@ -57,7 +57,8 @@
     "non-quantized",
     "nchw",
     "vcoco",
-    "channel-stable"
+    "channel-stable",
+    "downloaded"
   ],
   "use_scripts_from_another_entry": {
     "data_uoa": "download-and-install-package", 
