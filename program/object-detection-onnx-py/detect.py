@@ -242,7 +242,8 @@ def detect():
             for i in range(len(batch_results[2][0])):
                 score = batch_results[2][0][i]
                 if score > SCORE_THRESHOLD:
-                    class_num = batch_results[1][0][i] + bg_class_offset
+#                    class_num = batch_results[1][0][i] + bg_class_offset
+#                    class_name = labels[batch_results[1][0][i]]
                     class_num = class_map[batch_results[1][0][i]]
                     class_name = labels[class_num - 1]
                     box = batch_results[0][0][i]
