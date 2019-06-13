@@ -40,8 +40,14 @@ def ck_postprocess(i):
 
   # get some parameters directly from the deps' environment:
   #
-  MODEL_ROOT            = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
-  LABELMAP_FILE         = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
+  MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
+  if MODEL_ROOT:
+    LABELMAP_FILE       = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
+    MODEL_DATASET_TYPE  = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
+  else:
+    MODEL_ROOT          = dep_env('weights', "CK_ENV_ONNX_MODEL_ROOT")
+    LABELMAP_FILE       = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_ONNX_MODEL_CLASSES_LABELS') or "")
+    MODEL_DATASET_TYPE  = dep_env('weights', "CK_ENV_ONNX_MODEL_DATASET_TYPE")
 
   # Annotations can be a directory or a single file, depending on dataset type:
   ANNOTATIONS_PATH      = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
@@ -53,9 +59,6 @@ def ck_postprocess(i):
   DETECTIONS_OUT_DIR    = my_env('CK_DETECTIONS_OUT_DIR')
   RESULTS_OUT_DIR       = my_env('CK_RESULTS_OUT_DIR')
   ANNOTATIONS_OUT_DIR   = my_env('CK_ANNOTATIONS_OUT_DIR')
-
-  # model properties:
-  MODEL_DATASET_TYPE    = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
 
   DATASET_TYPE          = dep_env('dataset', "CK_ENV_DATASET_TYPE")
   METRIC_TYPE           = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
@@ -138,7 +141,8 @@ def ck_postprocess(i):
   evaluate(processed_image_ids, categories_list)
 
   OPENME['frame_predictions'] = converter_results.convert_to_frame_predictions(DETECTIONS_OUT_DIR)
- 
+  OPENME['execution_time'] = OPENME['run_time_state']['test_time_s'] + OPENME['run_time_state']['setup_time_s']
+
   # Store benchmark results
   with open(TIMER_JSON, 'w') as o:
     json.dump(OPENME, o, indent=2, sort_keys=True)

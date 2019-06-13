@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "15d6260d07c347ba",
+  "backup_module_uid": "1dc07ee0f4742028",
+  "backup_module_uoa": "package",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2019-06-10T18:56:20.080677",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "model-onnx-mlperf-ssd-mobilenet"
+}
