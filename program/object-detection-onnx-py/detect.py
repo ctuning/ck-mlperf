@@ -90,7 +90,6 @@ def load_labels(labels_filepath):
 
 
 def load_preprocessed_file(image_file):
-    batch_data = []
     img = np.fromfile(image_file, np.uint8)
     img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
     img = img.astype(np.float32)
