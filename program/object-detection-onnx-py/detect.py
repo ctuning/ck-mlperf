@@ -39,9 +39,14 @@ else:
 
 ## Image normalization:
 #
+# special normalization mode used in https://github.com/mlperf/inference/blob/master/cloud/image_classification/python/dataset.py
+#
+GUENTHER_NORM = os.getenv("CK_GUENTHER_NORM") in ('YES', 'yes', 'ON', 'on', '1')
+# or
+#
 MODEL_NORMALIZE_DATA = os.getenv("CK_ENV_ONNX_MODEL_NORMALIZE_DATA") in ('YES', 'yes', 'ON', 'on', '1')
-SUBTRACT_MEAN = os.getenv("CK_SUBTRACT_MEAN") == "YES"
-USE_MODEL_MEAN = os.getenv("CK_USE_MODEL_MEAN") == "YES"
+SUBTRACT_MEAN = os.getenv("CK_SUBTRACT_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
+USE_MODEL_MEAN = os.getenv("CK_USE_MODEL_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
 MODEL_MEAN_VALUE = np.array([0, 0, 0], dtype=np.float32)  # to be populated
 
 ## Input image properties:
@@ -90,16 +95,22 @@ def load_preprocessed_file(image_file):
     img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
     img = img.astype(np.float32)
 
-    # Normalize
-    if MODEL_NORMALIZE_DATA:
-        img = img/127.5 - 1.0
+    if GUENTHER_NORM and (MODEL_NAME == "MLPerf SSD-Resnet"):
+        mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+        std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+        img = img / 255. - mean
+        img = img / std
+    else:
+        # Normalize
+        if MODEL_NORMALIZE_DATA:
+            img = img/127.5 - 1.0
 
-    # Subtract mean value
-    if SUBTRACT_MEAN:
-        if USE_MODEL_MEAN:
-            img = img - MODEL_MEAN_VALUE
-        else:
-            img = img - np.mean(img)
+        # Subtract mean value
+        if SUBTRACT_MEAN:
+            if USE_MODEL_MEAN:
+                img = img - MODEL_MEAN_VALUE
+            else:
+                img = img - np.mean(img)
 
     # Add img to batch
     nhwc_data = img
