@@ -30,6 +30,12 @@ OUTPUT_LAYER_SCORES = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_SCORES']
 MODEL_DATA_LAYOUT = os.environ['ML_MODEL_DATA_LAYOUT']
 MODEL_IMAGE_HEIGHT = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_HEIGHT'])
 MODEL_IMAGE_WIDTH = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
+MODEL_SKIPED_CLASSES = os.getenv("CK_ENV_ONNX_MODEL_SKIPS_ORIGINAL_DATASET_CLASSES", None)
+
+if (MODEL_SKIPED_CLASSES):
+    SKIPPED_CLASSES = [int(x) for x in MODEL_SKIPED_CLASSES.split(",")]
+else:
+    SKIPPED_CLASSES = None
 
 ## Image normalization:
 #
@@ -192,14 +198,12 @@ def detect():
     images_loaded = 0
 
     ## Due to error in ONNX Resnet34 model
-    class_map = [   
-                     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 13, 14, 15, \
-                    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28, 31, 32, 33, \
-                    34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 46, 47, 48, 49, \
-                    50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, \
-                    65, 67, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 84, \
-                    85, 86, 87, 88, 89
-                ]
+    class_map = None
+    if (SKIPPED_CLASSES):
+        class_map = []
+        for i in range(len(labels) + bg_class_offset):
+            if i not in SKIPPED_CLASSES:
+                class_map.append(i)
 
     for image_index in range(BATCH_COUNT):
 
@@ -242,10 +246,11 @@ def detect():
             for i in range(len(batch_results[2][0])):
                 score = batch_results[2][0][i]
                 if score > SCORE_THRESHOLD:
-#                    class_num = batch_results[1][0][i] + bg_class_offset
-#                    class_name = labels[batch_results[1][0][i]]
-                    class_num = class_map[batch_results[1][0][i]]
-                    class_name = labels[class_num - 1]
+                    if class_map:
+                        class_num = class_map[batch_results[1][0][i]]
+                    else:
+                        class_num = batch_results[1][0][i] + bg_class_offset
+                    class_name = labels[class_num - bg_class_offset]
                     box = batch_results[0][0][i]
                     x1 = box[0] * width
                     y1 = box[1] * height
@@ -297,8 +302,6 @@ def main():
     # Print settings
     print("Model name: " + MODEL_NAME)
     print("Model file: " + MODEL_FILE)
-    # print("Model label map file: " + LABELMAP_FILE)
-    # print("Model is for dataset: " + MODEL_DATASET_TYPE)
 
     print("Dataset images: " + IMAGE_DIR)
     print("Dataset annotations: " + ANNOTATIONS_OUT_DIR)
@@ -308,16 +311,8 @@ def main():
     print('Results directory: {}'.format(RESULTS_OUT_DIR))
     print("Temporary annotations directory: " + ANNOTATIONS_OUT_DIR)
     print("Detections directory: " + DETECTIONS_OUT_DIR)
-    # print("Result images directory: " + IMAGES_OUT_DIR)
-    # print('Save result images: {}'.format(SAVE_IMAGES))
-
-    # Create category index
-    # category_index = label_map_util.create_category_index_from_labelmap(LABELMAP_FILE, use_display_name=True)
-    # categories_list = category_index.values()  # array: [{"id": 88, "name": "teddy bear"}, ...]
-    # print('Categories: {}'.format(categories_list))
 
     # Run detection if needed
-    # ck_utils.print_header('Process images')
     if SKIP_DETECTION:
         print('\nSkip detection, evaluate previous results')
     else:
