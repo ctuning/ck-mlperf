@@ -162,7 +162,9 @@ def detect():
     if CPU_THREADS > 0:
         sess_options.enable_sequential_execution = False
         sess_options.session_thread_pool_size = CPU_THREADS
+    graph_load_time_begin = time.time()
     sess = rt.InferenceSession(MODEL_PATH, sess_options)
+    graph_load_time = time.time() - graph_load_time_begin
 
     input_layer_names = [x.name for x in sess.get_inputs()]     # FIXME: check that INPUT_LAYER_NAME belongs to this list
     INPUT_LAYER_NAME = INPUT_LAYER_NAME or input_layer_names[0]
@@ -292,10 +294,10 @@ def detect():
 
     OPENME['setup_time_s'] = setup_time
     OPENME['test_time_s'] = test_time
-    OPENME['images_load_time_total_s'] = total_load_time
-    OPENME['images_load_time_avg_s'] = avg_load_time
-    OPENME['detection_time_total_s'] = total_detection_time
-    OPENME['detection_time_avg_s'] = avg_detection_time
+    OPENME['load_images_time_total_s'] = total_load_time
+    OPENME['load_images_time_avg_s'] = avg_load_time
+    OPENME['prediction_time_total_s'] = total_detection_time
+    OPENME['prediction_time_avg_s'] = avg_detection_time
     OPENME['avg_time_ms'] = avg_detection_time * 1000
     OPENME['avg_fps'] = 1.0 / avg_detection_time if avg_detection_time > 0 else 0
 

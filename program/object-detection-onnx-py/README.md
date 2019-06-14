@@ -40,8 +40,8 @@ The number of images to be processed.
 
 Default: `1`
 
-#### `CK_BATCH_COUNT`
+#### `CK_SKIP_IMAGES`
 
-The number of skiped images.
+The number of skipped images.
 
 Default: `0`
