@@ -45,15 +45,15 @@ $ ck run docker:object-detection-tflite.debian-9
 $ docker run --rm ctuning/object-detection-tflite.debian-9 \
     "ck run program:object-detection-tflite \
         --dep_add_tags.weights=ssd-mobilenet,non-quantized --env.USE_NMS=regular \
-        --dep_add_tags.dataset=coco.2017,first.50 --env.CK_BATCH_COUNT=50 \
+        --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=50 \
     "
 ...
 Summary:
 -------------------------------
-Graph loaded in 0.000000s
-All images loaded in 0.000000s
-All images detected in 0.000000s
-Average detection time: 0.000000s
+All images loaded in 0.147986s
+Average image load time: 0.002960s
+All images detected in 5.917367s
+Average detection time: 0.117556s
 mAP: 0.29672520317694373
 Recall: 0.3050474339529269
 --------------------------------
@@ -67,15 +67,15 @@ Recall: 0.3050474339529269
 $ docker run --rm ctuning/object-detection-tflite.debian-9 \
     "ck run program:object-detection-tflite \
         --dep_add_tags.weights=ssd-mobilenet,non-quantized --env.USE_NMS=fast \
-        --dep_add_tags.dataset=coco.2017,first.50 --env.CK_BATCH_COUNT=50 \
+        --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=50 \
     "
 ...
 Summary:
 -------------------------------
-Graph loaded in 0.000000s
-All images loaded in 0.000000s
-All images detected in 0.000000s
-Average detection time: 0.000000s
+All images loaded in 0.146889s
+Average image load time: 0.002938s
+All images detected in 5.868071s
+Average detection time: 0.116611s
 mAP: 0.29624782705876884
 Recall: 0.30501085304815917
 --------------------------------
@@ -91,10 +91,10 @@ $ docker run --rm ctuning/object-detection-tflite.debian-9 \
 ...
 Summary:
 -------------------------------
-Graph loaded in 0.000000s
-All images loaded in 0.000000s
-All images detected in 0.000000s
-Average detection time: 0.000000s
+All images loaded in 14.741492s
+Average image load time: 0.002948s
+All images detected in 587.250183s
+Average detection time: 0.117443s
 mAP: 0.22349680978666922
 Recall: 0.2550505369422975
 --------------------------------
@@ -110,10 +110,10 @@ $ docker run --rm ctuning/object-detection-tflite.debian-9 \
 ...
 Summary:
 -------------------------------
-Graph loaded in 0.000000s
-All images loaded in 0.000000s
-All images detected in 0.000000s
-Average detection time: 0.000000s
+All images loaded in 14.953116s
+Average image load time: 0.002991s
+All images detected in 587.7276s
+Average detection time: 0.117538s
 mAP: 0.21859688835124763
 Recall: 0.24801510024502602
 --------------------------------
