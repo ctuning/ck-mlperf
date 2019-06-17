@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "23cdc43ca7446b0b",
+  "backup_module_uid": "88eef0cd8c43b68a",
+  "backup_module_uoa": "docker",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2019-06-17T15:25:18.724184",
+    "version": [
+      "1",
+      "9",
+      "8",
+      "1"
+    ]
+  },
+  "data_name": "object-detection-tf-py.debian-9"
+}
