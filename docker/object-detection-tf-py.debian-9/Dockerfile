@@ -80,8 +80,7 @@ RUN ck install package --tags=tool,coco,api
 RUN ck install package:lib-tensorflow-1.13.1-cpu
 # Download the SSD-MobileNet TF models (non-quantized and quantized).
 RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,non-quantized
-#RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,non-quantized
-#RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,quantized,finetuned
+RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,quantized,finetuned
 
 # Download the COCO 2017 validation dataset (5,000 images) to the default path;
 RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
