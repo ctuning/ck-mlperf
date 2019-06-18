@@ -36,7 +36,7 @@ $ docker build -f Dockerfile -t ctuning/object-detection-tf-py.debian-9 .
 <a name="image_default_run_default"></a>
 #### Object Detection (default command)
 
-##### 50 images
+##### Non-quantized, 50 images
 ```bash
 $ ck run docker:object-detection-tf-py.debian-9
 ```
@@ -47,8 +47,7 @@ $ docker run --rm ctuning/object-detection-tf-py.debian-9 \
         --dep_add_tags.weights=ssd-mobilenet,non-quantized \
         --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=50 \
     "
-```
-
+...
 Summary:
 -------------------------------
 Graph loaded in 0.923238s
@@ -60,19 +59,17 @@ Recall: 0.3225293342489256
 --------------------------------
 ```
 
-
 <a name="image_default_run_custom"></a>
 #### Object Detection (custom command)
 
-##### 5000 images
+##### Non-quantized, 5000 images
 ```bash
 $ docker run --rm ctuning/object-detection-tf-py.debian-9 \
     "ck run program:object-detection-tf-py \
         --dep_add_tags.weights=ssd-mobilenet,non-quantized \
         --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=5000 \
     "
-```
-
+...
 Summary:
 -------------------------------
 Graph loaded in 0.937587s
@@ -84,8 +81,25 @@ Recall: 0.26304841188725403
 --------------------------------
 ```
 
+##### Quantized, 50 images
+```bash
+$ docker run --rm ctuning/object-detection-tf-py.debian-9 \
+    "ck run program:object-detection-tf-py \
+        --dep_add_tags.weights=ssd-mobilenet,quantized \
+        --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=50 \
+    "
+...
+```
 
-
+##### Quantized, 5000 images
+```bash
+$ docker run --rm ctuning/object-detection-tf-py.debian-9 \
+    "ck run program:object-detection-tf-py \
+        --dep_add_tags.weights=ssd-mobilenet,quantized \
+        --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=5000 \
+    "
+...
+```
 
 <a name="image_default_run_bash"></a>
 #### Bash
