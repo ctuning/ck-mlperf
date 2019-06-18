@@ -85,8 +85,7 @@ RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,qua
 # Download the COCO 2017 validation dataset (5,000 images) to the default path;
 RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
  && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
- rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
-
+'rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
 
 # Run the Object Detection TF-Python program
 # with the non-quantized SSD-MobileNet model 
