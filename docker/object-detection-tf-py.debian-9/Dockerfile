@@ -79,25 +79,17 @@ RUN ck install package --tags=tool,coco,api
 # Install TF.
 RUN ck install package:lib-tensorflow-1.13.1-cpu
 # Download the SSD-MobileNet TF models (non-quantized and quantized).
-# https://github.com/mlperf/inference/blob/master/edge/object_detection/ssd_mobilenet/tflite/README.md#install-the-ssd-mobilenet-models-for-tflite
 RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,non-quantized
 #RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,non-quantized
 #RUN ck install package --tags=model,tf,object-detection,mlperf,ssd-mobilenet,quantized,finetuned
 
 # Download the COCO 2017 validation dataset (5,000 images) to the default path;
-# preprocess all the 5000 images (as the user may want to run full evaluation);
-# remove the original images and training annotations while taking care to preserve
-# 'val2017/000000000139.jpg' used to detect COCO 2017 (ck-env:soft:dataset.coco.2017.val).
-RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full
-# && ck install package --tags=object-detection,dataset,coco.2017,preprocessed,first.50 \
-# && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
-#'mv $CK_ENV_DATASET_IMAGE_DIR/000000000139.jpg $CK_ENV_DATASET_COCO/;\
-# rm $CK_ENV_DATASET_IMAGE_DIR/*;\
-# mv $CK_ENV_DATASET_COCO/000000000139.jpg $CK_ENV_DATASET_IMAGE_DIR/;\
-# rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
+RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
+ && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
+ rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
 
 
-# Run the Object Detection TFLite program
-# with the non-quantized SSD-MobileNet model with regular non-max-suppression
+# Run the Object Detection TF-Python program
+# with the non-quantized SSD-MobileNet model 
 # on the first 50 images of the COCO 2017 validation dataset.
 CMD ["ck run program:object-detection-tf-py --env.CK_BATCH_COUNT=50 --dep_add_tags.weights=non-quantized"]

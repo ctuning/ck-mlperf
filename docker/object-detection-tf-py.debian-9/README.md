@@ -49,6 +49,18 @@ $ docker run --rm ctuning/object-detection-tf-py.debian-9 \
     "
 ```
 
+Summary:
+-------------------------------
+Graph loaded in 0.923238s
+All images loaded in 17.265170s
+All images detected in 1.988970s
+Average detection time: 0.040591s
+mAP: 0.3148934914889957
+Recall: 0.3225293342489256
+--------------------------------
+```
+
+
 <a name="image_default_run_custom"></a>
 #### Object Detection (custom command)
 
@@ -60,6 +72,20 @@ $ docker run --rm ctuning/object-detection-tf-py.debian-9 \
         --dep_add_tags.dataset=coco.2017,full --env.CK_BATCH_COUNT=5000 \
     "
 ```
+
+Summary:
+-------------------------------
+Graph loaded in 0.937587s
+All images loaded in 2006.936262s
+All images detected in 272.221948s
+Average detection time: 0.054455s
+mAP: 0.23111107753357035
+Recall: 0.26304841188725403
+--------------------------------
+```
+
+
+
 
 <a name="image_default_run_bash"></a>
 #### Bash
