@@ -70,6 +70,7 @@ def ck_postprocess(i):
   import converter_annotations
   import converter_results
 
+  ck_utils.prepare_dir(RESULTS_OUT_DIR)
 
   if METRIC_TYPE != ck_utils.COCO:
     import calc_metrics_coco_tf
