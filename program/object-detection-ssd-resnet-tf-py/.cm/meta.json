@@ -1,0 +1,100 @@
+{
+  "backup_data_uid": "00554b329f58eb46",
+  "data_name": "object-detection-ssd-resnet-tf-py",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "fine_grain_timer_file": "tmp-ck-timer.json",
+        "post_process_via_ck": {
+          "data_uoa": "24c98b0cee248d93",
+          "module_uoa": "script",
+          "script_name": "iniless_postprocess"
+        },
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../detect.py",
+        "run_make_directories": [
+          "detections",
+          "results"
+        ],
+        "run_output_files": [
+          "detections",
+          "tmp-ck-timer.json"
+        ]
+      }
+    }
+  },
+  "run_deps": {
+    "dataset": {
+      "local": "yes",
+      "name": "Preprocessed images",
+      "sort": 20,
+      "tags": "dataset,object-detection,preprocessed"
+    },
+    "lib-python-matplotlib": {
+      "local": "yes",
+      "name": "Python Matplotlib library",
+      "sort": 45,
+      "tags": "lib,python-package,matplotlib"
+    },
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 60,
+      "tags": "lib,python-package,numpy"
+    },
+    "lib-tensorflow": {
+      "local": "yes",
+      "name": "TensorFlow library",
+      "no_tags": "tensorflow_cc,vstatic,source",
+      "sort": 70,
+      "tags": "lib,tensorflow"
+    },
+    "lib-python-pillow": {
+      "local": "yes",
+      "name": "Python Pillow library",
+      "sort": 50,
+      "tags": "lib,python-package,pillow"
+    },
+    "python": {
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 5,
+      "tags": "compiler,python"
+    },
+    "tool-coco": {
+      "local": "yes",
+      "name": "Python API for COCO",
+      "sort": 40,
+      "tags": "tool,coco"
+    },
+    "weights": {
+      "local": "yes",
+      "name": "TensorFlow Object Detection model",
+      "sort": 30,
+      "tags": "model,tf,object-detection,ssd-resnet"
+    }
+  },
+  "run_vars": {
+    "CK_ANNOTATIONS_OUT_DIR": "annotations",
+    "CK_BATCH_COUNT": 1,
+    "CK_BATCH_SIZE": 1,
+    "CK_DETECTIONS_OUT_DIR": "detections",
+    "CK_DETECTION_THRESHOLD": 0.3,
+    "CK_PREPROCESSED_OUT_DIR": "preprocessed",
+    "CK_RESULTS_OUT_DIR": "results",
+    "CK_SILENT_MODE": 0,
+    "CK_SKIP_IMAGES": 0,
+    "CK_TIMER_FILE": "tmp-ck-timer.json"
+  },
+  "tags": [
+    "object-detection",
+    "tf",
+    "lang-python"
+  ],
+  "template": "yes",
+  "template_type": "Object Detection via TensorFlow (Python)"
+}

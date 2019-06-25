@@ -1,0 +1,70 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "extra_dir": "",
+    "install_env": {
+      "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "MODEL_CLASSES_LABELS": "flatlabels.txt",
+      "MODEL_DATASET_TYPE": "coco",
+      "MODEL_FILENAME": "ssd_resnet34_mAP_20.2.pb",
+      "MODEL_IMAGE_HEIGHT": "1200",
+      "MODEL_IMAGE_WIDTH": "1200",
+      "MODEL_INPUT_LAYER_NAME": "image",
+      "MODEL_NAME": "MLPerf SSD-Resnet",
+      "MODEL_NORMALIZE_DATA": "NO",
+      "MODEL_OUTPUT_LAYER_BBOXES": "detection_bboxes",
+      "MODEL_OUTPUT_LAYER_LABELS": "detection_classes",
+      "MODEL_OUTPUT_LAYER_SCORES": "detection_scores",
+      "MODEL_SKIPS_ORIGINAL_DATASET_CLASSES": "12,26,29,30,45,66,68,69,71,83",
+      "PACKAGE_NAME": "ssd_resnet34_mAP_20.2.pb",
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES",
+      "PACKAGE_SKIP_LINUX_MAKE": "YES",
+      "PACKAGE_URL": "https://zenodo.org/record/3246481/files",
+      "PACKAGE_WGET": "YES"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "skip_file_check": "yes",
+    "version": "reference"
+  },
+  "deps": {
+    "lib-tensorflow": {
+      "local": "yes",
+      "name": "TensorFlow library",
+      "no_tags": "tensorflow_cc,vstatic,source",
+      "sort": 20,
+      "tags": "lib,tensorflow"
+    }
+  },
+  "end_full_path": {
+    "linux": "ssd_resnet34_mAP_20.2.pb"
+  },
+  "only_for_host_os_tags": [
+    "linux"
+  ],
+  "only_for_target_os_tags": [
+    "linux"
+  ],
+  "package_extra_name": " (MLPerf SSD-ResNet)",
+  "process_script": "install",
+  "soft_uoa": "fea4c6b96badf21a",
+  "suggested_path": "model-tf-mlperf-ssd-resnet-downloaded",
+  "tags": [
+    "mlperf",
+    "object-detection",
+    "model",
+    "tf",
+    "ssd",
+    "ssd-resnet",
+    "ssd-resnet34",
+    "non-quantized",
+    "nhwc",
+    "vcoco",
+    "channel-stable",
+    "downloaded"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "download-and-install-package",
+    "module_uoa": "script"
+  }
+}

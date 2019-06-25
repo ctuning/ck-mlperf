@@ -1,0 +1,16 @@
+{
+  "auto_detect": "yes",
+  "customize": {
+    "check_that_exists": "yes",
+    "ck_version": 10,
+    "env_prefix": "CK_ENV_TENSORFLOW_MODEL",
+    "soft_file_universal": "*.pb"
+  },
+  "soft_name": "Tensorflow model",
+  "tags": [
+    "tensorflow",
+    "model"
+  ],
+  "template": "yes",
+  "template_type": "Tensorflow model"
+}
