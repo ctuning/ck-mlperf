@@ -45,9 +45,12 @@ GUENTHER_NORM = os.getenv("CK_GUENTHER_NORM") in ('YES', 'yes', 'ON', 'on', '1')
 # or
 #
 MODEL_NORMALIZE_DATA = os.getenv("CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA") in ('YES', 'yes', 'ON', 'on', '1')
-SUBTRACT_MEAN = os.getenv("CK_SUBTRACT_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
-USE_MODEL_MEAN = os.getenv("CK_USE_MODEL_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
-MODEL_MEAN_VALUE = np.array([0, 0, 0], dtype=np.float32)  # to be populated
+SUBTRACT_MEAN = os.getenv("CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
+MODEL_MEAN = os.getenv("CK_ENV_TENSORFLOW_MODEL_MEAN", None)
+if MODEL_MEAN:
+    MODEL_MEAN_VALUE = np.array([float(x) for x in MODEL_MEAN.split(",")], dtype=np.float32)
+
+USE_MODEL_MEAN = MODEL_MEAN != None
 
 ## Input image properties:
 #
@@ -139,9 +142,8 @@ def load_preprocessed_file(image_file):
             else:
                 img = img - np.mean(img)
 
-    # img = img[:, :, ::-1]
     # Add img to batch
-    nhwc_data = img[:,:,::-1]
+    nhwc_data = img
 
     nhwc_data = np.expand_dims(nhwc_data, axis=0)
 
@@ -276,7 +278,6 @@ def detect():
                 first_detection_time = detection_time
 
             # Process results
-            # res_name = file.with.some.name.ext -> file.with.some.name.txt
             res_name = ".".join(file_name.split(".")[:-1]) + ".txt"
             res_file = os.path.join(DETECTIONS_OUT_DIR, res_name)
             with open(res_file, 'w') as f:
