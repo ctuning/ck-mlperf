@@ -290,10 +290,10 @@ def detect():
                             class_num = int(output_dict["detection_classes"][0][i]) + bg_class_offset
                         class_name = labels[class_num - bg_class_offset]
                         box = output_dict["detection_bboxes"][0][i]
-                        x1 = box[0] * width
-                        y1 = box[1] * height
-                        x2 = box[2] * width
-                        y2 = box[3] * height
+                        x1 = box[1] * width
+                        y1 = box[0] * height
+                        x2 = box[3] * width
+                        y2 = box[2] * height
                         f.write('{:.2f} {:.2f} {:.2f} {:.2f} {:.3f} {} {}\n'.format(x1,
                                                                                     y1,
                                                                                     x2,
