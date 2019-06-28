@@ -16,10 +16,11 @@ def ck_preprocess(i):
 
     image_list_filename = dep_env('images', 'CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF')
     source_dir          = dep_env('images', 'CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
+    preprocessed_ext    = dep_env('images', 'CK_ENV_DATASET_IMAGENET_PREPROCESSED_NEW_EXTENSION')
     image_count         = int(my_env('CK_BATCH_SIZE')) * int(my_env('CK_BATCH_COUNT'))
     images_offset       = int(my_env('CK_SKIP_IMAGES') or '0')
 
-    sorted_filenames    = [filename for filename in sorted(os.listdir(source_dir)) if filename.lower().endswith('.rgb8') ]
+    sorted_filenames    = [filename for filename in sorted(os.listdir(source_dir)) if filename.lower().endswith('.' + preprocessed_ext) ]
 
     selected_filenames  = sorted_filenames[images_offset:images_offset+image_count]
 
