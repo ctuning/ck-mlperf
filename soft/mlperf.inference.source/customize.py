@@ -4,7 +4,8 @@
 # See CK LICENSE.txt for licensing details
 # See CK COPYRIGHT.txt for copyright details
 #
-# Developer: Zaborovskiy Vladislav, vladzab@yandex.ru
+# Developer(s):
+# - Anton Lokhmotov, anton@dividiti.com
 #
 
 import os
@@ -68,11 +69,12 @@ def setup(i):
     env=i['env']
     ep=cus['env_prefix']
 
-    tf_dir      = os.path.dirname(fp)
-    src_dir     = os.path.dirname(tf_dir)
-    inst_dir    = os.path.dirname(src_dir)
+    classification_and_detection_dir = os.path.dirname(fp)
+    v05_dir  = os.path.dirname(classification_and_detection_dir)
+    root_dir = os.path.dirname(v05_dir)
 
-    env[ep]         = inst_dir
-    env[ep+'_SRC']  = src_dir
+    env[ep] = root_dir
+    env[ep+'_V05'] = v05_dir
+    env[ep+'_LOADGEN'] = os.path.join(root_dir, 'loadgen')
 
     return {'return':0, 'bat':s}

@@ -3,11 +3,11 @@
   "customize": {
     "check_that_exists": "yes",
     "ck_version": 10,
-    "env_prefix": "CK_ENV_MLPERF_INFERENCE_SRC",
+    "env_prefix": "CK_ENV_MLPERF_INFERENCE",
     "limit_recursion_dir_search": {
       "linux": 5
     },
-    "soft_file_universal": "detection_and_classification$#sep#$README.md"
+    "soft_file_universal": "v0.5$#sep#$classification_and_detection$#sep#$README.md"
   },
   "soft_name": "MLPerf Inference source",
   "tags": [
