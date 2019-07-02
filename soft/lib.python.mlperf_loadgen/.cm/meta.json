@@ -1,0 +1,25 @@
+{
+  "auto_detect": "yes",
+  "customize": {
+    "check_that_exists": "yes",
+    "env_prefix": "CK_ENV_PYTHON_PACKAGE_MLPERF_LOADGEN",
+    "limit_recursion_dir_search": {
+      "linux": 5,
+      "win": 5
+    },
+    "soft_file_universal": "mlperf_loadgen$#sep#$__init__.py",
+    "version_module_name": "version",
+    "version_variable_name": "version"
+  },
+  "soft_name": "MLPerf loadgen library",
+  "tags": [
+    "lib",
+    "python-package",
+    "mlperf_loadgen",
+    "loadgen"
+  ],
+  "use_customize_script_from_another_entry": {
+    "data_uoa": "4460bdb0ade2a3df",
+    "module_uoa": "soft"
+  }
+}

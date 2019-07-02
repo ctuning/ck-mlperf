@@ -1,0 +1,40 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "install_env": {
+      "PIP_INSTALL_OPTIONS": "--ignore-installed",
+      "PYTHON_PACKAGE_NAME": "mlperf_loadgen"
+    }
+  },
+  "deps": {
+    "python": {
+      "add_to_path": "yes",
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 10,
+      "tags": "compiler,python"
+    },
+    "mlperf-inference": {
+      "add_to_path": "yes",
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "sort": 20,
+      "tags": "inference,mlperf,source"
+    }
+  },
+  "end_full_path_universal": "build$#sep#$mlperf_loadgen$#sep#$__init__.py",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [
+    "linux"
+  ],
+  "process_script": "install",
+  "soft_uoa": "4817b4c5316f6cb5",
+  "suggested_path": "lib-python-mlperf_loadgen",
+  "tags": [
+    "lib",
+    "python-package",
+    "loadgen",
+    "mlperf_loadgen",
+    "vmaster"
+  ]
+}
