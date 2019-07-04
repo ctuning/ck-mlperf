@@ -69,7 +69,7 @@ def setup(i):
     env=i['env']
     ep=cus['env_prefix']
 
-    classification_and_detection_dir = os.path.dirname(fp)
+    classification_and_detection_dir = os.path.dirname(os.path.dirname(os.path.dirname(fp)))
     v05_dir  = os.path.dirname(classification_and_detection_dir)
     root_dir = os.path.dirname(v05_dir)
 
