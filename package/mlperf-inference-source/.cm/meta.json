@@ -15,7 +15,7 @@
     "use_git_revision": "yes",
     "version": "master"
   },
-  "end_full_path_universal": "inference$#sep#$v0.5$#sep#$classification_and_detection$#sep#$optional_harness_ck",
+  "end_full_path_universal": "inference$#sep#$v0.5$#sep#$classification_and_detection$#sep#$optional_harness_ck$#sep#$classification$#sep#$README.md",
   "package_extra_name": " (from GitHub)",
   "process_script": "install",
   "soft_uoa": "mlperf.inference.source",
