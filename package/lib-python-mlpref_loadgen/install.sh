@@ -37,7 +37,8 @@ CFLAGS="-std=c++14" ${CK_ENV_COMPILER_PYTHON_FILE} setup.py bdist_wheel
 echo "Installing '${PYTHON_PACKAGE_NAME}' and its dependencies to '${PACKAGE_LIB_DIR}' ..."
 
 #${CK_ENV_COMPILER_PYTHON_FILE} -m pip install ${PYTHON_PACKAGE_NAME}${PACKAGE_VERSION:+"==${PACKAGE_VERSION}"} --prefix=${EXTRA_PYTHON_SITE} ${PIP_INSTALL_OPTIONS}
-${CK_ENV_COMPILER_PYTHON_FILE} -m pip install dist/mlperf_loadgen-0.5a0-cp36-cp36m-linux_x86_64.whl --prefix=${EXTRA_PYTHON_SITE} ${PIP_INSTALL_OPTIONS} --force-reinstall
+${CK_ENV_COMPILER_PYTHON_FILE} -m pip install `ls dist/mlperf_loadgen*.whl` --prefix=${EXTRA_PYTHON_SITE} ${PIP_INSTALL_OPTIONS} --force-reinstall
+touch ${PACKAGE_LIB_DIR}/__init__.py
 
 if [ "${?}" != "0" ] ; then
   echo "Error: installation failed!"

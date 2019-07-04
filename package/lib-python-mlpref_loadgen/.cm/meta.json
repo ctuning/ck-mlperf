@@ -4,7 +4,8 @@
     "install_env": {
       "PIP_INSTALL_OPTIONS": "--ignore-installed",
       "PYTHON_PACKAGE_NAME": "mlperf_loadgen"
-    }
+    },
+    "version": "master"
   },
   "deps": {
     "python": {
@@ -22,7 +23,7 @@
       "tags": "inference,mlperf,source"
     }
   },
-  "end_full_path_universal": "build$#sep#$mlperf_loadgen$#sep#$__init__.py",
+  "end_full_path_universal": "build$#sep#$__init__.py",
   "only_for_host_os_tags": [],
   "only_for_target_os_tags": [
     "linux"
@@ -32,6 +33,7 @@
   "suggested_path": "lib-python-mlperf_loadgen",
   "tags": [
     "lib",
+    "mlperf",
     "python-package",
     "loadgen",
     "mlperf_loadgen",
