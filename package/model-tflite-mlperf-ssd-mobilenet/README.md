@@ -34,8 +34,7 @@ index b7ed428..1b52335 100644
 
  if __name__ == '__main__':
 ```
-Until this bug is fixed upstream (perhaps in a more elegant way), please modify
-`export_tflite_ssd_graph.py` by hand.
+This was [fixed upstream](https://github.com/tensorflow/models/commit/9bbf8015dba2133ab2343ec6d6b5096033504e36#r34117181) on 31/May/2019 (albeit in a somewhat less elegant way).
 
 ### Manual instructions
 

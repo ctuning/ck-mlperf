@@ -1,0 +1,33 @@
+{
+  "customize": {
+    "extra_dir": "",
+    "git_src_dir": "src",
+    "install_env": {
+      "PACKAGE_BUILD_TYPE": "none",
+      "PACKAGE_GIT": "YES",
+      "PACKAGE_GIT_SUBMODULES": "YES",
+      "PACKAGE_SKIP_CLEAN_SRC_DIR": "YES",
+      "PACKAGE_SKIP_LINUX_MAKE": "YES",
+      "PACKAGE_SUB_DIR": "inference",
+      "PACKAGE_URL": "https://github.com/mlperf/inference"
+    },
+    "no_os_in_suggested_path": "yes",
+    "use_git_revision": "yes",
+    "version": "master"
+  },
+  "end_full_path_universal": "inference$#sep#$v0.5$#sep#$classification_and_detection$#sep#$optional_harness_ck$#sep#$classification$#sep#$README.md",
+  "package_extra_name": " (from GitHub)",
+  "process_script": "install",
+  "soft_uoa": "mlperf.inference.source",
+  "suggested_path": "mlperf-inference",
+  "tags": [
+    "uninstalled",
+    "mlperf",
+    "inference",
+    "source"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "cd9ccc74060b3d18",
+    "module_uoa": "script"
+  }
+}

@@ -26,6 +26,7 @@ def ck_postprocess(i):
   SKIP_IMAGES = int(my_env('CK_SKIP_IMAGES'))
   RESULTS_DIR = 'predictions'
   NUM_CLASSES = 1000
+  PREPROCESSED_EXT = dep_env('images', 'CK_ENV_DATASET_IMAGENET_PREPROCESSED_NEW_EXTENSION')
   AUX_DIR = dep_env('imagenet-aux', 'CK_ENV_DATASET_IMAGENET_AUX')
   CLASSES_FILE = os.path.join(AUX_DIR, 'synset_words.txt')
   VALUES_FILE = os.path.join(AUX_DIR, 'val.txt')
@@ -141,8 +142,8 @@ def ck_postprocess(i):
     for res_file in sorted(os.listdir(RESULTS_DIR)):
       # remove trailing suffix '.txt'
       img_file = res_file[:-4]
-      # replace preprocesed extension '.rgb8' with original '.JPEG'
-      img_file = img_file.replace('rgb8', 'JPEG')
+      # replace preprocesed extension '.rgb8' or '.rgbf32' with original '.JPEG'
+      img_file = img_file.replace(PREPROCESSED_EXT, 'JPEG')
       checked_files += 1
 
       all_probes = load_probes(res_file)
