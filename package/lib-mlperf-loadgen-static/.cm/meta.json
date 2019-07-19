@@ -1,0 +1,34 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "no_ver_in_suggested_path": "yes",
+    "version": "master"
+  },
+  "deps": {
+    "mlperf-inference": {
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "sort": 20,
+      "tags": "mlperf,inference,source"
+    }
+  },
+  "end_full_path_universal": "lib/libmlperf_loadgen.a",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [
+    "linux"
+  ],
+  "process_script": "install",
+  "soft_uoa": "6c44b702d4441af1",
+  "suggested_path": "lib-mlperf-loadgen-static",
+  "tags": [
+    "lib",
+    "mlperf",
+    "loadgen",
+    "mlperf_loadgen",
+    "mlperf-loadgen",
+    "static",
+    "lang-cpp",
+    "vmaster"
+  ]
+}

@@ -11,11 +11,13 @@
     "version_module_name": "version",
     "version_variable_name": "version"
   },
-  "soft_name": "MLPerf loadgen library",
+  "soft_name": "MLPerf Inference LoadGen library",
   "tags": [
     "lib",
+    "mlperf",
     "python-package",
     "mlperf_loadgen",
+    "mlperf-loadgen",
     "loadgen"
   ],
   "use_customize_script_from_another_entry": {

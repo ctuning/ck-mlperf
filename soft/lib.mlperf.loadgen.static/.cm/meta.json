@@ -1,0 +1,26 @@
+{
+  "auto_detect": "yes",
+  "customize": {
+    "check_that_exists": "yes",
+    "env_prefix": "CK_ENV_LIB_MLPERF_LOADGEN",
+    "limit_recursion_dir_search": {
+      "linux": 5
+    },
+    "soft_file": {
+      "linux": "libmlperf_loadgen.a"
+    },
+    "soft_path_example": {
+      "linux": ""
+    }
+  },
+  "soft_name": "MLPerf Inference LoadGen library",
+  "tags": [
+    "lib",
+    "mlperf",
+    "loadgen",
+    "mlperf_loadgen",
+    "mlperf-loadgen",
+    "static",
+    "vmaster"
+  ]
+}
