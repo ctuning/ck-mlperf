@@ -30,6 +30,8 @@ before_install:
     - |
         if [ $TRAVIS_OS_NAME == "osx" ]; then
 
+            export SUDOH="sudo"
+
             if [ "$WANTED_PYTHON_VERSION" == "2.7" ]; then
                 brew update                                                     # this swaps python versions and makes 3 the default one
                 brew reinstall python\@2 || brew link --overwrite python\@2     # install and link python2 and pip2 to /usr/local/bin
@@ -37,17 +39,12 @@ before_install:
                 export PYTHON_EXE=python
             elif [ "$WANTED_PYTHON_VERSION" == "3.6" ]; then
                 curl https://www.python.org/ftp/python/3.6.8/python-3.6.8-macosx10.9.pkg -s -o /tmp/python.pkg
-                sudo installer -pkg /tmp/python.pkg -target /
+                ${SUDOH} installer -pkg /tmp/python.pkg -target /
                 ls -l /Library/Frameworks/Python.framework/Versions/3.6/bin
                 export PATH=/Library/Frameworks/Python.framework/Versions/3.6/bin:$PATH
                 export PYTHON_EXE=python3
             else
-                brew update                                                     # this swaps python versions and makes 3 the default one
-                brew unlink python
-                brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb --ignore-dependencies
-                brew switch python 3.6.5_1
-                export PATH=/usr/local/opt/python/bin:$PATH
-                export PYTHON_EXE=python3
+                echo "Other MacOS Pythons are not supported at the moment"
             fi
 
             export CK_PLATFORM_NAME="generic-macos "                            # used later by CK
@@ -65,7 +62,7 @@ install:
     - which "${PYTHON_EXE}"
     - ${PYTHON_EXE} --version
     - rm -f `which pip`                                                             # the file is removable, but not writeable
-    - ${PYTHON_EXE} -m pip install --ignore-installed --verbose pip setuptools      # make sure pip is also up to date no matter what
+    - ${SUDOH} ${PYTHON_EXE} -m pip install --ignore-installed --verbose pip setuptools # make sure pip is also up to date no matter what
     - ${PYTHON_EXE} -m pip install -r requirements.txt                              # ck kernel itself and some essential components
     - ck pull repo:${THIS_REPO_NAME}                                                # ...also trigger pulling dependent repositories
     - echo "$CK_PLATFORM_NAME" | ck detect platform.os --update_platform_init       # set the platform to generic-linux (1) or generic-macos (2)
