@@ -76,6 +76,7 @@
   ],
   "variations": {
     "mobilenet": {
+      "extra_tags": [ "image-classification" ],
       "extra_env": {
         "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224",
         "MODEL_INPUT_LAYER_NAME": "input:0",
@@ -88,6 +89,7 @@
       }
     },
     "resnet": {
+      "extra_tags": [ "image-classification" ],
       "extra_env": {
         "ML_MODEL_TO_CONVERT": "resnet50_v1",
         "MODEL_INPUT_LAYER_NAME": "input_tensor:0",
@@ -100,6 +102,7 @@
       }
     },
     "ssd-mobilenet": {
+      "extra_tags": [ "object-detection" ],
       "extra_env": {
         "CONVERSION_OPSET": "10",
         "ML_MODEL_TO_CONVERT": "ssd-mobilenet",
