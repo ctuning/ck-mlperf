@@ -11,6 +11,22 @@
       "name": "MLPerf Inference source",
       "sort": 20,
       "tags": "mlperf,inference,source"
+    },
+    "cmake": {
+      "force_target_as_host": "yes",
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "CMake tool",
+      "skip_from_bat": "yes",
+      "sort": 30,
+      "tags": "tool,cmake"
+    },
+    "compiler": {
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "C++ compiler",
+      "sort": 40,
+      "tags": "compiler,lang-cpp"
     }
   },
   "end_full_path_universal": "lib/libmlperf_loadgen.a",
@@ -30,5 +46,9 @@
     "static",
     "lang-cpp",
     "vmaster"
-  ]
+  ],
+  "use_preprocess_scripts_from_another_entry": {
+    "data_uoa": "process-compiler-for-cmake",
+    "module_uoa": "script"
+  }
 }

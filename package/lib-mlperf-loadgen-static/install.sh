@@ -26,9 +26,25 @@ rm -rf ${BUILD_DIR} ${INCLUDE_DIR} ${LIB_DIR}
 mkdir -p ${BUILD_DIR} ${INCLUDE_DIR} ${LIB_DIR}
 
 # Configure.
-cd ${BUILD_DIR}
-cmake ${SOURCE_DIR} \
+read -d '' CMK_CMD <<EO_CMK_CMD
+${CK_ENV_TOOL_CMAKE_BIN}/cmake "${SOURCE_DIR}" \
+  -DCMAKE_C_COMPILER="${CK_CC_PATH_FOR_CMAKE}" \
+  -DCMAKE_C_FLAGS="${CK_CC_FLAGS_FOR_CMAKE} ${EXTRA_FLAGS}" \
+  -DCMAKE_CXX_COMPILER="${CK_CXX_PATH_FOR_CMAKE}" \
+  -DCMAKE_CXX_FLAGS="${CK_CXX_FLAGS_FOR_CMAKE} ${CK_COMPILER_FLAG_CPP14} ${EXTRA_FLAGS}" \
+  -DCMAKE_AR="${CK_AR_PATH_FOR_CMAKE}" \
+  -DCMAKE_RANLIB="${CK_RANLIB_PATH_FOR_CMAKE}" \
+  -DCMAKE_LINKER="${CK_LD_PATH_FOR_CMAKE}" \
   -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}"
+EO_CMK_CMD
+
+# Print the EXACT command we are about to run (with all interpolations that have not been specifically blocked)
+echo $CMK_CMD
+echo ""
+
+# Now run it from the build directory.
+cd ${BUILD_DIR}
+eval $CMK_CMD
 exit_if_error
 
 # Build and install.
