@@ -68,9 +68,8 @@ install:
     - echo "$CK_PLATFORM_NAME" | ck detect platform.os --update_platform_init       # set the platform to generic-linux (1) or generic-macos (2)
     - ck detect soft:compiler.python --full_path=`which ${PYTHON_EXE}`              # pick the one Travis has set for us in the PATH
     - ck install package --tags=lib,python-package,numpy                            # avoid detection by force-installing the package
-    - ck install package --tags=lib,python-package,scipy --force_version=1.2.1      # avoid detection by force-installing the package
-    - ck install package --tags=lib,python-package,pillow --force_version=6.0.0     # avoid detection by force-installing the package
-    - ck install package --tags=lib,python-package,tf2onnx --force_version=1.5.1    # avoid detection by force-installing the package
+    - ck install package --tags=lib,python-package,scipy                            # avoid detection by force-installing the package
+    - ck install package --tags=lib,python-package,pillow                           # avoid detection by force-installing the package
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
     - ck install package --tags=dataset,imagenet,preprocessed,using-scipy-PIL,first.20      # we only need a short preprocessed subset
