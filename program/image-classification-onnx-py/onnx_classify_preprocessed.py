@@ -15,6 +15,7 @@ OUTPUT_LAYER_NAME       = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
 MODEL_DATA_LAYOUT       = os.environ['ML_MODEL_DATA_LAYOUT']
 MODEL_IMAGE_HEIGHT      = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_HEIGHT'])
 MODEL_IMAGE_WIDTH       = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
+LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 
 ## Image normalization:
 #
@@ -30,23 +31,16 @@ IMAGE_DIR               = os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
 IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF'))
 IMAGE_DATA_TYPE         = np.dtype( os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DATA_TYPE', 'uint8') )
 
-## Old perprocessor:
+## Writing the results out:
 #
-# IMAGE_DIR               = os.getenv('RUN_OPT_IMAGE_DIR')
-# IMAGE_LIST_FILE         = os.getenv('RUN_OPT_IMAGE_LIST')
-
-LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
+RESULTS_DIR             = os.getenv('CK_RESULTS_DIR')
+FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
 ## Processing in batches:
 #
 BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', 1))
 BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
 CPU_THREADS             = int(os.getenv('CK_HOST_CPU_NUMBER_OF_PROCESSORS',0))
-
-## Writing the results out:
-#
-RESULTS_DIR             = os.getenv('CK_RESULTS_DIR')
-FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
 
 def load_preprocessed_batch(image_list, image_index):
@@ -152,7 +146,6 @@ def main():
     print("Input layer name: " + INPUT_LAYER_NAME)
     print("Expected input shape: {}".format(model_input_shape))
     print("Output layer name: " + OUTPUT_LAYER_NAME)
-    print("Data normalization: {}".format(MODEL_NORMALIZE_DATA))
     print("Background/unlabelled classes to skip: {}".format(bg_class_offset))
     print("")
 
