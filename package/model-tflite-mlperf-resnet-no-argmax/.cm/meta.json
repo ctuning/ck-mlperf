@@ -3,6 +3,7 @@
   "customize": {
     "install_env": {
       "ML_MODEL_DATA_LAYOUT": "NHWC", 
+      "ML_MODEL_GIVEN_CHANNEL_MEANS": "123.68 116.6 103.94",
       "MODEL_IMAGE_HEIGHT": "224", 
       "MODEL_IMAGE_WIDTH": "224", 
       "MODEL_INPUT_LAYER_NAME": "input_tensor", 
