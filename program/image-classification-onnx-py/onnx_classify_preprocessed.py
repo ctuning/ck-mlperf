@@ -19,9 +19,10 @@ MODEL_IMAGE_WIDTH       = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
 ## Image normalization:
 #
 MODEL_NORMALIZE_DATA    = os.getenv("CK_ENV_ONNX_MODEL_NORMALIZE_DATA") in ('YES', 'yes', 'ON', 'on', '1')
-SUBTRACT_MEAN           = os.getenv("CK_SUBTRACT_MEAN") == "YES"
-USE_MODEL_MEAN          = os.getenv("CK_USE_MODEL_MEAN") == "YES"
-MODEL_MEAN_VALUE        = np.array([0, 0, 0], dtype=np.float32) # to be populated
+SUBTRACT_MEAN           = os.getenv("CK_ENV_ONNX_MODEL_SUBTRACT_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
+GIVEN_CHANNEL_MEANS     = os.getenv("ML_MODEL_GIVEN_CHANNEL_MEANS", '')
+if GIVEN_CHANNEL_MEANS:
+    GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=np.float32)
 
 ## Input image properties:
 #
@@ -64,10 +65,10 @@ def load_preprocessed_batch(image_list, image_index):
 
             # Subtract mean value
             if SUBTRACT_MEAN:
-                if USE_MODEL_MEAN:
-                    img = img - MODEL_MEAN_VALUE
+                if len(GIVEN_CHANNEL_MEANS):
+                    img -= GIVEN_CHANNEL_MEANS
                 else:
-                    img = img - np.mean(img)
+                    img -= np.mean(img)
 
         # Add img to batch
         batch_data.append( [img] )
@@ -107,7 +108,7 @@ def main():
     print('Results dir: ' + RESULTS_DIR);
     print('Normalize: {}'.format(MODEL_NORMALIZE_DATA))
     print('Subtract mean: {}'.format(SUBTRACT_MEAN))
-    print('Use model mean: {}'.format(USE_MODEL_MEAN))
+    print('Per-channel means to subtract: {}'.format(GIVEN_CHANNEL_MEANS))
 
     setup_time_begin = time.time()
 
