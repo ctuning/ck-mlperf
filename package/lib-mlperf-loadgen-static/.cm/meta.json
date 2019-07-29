@@ -9,7 +9,7 @@
       "add_to_path": "no",
       "local": "yes",
       "name": "MLPerf Inference source",
-      "sort": 20,
+      "sort": 10,
       "tags": "mlperf,inference,source"
     },
     "cmake": {
@@ -18,8 +18,15 @@
       "local": "yes",
       "name": "CMake tool",
       "skip_from_bat": "yes",
-      "sort": 30,
+      "sort": 20,
       "tags": "tool,cmake"
+    },
+    "python": {
+      "add_to_path": "yes",
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 30,
+      "tags": "compiler,python"
     },
     "compiler": {
       "add_to_path": "no",
