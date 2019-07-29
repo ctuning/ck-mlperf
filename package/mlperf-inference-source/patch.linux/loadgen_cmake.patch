@@ -1,0 +1,28 @@
+diff --git a/loadgen/CMakeLists.txt b/loadgen/CMakeLists.txt
+index 9649c96..cd51246 100644
+--- a/loadgen/CMakeLists.txt
++++ b/loadgen/CMakeLists.txt
+@@ -8,17 +8,21 @@ set(mlperf_loadgen_VERSION_MINOR 5)
+ message("mlperf_loadgen v${mlperf_loadgen_VERSION_MAJOR}.${mlperf_loadgen_VERSION_MINOR}")
+ 
+ # Set build options.
+-set(CMAKE_CXX_FLAGS "-O2 -W -Wall")
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -W -Wall")
++
++find_package(PythonInterp)
++
+ message(STATUS "Using compiler flags: ${CMAKE_CXX_FLAGS}")
+ message(STATUS "Using static linker flags: ${CMAKE_STATIC_LINKER_FLAGS}")
+ message(STATUS "Using shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS}")
++message(STATUS "Using Python interpreter: ${PYTHON_EXECUTABLE}")
+ 
+ # Output directory for libraries.
+ SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+ message(STATUS "Using output path: ${LIBRARY_OUTPUT_PATH}")
+ 
+ # Generate source file with version info.
+-execute_process(COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/version_generator.py ${CMAKE_BINARY_DIR}/version_generated.cc ${CMAKE_CURRENT_SOURCE_DIR})
++execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/version_generator.py ${CMAKE_BINARY_DIR}/version_generated.cc ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+ # Add source files.
+ set(SOURCE
