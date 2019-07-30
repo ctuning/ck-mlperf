@@ -28,6 +28,18 @@
       "sort": 30,
       "tags": "compiler,python"
     },
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 33,
+      "tags": "lib,python-package,numpy"
+    },
+    "lib-python-absl": {
+      "local": "yes",
+      "name": "Python Abseil library",
+      "sort": 36,
+      "tags": "lib,python-package,absl"
+    },
     "compiler": {
       "add_to_path": "no",
       "local": "yes",
