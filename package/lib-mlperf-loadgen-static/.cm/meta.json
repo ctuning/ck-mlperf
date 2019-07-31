@@ -6,6 +6,7 @@
   },
   "deps": {
     "mlperf-inference": {
+      "force_target_as_host": "yes",
       "add_to_path": "no",
       "local": "yes",
       "name": "MLPerf Inference source",
@@ -22,6 +23,7 @@
       "tags": "tool,cmake"
     },
     "python": {
+      "force_target_as_host": "yes",
       "add_to_path": "yes",
       "local": "yes",
       "name": "Python interpreter",
@@ -29,12 +31,14 @@
       "tags": "compiler,python"
     },
     "lib-python-numpy": {
+      "force_target_as_host": "yes",
       "local": "yes",
       "name": "Python NumPy library",
       "sort": 33,
       "tags": "lib,python-package,numpy"
     },
     "lib-python-absl": {
+      "force_target_as_host": "yes",
       "local": "yes",
       "name": "Python Abseil library",
       "sort": 36,
@@ -49,9 +53,12 @@
     }
   },
   "end_full_path_universal": "lib/libmlperf_loadgen.a",
-  "only_for_host_os_tags": [],
-  "only_for_target_os_tags": [
+  "only_for_host_os_tags": [
     "linux"
+  ],
+  "only_for_target_os_tags": [
+    "linux",
+    "android"
   ],
   "process_script": "install",
   "soft_uoa": "6c44b702d4441af1",
