@@ -17,7 +17,7 @@
     "version": "master"
   },
   "end_full_path_universal": "inference$#sep#$v0.5$#sep#$classification_and_detection$#sep#$optional_harness_ck$#sep#$classification$#sep#$README.md",
-  "package_extra_name": " (from GitHub)",
+  "package_extra_name": " (upstream repository)",
   "process_script": "install",
   "soft_uoa": "mlperf.inference.source",
   "suggested_path": "mlperf-inference",
@@ -27,6 +27,24 @@
     "inference",
     "source"
   ],
+  "variations": {
+    "upstream.master": {
+      "extra_env": {
+          "PACKAGE_URL": "https://github.com/mlperf/inference"
+      },
+      "extra_customize": {
+        "package_extra_name": " (upstream repository)"
+      }
+    },
+    "dividiti.master": {
+      "extra_env": {
+          "PACKAGE_URL": "https://github.com/dividiti/inference"
+      },
+      "extra_customize": {
+        "package_extra_name": " (dividiti's fork)"
+      }
+    }
+  },
   "use_scripts_from_another_entry": {
     "data_uoa": "cd9ccc74060b3d18",
     "module_uoa": "script"
