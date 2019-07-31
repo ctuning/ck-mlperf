@@ -1,0 +1,54 @@
+diff --git a/loadgen/bindings/c_api.cc b/loadgen/bindings/c_api.cc
+index f5b0ee5..afe545e 100644
+--- a/loadgen/bindings/c_api.cc
++++ b/loadgen/bindings/c_api.cc
+@@ -97,8 +97,8 @@ class QuerySampleLibraryTrampoline : public QuerySampleLibrary {
+   ~QuerySampleLibraryTrampoline() override = default;
+ 
+   const std::string& Name() const override { return name_; }
+-  size_t TotalSampleCount() { return total_sample_count_; }
+-  size_t PerformanceSampleCount() { return performance_sample_count_; }
++  size_t TotalSampleCount() override { return total_sample_count_; }
++  size_t PerformanceSampleCount() override { return performance_sample_count_; }
+ 
+   void LoadSamplesToRam(const std::vector<QuerySampleIndex>& samples) override {
+     (*load_samples_to_ram_cb_)(client_data_, samples.data(), samples.size());
+diff --git a/loadgen/loadgen.cc b/loadgen/loadgen.cc
+index 9bacb9a..60b3612 100644
+--- a/loadgen/loadgen.cc
++++ b/loadgen/loadgen.cc
+@@ -38,7 +38,7 @@ limitations under the License.
+ namespace mlperf {
+ 
+ struct SampleMetadata;
+-struct QueryMetadata;
++class QueryMetadata;
+ 
+ // Every query and sample within a call to StartTest gets a unique sequence id
+ // for easy cross reference.
+@@ -1056,9 +1056,9 @@ struct RunFunctions {
+     return GetCompileTime<TestScenario::SingleStream>();
+   }
+ 
+-  const Signature& accuracy;
+-  const Signature& performance;
+-  const Signature& find_peak_performance;
++  Signature& accuracy;
++  Signature& performance;
++  Signature& find_peak_performance;
+ };
+ 
+ // Generates random sets of samples in the QSL that we can load into RAM
+diff --git a/loadgen/logging.h b/loadgen/logging.h
+index ad5ac4d..690168b 100644
+--- a/loadgen/logging.h
++++ b/loadgen/logging.h
+@@ -36,7 +36,7 @@ namespace mlperf {
+ class AsyncLog;
+ class Logger;
+ class TlsLogger;
+-class TlsLoggerWrapper;
++struct TlsLoggerWrapper;
+ 
+ using AsyncLogEntry = std::function<void(AsyncLog&)>;
+ using PerfClock = std::chrono::high_resolution_clock;
