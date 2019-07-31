@@ -1,7 +1,7 @@
 {
   "customize": {
     "extra_dir": "",
-    "git_src_dir": "src",
+    "git_src_dir": "inference",
     "install_env": {
       "PACKAGE_BUILD_TYPE": "none",
       "PACKAGE_GIT": "YES",
