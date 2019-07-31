@@ -13,6 +13,7 @@
       "PACKAGE_URL": "https://github.com/mlperf/inference"
     },
     "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
     "use_git_revision": "yes",
     "version": "master"
   },
@@ -30,7 +31,7 @@
   "variations": {
     "upstream.master": {
       "extra_env": {
-          "PACKAGE_URL": "https://github.com/mlperf/inference"
+        "PACKAGE_URL": "https://github.com/mlperf/inference"
       },
       "extra_customize": {
         "package_extra_name": " (upstream repository)"
@@ -38,7 +39,16 @@
     },
     "dividiti.master": {
       "extra_env": {
-          "PACKAGE_URL": "https://github.com/dividiti/inference"
+        "PACKAGE_URL": "https://github.com/dividiti/inference"
+      },
+      "extra_customize": {
+        "package_extra_name": " (dividiti's fork)"
+      }
+    },
+    "dividiti.branch": {
+      "extra_env": {
+        "PACKAGE_URL": "https://github.com/dividiti/inference",
+        "PACKAGE_GIT_CHECKOUT": "ck-update"
       },
       "extra_customize": {
         "package_extra_name": " (dividiti's fork)"
