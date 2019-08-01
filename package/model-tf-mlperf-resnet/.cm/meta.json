@@ -21,7 +21,7 @@
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
     "skip_file_check": "yes", 
-    "version": "v1.5"
+    "version": "1.5"
   }, 
   "end_full_path_universal": "resnet50_v1.pb", 
   "only_for_host_os_tags": [], 
