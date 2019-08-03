@@ -10,6 +10,7 @@ ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
+# OpenCV needs: libsm6, libxext6, libxrender-dev.
 # TF needs: curl.
 # Install to share with other images: cmake.
 RUN apt update -y\
@@ -17,6 +18,7 @@ RUN apt update -y\
  && apt upgrade -y\
  && apt install -y\
  git wget zip libz-dev\
+ libsm6 libxext6 libxrender-dev\
  curl\
  cmake\
  python3 python3-pip\
@@ -75,9 +77,9 @@ RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,do
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
 RUN ck install package --tags=dataset,imagenet,aux
 RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
-# Preprocess using Pillow.
-RUN ck install package --tags=lib,python-package,pillow
-RUN ck install package --tags=dataset,imagenet,val,preprocessed,using-pillow
+# Preprocess using OpenCV.
+RUN ck install package --tags=lib,python-package,cv2
+RUN ck install package --tags=dataset,imagenet,val,preprocessed,using-opencv
 
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
@@ -85,6 +87,6 @@ RUN ck compile program:image-classification-tflite
 # Run the Image Classification TFLite program
 # with the non-quantized MobileNet model twice.
 CMD ["ck run program:image-classification-tflite \
---dep_add_tags.images=preprocessed,using-pillow \
+--dep_add_tags.images=preprocessed,using-opencv \
 --dep_add_tags.weights=mobilenet,non-quantized \
 --env.CK_BATCH_COUNT=2"]
