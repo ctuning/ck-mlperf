@@ -34,7 +34,7 @@ def ck_postprocess(i):
   VALUES_MAP = {}
   IMAGE_FILE = my_env('CK_IMAGE_FILE')
   FULL_REPORT = my_env('CK_SILENT_MODE') != 'YES'
-
+  NO_LOADGEN = my_env('CK_LOADGEN_MODE') not in ('YES', 'yes', 'ON', 'on', '1', 1)
 
   # Loads ImageNet classes and correct predictions
   def load_ImageNet_classes():
@@ -189,30 +189,37 @@ def ck_postprocess(i):
   # Store benchmark results
   openme = {}
 
-  # Preserve values stored by program
-  with open('tmp-ck-timer.json', 'r') as o:
-    old_values = json.load(o)
-  for key in old_values:
-    # xopenmp c++ writes this section, copy it into root object
-    if key == 'run_time_state':
-      for key1 in old_values[key]:
-        openme[key1] = old_values[key][key1]
-    else:
-      openme[key] = old_values[key]
-
-  setup_time = openme.get('setup_time_s', 0.0)
-  test_time = openme.get('test_time_s', 0.0)
-  total_load_images_time = openme.get('images_load_time_total_s', 0.0)
-  total_prediction_time = openme.get('prediction_time_total_s', 0.0)
-  avg_prediction_time = openme.get('prediction_time_avg_s', 0.0)
-
   # Print metrics
   print('\nSummary:')
   print('-------------------------------')
-  print('Graph loaded in {:.6f}s'.format(setup_time))
-  print('All images loaded in {:.6f}s'.format(total_load_images_time))
-  print('All images classified in {:.6f}s'.format(total_prediction_time))
-  print('Average classification time: {:.6f}s'.format(avg_prediction_time))
+
+  if NO_LOADGEN:
+    # Preserve values stored by program
+    with open('tmp-ck-timer.json', 'r') as o:
+      old_values = json.load(o)
+    for key in old_values:
+      # xopenmp c++ writes this section, copy it into root object
+      if key == 'run_time_state':
+        for key1 in old_values[key]:
+          openme[key1] = old_values[key][key1]
+      else:
+        openme[key] = old_values[key]
+
+    setup_time = openme.get('setup_time_s', 0.0)
+    test_time = openme.get('test_time_s', 0.0)
+    total_load_images_time = openme.get('images_load_time_total_s', 0.0)
+    total_prediction_time = openme.get('prediction_time_total_s', 0.0)
+    avg_prediction_time = openme.get('prediction_time_avg_s', 0.0)
+
+    openme['execution_time'] = total_prediction_time
+    openme['execution_time_sum'] = setup_time + test_time
+
+    print('Graph loaded in {:.6f}s'.format(setup_time))
+    print('All images loaded in {:.6f}s'.format(total_load_images_time))
+    print('All images classified in {:.6f}s'.format(total_prediction_time))
+    print('Average classification time: {:.6f}s'.format(avg_prediction_time))
+
+
   print('Accuracy top 1: {} ({} of {})'.format(accuracy_top1, TOP1, IMAGES_COUNT))
   openme['accuracy_top1'] = accuracy_top1
   print('Accuracy top 5: {} ({} of {})'.format(accuracy_top5, TOP5, IMAGES_COUNT))
@@ -223,8 +230,6 @@ def ck_postprocess(i):
     print('Accuracy top {}: {} ({} of {})'.format(N, accuracy_topn, TOPN, IMAGES_COUNT))
     openme['accuracy_topn'] = accuracy_topn
   openme['frame_predictions'] = frame_predictions
-  openme['execution_time'] = total_prediction_time
-  openme['execution_time_sum'] = setup_time + test_time
 
   with open('tmp-ck-timer.json', 'w') as o:
     json.dump(openme, o, indent=2, sort_keys=True)
