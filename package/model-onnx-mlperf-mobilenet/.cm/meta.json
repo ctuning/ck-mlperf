@@ -8,11 +8,11 @@
       "MODEL_INPUT_LAYER_NAME": "input:0",
       "MODEL_NORMALIZE_DATA": "YES", 
       "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1:0",
-      "PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx.gz",
+      "PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx",
       "PACKAGE_SKIP_CLEAN_PACKAGE": "YES", 
       "PACKAGE_SKIP_LINUX_MAKE": "YES", 
-      "PACKAGE_UNGZIP": "YES", 
-      "PACKAGE_URL": "https://www.dropbox.com/s/eu7g3xt0yg12q3o",
+      "PACKAGE_UNGZIP": "NO", 
+      "PACKAGE_URL": "https://zenodo.org/record/3157894/files",
       "PACKAGE_WGET": "YES"
     }, 
     "no_os_in_suggested_path": "yes", 
@@ -39,5 +39,22 @@
   "use_scripts_from_another_entry": {
     "data_uoa": "download-and-install-package", 
     "module_uoa": "script"
+  },
+  "variations": {
+    "from-zenodo": {
+      "extra_env": {
+	"PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx",
+        "PACKAGE_URL": "https://zenodo.org/record/3157894/files",
+        "PACKAGE_UNGZIP": "NO"
+      }
+    },
+    "from-dropbox": {
+      "extra_env": {
+	"COMMENT": "This model is converted similarly to the one at zenodo.org but is NOT the same!",
+        "PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx.gz",
+        "PACKAGE_URL": "https://www.dropbox.com/s/eu7g3xt0yg12q3o",
+        "PACKAGE_UNGZIP": "YES"
+      }
+    }
   }
 }

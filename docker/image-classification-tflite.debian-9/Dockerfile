@@ -62,22 +62,24 @@ RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 # Install Python dependencies.
 RUN ck install package --tags=lib,python-package,numpy
-RUN ck install package --tags=lib,python-package,scipy --force_version=1.2.1
-RUN ck install package --tags=lib,python-package,pillow
 
 # Download the MobileNet TF/TFLite models (non-quantized and quantized).
-# https://github.com/mlperf/inference/blob/master/edge/object_classification/mobilenets/tflite/README.md#install-the-mobilenet-models-for-tflite
+# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md#mobilenet-non-quantized
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-zenodo
-RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-google
+# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md#mobilenet-quantized
+RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-zenodo
+
 # Download the ResNet TFLite models (with and without the ArgMax operator).
-# https://github.com/mlperf/inference/blob/master/edge/object_classification/mobilenets/tflite/README.md#install-the-resnet-model
+# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md#resnet
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,with-argmax
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,no-argmax
 
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
 RUN ck install package --tags=dataset,imagenet,aux
 RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
-RUN ck install package --tags=dataset,imagenet,val,preprocessed
+# Preprocess using "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
+RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
+RUN ck install package --tags=dataset,imagenet,val,preprocessed,using-opencv
 
 # Compile the Image Classification TFLite program.
 RUN ck compile program:image-classification-tflite
@@ -85,5 +87,6 @@ RUN ck compile program:image-classification-tflite
 # Run the Image Classification TFLite program
 # with the non-quantized MobileNet model twice.
 CMD ["ck run program:image-classification-tflite \
+--dep_add_tags.images=preprocessed,using-opencv \
 --dep_add_tags.weights=mobilenet,non-quantized \
 --env.CK_BATCH_COUNT=2"]

@@ -33,7 +33,7 @@
       "PACKAGE_UNGZIP": "YES",
       "PACKAGE_UNTAR": "YES",
       "PACKAGE_UNTAR_EXTRA": "--strip=1",
-      "PACKAGE_URL": "https://www.dropbox.com/s/p28y9ll7dczpdu1/", 
+      "PACKAGE_URL": "https://zenodo.org/record/3361502/files",
       "PACKAGE_WGET": "YES"
     }, 
     "no_os_in_suggested_path": "yes", 
@@ -66,5 +66,17 @@
   "use_scripts_from_another_entry": {
     "data_uoa": "download-and-install-package", 
     "module_uoa": "script"
+  },
+  "variations": {
+    "from-zenodo": {
+      "extra_env": {
+        "PACKAGE_URL": "https://zenodo.org/record/3361502/files"
+      }
+    },
+    "from-dropbox": {
+      "extra_env": {
+        "PACKAGE_URL": "https://www.dropbox.com/s/p28y9ll7dczpdu1"
+      }
+    }
   }
 }
