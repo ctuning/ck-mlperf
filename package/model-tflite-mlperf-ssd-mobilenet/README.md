@@ -1,8 +1,5 @@
 # MLPerf Inference - Object Detection - SSD-MobileNet (TFLite)
 
-**TODO:** [Move model files to Zenodo](https://github.com/ctuning/ck-mlperf/issues/9).
-
-
 This model was converted to TFLite from the [original](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz) TF model in two steps,
 by adapting instructions from [Google's blog](https://medium.com/tensorflow/training-and-serving-a-realtime-mobile-object-detector-in-30-minutes-with-cloud-tpus-b78971cf1193).
 
