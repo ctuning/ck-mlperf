@@ -7,14 +7,14 @@
       "FROZEN_GRAPH": "graph.pb", 
       "LABELMAP_FILE": "mscoco_label_map.pbtxt", 
       "MODEL_NAME": "MLPerf SSD-MobileNet", 
-      "PACKAGE_NAME": "mobilenet_v1_ssd_finetuned.tar.gz", 
-      "PACKAGE_NAME1": "mobilenet_v1_ssd_finetuned", 
-      "PACKAGE_URL": "https://www.dropbox.com/s/0qxw50yzfabo5q5", 
+      "PACKAGE_NAME": "mobilenet_v1_ssd_8bit_finetuned.tar.gz",
+      "PACKAGE_NAME1": "mobilenet_v1_ssd_finetuned",
+      "PACKAGE_URL": "https://zenodo.org/record/3252084/files",
       "PIPELINE_CONFIG": "pipeline.config", 
       "WEIGHTS_FILE": "model.ckpt",
       "PACKAGE_UNZIP": "YES"
     }, 
-    "model_id": "mobilenet_v1", 
+    "model_id": "ssd_mobilenet_v1",
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
     "version": "finetuned"
@@ -57,5 +57,19 @@
   "use_scripts_from_another_entry": {
     "data_uoa": "c412930408fb8271", 
     "module_uoa": "script"
+  },
+  "variations": {
+    "from-zenodo": {
+      "extra_env": {
+        "PACKAGE_NAME": "mobilenet_v1_ssd_8bit_finetuned.tar.gz",
+        "PACKAGE_URL": "https://zenodo.org/record/3252084/files"
+      }
+    },
+    "from-dropbox": {
+      "extra_env": {
+        "PACKAGE_NAME": "mobilenet_v1_ssd_finetuned.tar.gz",
+        "PACKAGE_URL": "https://www.dropbox.com/s/0qxw50yzfabo5q5"
+      }
+    }
   }
 }
