@@ -46,9 +46,50 @@ $ docker run --rm ctuning/image-classification-tflite.debian-9 \
 
 <a name="image_default_run_custom"></a>
 #### Image Classification (custom command)
+##### ResNet
 ```bash
 $ docker run --rm ctuning/image-classification-tflite.debian-9 \
-"ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=10"
+"ck run program:image-classification-tflite --dep_add_tags.weights=resnet,no-argmax --env.CK_BATCH_COUNT=500"
+...
+Summary:
+-------------------------------
+Graph loaded in 0.001373s
+All images loaded in 1.173109s
+All images classified in 83.794106s
+Average classification time: 0.167370s
+Accuracy top 1: 0.762 (381 of 500)
+Accuracy top 5: 0.93 (465 of 500)
+--------------------------------
+```
+##### MobileNet non-quantized
+```bash
+$ docker run --rm ctuning/image-classification-tflite.debian-9 \
+"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,non-quantized --env.CK_BATCH_COUNT=500"
+...
+Summary:
+-------------------------------
+Graph loaded in 0.001232s
+All images loaded in 0.688655s
+All images classified in 27.330872s
+Average classification time: 0.054614s
+Accuracy top 1: 0.724 (362 of 500)
+Accuracy top 5: 0.896 (448 of 500)
+--------------------------------
+```
+##### MobileNet quantized
+```bash
+$ docker run --rm ctuning/image-classification-tflite.debian-9 \
+"ck run program:image-classification-tflite --dep_add_tags.weights=mobilenet,quantized --env.CK_BATCH_COUNT=500"
+...
+Summary:
+-------------------------------
+Graph loaded in 0.001149s
+All images loaded in 0.032835s
+All images classified in 81.675827s
+Average classification time: 0.163378s
+Accuracy top 1: 0.728 (364 of 500)
+Accuracy top 5: 0.898 (449 of 500)
+--------------------------------
 ```
 
 <a name="image_default_run_bash"></a>

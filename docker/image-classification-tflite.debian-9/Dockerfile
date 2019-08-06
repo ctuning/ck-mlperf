@@ -10,7 +10,6 @@ ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
-# OpenCV needs: libsm6, libxext6, libxrender-dev.
 # TF needs: curl.
 # Install to share with other images: cmake.
 RUN apt update -y\
@@ -18,7 +17,6 @@ RUN apt update -y\
  && apt upgrade -y\
  && apt install -y\
  git wget zip libz-dev\
- libsm6 libxext6 libxrender-dev\
  curl\
  cmake\
  python3 python3-pip\
@@ -66,19 +64,21 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 RUN ck install package --tags=lib,python-package,numpy
 
 # Download the MobileNet TF/TFLite models (non-quantized and quantized).
-# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md
+# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md#mobilenet-non-quantized
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,non-quantized,from-zenodo
+# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md#mobilenet-quantized
 RUN ck install package --tags=image-classification,model,tf,tflite,mlperf,mobilenet,quantized,from-zenodo
+
 # Download the ResNet TFLite models (with and without the ArgMax operator).
-# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md
+# https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md#resnet
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,with-argmax
 RUN ck install package --tags=image-classification,model,tflite,mlperf,resnet,downloaded,no-argmax
 
 # Download and preprocess the first 500 images of the ImageNet 2012 validation dataset.
 RUN ck install package --tags=dataset,imagenet,aux
 RUN ck install package --tags=dataset,imagenet,val,original,min --no_tags=resized
-# Preprocess using OpenCV.
-RUN ck install package --tags=lib,python-package,cv2
+# Preprocess using "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
+RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
 RUN ck install package --tags=dataset,imagenet,val,preprocessed,using-opencv
 
 # Compile the Image Classification TFLite program.
