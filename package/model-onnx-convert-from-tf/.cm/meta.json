@@ -94,7 +94,7 @@
       "extra_tags": [ "image-classification" ],
       "extra_env": {
         "ML_MODEL_TO_CONVERT": "resnet50_v1",
-        "ML_MODEL_GIVEN_CHANNEL_MEANS": "123.68 116.6 103.94",
+        "ML_MODEL_GIVEN_CHANNEL_MEANS": "123.68 116.78 103.94",
         "MODEL_INPUT_LAYER_NAME": "input_tensor:0",
         "MODEL_NORMALIZE_DATA": "0",
         "MODEL_SUBTRACT_MEAN": "YES",
