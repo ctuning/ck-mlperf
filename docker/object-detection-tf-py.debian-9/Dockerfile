@@ -79,6 +79,10 @@ RUN ck install package --tags=tool,coco,api
 # Install TF.
 RUN ck install package:lib-tensorflow-1.13.1-cpu
 
+##remove useless api files to free space
+RUN ck virtual env --tags=tensorflow,api --shell_cmd=\
+'cd $CK_ENV_TENSORFLOW_MODELS; mv object_detection ..; rm * -r; mv ../object_detection .;cd ..; rm official -rf; rm samples -rf; rm turorials -rf;rm .git -rf'
+
 # Download the COCO 2017 validation dataset (5,000 images) to the default path.
 RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
  && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\

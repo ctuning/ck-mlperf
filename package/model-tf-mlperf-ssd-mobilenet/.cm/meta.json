@@ -4,6 +4,8 @@
     "extra_dir": "", 
     "install_env": {
       "DATASET_TYPE": "coco", 
+      "DEFAULT_WIDTH": "300",
+      "DEFAULT_HEIGHT": "300",
       "FROZEN_GRAPH": "frozen_inference_graph.pb", 
       "LABELMAP_FILE": "mscoco_label_map.pbtxt", 
       "MODEL_NAME": "MLPerf SSD-MobileNet", 

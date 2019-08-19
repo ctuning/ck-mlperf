@@ -72,9 +72,11 @@ def setup(i):
     classification_and_detection_dir = os.path.dirname(os.path.dirname(os.path.dirname(fp)))
     v05_dir  = os.path.dirname(classification_and_detection_dir)
     root_dir = os.path.dirname(v05_dir)
-
+    python_dir=os.path.join(classification_and_detection_dir,'python')
+    
     env[ep] = root_dir
     env[ep+'_V05'] = v05_dir
     env[ep+'_LOADGEN'] = os.path.join(root_dir, 'loadgen')
+    env['PYTHONPATH'] = python_dir + ( ';%PYTHONPATH%' if winh=='yes' else ':${PYTHONPATH}')
 
     return {'return':0, 'bat':s}

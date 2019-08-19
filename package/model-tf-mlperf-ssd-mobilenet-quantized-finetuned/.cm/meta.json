@@ -5,6 +5,8 @@
     "install_env": {
       "DATASET_TYPE": "coco", 
       "FROZEN_GRAPH": "graph.pb", 
+      "DEFAULT_WIDTH": "300",
+      "DEFAULT_HEIGHT": "300",
       "LABELMAP_FILE": "mscoco_label_map.pbtxt", 
       "MODEL_NAME": "MLPerf SSD-MobileNet", 
       "PACKAGE_NAME": "mobilenet_v1_ssd_8bit_finetuned.tar.gz",
