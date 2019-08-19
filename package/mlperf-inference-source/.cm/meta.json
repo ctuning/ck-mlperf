@@ -45,7 +45,7 @@
         "package_extra_name": " (dividiti's fork)"
       }
     },
-    "dividiti.ck_version": {
+    "dividiti.vision_with_ck": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/dividiti/inference",
 	"PACKAGE_GIT_CLONE_FLAGS": "-b classification_and_detection_with_ck"
