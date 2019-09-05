@@ -36,20 +36,21 @@
   "only_for_target_os_tags": [
     "linux"
   ], 
-  "package_extra_name": " (MLPerf SSD-MobileNet)", 
+  "package_extra_name": " (MLPerf SSD-MobileNet non-quantized)", 
   "process_script": "install", 
   "soft_uoa": "3fc0c4b9ba63de2f", 
   "suggested_path": "model-tf-mlperf-ssd-mobilenet", 
   "tags": [
-    "mlperf",
-    "object-detection",
-    "tensorflowmodel",
     "model",
-    "tf", 
     "tensorflow",
-    "ssd", 
-    "ssd-mobilenet", 
+    "tf", 
+    "object-detection",
+    "mlperf",
     "ssd-mobilenet-v1", 
+    "ssd-mobilenet", 
+    "ssd", 
+    "mobilenet",
+    "mobilenet-v1",
     "non-quantized",
     "vcoco", 
     "channel-stable"

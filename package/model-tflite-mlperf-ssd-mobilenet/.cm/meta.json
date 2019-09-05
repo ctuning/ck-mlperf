@@ -53,12 +53,14 @@
   "tags": [
     "model", 
     "tflite", 
-    "nhwc", 
-    "ssd-mobilenet", 
-    "ssd-mobilenet-v1", 
-    "mlperf",
     "object-detection",
+    "mlperf",
+    "ssd-mobilenet-v1", 
+    "ssd-mobilenet", 
     "ssd",
+    "mobilenet",
+    "mobilenet-v1",
+    "nhwc", 
     "vcoco",
     "non-quantized",
     "downloaded"
