@@ -21,10 +21,10 @@
     "version": "reference"
   }, 
   "deps": {
-    "tensorflow-object-detection-api": {
+    "labelmap": {
       "local": "yes", 
-      "name": "TensorFlow Object Detection API", 
-      "tags": "tensorflow,model,api"
+      "name": "Labelmap for COCO dataset",
+      "tags": "labelmap,vcoco"
     }
   }, 
   "end_full_path": {
