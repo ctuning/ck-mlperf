@@ -57,7 +57,7 @@
     "dividiti.branch": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/dividiti/inference",
-        "PACKAGE_GIT_CHECKOUT": "ck-update"
+        "PACKAGE_GIT_CHECKOUT": "fix_thread_id_conversion_mac"
       },
       "extra_customize": {
         "package_extra_name": " (dividiti's fork)"
