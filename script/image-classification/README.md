@@ -56,7 +56,7 @@ A client program may contain its own additional preprocessing script  `preproces
 
 ## Images dataset
 
-A client program should provide access to the ImageNet dataset via run-time dependencies `imagenet-val` and `imagenet-aux`, e.g.:
+A client program should provide access to the ImageNet dataset via run-time dependencies `images` and `imagenet-aux`, e.g.:
 
 ```json
   "run_deps": {
@@ -67,7 +67,7 @@ A client program should provide access to the ImageNet dataset via run-time depe
       "sort": 10,
       "tags": "dataset,imagenet,aux"
     },
-    "imagenet-val": {
+    "images": {
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "ImageNet dataset (val)",

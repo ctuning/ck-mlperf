@@ -134,7 +134,7 @@ def ck_preprocess(i):
     
   IMAGE_COUNT = int(my_env('CK_BATCH_COUNT')) * int(my_env('CK_BATCH_SIZE'))
   SKIP_IMAGES = int(my_env('CK_SKIP_IMAGES'))
-  IMAGE_DIR = dep_env('imagenet-val', 'CK_ENV_DATASET_IMAGENET_VAL')
+  IMAGE_DIR = dep_env('images', 'CK_ENV_DATASET_IMAGENET_VAL')
   IMAGE_FILE = my_env('CK_IMAGE_FILE')
   RESULTS_DIR = 'predictions'
   IMAGE_LIST_FILE = 'image_list.txt'
