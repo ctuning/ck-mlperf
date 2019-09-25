@@ -16,19 +16,19 @@ Table of Contents
 - [Training v0.7](#training_0_7)
 
 
-<a href="inference_0_5"></a>
+<a name="inference_0_5"></a>
 ## MLPerf Inference v0.5
 
 Using CK is optional for MLPerf Inference v0.5.
 
-<a href="unofficial"></a>
+<a name="unofficial"></a>
 ### Unofficial CK workflows
 
-We (unofficially) support 2 tasks out of 3 (i.e. except Machine Translation):
-- [image classification] (https://github.com/mlperf/inference/tree/master/v0.5/classification_and_detection/optional_harness_ck/classification)
-- [object detection](https://github.com/mlperf/inference/tree/master/v0.5/classification_and_detection/optional_harness_ck/detection)
+We (unofficially) support two tasks out of three (i.e. except for Machine Translation):
+- [Image Classification](https://github.com/mlperf/inference/tree/master/v0.5/classification_and_detection/optional_harness_ck/classification)
+- [Object Detection](https://github.com/mlperf/inference/tree/master/v0.5/classification_and_detection/optional_harness_ck/detection)
 
-<a href="official"></a>
+<a name="official"></a>
 ### CK workflows for official application
 
 You can run the official vision application with CK model and dataset packages.
@@ -98,6 +98,7 @@ $ ./run_and_time.sh tf ssd-mobilenet cpu
 TestScenario.Offline qps=5.46, mean=9.4975, time=29.310, acc=94.037, mAP=0.239, queries=160, tiles=50.0:7.9843,80.0:12.2297,90.0:12.3646,95.0:12.3965,99.0:12.4229,99.9:12.4351
 ```
 
-<a href="training_0_7"></a>
+<a name="training_0_7"></a>
 ## MLPerf Training v0.7
+
 **TODO**
