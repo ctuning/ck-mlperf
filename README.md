@@ -74,6 +74,14 @@ $ ck install package --tags=lib,python-package,mlperf,loadgen
 and enter its virtual environment before any other commands:
 ```bash
 $ ck virtual env --tags=lib,python-package,mlperf,loadgen
+$ python3.6 -c "import mlperf_loadgen as lg"
+```
+**NB:** Use with the same Python version as your LoadGen installation "needs":
+```bash
+$ ck show env --tags=lib,python-package,mlperf,loadgen
+Env UID:         Target OS: Bits: Name:                            Version: Tags:
+
+462592cb2beeaf63   linux-64    64 MLPerf Inference LoadGen library master   64bits,host-os-linux-64,lib,loadgen,mlperf,mlperf-loadgen,mlperf_loadgen,needs-python,needs-python-3.6.7,python-package,target-os-linux-64,v0,vmaster
 ```
 
 <a name="datasets"></a>
