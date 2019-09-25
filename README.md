@@ -14,6 +14,7 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
 - [Inference v0.5](#inference_0_5) 
     - [Unofficial CK workflows](#unofficial)
     - [CK workflows for official application](#official)
+        - [LoadGen](#loadgen)
         - [Datasets](#datasets)
         - [Models](#models)
             - [ResNet](#resnet)
@@ -21,7 +22,7 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
             - [MobileNet quantized](#mobilenet_quant)
             - [SSD-MobileNet non-quantized](#ssd_mobilenet)
             - [SSD-MobileNet quantized](#ssd_mobilenet_quant)
-            - [SSD-ResNet quantized](#ssd_resnet)
+            - [SSD-ResNet](#ssd_resnet)
 - [Training v0.7](#training_0_7)
 
 
@@ -58,6 +59,22 @@ Full instructions are provided in the official MLPerf Inference repository:
 ### CK workflows for official application
 
 You can run the official vision application with CK model and dataset packages.
+
+
+<a name="loadgen"></a>
+#### Install LoadGen
+
+When running the official application locally (i.e. without Docker), install
+LoadGen:
+```bash
+$ ck install package --tags=mlperf,inference,source,upstream.master
+$ ck install package --tags=lib,python-package,absl
+$ ck install package --tags=lib,python-package,mlperf,loadgen
+```
+and enter its virtual environment before any other commands:
+```bash
+$ ck virtual env --tags=lib,python-package,mlperf,loadgen
+```
 
 <a name="datasets"></a>
 #### Install datasets 
