@@ -17,6 +17,11 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
         - [Datasets](#datasets)
         - [Models](#models)
             - [ResNet](#resnet)
+            - [MobileNet non-quantized](#mobilenet)
+            - [MobileNet quantized](#mobilenet_quant)
+            - [SSD-MobileNet non-quantized](#ssd_mobilenet)
+            - [SSD-MobileNet quantized](#ssd_mobilenet_quant)
+            - [SSD-ResNet quantized](#ssd_resnet)
 - [Training v0.7](#training_0_7)
 
 
@@ -54,13 +59,6 @@ Full instructions are provided in the official MLPerf Inference repository:
 
 You can run the official vision application with CK model and dataset packages.
 
-**NB:** It is currently necessary to create symbolic links if a model's file
-name is different from the one hardcoded in the application for each profile.
-For example, for the `tf-mobilenet` profile (which can be used both for the
-non-quantized and quantized MobileNet TF models), the application specifies
-`mobilenet_v1_1.0_224_frozen.pb` , but the quantized model's file is
-`mobilenet_v1_1.0_224_quant_frozen.pb`.
-
 <a name="datasets"></a>
 #### Install datasets 
 
@@ -89,7 +87,14 @@ $ ck locate env --tags=object-detection,dataset,coco,2017,val,original
 ```
 
 <a name="models"></a>
-#### Install and run models
+#### Install and run TensorFlow models
+
+**NB:** It is currently necessary to create symbolic links if a model's file
+name is different from the one hardcoded in the application for each profile.
+For example, for the `tf-mobilenet` profile (which can be used both for the
+non-quantized and quantized MobileNet TF models), the application specifies
+`mobilenet_v1_1.0_224_frozen.pb` , but the quantized model's file is
+`mobilenet_v1_1.0_224_quant_frozen.pb`.
 
 <a name="resnet"></a>
 ##### ResNet
@@ -103,6 +108,7 @@ $ ./run_and_time.sh tf resnet cpu
 TestScenario.SingleStream qps=1089.79, mean=0.0455, time=45.880, acc=76.456, queries=50000, tiles=50.0:0.0447,80.0:0.0465,90.0:0.0481,95.0:0.0501,99.0:0.0564,99.9:0.0849
 ```
 
+<a name="mobilenet"></a>
 ##### MobileNet non-quantized
 ```
 $ ck install package --tags=mlperf,image-classification,model,tf,mobilenet,non-quantized
@@ -114,6 +120,7 @@ $ ./run_and_time.sh tf mobilenet cpu
 TestScenario.Offline qps=352.92, mean=3.2609, time=4.534, acc=71.676, queries=1600, tiles=50.0:2.9725,80.0:4.0271,90.0:4.0907,95.0:4.3719,99.0:4.4811,99.9:4.5173
 ```
 
+<a name="mobilenet_quant"></a>
 ##### MobileNet quantized
 ```
 $ ck install package --tags=mlperf,image-classification,model,tf,mobilenet,quantized
@@ -126,6 +133,7 @@ $ ./run_and_time.sh tf mobilenet cpu
 TestScenario.Offline qps=128.83, mean=7.5497, time=12.419, acc=70.676, queries=1600, tiles=50.0:7.8294,80.0:11.1442,90.0:11.7616,95.0:12.1174,99.0:12.9126,99.9:13.1641
 ```
 
+<a name="ssd_mobilenet"></a>
 ##### SSD-MobileNet non-quantized
 ```
 $ ck install package --tags=mlperf,object-detection,model,tf,ssd-mobilenet,non-quantized
@@ -138,6 +146,7 @@ $ ./run_and_time.sh tf ssd-mobilenet cpu
 TestScenario.Offline qps=5.82, mean=8.0406, time=27.497, acc=93.312, mAP=0.235, queries=160, tiles=50.0:6.7605,80.0:10.3870,90.0:10.4632,95.0:10.4788,99.0:10.4936,99.9:10.5068
 ```
 
+<a name="ssd_mobilenet_quant"></a>
 ##### SSD-MobileNet quantized
 ```
 $ ck install package --tags=mlperf,object-detection,model,tf,ssd-mobilenet,quantized
@@ -150,6 +159,7 @@ $ ./run_and_time.sh tf ssd-mobilenet cpu
 TestScenario.Offline qps=5.46, mean=9.4975, time=29.310, acc=94.037, mAP=0.239, queries=160, tiles=50.0:7.9843,80.0:12.2297,90.0:12.3646,95.0:12.3965,99.0:12.4229,99.9:12.4351
 ```
 
+<a name="ssd_resnet"></a>
 ##### SSD-ResNet
 **TODO**
 
