@@ -23,8 +23,7 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
             - [SSD-MobileNet quantized](#ssd_mobilenet_quant)
             - [SSD-ResNet](#ssd_resnet)
     - [CK workflows for official application without Docker](#official_native)
-        - [TensorFlow](#tensorflow)
-        - [LoadGen](#loadgen)
+        - [Prerequisites](#prereqs)
         - [Modify](#modify_run_local) `run_local.sh`
         - [Use](#use_run_local) `run_local_sh`
 
@@ -105,7 +104,7 @@ non-quantized and quantized MobileNet TF models), the application specifies
 
 <a name="resnet"></a>
 ##### ResNet
-```
+```bash
 $ ck install package --tags=mlperf,image-classification,model,tf,resnet
 $ export MODEL_DIR=`ck locate env --tags=model,tf,resnet`
 $ export DATA_DIR=`ck locate env --tags=dataset,imagenet,val`
@@ -117,7 +116,7 @@ TestScenario.SingleStream qps=1089.79, mean=0.0455, time=45.880, acc=76.456, que
 
 <a name="mobilenet"></a>
 ##### MobileNet non-quantized
-```
+```bash
 $ ck install package --tags=mlperf,image-classification,model,tf,mobilenet,non-quantized
 $ export MODEL_DIR=`ck locate env --tags=model,tf,mobilenet,non-quantized`
 $ export DATA_DIR=`ck locate env --tags=dataset,imagenet,val`
@@ -129,7 +128,7 @@ TestScenario.Offline qps=352.92, mean=3.2609, time=4.534, acc=71.676, queries=16
 
 <a name="mobilenet_quant"></a>
 ##### MobileNet quantized
-```
+```bash
 $ ck install package --tags=mlperf,image-classification,model,tf,mobilenet,quantized
 $ ln -s `ck locate env --tags=mobilenet,quantized`/mobilenet_v1_1.0_224{_quant,}_frozen.pb`
 $ export MODEL_DIR=`ck locate env --tags=model,tf,mobilenet,quantized`
@@ -142,7 +141,7 @@ TestScenario.Offline qps=128.83, mean=7.5497, time=12.419, acc=70.676, queries=1
 
 <a name="ssd_mobilenet"></a>
 ##### SSD-MobileNet non-quantized
-```
+```bash
 $ ck install package --tags=mlperf,object-detection,model,tf,ssd-mobilenet,non-quantized
 $ ln -s `ck locate env --tags=model,tf,ssd-mobilenet,non-quantized`/{frozen_inference_graph.pb,ssd_mobilenet_v1_coco_2018_01_28.pb}
 $ export MODEL_DIR=`ck locate env --tags=model,tf,ssd-mobilenet,non-quantized`
@@ -155,7 +154,7 @@ TestScenario.Offline qps=5.82, mean=8.0406, time=27.497, acc=93.312, mAP=0.235, 
 
 <a name="ssd_mobilenet_quant"></a>
 ##### SSD-MobileNet quantized
-```
+```bash
 $ ck install package --tags=mlperf,object-detection,model,tf,ssd-mobilenet,quantized
 $ ln -s `ck locate env --tags=model,tf,ssd-mobilenet,quantized`/{graph.pb,ssd_mobilenet_v1_coco_2018_01_28.pb}
 $ export MODEL_DIR=`ck locate env --tags=model,tf,ssd-mobilenet,quantized`
@@ -177,7 +176,7 @@ TestScenario.Offline qps=5.46, mean=9.4975, time=29.310, acc=94.037, mAP=0.239, 
 <a name="prereqs"></a>
 #### Install prerequisites
 
-Running the official vision app natively (i.e. without Docker) requires installing some Python prerequisites such as OpenCV, TensorFlow and COCO Python API:
+To run the official vision app natively (i.e. without Docker), first install Python prerequisites such as OpenCV, TensorFlow and COCO Python API:
 ```bash
 $ ck detect soft --tags=compiler,python --full_path=`which python3`
 $ ck install package --tags=lib,tensorflow,v1.14,vcpu,vprebuilt
@@ -185,53 +184,40 @@ $ ck install package --tags=lib,python-package,cv2
 $ ck install package --tags=tool,coco,api
 ```
 
-**NB:** The most important thing during installation is to select the same version of Python 3 (if you have more than one registered with CK).
-Check what each package "needs" after installation:
-```bash
-$ ck show env --tags=tool,coco,api
-Env UID:         Target OS: Bits: Name:            Version: Tags:
-
-885a8f71bf1219da   linux-64    64 COCO dataset API master   64bits,api,coco,compiled-by-gcc,compiled-by-gcc-8.3.0,host-os-linux-64,needs-python,needs-python-3.6.7,target-os-linux-64,tool,v0,vmaster,vtrunk
-
-$ ck show env --tags=lib,python-package,cv2
-Env UID:         Target OS: Bits: Name:                 Version: Tags:
-
-5f31d16b444d6b8c   linux-64    64 Python OpenCV library 3.6.7    64bits,cv2,host-os-linux-64,lib,needs-python,needs-python-3.6.7,opencv,python-package,target-os-linux-64,v3,v3.6,v3.6.7
-
-$ ck show env --tags=lib,tensorflow,v1.14,vcpu,vprebuilt
-Env UID:         Target OS: Bits: Name:                              Version: Tags:
-
-087035468886d589   linux-64    64 TensorFlow library (prebuilt, cpu) 1.14.0   64bits,channel-stable,host-os-linux-64,lib,needs-python,needs-python-3.6.7,target-os-linux-64,tensorflow,tensorflow-cpu,tf,tf-cpu,v1,v1.14,v1.14.0,vcpu,vprebuilt
-```
-
-<a name="loadgen"></a>
-#### Install LoadGen
-
-When running the official application locally (i.e. without Docker), install
-LoadGen:
+Then, install the latest LoadGen package:
 ```bash
 $ ck install package --tags=mlperf,inference,source,upstream.master
 $ ck install package --tags=lib,python-package,absl
 $ ck install package --tags=lib,python-package,mlperf,loadgen
 ```
-and enter its virtual environment before any other commands:
+
+**NB:** The most important thing during installation is to select the same version of Python 3 (if you have more than one registered with CK).
+Check that each package "needs" exactly the same version of Python 3 after installation:
 ```bash
-$ ck virtual env --tags=lib,python-package,mlperf,loadgen
-$ python3.6 -c "import mlperf_loadgen as lg"
-```
-**NB:** Use with the same Python version as your LoadGen installation "needs":
-```bash
+$ ck show env --tags=lib,tensorflow,v1.14,vcpu,vprebuilt
+Env UID:         Target OS: Bits: Name:                              Version: Tags:
+087035468886d589   linux-64    64 TensorFlow library (prebuilt, cpu) 1.14.0   64bits,channel-stable,host-os-linux-64,lib,needs-python,needs-python-3.6.7,target-os-linux-64,tensorflow,tensorflow-cpu,tf,tf-cpu,v1,v1.14,v1.14.0,vcpu,vprebuilt
+
+$ ck show env --tags=lib,python-package,cv2
+Env UID:         Target OS: Bits: Name:                 Version: Tags:
+5f31d16b444d6b8c   linux-64    64 Python OpenCV library 3.6.7    64bits,cv2,host-os-linux-64,lib,needs-python,needs-python-3.6.7,opencv,python-package,target-os-linux-64,v3,v3.6,v3.6.7
+
+$ ck show env --tags=tool,coco,api
+Env UID:         Target OS: Bits: Name:            Version: Tags:
+885a8f71bf1219da   linux-64    64 COCO dataset API master   64bits,api,coco,compiled-by-gcc,compiled-by-gcc-8.3.0,host-os-linux-64,needs-python,needs-python-3.6.7,target-os-linux-64,tool,v0,vmaster,vtrunk
+
 $ ck show env --tags=lib,python-package,mlperf,loadgen
 Env UID:         Target OS: Bits: Name:                            Version: Tags:
-
 462592cb2beeaf63   linux-64    64 MLPerf Inference LoadGen library master   64bits,host-os-linux-64,lib,loadgen,mlperf,mlperf-loadgen,mlperf_loadgen,needs-python,needs-python-3.6.7,python-package,target-os-linux-64,v0,vmaster
 ```
 
 <a name="modify_run_local"></a>
 #### Modify `run_local.sh`
 
+Modify the `run_local.sh` script under `v0.5/classification_and_detection` as follows:
+
 ```bash
-/data/anton/mlperf/dividiti-inference/v0.5/classification_and_detection$ git diff
+$ git diff
 diff --git a/v0.5/classification_and_detection/run_local.sh b/v0.5/classification_and_detection/run_local.sh
 index 1262991..7597403 100755
 --- a/v0.5/classification_and_detection/run_local.sh
@@ -245,6 +231,7 @@ index 1262991..7597403 100755
 +ck virtual env --tag_groups="lib,tensorflow-cpu,v1.14,vcpu,vprebuilt lib,python-package,cv2 tool,coco lib,python-package,mlperf,loadgen" \
 +--shell_cmd="python3.6 python/main.py --profile $profile $common_opt --model $model_path $dataset --output $OUTPUT_DIR $EXTRA_OPS $@"
 ```
+**NB:** Use exactly the same Python version as your [prerequisites](#prereqs) "need" (only the major and minor version numbers e.g. 3.6, not 3.6.7).
 
 <a name="use_run_local"></a>
 #### Use `run_local.sh`
@@ -252,7 +239,7 @@ index 1262991..7597403 100755
 See [above](#official_docker) for how to specify [datasets](#datasets) and [models](#models).
 
 ##### Example: MobileNet non-quantized
-```
+```bash
 $ ck install package --tags=mlperf,image-classification,model,tf,mobilenet,non-quantized
 $ export MODEL_DIR=`ck locate env --tags=model,tf,mobilenet,non-quantized`
 $ export DATA_DIR=`ck locate env --tags=dataset,imagenet,val`
