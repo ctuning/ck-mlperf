@@ -63,7 +63,7 @@
         "package_extra_name": " (PR#439)"
       }
     },
-    "nvpohanh.dev-pohanh": {
+    "pr461": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/nvpohanh/inference",
         "PACKAGE_GIT_CHECKOUT": "dev-pohanh"
