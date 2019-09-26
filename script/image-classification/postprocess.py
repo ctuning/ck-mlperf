@@ -26,7 +26,7 @@ def ck_postprocess(i):
   SKIP_IMAGES = int(my_env('CK_SKIP_IMAGES'))
   RESULTS_DIR = 'predictions'
   NUM_CLASSES = 1000
-  PREPROCESSED_EXT = dep_env('images', 'CK_ENV_DATASET_IMAGENET_PREPROCESSED_NEW_EXTENSION')
+  PREPROCESSED_EXT = dep_env('images', 'CK_ENV_DATASET_IMAGENET_PREPROCESSED_NEW_EXTENSION') or 'JPEG'
   AUX_DIR = dep_env('imagenet-aux', 'CK_ENV_DATASET_IMAGENET_AUX')
   CLASSES_FILE = os.path.join(AUX_DIR, 'synset_words.txt')
   VALUES_FILE = os.path.join(AUX_DIR, 'val.txt')
