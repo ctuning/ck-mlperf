@@ -51,7 +51,7 @@
 	"PACKAGE_GIT_CLONE_FLAGS": "-b classification_and_detection_with_ck"
       },
       "extra_customize": {
-        "package_extra_name": " from dividiti's fork, library for the ck-mlperf inference program"
+        "package_extra_name": " (for the CK-tweaked MLPerf Inference vision app)"
       }
     },
     "dividiti.branch": {
@@ -60,7 +60,16 @@
         "PACKAGE_GIT_CHECKOUT": "fix_thread_id_conversion_mac"
       },
       "extra_customize": {
-        "package_extra_name": " (dividiti's fork)"
+        "package_extra_name": " (PR#439)"
+      }
+    },
+    "nvpohanh.dev-pohanh": {
+      "extra_env": {
+        "PACKAGE_URL": "https://github.com/nvpohanh/inference",
+        "PACKAGE_GIT_CHECKOUT": "dev-pohanh"
+      },
+      "extra_customize": {
+        "package_extra_name": " (PR#461)"
       }
     }
   },
