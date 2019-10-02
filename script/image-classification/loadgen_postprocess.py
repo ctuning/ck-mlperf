@@ -27,9 +27,6 @@ def ck_postprocess(i):
   save_dict['mlperf_log'] = {}
   mlperf_log_dict = save_dict['mlperf_log']
 
-  with open(MLPERF_LOG_TRACE_JSON, 'r') as trace_file:
-    mlperf_log_dict['trace'] = json.load(trace_file)
-
   with open(MLPERF_LOG_ACCURACY_JSON, 'r') as accuracy_file:
     mlperf_log_dict['accuracy'] = json.load(accuracy_file)
 
@@ -38,6 +35,13 @@ def ck_postprocess(i):
 
   with open(MLPERF_LOG_DETAIL_TXT, 'r') as detail_file:
     mlperf_log_dict['detail'] = detail_file.readlines()
+
+  if os.stat(MLPERF_LOG_TRACE_JSON).st_size==0:
+    mlperf_log_dict['trace'] = {}
+  else:
+    with open(MLPERF_LOG_TRACE_JSON, 'r') as trace_file:
+      mlperf_log_dict['trace'] = json.load(trace_file)
+
 
   # Check accuracy in accuracy mode.
   accuracy_mode = False
