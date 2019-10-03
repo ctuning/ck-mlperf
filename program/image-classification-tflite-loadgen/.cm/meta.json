@@ -34,7 +34,7 @@
     "CK_ENV_LIB_MLPERF_LOADGEN_INCLUDE"
   ],
   "compiler_env": "CK_CXX",
-  "compiler_flags_as_env": "$<<CK_COMPILER_FLAG_CPP11>>$ $<<CK_ENV_LIB_TF_DEF>>$ -Wall -Wno-sign-compare",
+  "compiler_flags_as_env": "$<<CK_COMPILER_FLAG_CPP11>>$ $<<CK_ENV_LIB_TF_DEF>>$ -Wall -Wno-sign-compare -Wno-psabi",
   "data_name": "loadgen-image-classification-tflite",
   "extra_ld_vars": "$<<CK_ENV_LIB_TF_LIBS_DIRS>>$ $<<CK_ENV_LIB_TF_LIBS>>$ $<<CK_EXTRA_LIB_LOG>>$ -L$<<CK_ENV_LIB_MLPERF_LOADGEN_LIB>>$ -lmlperf_loadgen",
   "linker_add_lib_as_env": [
