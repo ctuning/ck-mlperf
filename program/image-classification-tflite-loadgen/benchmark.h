@@ -198,7 +198,7 @@ public:
 
   virtual ~BenchmarkSession() {}
 
-  const std::vector<std::string>& load_filenames(std::vector<unsigned long> img_indices) {
+  const std::vector<std::string>& load_filenames(std::vector<unsigned int> img_indices) {
     _filenames_buffer.clear();
     _filenames_buffer.reserve( img_indices.size() );
     idx2loc.clear();
