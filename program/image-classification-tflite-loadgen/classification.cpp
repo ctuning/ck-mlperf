@@ -292,9 +292,14 @@ void TestSingleStream(Program *prg) {
   //ts.min_duration_ms = 0;
   //ts.max_duration_ms = 2000;
 
-  const int time_limit_sec = getenv_i("CK_LOADGEN_TIME_LIMIT_SEC");
-  if(time_limit_sec) {
+  const float time_limit_sec = getenv_f("CK_LOADGEN_TIME_LIMIT_SEC");
+  if(time_limit_sec > 0.0) {
       ts.max_duration_ms = time_limit_sec * 1000;
+  }
+
+  const float expected_qps = getenv_f("CK_LOADGEN_OFFLINE_EXPECTED_QPS");
+  if(expected_qps > 0.0) {
+      ts.offline_expected_qps = expected_qps;
   }
 
   mlperf::LogSettings log_settings;
