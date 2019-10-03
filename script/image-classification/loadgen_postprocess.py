@@ -54,6 +54,8 @@ def ck_postprocess(i):
                                     'classification_and_detection', 'tools', 'accuracy-imagenet.py' )
     imagenet_labels_filepath = deps['imagenet-aux']['dict']['env']['CK_CAFFE_IMAGENET_VAL_TXT']
 
+    os.environ['PYTHONPATH'] = deps['lib-python-numpy']['dict']['env']['PYTHONPATH'].split(':')[0] +':'+os.environ.get('PYTHONPATH','')
+
     command = [ deps['python']['dict']['env']['CK_ENV_COMPILER_PYTHON_FILE'], accuracy_script,
               '--mlperf-accuracy-file', MLPERF_LOG_ACCURACY_JSON,
               '--imagenet-val-file', imagenet_labels_filepath,
