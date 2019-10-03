@@ -191,27 +191,26 @@ public:
   }
 
   void FlushQueries() override {}
-  void ReportLatencyResults(
-      const std::vector<mlperf::QuerySampleLatency>& latencies_ns) override {
+  void ReportLatencyResults(const std::vector<mlperf::QuerySampleLatency>& latencies_ns) override {
 
-    int size = latencies_ns.size();
-    std::vector<mlperf::QuerySampleLatency> v(size);
-    std::copy (latencies_ns.begin(), latencies_ns.end(), v.begin() );
+    size_t size = latencies_ns.size();
+    uint64_t avg = accumulate(latencies_ns.begin(), latencies_ns.end(), uint64_t(0) )/size;
+
+    std::vector<mlperf::QuerySampleLatency> sorted_lat(latencies_ns.begin(), latencies_ns.end());
+    sort(sorted_lat.begin(), sorted_lat.end());
 
     cout << endl << "------------------------------------------------------------";
     cout << endl << "|            LATENCIES (in nanoseconds and fps)            |";
     cout << endl << "------------------------------------------------------------";
-    sort(v.begin(), v.end());
-    long avg = long(accumulate(v.begin(), v.end(), 0L))/size;
-    int p50 = size * 0.5;
-    int p90 = size * 0.9;
+    size_t p50 = size * 0.5;
+    size_t p90 = size * 0.9;
     cout << endl << "Number of queries run: " << size;
-    cout << endl << "Min latency:                      " << v[0]            << "ns  (" << 1e9/v[0]            << " fps)";
-    cout << endl << "Median latency:                   " << v[p50]          << "ns  (" << 1e9/v[p50]          << " fps)";
-    cout << endl << "Average latency:                  " << avg             << "ns  (" << 1e9/avg             << " fps)";
-    cout << endl << "90 percentile latency:            " << v[p90]          << "ns  (" << 1e9/v[p90]          << " fps)";
-    cout << endl << "First query (cold model) latency: " << latencies_ns[0] << "ns  (" << 1e9/latencies_ns[0] << " fps)";
-    cout << endl << "Max latency:                      " << v[size-1]       << "ns  (" << 1e9/v[size-1]       << " fps)";
+    cout << endl << "Min latency:                      " << sorted_lat[0]       << "ns  (" << 1e9/sorted_lat[0]         << " fps)";
+    cout << endl << "Median latency:                   " << sorted_lat[p50]     << "ns  (" << 1e9/sorted_lat[p50]       << " fps)";
+    cout << endl << "Average latency:                  " << avg             	<< "ns  (" << 1e9/avg             	<< " fps)";
+    cout << endl << "90 percentile latency:            " << sorted_lat[p90]     << "ns  (" << 1e9/sorted_lat[p90]       << " fps)";
+    cout << endl << "First query (cold model) latency: " << latencies_ns[0] 	<< "ns  (" << 1e9/latencies_ns[0] 	<< " fps)";
+    cout << endl << "Max latency:                      " << sorted_lat[size-1]	<< "ns  (" << 1e9/sorted_lat[size-1]	<< " fps)";
 
     cout << endl << "------------------------------------------------------------ " << endl;
   }
