@@ -292,6 +292,11 @@ void TestSingleStream(Program *prg) {
   //ts.min_duration_ms = 0;
   //ts.max_duration_ms = 2000;
 
+  const int time_limit_sec = getenv_i("CK_LOADGEN_TIME_LIMIT_SEC");
+  if(time_limit_sec) {
+      ts.max_duration_ms = time_limit_sec * 1000;
+  }
+
   mlperf::LogSettings log_settings;
   log_settings.log_output.prefix_with_datetime = false;
   log_settings.enable_trace = false;
