@@ -110,6 +110,20 @@
       "no_tags": "mobilenet-all",
       "sort": 30,
       "tags": "model,tflite,image-classification"
+    },
+    "python": {
+      "force_target_as_host": "yes",
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 50,
+      "tags": "compiler,lang-python"
+    },
+    "lib-python-numpy": {
+      "force_target_as_host": "yes",
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 60,
+      "tags": "lib,python-package,numpy"
     }
   },
   "run_vars": {
