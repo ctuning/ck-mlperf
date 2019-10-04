@@ -109,7 +109,7 @@ public:
   const bool subtract_mean = getenv_s("CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN") == "YES";
   const char *given_channel_means_str = getenv("ML_MODEL_GIVEN_CHANNEL_MEANS");
 
-  const bool full_report = getenv_i("CK_SILENT_MODE") == 0;
+  const int verbosity_level = getenv_i("CK_VERBOSE");
 
   BenchmarkSettings(enum MODEL_TYPE mode = MODEL_TYPE::LITE) {
 
@@ -259,12 +259,16 @@ public:
     s->image_size * s->image_size * s->num_channels * (s->skip_internal_preprocessing ? sizeof(float) : sizeof(uint8_t)),
     s->images_dir) {}
   
-  void load(const std::string& filename) {
+  void load(const std::string& filename, int vl) {
     auto path = _dir + '/' + filename;
     std::ifstream file(path, std::ios::in | std::ios::binary);
     if (!file) throw "Failed to open image data " + path;
     file.read(reinterpret_cast<char*>(_buffer), _size);
-    std::cout << "Loaded file: " << path << std::endl;
+    if( vl > 1) {
+      std::cout << "Loaded file: " << path << std::endl;
+    } else if ( vl ) {
+      std::cout << 'l' << std::flush;
+    }
   }
 };
 
@@ -323,6 +327,7 @@ public:
 
   void load_images(BenchmarkSession *_session) override {
     session = _session;
+    auto vl = _settings->verbosity_level;
 
     const std::vector<std::string>& image_filenames = session->current_filenames();
 
@@ -334,7 +339,7 @@ public:
     for (auto image_file : image_filenames) {
       _in_batch[i].reset(new ImageData(_settings));
       _out_batch[i].reset(new ResultData(_settings));
-      _in_batch[i]->load(image_file);
+      _in_batch[i]->load(image_file, vl);
       i++;
     }
   }

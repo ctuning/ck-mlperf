@@ -120,13 +120,22 @@ public:
   //bool is_available_batch() {return session? session->get_next_batch(): false; }
 
   void LoadNextBatch(const std::vector<mlperf::QuerySampleIndex>& img_indices) {
-    std::cout << "LoadNextBatch([";
-    for( auto idx : img_indices) {
-      std::cout << idx << ' ';
+    auto vl = settings->verbosity_level;
+
+    if( vl > 1 ) {
+      cout << "LoadNextBatch([";
+      for( auto idx : img_indices) {
+        cout << idx << ' ';
+      }
+      cout << "])" << endl;
+    } else if( vl ) {
+      cout << 'B' << flush;
     }
-    std::cout << "])" << std::endl;
     session->load_filenames(img_indices);
     benchmark->load_images( session );
+    if( vl ) {
+      cout << endl;
+    }
   }
 
   int InferenceOnce(int img_idx) {
@@ -143,8 +152,8 @@ public:
   const int available_images_max() { return settings->list_of_available_imagefiles().size(); }
   const int images_in_memory_max() { return settings->images_in_memory_max; }
 
-private:
   BenchmarkSettings *settings;
+private:
   BenchmarkSession *session;
   unique_ptr<IBenchmark> benchmark;
   unique_ptr<tflite::Interpreter> interpreter;
@@ -164,7 +173,12 @@ public:
 
   void IssueQuery(const std::vector<mlperf::QuerySample>& samples) override {
 
-    std::cout << "IssueQuery([" << samples.size() << "]," << samples[0].id << "," << samples[0].index << ")" << std::endl;
+    auto vl = prg->settings->verbosity_level;
+    if( vl > 1 ) {
+      cout << "IssueQuery([" << samples.size() << "]," << samples[0].id << "," << samples[0].index << ")" << endl;
+    } else if ( vl ) {
+      cout << 'Q' << flush;
+    }
 
     // This is currently a completely fake response, only to satisfy the interface
     std::vector<mlperf::QuerySampleResponse> responses;
@@ -173,8 +187,12 @@ public:
     int i=0;
     for (auto s : samples) {
       int predicted_class = prg->InferenceOnce(s.index);
-      std::cout << "Query image index: " << s.index << " -> Predicted class: " << predicted_class << std::endl;
 
+      if( vl > 1 ) {
+        cout << "Query image index: " << s.index << " -> Predicted class: " << predicted_class << endl << endl;
+      } else if ( vl ) {
+        cout << 'p' << flush;
+      }
 
       /* This would be the correct way to pass in one integer index:
       */
@@ -190,7 +208,13 @@ public:
     mlperf::QuerySamplesComplete(responses.data(), responses.size());
   }
 
-  void FlushQueries() override {}
+  void FlushQueries() override {
+      auto vl = prg->settings->verbosity_level;
+
+      if ( vl ) {
+        cout << endl;
+      }
+  }
   void ReportLatencyResults(const std::vector<mlperf::QuerySampleLatency>& latencies_ns) override {
 
     size_t size = latencies_ns.size();
