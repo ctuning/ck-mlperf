@@ -48,6 +48,15 @@ inline std::string getenv_s(const std::string& name) {
   return std::string(value);
 }
 
+inline std::string getenv_opt_s(const std::string& name, const std::string default_value) {
+  const char *value = getenv(name.c_str());
+  if (!value)
+    return default_value;
+  else
+    return std::string(value);
+}
+
+
 /// Load mandatory integer value from the environment.
 inline int getenv_i(const std::string& name) {
   const char *value = getenv(name.c_str());
@@ -105,7 +114,8 @@ public:
   const int num_channels = 3;
   const int num_classes = 1000;
   const bool normalize_img = getenv_s("CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA") == "YES";
-  const bool subtract_mean = getenv_s("CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN") == "YES";
+
+  const bool subtract_mean = getenv_opt_s("CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN", "0") == "YES";
   const char *given_channel_means_str = getenv("ML_MODEL_GIVEN_CHANNEL_MEANS");
 
   const std::string trigger_cold_run_str = getenv_s("CK_LOADGEN_TRIGGER_COLD_RUN");
