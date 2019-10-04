@@ -108,6 +108,13 @@ public:
   const bool subtract_mean = getenv_s("CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN") == "YES";
   const char *given_channel_means_str = getenv("ML_MODEL_GIVEN_CHANNEL_MEANS");
 
+  const std::string trigger_cold_run_str = getenv_s("CK_LOADGEN_TRIGGER_COLD_RUN");
+  const bool trigger_cold_run =  (trigger_cold_run_str == "YES")
+                              || (trigger_cold_run_str == "yes")
+                              || (trigger_cold_run_str == "ON")
+                              || (trigger_cold_run_str == "on")
+                              || (trigger_cold_run_str == "1");
+
   const int verbosity_level = getenv_i("CK_VERBOSE");
 
   BenchmarkSettings(enum MODEL_TYPE mode = MODEL_TYPE::LITE) {

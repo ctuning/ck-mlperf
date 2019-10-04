@@ -133,6 +133,19 @@ public:
     }
   }
 
+  void ColdRun() {
+    auto vl = settings->verbosity_level;
+
+    if( vl > 1 ) {
+      cout << "Triggering a Cold Run..." << endl;
+    } else if( vl ) {
+      cout << 'C' << flush;
+    }
+
+    if (interpreter->Invoke() != kTfLiteOk)
+      throw "Failed to invoke tflite";
+  }
+
   int InferenceOnce(int img_idx) {
     benchmark->get_random_image( img_idx );
     if (interpreter->Invoke() != kTfLiteOk)
@@ -227,10 +240,13 @@ public:
     cout << endl << "Number of queries run: " << size;
     cout << endl << "Min latency:                      " << sorted_lat[0]       << "ns  (" << 1e9/sorted_lat[0]         << " fps)";
     cout << endl << "Median latency:                   " << sorted_lat[p50]     << "ns  (" << 1e9/sorted_lat[p50]       << " fps)";
-    cout << endl << "Average latency:                  " << avg             	<< "ns  (" << 1e9/avg             	<< " fps)";
+    cout << endl << "Average latency:                  " << avg                 << "ns  (" << 1e9/avg                   << " fps)";
     cout << endl << "90 percentile latency:            " << sorted_lat[p90]     << "ns  (" << 1e9/sorted_lat[p90]       << " fps)";
-    cout << endl << "First query (cold model) latency: " << latencies_ns[0] 	<< "ns  (" << 1e9/latencies_ns[0] 	<< " fps)";
-    cout << endl << "Max latency:                      " << sorted_lat[size-1]	<< "ns  (" << 1e9/sorted_lat[size-1]	<< " fps)";
+
+    if(!prg->settings->trigger_cold_run) {
+      cout << endl << "First query (cold model) latency: " << latencies_ns[0]     << "ns  (" << 1e9/latencies_ns[0]       << " fps)";
+    }
+    cout << endl << "Max latency:                      " << sorted_lat[size-1]  << "ns  (" << 1e9/sorted_lat[size-1]    << " fps)";
 
     cout << endl << "------------------------------------------------------------ " << endl;
   }
@@ -325,6 +341,10 @@ void TestSingleStream(Program *prg) {
   mlperf::LogSettings log_settings;
   log_settings.log_output.prefix_with_datetime = false;
   log_settings.enable_trace = false;
+
+  if(prg->settings->trigger_cold_run) {
+    prg->ColdRun();
+  }
 
   mlperf::StartTest(&sut, &qsl, ts, log_settings);
 }
