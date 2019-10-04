@@ -132,7 +132,7 @@
     "CK_LOADGEN_MODE": "AccuracyOnly",
     "CK_LOADGEN_SCENARIO": "SingleStream",
     "CK_LOADGEN_SUPPORT": "YES",
-    "CK_LOADGEN_TIME_LIMIT_SEC": 0,
+    "CK_LOADGEN_MAX_DURATION_S": 0,
     "CK_LOADGEN_OFFLINE_EXPECTED_QPS": 0,
     "CK_RESULTS_DIR": "predictions",
     "CK_VERBOSE": 1,

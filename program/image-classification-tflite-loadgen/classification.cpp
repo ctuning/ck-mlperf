@@ -310,9 +310,9 @@ void TestSingleStream(Program *prg) {
   //ts.min_duration_ms = 0;
   //ts.max_duration_ms = 2000;
 
-  const float time_limit_sec = getenv_f("CK_LOADGEN_TIME_LIMIT_SEC");
-  if(time_limit_sec > 0.0) {
-      ts.max_duration_ms = time_limit_sec * 1000;
+  const float max_duration_s = getenv_f("CK_LOADGEN_MAX_DURATION_S");
+  if(max_duration_s > 0.0) {
+      ts.max_duration_ms = max_duration_s * 1000;
   }
 
   const float expected_qps = getenv_f("CK_LOADGEN_OFFLINE_EXPECTED_QPS");
