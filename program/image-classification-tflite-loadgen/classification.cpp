@@ -158,8 +158,9 @@ private:
 
 class SystemUnderTestSingleStream : public mlperf::SystemUnderTest {
 public:
-  SystemUnderTestSingleStream(Program *prg) : mlperf::SystemUnderTest() {
-    this->prg = prg;
+  SystemUnderTestSingleStream(Program *_prg) : mlperf::SystemUnderTest() {
+    prg = _prg;
+    query_counter = 0;
   };
 
   ~SystemUnderTestSingleStream() override = default;
@@ -168,14 +169,14 @@ public:
 
   void IssueQuery(const std::vector<mlperf::QuerySample>& samples) override {
 
+    ++query_counter;
     auto vl = prg->settings->verbosity_level;
     if( vl > 1 ) {
-      cout << "IssueQuery([" << samples.size() << "]," << samples[0].id << "," << samples[0].index << ")" << endl;
+      cout << query_counter << ") IssueQuery([" << samples.size() << "]," << samples[0].id << "," << samples[0].index << ")" << endl;
     } else if ( vl ) {
       cout << 'Q' << flush;
     }
 
-    // This is currently a completely fake response, only to satisfy the interface
     std::vector<mlperf::QuerySampleResponse> responses;
     responses.reserve(samples.size());
     float encoding_buffer[samples.size()];
@@ -237,12 +238,13 @@ public:
 private:
   std::string name_{"SingleStreamSUT"};
   Program *prg;
+  long query_counter;
 };
 
 class QuerySampleLibrarySingleStream : public mlperf::QuerySampleLibrary {
 public:
-  QuerySampleLibrarySingleStream(Program *prg) : mlperf::QuerySampleLibrary() {
-    this->prg = prg;
+  QuerySampleLibrarySingleStream(Program *_prg) : mlperf::QuerySampleLibrary() {
+    prg = _prg;
   };
 
   ~QuerySampleLibrarySingleStream() = default;
