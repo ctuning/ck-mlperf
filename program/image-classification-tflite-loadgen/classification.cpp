@@ -7,8 +7,8 @@
  */
 
 #include <future>
-#include <algorithm> 
-#include <numeric> 
+#include <algorithm>
+#include <numeric>
 
 #include "loadgen.h"
 #include "query_sample_library.h"
@@ -43,7 +43,7 @@ class Program {
 public:
   Program () {
     settings = new BenchmarkSettings(MODEL_TYPE::LITE);
-    
+
     session = new BenchmarkSession(settings);
 
     cout << "\nLoading graph..." << endl;
@@ -218,12 +218,12 @@ public:
   }
 
   void FlushQueries() override {
-      auto vl = prg->settings->verbosity_level;
-
-      if ( vl ) {
-        cout << endl;
-      }
+    auto vl = prg->settings->verbosity_level;
+    if ( vl ) {
+      cout << endl;
+    }
   }
+
   void ReportLatencyResults(const std::vector<mlperf::QuerySampleLatency>& latencies_ns) override {
 
     size_t size = latencies_ns.size();
@@ -247,7 +247,6 @@ public:
       cout << endl << "First query (cold model) latency: " << latencies_ns[0]     << "ns  (" << 1e9/latencies_ns[0]       << " fps)";
     }
     cout << endl << "Max latency:                      " << sorted_lat[size-1]  << "ns  (" << 1e9/sorted_lat[size-1]    << " fps)";
-
     cout << endl << "------------------------------------------------------------ " << endl;
   }
 
@@ -329,20 +328,20 @@ void TestSingleStream(Program *prg) {
   //ts.max_duration_ms = 2000;
 
   const float max_duration_s = getenv_f("CK_LOADGEN_MAX_DURATION_S");
-  if(max_duration_s > 0.0) {
-      ts.max_duration_ms = max_duration_s * 1000;
+  if (max_duration_s > 0.0) {
+    ts.max_duration_ms = max_duration_s * 1000;
   }
 
   const float expected_qps = getenv_f("CK_LOADGEN_OFFLINE_EXPECTED_QPS");
-  if(expected_qps > 0.0) {
-      ts.offline_expected_qps = expected_qps;
+  if (expected_qps > 0.0) {
+    ts.offline_expected_qps = expected_qps;
   }
 
   mlperf::LogSettings log_settings;
   log_settings.log_output.prefix_with_datetime = false;
   log_settings.enable_trace = false;
 
-  if(prg->settings->trigger_cold_run) {
+  if (prg->settings->trigger_cold_run) {
     prg->ColdRun();
   }
 

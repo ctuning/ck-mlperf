@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: BSD-3-Clause.
  * See CK LICENSE.txt for licensing details.
  */
- 
+
 #pragma once
 
 #include <stdio.h>
@@ -129,11 +129,11 @@ public:
 
   BenchmarkSettings(enum MODEL_TYPE mode = MODEL_TYPE::LITE) {
 
-    if(given_channel_means_str) {
-        std::stringstream ss(given_channel_means_str);
-        for(int i=0;i<3;i++){
-            ss >> given_channel_means[i];
-        }
+    if (given_channel_means_str) {
+      std::stringstream ss(given_channel_means_str);
+      for(int i=0;i<3;i++){
+        ss >> given_channel_means[i];
+      }
     }
 
     switch (mode)
@@ -141,11 +141,11 @@ public:
     case MODEL_TYPE::LITE:
       _graph_file = getenv_s("CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH");
       break;
-    
+
     case MODEL_TYPE::TF_FROZEN:
       _graph_file = getenv_s("CK_ENV_TENSORFLOW_MODEL_TF_FROZEN_FILEPATH");
       break;
-    
+
     default:
       std::cout << "Unsupported MODEL_TYPE" << std::endl;
       exit(-1);
@@ -251,7 +251,7 @@ public:
   StaticBuffer(int size, const std::string& dir): _size(size), _dir(dir) {
     _buffer = new TData[size];
   }
-  
+
   virtual ~StaticBuffer() {
     delete[] _buffer;
   }
@@ -272,7 +272,7 @@ public:
   ImageData(const BenchmarkSettings* s): StaticBuffer(
     s->image_size * s->image_size * s->num_channels * (s->skip_internal_preprocessing ? sizeof(float) : sizeof(uint8_t)),
     s->images_dir) {}
-  
+
   void load(const std::string& filename, int vl) {
     auto path = _dir + '/' + filename;
     std::ifstream file(path, std::ios::in | std::ios::binary);
@@ -305,11 +305,12 @@ public:
     int   arg_index = 0;
     float max_value = _buffer[0];
 
-    for (int i = 1; i < _size; i++)
+    for (int i = 1; i < _size; i++) {
       if (_buffer[i] > max_value) {
         arg_index = i;
         max_value = _buffer[i];
       }
+    }
 
     return arg_index;
   }
@@ -371,7 +372,6 @@ public:
   }
 
   void save_results() override {
-
     const std::vector<std::string>& image_filenames = session->current_filenames();
     int i = 0;
     for (auto image_file : image_filenames) {
@@ -386,8 +386,8 @@ private:
   int _current_buffer_size = 0;
   TData* _in_ptr;
   TData* _out_ptr;
-  std::unique_ptr<ImageData>  *_in_batch;
-  std::unique_ptr<ResultData>  *_out_batch;
+  std::unique_ptr<ImageData> *_in_batch;
+  std::unique_ptr<ResultData> *_out_batch;
   std::unique_ptr<TInConverter> _in_converter;
   std::unique_ptr<TOutConverter> _out_converter;
 };
@@ -405,7 +405,7 @@ public:
 class InCopy : public IinputConverter {
 public:
   InCopy(const BenchmarkSettings* s) {}
-  
+
   void convert(const ImageData* source, void* target) {
     uint8_t *uint8_target = static_cast<uint8_t *>(target);
     std::copy(source->data(), source->data() + source->size(), uint8_target);
@@ -422,7 +422,7 @@ public:
     _given_channel_means(s->given_channel_means),
     _num_channels(s->num_channels) {
   }
-  
+
   void convert(const ImageData* source, void* target) {
     // Copy image data to target
     float *float_target = static_cast<float *>(target);
@@ -436,14 +436,14 @@ public:
     }
     // Subtract mean value if required
     if (_subtract_mean) {
-        if(_given_channel_means) {
-            for (int i = 0; i < source->size(); i++)
-                float_target[i] -= _given_channel_means[i % _num_channels];    // assuming NHWC order!
-        } else {
-            float mean = sum / static_cast<float>(source->size());
-            for (int i = 0; i < source->size(); i++)
-                float_target[i] -= mean;
-        }
+      if(_given_channel_means) {
+        for (int i = 0; i < source->size(); i++)
+          float_target[i] -= _given_channel_means[i % _num_channels];    // assuming NHWC order!
+      } else {
+        float mean = sum / static_cast<float>(source->size());
+        for (int i = 0; i < source->size(); i++)
+          float_target[i] -= mean;
+      }
     }
   }
 
@@ -459,7 +459,7 @@ private:
 class OutCopy {
 public:
   OutCopy(const BenchmarkSettings* s) {}
-  
+
   void convert(const float* source, ResultData* target) const {
     std::copy(source, source + target->size(), target->data());
   }
@@ -470,7 +470,7 @@ public:
 class OutDequantize {
 public:
   OutDequantize(const BenchmarkSettings* s) {}
-  
+
   void convert(const uint8_t* source, ResultData* target) const {
     for (int i = 0; i < target->size(); i++)
       target->data()[i] = source[i] / 255.0;
