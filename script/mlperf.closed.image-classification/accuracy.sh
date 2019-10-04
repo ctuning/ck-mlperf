@@ -1,23 +1,30 @@
 #!/bin/bash
 
-division=closed
-task=image-classification
+division='closed'
+task='image-classification'
 
-system=rpi4
-library=tflite,v1.15
+system='hikey960'
+library='tflite,v1.15'
 if [ ${system} = 'rpi4' ]
 then
-  compiler=gcc,v8
+  compiler='gcc,v8'
 else
-  compiler=gcc,v7
+  compiler='gcc,v7'
 fi
 
-scenario=SingleStream
-scenario_tag=singlestream
-mode=AccuracyOnly
-mode_tag=accuracy
-dataset_size=5000
-buffer_size=500
+scenario='SingleStream'
+scenario_tag='singlestream'
+
+mode='AccuracyOnly'
+mode_tag='accuracy'
+if [ ${mode_tag} = 'accuracy' ]
+then
+  dataset_size=5000 # FIXME: 50000
+  buffer_size=500
+else
+  dataset_size=1024
+  buffer_size=1024
+fi
 
 # Image classification models (in the closed division).
 models=( 'mobilenet' 'resnet' )
