@@ -43,11 +43,6 @@ class Program {
 public:
   Program () {
     settings = new BenchmarkSettings(MODEL_TYPE::LITE);
-
-    // TODO: learn how to process batches via tflite.
-    // currently interpreter->tensor(input_index)->dims[0] = 1
-    if (settings->batch_size != 1)
-      throw string("Only BATCH_SIZE=1 is currently supported");
     
     session = new BenchmarkSession(settings);
 
