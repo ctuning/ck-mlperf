@@ -324,6 +324,7 @@ public:
 
   virtual ~IBenchmark() {}
   virtual void load_images(BenchmarkSession *session) = 0;
+  virtual void unload_images(size_t num_examples) = 0;
   virtual void save_results() = 0;
   virtual int get_next_result() = 0;
   virtual void get_random_image(int img_idx) = 0;
@@ -356,6 +357,13 @@ public:
       _out_batch[i].reset(new ResultData(_settings));
       _in_batch[i]->load(image_file, vl);
       i++;
+    }
+  }
+
+  void unload_images(size_t num_examples) override {
+    for(size_t i=0;i<num_examples;i++) {
+      delete _in_batch[i].get();
+      delete _out_batch[i].get();
     }
   }
 

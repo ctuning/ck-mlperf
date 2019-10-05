@@ -154,6 +154,17 @@ public:
   }
 
   void UnloadBatch(const std::vector<mlperf::QuerySampleIndex>& img_indices) {
+    auto b_size = img_indices.size();
+
+    auto vl = settings->verbosity_level;
+
+    if( vl > 1 ) {
+      cout << "Unloading a batch[" << b_size << "]" << endl;
+    } else if( vl ) {
+      cout << 'U' << flush;
+    }
+
+    benchmark->unload_images(b_size);
     //benchmark->save_results( );
   }
 
