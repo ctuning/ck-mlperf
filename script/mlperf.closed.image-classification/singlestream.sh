@@ -59,7 +59,7 @@ for i in $(seq 1 ${#models[@]}); do
   fi
   # Benchmark.
   echo "Benchmarking '${model}' ..."
-  echo ck benchmark program:image-classification-tflite-loadgen \
+  ck benchmark program:image-classification-tflite-loadgen \
   --speed --repetitions=1 --env.CK_VERBOSE=2 \
   --env.CK_LOADGEN_SCENARIO=${scenario} \
   --env.CK_LOADGEN_MODE=${mode} \
