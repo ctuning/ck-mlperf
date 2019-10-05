@@ -45,12 +45,9 @@ for i in $(seq 1 ${#models[@]}); do
   if [ "${system}" = "hikey960" ]
   then
     preprocessing_tags=${preprocessing_tags_list[${i}-1]}
-    # Get substring after "preprocessed," to end.
-    preprocessing="${preprocessing_tags##preprocessed,}"
   else
     # By default, use the same preprocessing method for all models.
     preprocessing_tags=${preprocessing_tags_list[0]}
-    preprocessing=''
   fi
   # Iterate for each mode.
   for j in $(seq 1 ${#modes[@]}); do
@@ -61,14 +58,18 @@ for i in $(seq 1 ${#models[@]}); do
     then
       dataset_size=50000
       buffer_size=500
+      verbose=2
     else
       dataset_size=1024
       buffer_size=1024
+      verbose=0
     fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
-    if [ "${mode}" = "accuracy" ] && [ "${preprocessing}" != "" ]; then
+    if [ "${mode}" = "accuracy" ]; then
+      # Get substring after "preprocessed," to end.
+      preprocessing="${preprocessing_tags##preprocessed,}"
       record_uoa+=".${preprocessing}"
       record_tags+=",${preprocessing}"
     fi
@@ -78,8 +79,9 @@ for i in $(seq 1 ${#models[@]}); do
     fi
     # Run.
     echo "Running '${model}' in '${mode}' mode ..."
-    echo ck benchmark program:image-classification-tflite-loadgen \
-    --speed --repetitions=1 --env.CK_VERBOSE=2 \
+    ck benchmark program:image-classification-tflite-loadgen \
+    --speed --repetitions=1 \
+    --env.CK_VERBOSE=${verbose} \
     --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
     --env.CK_LOADGEN_MODE=${mode_tag} \
     --env.CK_LOADGEN_DATASET_SIZE=${dataset_size} \
