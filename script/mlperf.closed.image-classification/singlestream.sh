@@ -62,7 +62,7 @@ for i in $(seq 1 ${#models[@]}); do
     else
       dataset_size=1024
       buffer_size=1024
-      verbose=0
+      verbose=1
     fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
