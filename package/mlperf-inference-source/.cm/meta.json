@@ -63,13 +63,13 @@
         "package_extra_name": " (PR#439)"
       }
     },
-    "pr461": {
+    "pr473": {
       "extra_env": {
-        "PACKAGE_URL": "https://github.com/nvpohanh/inference",
-        "PACKAGE_GIT_CHECKOUT": "dev-pohanh"
+        "PACKAGE_URL": "https://github.com/guschmue/inference",
+        "PACKAGE_GIT_CHECKOUT": "gs/submission"
       },
       "extra_customize": {
-        "package_extra_name": " (PR#461)"
+        "package_extra_name": " (PR#473: submission aid)"
       }
     }
   },
