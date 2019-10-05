@@ -1,54 +1,63 @@
 #!/bin/bash
 
-division='closed'
-task='image-classification'
+division="closed"
+task="image-classification"
 imagenet_size=50000
 
-scenario='singlestream'
-scenario_tag='SingleStream'
+scenario="singlestream"
+scenario_tag="SingleStream"
 
 hostname=`hostname`
-if [ ${hostname} = 'hikey961' ]
+if [ "${hostname}" = "hikey961" ]
 then
-  system='hikey960'
+  system="hikey960"
 else
-  system=${hostname}
+  system="${hostname}"
 fi
 
-if [ ${system} = 'hikey960' ] || [ ${system} = 'firefly' ]
+if [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]
 then
-  compiler_tags='gcc,v7'
+  compiler_tags="gcc,v7"
 else
-  compiler_tags='gcc,v8'
+  compiler_tags="gcc,v8"
 fi
 
 # Library.
-library='tflite-v1.15'
-library_tags='tflite,v1.15'
+library="tflite-v1.15"
+library_tags="tflite,v1.15"
 
 # Image classification models (in the closed division).
-models=( 'mobilenet' 'resnet' )
-models_tags=( 'mobilenet,non-quantized' 'resnet' )
+models=( "mobilenet" "resnet" )
+models_tags=( "mobilenet,non-quantized" "resnet" )
 # Preferred preprocessing methods per model.
-preprocessing_tags_list=( 'preprocessed,using-opencv' 'preprocessed,using-tensorflow' )
+preprocessing_tags_list=( "preprocessed,using-opencv" "preprocessed,using-tensorflow" )
 
-# Modes: accuracy, performance.
-modes=( 'performance' 'accuracy' )
-modes_tags=( 'PerformanceOnly' 'AccuracyOnly' )
+# Modes.
+modes=( "performance" "accuracy" )
+modes_tags=( "PerformanceOnly" "AccuracyOnly" )
 
 # Iterate for each model.
 for i in $(seq 1 ${#models[@]}); do
   # Configure the model.
   model=${models[${i}-1]}
   model_tags=${models_tags[${i}-1]}
-  # Use the same preprocessing method for all models.
-  preprocessing_tags=${preprocessing_tags_list[0]}
+  # Configure the preprocessing method.
+  if [ "${system}" = "hikey960" ]
+  then
+    preprocessing_tags=${preprocessing_tags_list[${i}-1]}
+    # Get substring after "preprocessed," to end.
+    preprocessing="${preprocessing_tags##preprocessed,}"
+  else
+    # By default, use the same preprocessing method for all models.
+    preprocessing_tags=${preprocessing_tags_list[0]}
+    preprocessing=''
+  fi
   # Iterate for each mode.
   for j in $(seq 1 ${#modes[@]}); do
     # Configure the mode.
     mode=${modes[${j}-1]}
     mode_tag=${modes_tags[${j}-1]}
-    if [ ${mode} = 'accuracy' ]
+    if [ "${mode}" = "accuracy" ]
     then
       dataset_size=50000
       buffer_size=500
@@ -59,7 +68,11 @@ for i in $(seq 1 ${#models[@]}); do
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
-    if [ ${mode} = 'accuracy' ] && [ "${dataset_size}" != "${imagenet_size}" ]; then
+    if [ "${mode}" = "accuracy" ] && [ "${preprocessing}" != "" ]; then
+      record_uoa+=".${preprocessing}"
+      record_tags+=",${preprocessing}"
+    fi
+    if [ "${mode}" = "accuracy" ] && [ "${dataset_size}" != "${imagenet_size}" ]; then
       record_uoa+=".${dataset_size}"
       record_tags+=",${dataset_size}"
     fi
