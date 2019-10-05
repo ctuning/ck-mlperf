@@ -28,7 +28,7 @@ library_tags="tflite,v1.15"
 
 # Image classification models (in the closed division).
 models=( "mobilenet" "resnet" )
-models_tags=( "mobilenet,non-quantized" "resnet" )
+models_tags=( "model,tflite,mobilenet,non-quantized" "model,tflite,resnet,no-argmax" )
 # Preferred preprocessing methods per model.
 preprocessing_tags_list=( "preprocessed,using-opencv" "preprocessed,using-tensorflow" )
 
