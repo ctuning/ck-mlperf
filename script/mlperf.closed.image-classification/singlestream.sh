@@ -8,15 +8,13 @@ scenario="singlestream"
 scenario_tag="SingleStream"
 
 hostname=`hostname`
-if [ "${hostname}" = "hikey961" ]
-then
+if [ "${hostname}" = "hikey961" ]; then
   system="hikey960"
 else
   system="${hostname}"
 fi
 
-if [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]
-then
+if [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]; then
   compiler_tags="gcc,v7"
 else
   compiler_tags="gcc,v8"
@@ -42,8 +40,7 @@ for i in $(seq 1 ${#models[@]}); do
   model=${models[${i}-1]}
   model_tags=${models_tags[${i}-1]}
   # Configure the preprocessing method.
-  if [ "${system}" = "hikey960" ]
-  then
+  if [ "${system}" = "hikey960" ]; then
     preprocessing_tags=${preprocessing_tags_list[${i}-1]}
   else
     # By default, use the same preprocessing method for all models.
@@ -54,8 +51,7 @@ for i in $(seq 1 ${#models[@]}); do
     # Configure the mode.
     mode=${modes[${j}-1]}
     mode_tag=${modes_tags[${j}-1]}
-    if [ "${mode}" = "accuracy" ]
-    then
+    if [ "${mode}" = "accuracy" ]; then
       dataset_size=50000
       buffer_size=500
       verbose=2
@@ -64,6 +60,9 @@ for i in $(seq 1 ${#models[@]}); do
       buffer_size=1024
       verbose=1
     fi
+    # Opportunity to skip.
+    if [ "${mode}" != "accuracy" ]; then continue; fi
+#    if [ "${model}" != "resnet" ] || [ "${mode}" != "accuracy" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
@@ -94,7 +93,7 @@ for i in $(seq 1 ${#models[@]}); do
     --skip_print_timers --skip_stat_analysis --process_multi_keys
     echo
     # Check for errors.
-    if [ "${?}" != "0" ] ; then
+    if [ "${?}" != "0" ]; then
       echo "Error: Failed running '${model}' in '${mode}' mode ..."
       exit 1
     fi
