@@ -35,7 +35,7 @@ multipliers=( 1.0 0.75 0.5 0.25 )
 for resolution in ${resolutions[@]}; do
   for multiplier in ${multipliers[@]}; do
     models+=( "mobilenet-v1-${multiplier}-${resolution}" )
-    models_tags+=( "model,tflite,mobilenet-v1-${multiplier}-${resolution},non-quantized" )
+    models_tags+=( "model,tflite,mobilenet,v1-${multiplier}-${resolution},non-quantized" )
     preprocessing_tags_list+=( "side.${resolution},preprocessed,using-opencv" )
   done
 done
