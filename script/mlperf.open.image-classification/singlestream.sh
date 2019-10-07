@@ -35,7 +35,7 @@ multipliers=( 1.0 0.75 0.5 0.25 )
 for resolution in ${resolutions[@]}; do
   for multiplier in ${multipliers[@]}; do
     models+=( "mobilenet-v1-${multiplier}-${resolution}" )
-    models_tags+=( "mobilenet-v1-${resolution}-${multiplier}" )
+    models_tags+=( "model,tflite,mobilenet-v1-${multiplier}-${resolution},non-quantized" )
     preprocessing_tags_list+=( "side.${resolution},preprocessed,using-opencv" )
   done
 done
@@ -65,8 +65,8 @@ for i in $(seq 1 ${#models[@]}); do
     mode=${modes[${j}-1]}
     mode_tag=${modes_tags[${j}-1]}
     if [ "${mode}" = "accuracy" ]; then
-      dataset_size=500
-      buffer_size=500
+      dataset_size=500 # 50000
+      buffer_size=500 # 50000
       verbose=2
     else
       dataset_size=1024
@@ -74,7 +74,7 @@ for i in $(seq 1 ${#models[@]}); do
       verbose=1
     fi
     # Opportunity to skip.
-#    if [ "${mode}" != "accuracy" ] || [ "${model}" != "resnet" ]; then continue; fi
+    if [ "${mode}" != "accuracy" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
