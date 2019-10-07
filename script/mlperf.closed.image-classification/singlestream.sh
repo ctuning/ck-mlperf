@@ -26,7 +26,7 @@ library_tags="tflite,v1.15"
 
 # Image classification models (in the closed division).
 models=( "mobilenet" "resnet" )
-models_tags=( "model,tflite,mobilenet,non-quantized" "model,tflite,resnet,no-argmax" )
+models_tags=( "model,tflite,mobilenet-v1-1.0-224,non-quantized" "model,tflite,resnet,no-argmax" )
 # Preferred preprocessing methods per model.
 preprocessing_tags_list=( "side.224,preprocessed,using-opencv" "side.224,preprocessed,using-tensorflow" )
 
@@ -61,7 +61,7 @@ for i in $(seq 1 ${#models[@]}); do
       verbose=1
     fi
     # Opportunity to skip by mode or model.
-    #if [ "${mode}" != "accuracy" ] || [ "${model}" != "resnet" ]; then continue; fi
+    if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
