@@ -1,0 +1,312 @@
+{
+  "check_exit_status": "yes", 
+  "customize": {
+    "install_env": {
+      "ML_MODEL_DATA_LAYOUT": "NHWC", 
+      "MODEL_NORMALIZE_DATA": "YES", 
+      "MODEL_SUBTRACT_MEAN": "0", 
+      "MODEL_INPUT_LAYER_NAME": "input", 
+      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1", 
+      "MODULE_FILE": "mobilenet-model.py", 
+      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES"
+    }, 
+    "no_os_in_suggested_path": "yes", 
+    "no_ver_in_suggested_path": "yes", 
+    "skip_file_check": "yes"
+  }, 
+  "end_full_path_universal": "mobilenet-model.py", 
+  "only_for_host_os_tags": [], 
+  "only_for_target_os_tags": [], 
+  "process_script": "install", 
+  "soft_uoa": "439b9f1757f27091", 
+  "suggested_path": "model-tf-and-tflite-mlperf-mobilenet-downloaded", 
+  "tags": [
+    "model", 
+    "image-classification", 
+    "tensorflowmodel", 
+    "tf", 
+    "tflite", 
+    "nhwc", 
+    "mobilenet", 
+    "mobilenet-v1", 
+    "revision.2018_08_02",
+    "mlperf", 
+    "non-quantized", 
+    "weights", 
+    "python", 
+    "frozen", 
+    "downloaded"
+  ], 
+  "use_scripts_from_another_entry": {
+    "data_uoa": "6b1b2b254718b69a", 
+    "module_uoa": "script"
+  }, 
+  "variations": {
+    "v1-1.0-224": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+          "MODEL_MOBILENET_RESOLUTION": "224", 
+          "MODEL_IMAGE_HEIGHT": "224", 
+          "MODEL_IMAGE_WIDTH": "224", 
+          "PACKAGE_NAME": "mobilenet_v1_1.0_224.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_1.0_224.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-1.0-224-2018_08_02)", 
+        "version": "1.1.0.224"
+      },
+      "extra_tags": [ "multiplier.1.0", "side.224" ]
+    },
+    "v1-1.0-192": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+          "MODEL_MOBILENET_RESOLUTION": "192", 
+          "MODEL_IMAGE_HEIGHT": "192", 
+          "MODEL_IMAGE_WIDTH": "192", 
+          "PACKAGE_NAME": "mobilenet_v1_1.0_192.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_1.0_192.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-1.0-192-2018_08_02)", 
+        "version": "1.1.0.192"
+      },
+      "extra_tags": [ "multiplier.1.0", "side.192" ]
+    },
+    "v1-1.0-160": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+          "MODEL_MOBILENET_RESOLUTION": "160", 
+          "MODEL_IMAGE_HEIGHT": "160", 
+          "MODEL_IMAGE_WIDTH": "160", 
+          "PACKAGE_NAME": "mobilenet_v1_1.0_160.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_1.0_160.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-1.0-160-2018_08_02)", 
+        "version": "1.1.0.160"
+      },
+      "extra_tags": [ "multiplier.1.0", "side.160" ]
+    },
+    "v1-1.0-128": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+          "MODEL_MOBILENET_RESOLUTION": "128", 
+          "MODEL_IMAGE_HEIGHT": "128", 
+          "MODEL_IMAGE_WIDTH": "128", 
+          "PACKAGE_NAME": "mobilenet_v1_1.0_128.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_1.0_128.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-1.0-128-2018_08_02)", 
+        "version": "1.1.0.128"
+      },
+      "extra_tags": [ "multiplier.1.0", "side.128" ]
+    },
+    "v1-0.75-224": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+          "MODEL_MOBILENET_RESOLUTION": "224", 
+          "MODEL_IMAGE_HEIGHT": "224", 
+          "MODEL_IMAGE_WIDTH": "224", 
+          "PACKAGE_NAME": "mobilenet_v1_0.75_224.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.75_224.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.75-224-2018_08_02)", 
+        "version": "1.0.75.224"
+      },
+      "extra_tags": [ "multiplier.0.75", "side.224" ]
+    },
+    "v1-0.75-192": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+          "MODEL_MOBILENET_RESOLUTION": "192", 
+          "MODEL_IMAGE_HEIGHT": "192", 
+          "MODEL_IMAGE_WIDTH": "192", 
+          "PACKAGE_NAME": "mobilenet_v1_0.75_192.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.75_192.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.75-192-2018_08_02)", 
+        "version": "1.0.75.192"
+      },
+      "extra_tags": [ "multiplier.0.75", "side.192" ]
+    },
+    "v1-0.75-160": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+          "MODEL_MOBILENET_RESOLUTION": "160", 
+          "MODEL_IMAGE_HEIGHT": "160", 
+          "MODEL_IMAGE_WIDTH": "160", 
+          "PACKAGE_NAME": "mobilenet_v1_0.75_160.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.75_160.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.75-160-2018_08_02)", 
+        "version": "1.0.75.160"
+      },
+      "extra_tags": [ "multiplier.0.75", "side.160" ]
+    },
+    "v1-0.75-128": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+          "MODEL_MOBILENET_RESOLUTION": "128", 
+          "MODEL_IMAGE_HEIGHT": "128", 
+          "MODEL_IMAGE_WIDTH": "128", 
+          "PACKAGE_NAME": "mobilenet_v1_0.75_128.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.75_128.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.75-128-2018_08_02)", 
+        "version": "1.0.75.128"
+      },
+      "extra_tags": [ "multiplier.0.75", "side.128" ]
+    },
+    "v1-0.5-224": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+          "MODEL_MOBILENET_RESOLUTION": "224", 
+          "MODEL_IMAGE_HEIGHT": "224", 
+          "MODEL_IMAGE_WIDTH": "224", 
+          "PACKAGE_NAME": "mobilenet_v1_0.5_224.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.5_224.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.5-224-2018_08_02)", 
+        "version": "1.0.5.224"
+      },
+      "extra_tags": [ "multiplier.0.5", "side.224" ]
+    },
+    "v1-0.5-192": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+          "MODEL_MOBILENET_RESOLUTION": "192", 
+          "MODEL_IMAGE_HEIGHT": "192", 
+          "MODEL_IMAGE_WIDTH": "192", 
+          "PACKAGE_NAME": "mobilenet_v1_0.5_192.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.5_192.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.5-192-2018_08_02)", 
+        "version": "1.0.5.192"
+      },
+      "extra_tags": [ "multiplier.0.5", "side.192" ]
+    },
+    "v1-0.5-160": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+          "MODEL_MOBILENET_RESOLUTION": "160", 
+          "MODEL_IMAGE_HEIGHT": "160", 
+          "MODEL_IMAGE_WIDTH": "160", 
+          "PACKAGE_NAME": "mobilenet_v1_0.5_160.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.5_160.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.5-160-2018_08_02)", 
+        "version": "1.0.5.160"
+      },
+      "extra_tags": [ "multiplier.0.5", "side.160" ]
+    },
+    "v1-0.5-128": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+          "MODEL_MOBILENET_RESOLUTION": "128", 
+          "MODEL_IMAGE_HEIGHT": "128", 
+          "MODEL_IMAGE_WIDTH": "128", 
+          "PACKAGE_NAME": "mobilenet_v1_0.5_128.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.5_128.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.5-128-2018_08_02)", 
+        "version": "1.0.5.128"
+      },
+      "extra_tags": [ "multiplier.0.5", "side.128" ]
+    },
+    "v1-0.25-224": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.25", 
+          "MODEL_MOBILENET_RESOLUTION": "224", 
+          "MODEL_IMAGE_HEIGHT": "224", 
+          "MODEL_IMAGE_WIDTH": "224", 
+          "PACKAGE_NAME": "mobilenet_v1_0.25_224.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.25_224.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.25-224-2018_08_02)", 
+        "version": "1.0.25.224"
+      },
+      "extra_tags": [ "multiplier.0.25", "side.224" ]
+    },
+    "v1-0.25-192": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.25", 
+          "MODEL_MOBILENET_RESOLUTION": "192", 
+          "MODEL_IMAGE_HEIGHT": "192", 
+          "MODEL_IMAGE_WIDTH": "192", 
+          "PACKAGE_NAME": "mobilenet_v1_0.25_192.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.25_192.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.25-192-2018_08_02)", 
+        "version": "1.0.25.192"
+      },
+      "extra_tags": [ "multiplier.0.25", "side.192" ]
+    },
+    "v1-0.25-160": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.25", 
+          "MODEL_MOBILENET_RESOLUTION": "160", 
+          "MODEL_IMAGE_HEIGHT": "160", 
+          "MODEL_IMAGE_WIDTH": "160", 
+          "PACKAGE_NAME": "mobilenet_v1_0.25_160.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.25_160.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.25-160-2018_08_02)", 
+        "version": "1.0.25.160"
+      },
+      "extra_tags": [ "multiplier.0.25", "side.160" ]
+    },
+    "v1-0.25-128": {
+      "extra_env": {
+          "MODEL_MOBILENET_VERSION": "1", 
+          "MODEL_MOBILENET_MULTIPLIER": "0.25", 
+          "MODEL_MOBILENET_RESOLUTION": "128", 
+          "MODEL_IMAGE_HEIGHT": "128", 
+          "MODEL_IMAGE_WIDTH": "128", 
+          "PACKAGE_NAME": "mobilenet_v1_0.25_128.tgz", 
+          "WEIGHTS_FILE": "mobilenet_v1_0.25_128.ckpt"
+      },
+      "extra_customize": {
+        "package_extra_name": " (mobilenet-v1-0.25-128-2018_08_02)", 
+        "version": "1.0.25.128"
+      },
+      "extra_tags": [ "multiplier.0.25", "side.128" ]
+    },
+    "from.google": {
+      "extra_env": {
+        "PACKAGE_URL": "http://download.tensorflow.org/models/mobilenet_v1_2018_08_02"
+      }
+    }, 
+    "from.zenodo": {
+      "extra_env": {
+        "PACKAGE_URL": "https://zenodo.org/record/2269307/files"
+      }
+    }
+  }
+}

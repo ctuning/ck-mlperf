@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "6c042318059ad499", 
+  "backup_module_uid": "1dc07ee0f4742028", 
+  "backup_module_uoa": "package", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-10-07T11:13:00.589942", 
+    "version": [
+      "1", 
+      "11", 
+      "1", 
+      "1"
+    ]
+  }, 
+  "data_name": "model-tf-and-tflite-mlperf-mobilenet-v1-20180802"
+}
