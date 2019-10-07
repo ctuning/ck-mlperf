@@ -60,14 +60,14 @@ for i in $(seq 1 ${#models[@]}); do
       buffer_size=1024
       verbose=1
     fi
-    # Opportunity to skip.
-    if [ "${mode}" != "accuracy" ] || [ "${model}" != "resnet" ]; then continue; fi
+    # Opportunity to skip by mode or model.
+    #if [ "${mode}" != "accuracy" ] || [ "${model}" != "resnet" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
     if [ "${mode}" = "accuracy" ]; then
       # Get substring after "preprocessed," to end.
-      preprocessing="${preprocessing_tags##preprocessed,}"
+      preprocessing="${preprocessing_tags##*preprocessed,}"
       record_uoa+=".${preprocessing}"
       record_tags+=",${preprocessing}"
     fi
@@ -88,6 +88,7 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.library=${library_tags} \
     --dep_add_tags.compiler=${compiler_tags} \
     --dep_add_tags.images=${preprocessing_tags} \
+    --dep_add_tags.python=v3 \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
     echo
