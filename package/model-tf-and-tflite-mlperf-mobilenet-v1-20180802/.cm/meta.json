@@ -8,7 +8,9 @@
       "MODEL_INPUT_LAYER_NAME": "input", 
       "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1", 
       "MODULE_FILE": "mobilenet-model.py", 
-      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES"
+      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
+
+      "PACKAGE_URL": "https://zenodo.org/record/2269307/files"
     }, 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
