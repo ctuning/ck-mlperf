@@ -1,6 +1,6 @@
 #!/bin/bash
 
-division="closed"
+division="open"
 task="image-classification"
 imagenet_size=50000
 
@@ -27,7 +27,6 @@ library_tags="tflite,v1.15"
 # Image classification models (in the open division).
 models=()
 models_tags=()
-# Preferred preprocessing methods per model.
 preprocessing_tags_list=()
 # Iterate for each model, i.e. resolution and multiplier.
 resolutions=( 224 192 160 128 )
@@ -82,7 +81,7 @@ for i in $(seq 1 ${#models[@]}); do
       record_uoa+=".${dataset_size}"
       record_tags+=",${dataset_size}"
     fi
-    # Run (but before that, print the exact command we are about to run).
+    # Run (but before that print the exact command we are about to run).
     echo "Running '${model}' in '${mode}' mode ..."
     read -d '' CMD <<END_OF_CMD
     ck benchmark program:image-classification-tflite-loadgen \
