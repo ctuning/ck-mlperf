@@ -61,8 +61,7 @@ for i in $(seq 1 ${#models[@]}); do
       verbose=1
     fi
     # Opportunity to skip.
-    if [ "${mode}" != "accuracy" ]; then continue; fi
-#    if [ "${model}" != "resnet" ] || [ "${mode}" != "accuracy" ]; then continue; fi
+    if [ "${mode}" != "accuracy" ] || [ "${model}" != "resnet" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
