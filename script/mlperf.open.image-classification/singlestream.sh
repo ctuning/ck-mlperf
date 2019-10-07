@@ -39,9 +39,9 @@ for resolution in ${resolutions[@]}; do
     preprocessing_tags_list+=( "side.${resolution},preprocessed,using-opencv" )
   done
 done
-#echo ${models[@]}
-#echo ${models_tags[@]}
-#echo ${preprocessing_tags_list[@]}
+#echo "models=( ${models[@]} )"
+#echo "models_tags=( ${models_tags[@]} )"
+#echo "preprocessing_tags_list=( ${preprocessing_tags_list[@]} )"
 
 # Modes.
 modes=( "performance" "accuracy" )
@@ -52,21 +52,15 @@ for i in $(seq 1 ${#models[@]}); do
   # Configure the model.
   model=${models[${i}-1]}
   model_tags=${models_tags[${i}-1]}
-  # Configure the preprocessing method.
-  if [ "${system}" = "hikey960" ]; then
-    preprocessing_tags=${preprocessing_tags_list[${i}-1]}
-  else
-    # By default, use the same preprocessing method for all models.
-    preprocessing_tags=${preprocessing_tags_list[0]}
-  fi
+  preprocessing_tags=${preprocessing_tags_list[${i}-1]}
   # Iterate for each mode.
   for j in $(seq 1 ${#modes[@]}); do
     # Configure the mode.
     mode=${modes[${j}-1]}
     mode_tag=${modes_tags[${j}-1]}
     if [ "${mode}" = "accuracy" ]; then
-      dataset_size=500 # 50000
-      buffer_size=500 # 50000
+      dataset_size=50 # 50000
+      buffer_size=50 # 50000
       verbose=2
     else
       dataset_size=1024
@@ -74,7 +68,7 @@ for i in $(seq 1 ${#models[@]}); do
       verbose=1
     fi
     # Opportunity to skip by mode.
-    #if [ "${mode}" != "accuracy" ]; then continue; fi
+    if [ "${mode}" != "accuracy" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
@@ -88,8 +82,9 @@ for i in $(seq 1 ${#models[@]}); do
       record_uoa+=".${dataset_size}"
       record_tags+=",${dataset_size}"
     fi
-    # Run.
+    # Run (but before that, print the exact command we are about to run).
     echo "Running '${model}' in '${mode}' mode ..."
+    read -d '' CMD <<END_OF_CMD
     ck benchmark program:image-classification-tflite-loadgen \
     --speed --repetitions=1 \
     --env.CK_VERBOSE=${verbose} \
@@ -104,6 +99,9 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.python=v3 \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
+END_OF_CMD
+    echo ${CMD}
+    eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then
