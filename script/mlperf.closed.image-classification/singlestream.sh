@@ -28,7 +28,7 @@ library_tags="tflite,v1.15"
 models=( "mobilenet" "resnet" )
 models_tags=( "model,tflite,mobilenet,non-quantized" "model,tflite,resnet,no-argmax" )
 # Preferred preprocessing methods per model.
-preprocessing_tags_list=( "preprocessed,using-opencv" "preprocessed,using-tensorflow" )
+preprocessing_tags_list=( "side.224,preprocessed,using-opencv" "side.224,preprocessed,using-tensorflow" )
 
 # Modes.
 modes=( "performance" "accuracy" )
