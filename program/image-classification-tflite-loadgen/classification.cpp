@@ -300,7 +300,11 @@ void TestSingleStream(Program *prg) {
   SystemUnderTestSingleStream sut(prg);
   QuerySampleLibrarySingleStream qsl(prg);
 
-  const std::string config_file_path = getenv_s("CK_ENV_MLPERF_INFERENCE_V05") + "/mlperf.conf";
+  const std::string conf_filename = getenv_opt_s("CK_LOADGEN_CONF_FILE", "");
+
+  const std::string config_file_path = conf_filename != ""
+      ? "../" + conf_filename
+      : getenv_s("CK_ENV_MLPERF_INFERENCE_V05") + "/mlperf.conf";
 
   std::string guenther_model_name = "anything_else";
   if( getenv_s("CK_ENV_TENSORFLOW_MODEL_TFLITE_FILENAME") == "resnet50_v1.tflite" )
