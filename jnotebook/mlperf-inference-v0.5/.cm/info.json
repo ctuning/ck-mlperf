@@ -12,5 +12,5 @@
       "1"
     ]
   },
-  "data_name": "image-classification"
+  "data_name": "mlperf-inference-v0.5"
 }
