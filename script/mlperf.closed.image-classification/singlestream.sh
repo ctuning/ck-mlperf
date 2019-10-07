@@ -75,8 +75,8 @@ for i in $(seq 1 ${#models[@]}); do
       record_uoa+=".${dataset_size}"
       record_tags+=",${dataset_size}"
     fi
-    # Run.
-    echo "Running '${model}' in '${mode}' mode ..."
+    # Run (but before that print the exact command we are about to run).
+    read -d '' CMD <<END_OF_CMD
     ck benchmark program:image-classification-tflite-loadgen \
     --speed --repetitions=1 \
     --env.CK_VERBOSE=${verbose} \
@@ -91,6 +91,9 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.python=v3 \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
+END_OF_CMD
+    echo ${CMD}
+    eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then
