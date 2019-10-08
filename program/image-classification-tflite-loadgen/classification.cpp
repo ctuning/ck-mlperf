@@ -262,7 +262,7 @@ public:
   }
 
 private:
-  std::string name_{"SingleStreamSUT"};
+  std::string name_{"TFLite_SUT"};
   Program *prg;
   long query_counter;
 };
@@ -292,7 +292,7 @@ public:
   }
 
 private:
-  std::string name_{"SingleStreamQSL"};
+  std::string name_{"TFLite_QSL"};
   Program *prg;
 };
 
