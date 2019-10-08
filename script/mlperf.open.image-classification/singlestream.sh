@@ -28,19 +28,44 @@ library_tags="tflite,v1.15"
 models=()
 models_tags=()
 models_preprocessing_tags=()
+
 # Iterate for each model, i.e. resolution and multiplier.
-resolutions=( 224 192 160 128 )
+# MobileNet-v1.
+#version=1
+#resolutions=( 224 192 160 128 )
+#multipliers=( 1.0 0.75 0.5 0.25 )
+#for resolution in ${resolutions[@]}; do
+#  for multiplier in ${multipliers[@]}; do
+#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+#  done
+#done
+
+# MobileNet-v2.
+version=2
+resolutions=( 224 192 160 128 96 )
 multipliers=( 1.0 0.75 0.5 0.25 )
 for resolution in ${resolutions[@]}; do
   for multiplier in ${multipliers[@]}; do
-    models+=( "mobilenet-v1-${multiplier}-${resolution}" )
-    models_tags+=( "model,tflite,mobilenet,v1-${multiplier}-${resolution},non-quantized" )
+    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
     models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
   done
 done
-#echo "models=( ${models[@]} )"
-#echo "models_tags=( ${models_tags[@]} )"
-#echo "models_preprocessing_tags=( ${models_preprocessing_tags[@]} )"
+resolutions=( 224 )
+multipliers=( 1.4 1.3 )
+for resolution in ${resolutions[@]}; do
+  for multiplier in ${multipliers[@]}; do
+    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+  done
+done
+
+echo "models=( ${models[@]} )"
+echo "models_tags=( ${models_tags[@]} )"
+echo "models_preprocessing_tags=( ${models_preprocessing_tags[@]} )"
 
 # Modes.
 modes=( "performance" "accuracy" )
@@ -100,7 +125,7 @@ for i in $(seq 1 ${#models[@]}); do
     --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
     echo ${CMD}
-    #eval ${CMD}
+    eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then
