@@ -27,7 +27,7 @@ library_tags="tflite,v1.15"
 # Image classification models (in the open division).
 models=()
 models_tags=()
-preprocessing_tags_list=()
+models_preprocessing_tags=()
 # Iterate for each model, i.e. resolution and multiplier.
 resolutions=( 224 192 160 128 )
 multipliers=( 1.0 0.75 0.5 0.25 )
@@ -35,12 +35,12 @@ for resolution in ${resolutions[@]}; do
   for multiplier in ${multipliers[@]}; do
     models+=( "mobilenet-v1-${multiplier}-${resolution}" )
     models_tags+=( "model,tflite,mobilenet,v1-${multiplier}-${resolution},non-quantized" )
-    preprocessing_tags_list+=( "side.${resolution},preprocessed,using-opencv" )
+    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
   done
 done
 #echo "models=( ${models[@]} )"
 #echo "models_tags=( ${models_tags[@]} )"
-#echo "preprocessing_tags_list=( ${preprocessing_tags_list[@]} )"
+#echo "models_preprocessing_tags=( ${models_preprocessing_tags[@]} )"
 
 # Modes.
 modes=( "performance" "accuracy" )
@@ -51,7 +51,7 @@ for i in $(seq 1 ${#models[@]}); do
   # Configure the model.
   model=${models[${i}-1]}
   model_tags=${models_tags[${i}-1]}
-  preprocessing_tags=${preprocessing_tags_list[${i}-1]}
+  model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
   # Iterate for each mode.
   for j in $(seq 1 ${#modes[@]}); do
     # Configure the mode.
@@ -73,7 +73,7 @@ for i in $(seq 1 ${#models[@]}); do
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
     if [ "${mode}" = "accuracy" ]; then
       # Get substring after "preprocessed," to end.
-      preprocessing="${preprocessing_tags##*preprocessed,}"
+      preprocessing="${model_preprocessing_tags##*preprocessed,}"
       record_uoa+=".${preprocessing}"
       record_tags+=",${preprocessing}"
     fi
@@ -94,13 +94,13 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.weights=${model_tags} \
     --dep_add_tags.library=${library_tags} \
     --dep_add_tags.compiler=${compiler_tags} \
-    --dep_add_tags.images=${preprocessing_tags} \
+    --dep_add_tags.images=${model_preprocessing_tags} \
     --dep_add_tags.python=v3 \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
     echo ${CMD}
-    eval ${CMD}
+    #eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then
