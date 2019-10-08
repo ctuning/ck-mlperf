@@ -91,6 +91,7 @@
       "tags": "dataset,imagenet,preprocessed"
     },
     "mlperf-inference-src": {
+      "force_target_as_host": "yes",
       "add_to_path": "no",
       "local": "yes",
       "name": "MLPerf Inference source",
