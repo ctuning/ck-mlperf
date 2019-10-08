@@ -61,7 +61,7 @@ for i in $(seq 1 ${#models[@]}); do
       verbose=1
     fi
     # Opportunity to skip by mode or model.
-    if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
+    #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
     # Configure record settings.
     record_uoa="mlperf.${division}.${task}.${system}.${library}.${model}.${scenario}.${mode}"
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
@@ -76,6 +76,7 @@ for i in $(seq 1 ${#models[@]}); do
       record_tags+=",${dataset_size}"
     fi
     # Run (but before that print the exact command we are about to run).
+    echo "Running '${model}' in '${mode}' mode ..."
     read -d '' CMD <<END_OF_CMD
     ck benchmark program:image-classification-tflite-loadgen \
     --speed --repetitions=1 \
