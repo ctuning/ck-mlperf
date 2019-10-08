@@ -303,7 +303,7 @@ void TestSingleStream(Program *prg) {
   const std::string conf_filename = getenv_opt_s("CK_LOADGEN_CONF_FILE", "");
 
   const std::string config_file_path = conf_filename != ""
-      ? "../" + conf_filename
+      ? conf_filename
       : getenv_s("CK_ENV_MLPERF_INFERENCE_V05") + "/mlperf.conf";
 
   std::string guenther_model_name = "anything_else";

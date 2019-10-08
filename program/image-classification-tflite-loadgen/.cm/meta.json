@@ -47,6 +47,7 @@
       "ignore_return_code": "no",
       "run_time": {
         "copy_env_to_remote": [
+          "CK_ENV_TENSORFLOW_MODEL_TFLITE_FILENAME",
           "CK_ENV_TENSORFLOW_MODEL_INPUT_LAYER_NAME",
           "CK_ENV_TENSORFLOW_MODEL_OUTPUT_LAYER_NAME",
           "CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF",
@@ -67,10 +68,15 @@
         },
         "run_cmd_main": "$#BIN_FILE#$",
         "run_input_files": [
-          "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$"
+          "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
+          "$<<CK_ENV_MLPERF_INFERENCE_V05>>$/mlperf.conf",
+          "$<<>>$../user.conf"
         ],
         "run_output_files": [
-          "tmp-ck-timer.json"
+            "mlperf_log_accuracy.json",
+            "mlperf_log_detail.txt",
+            "mlperf_log_summary.txt",
+            "mlperf_log_trace.json"
         ]
       }
     }
@@ -122,7 +128,7 @@
     }
   },
   "run_vars": {
-    "CK_LOADGEN_CONF_FILE": "user.conf",
+    "CK_LOADGEN_CONF_FILE": "../user.conf",
     "CK_LOADGEN_TRIGGER_COLD_RUN": "yes",
     "CK_LOADGEN_DATASET_SIZE": 0,
     "CK_LOADGEN_BUFFER_SIZE": 1024,
