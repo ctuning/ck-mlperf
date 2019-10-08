@@ -21,7 +21,6 @@
 #include <vector>
 #include <map>
 
-#include <xopenme.h>
 
 #define DEBUG(msg) std::cout << "DEBUG: " << msg << std::endl;
 
@@ -31,14 +30,6 @@ enum MODEL_TYPE {
   LITE,
   TF_FROZEN
 };
-
-/// Store named value into xopenme variable.
-inline void store_value_f(int index, const char* name, float value) {
-  char* json_name = new char[strlen(name) + 6];
-  sprintf(json_name, "\"%s\":%%f", name);
-  xopenme_add_var_f(index, json_name, value);
-  delete[] json_name;
-}
 
 /// Load mandatory string value from the environment.
 inline std::string getenv_s(const std::string& name) {
