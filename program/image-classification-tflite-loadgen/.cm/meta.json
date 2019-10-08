@@ -148,6 +148,7 @@
   "tags": [
     "image-classification",
     "tflite",
+    "loadgen",
     "lang-cpp"
   ],
   "target_file": "classification",

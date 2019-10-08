@@ -52,6 +52,7 @@
       "ignore_return_code": "no",
       "run_time": {
         "copy_env_to_remote": [
+          "CK_ENV_TENSORFLOW_MODEL_TFLITE_FILENAME",
           "CK_ENV_TENSORFLOW_MODEL_INPUT_LAYER_NAME",
           "CK_ENV_TENSORFLOW_MODEL_OUTPUT_LAYER_NAME",
           "CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF",
@@ -89,10 +90,15 @@
             "$<<CK_ENV_LIB_BOOST>>$/lib/libboost_timer.so.1.64.0",
             "$<<CK_ENV_LIB_BOOST>>$/lib/libboost_unit_test_framework.so.1.64.0",
             "$<<CK_ENV_LIB_ARMNN>>$/lib/libarmnnTfLiteParser.so",
-            "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$"
+            "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
+            "$<<CK_ENV_MLPERF_INFERENCE_V05>>$/mlperf.conf",
+            "$<<>>$../user.conf"
         ],
         "run_output_files": [
-          "tmp-ck-timer.json"
+            "mlperf_log_accuracy.json",
+            "mlperf_log_detail.txt",
+            "mlperf_log_summary.txt",
+            "mlperf_log_trace.json"
         ]
       }
     }
@@ -142,6 +148,7 @@
       "tags": "lib,python-package,numpy"
     },
     "mlperf-inference-src": {
+      "force_target_as_host": "yes",
       "add_to_path": "no",
       "local": "yes",
       "name": "MLPerf Inference source",
@@ -168,7 +175,7 @@
     "USE_NEON": "NO",
     "USE_OPENCL": "NO",
     "CK_LOADGEN_BUFFER_SIZE": 1024,
-    "CK_LOADGEN_CONF_FILE": "user.conf",
+    "CK_LOADGEN_CONF_FILE": "../user.conf",
     "CK_LOADGEN_DATASET_SIZE": 0,
     "CK_LOADGEN_MAX_DURATION_S": 0,
     "CK_LOADGEN_MODE": "AccuracyOnly",
@@ -188,6 +195,7 @@
     "image-classification",
     "tflite",
     "armnn",
+    "loadgen",
     "lang-cpp"
   ],
   "target_file": "classification",
