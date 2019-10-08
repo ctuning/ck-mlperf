@@ -31,7 +31,15 @@ def ck_postprocess(i):
     mlperf_log_dict['accuracy'] = json.load(accuracy_file)
 
   with open(MLPERF_LOG_SUMMARY_TXT, 'r') as summary_file:
-    mlperf_log_dict['summary'] = summary_file.readlines()
+    unstripped_summary_lines = summary_file.readlines()
+    mlperf_log_dict['summary'] = unstripped_summary_lines
+
+    save_dict['parsed_summary'] = {}
+    parsed_summary = save_dict['parsed_summary']
+    for line in unstripped_summary_lines:
+      pair = line.strip().split(': ', 1)
+      if len(pair)==2:
+        parsed_summary[ pair[0].strip() ] = pair[1].strip()
 
   with open(MLPERF_LOG_DETAIL_TXT, 'r') as detail_file:
     mlperf_log_dict['detail'] = detail_file.readlines()
