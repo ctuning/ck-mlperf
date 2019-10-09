@@ -8,10 +8,16 @@ scenario="singlestream"
 scenario_tag="SingleStream"
 
 hostname=`hostname`
-if [ "${hostname}" = "hikey961" ]; then
+if [ "${hostname}" = "diviniti" ]; then
+  # Assume that host "diviniti" is always used to benchmark Android device "mate10pro".
+  system="mate10pro"
+  android="--target_os=android24-arm64 --env.CK_LOADGEN_CONF_FILE=user.conf"
+elif [ "${hostname}" = "hikey961" ]; then
   system="hikey960"
+  android=""
 else
   system="${hostname}"
+  android=""
 fi
 
 if [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]; then
@@ -24,11 +30,14 @@ fi
 library="tflite-v1.15"
 library_tags="tflite,v1.15"
 
+# Implementation.
+implementation="image-classification-tflite-loadgen"
+
 # Image classification models (in the closed division).
 models=( "mobilenet" "resnet" )
 models_tags=( "model,tflite,mobilenet-v1-1.0-224,non-quantized" "model,tflite,resnet,no-argmax" )
 # Preferred preprocessing methods per model.
-preprocessing_tags_list=( "side.224,preprocessed,using-opencv" "side.224,preprocessed,using-tensorflow" )
+models_preprocessing_tags=( "full,side.224,preprocessed,using-opencv" "full,side.224,preprocessed,using-tensorflow" )
 
 # Modes.
 modes=( "performance" "accuracy" )
@@ -41,10 +50,10 @@ for i in $(seq 1 ${#models[@]}); do
   model_tags=${models_tags[${i}-1]}
   # Configure the preprocessing method.
   if [ "${system}" = "hikey960" ]; then
-    preprocessing_tags=${preprocessing_tags_list[${i}-1]}
+    model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
   else
     # By default, use the same preprocessing method for all models.
-    preprocessing_tags=${preprocessing_tags_list[0]}
+    model_preprocessing_tags=${models_preprocessing_tags[0]}
   fi
   # Iterate for each mode.
   for j in $(seq 1 ${#modes[@]}); do
@@ -67,7 +76,7 @@ for i in $(seq 1 ${#models[@]}); do
     record_tags="mlperf,${division},${task},${system},${library},${model},${scenario},${mode}"
     if [ "${mode}" = "accuracy" ]; then
       # Get substring after "preprocessed," to end.
-      preprocessing="${preprocessing_tags##*preprocessed,}"
+      preprocessing="${model_preprocessing_tags##*preprocessed,}"
       record_uoa+=".${preprocessing}"
       record_tags+=",${preprocessing}"
     fi
@@ -78,8 +87,8 @@ for i in $(seq 1 ${#models[@]}); do
     # Run (but before that print the exact command we are about to run).
     echo "Running '${model}' in '${mode}' mode ..."
     read -d '' CMD <<END_OF_CMD
-    ck benchmark program:image-classification-tflite-loadgen \
-    --speed --repetitions=1 \
+    ck benchmark program:${implementation} \
+    --speed --repetitions=1 ${android} \
     --env.CK_VERBOSE=${verbose} \
     --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
     --env.CK_LOADGEN_MODE=${mode_tag} \
