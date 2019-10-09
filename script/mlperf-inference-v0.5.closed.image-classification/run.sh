@@ -97,7 +97,7 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.weights=${model_tags} \
     --dep_add_tags.library=${library_tags} \
     --dep_add_tags.compiler=${compiler_tags} \
-    --dep_add_tags.images=${preprocessing_tags} \
+    --dep_add_tags.images=${preprocessing} \
     --dep_add_tags.python=v3 \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
