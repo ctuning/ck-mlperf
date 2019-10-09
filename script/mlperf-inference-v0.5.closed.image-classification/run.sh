@@ -112,7 +112,7 @@ for i in $(seq 1 ${#models[@]}); do
     --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
     echo ${CMD}
-    #eval ${CMD}
+    eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then

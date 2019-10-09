@@ -7,22 +7,40 @@ imagenet_size=50000
 scenario="singlestream"
 scenario_tag="SingleStream"
 
+# System, library.
 hostname=`hostname`
-if [ "${hostname}" = "hikey961" ]; then
+if [ "${hostname}" = "diviniti" ]; then
+  # Assume that host "diviniti" is always used to benchmark Android device "mate10pro".
+  system="mate10pro"
+  android="--target_os=android24-arm64 --env.CK_LOADGEN_CONF_FILE=user.conf"
+elif [ "${hostname}" = "hikey961" ]; then
   system="hikey960"
+  android=""
 else
   system="${hostname}"
+  android=""
 fi
 
-if [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]; then
+# Library. NB: Currently, we only support TFLite v1.13 for Android.
+if [ "${android}" != "" ]; then
+  library="tflite-v1.13"
+  library_tags="tflite,v1.13"
+else
+  library="tflite-v1.15"
+  library_tags="tflite,v1.15"
+fi
+
+# Compiler. NB: Currently, we only support Clang 6 (NDK 17c) for Android.
+if [ "${system}" = "mate10pro" ]; then
+  compiler_tags="llvm,v6"
+elif [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]; then
   compiler_tags="gcc,v7"
 else
   compiler_tags="gcc,v8"
 fi
 
-# Library.
-library="tflite-v1.15"
-library_tags="tflite,v1.15"
+# Implementation.
+implementation="image-classification-tflite-loadgen"
 
 # Image classification models (in the open division).
 models=()
@@ -30,17 +48,17 @@ models_tags=()
 models_preprocessing_tags=()
 
 # Iterate for each model, i.e. resolution and multiplier.
-# MobileNet-v1.
-#version=1
-#resolutions=( 224 192 160 128 )
-#multipliers=( 1.0 0.75 0.5 0.25 )
-#for resolution in ${resolutions[@]}; do
-#  for multiplier in ${multipliers[@]}; do
-#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
-#  done
-#done
+# # MobileNet-v1.
+# version=1
+# resolutions=( 224 192 160 128 )
+# multipliers=( 1.0 0.75 0.5 0.25 )
+# for resolution in ${resolutions[@]}; do
+#   for multiplier in ${multipliers[@]}; do
+#     models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+#     models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+#     models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+#   done
+# done
 
 # MobileNet-v2.
 version=2
@@ -63,9 +81,9 @@ for resolution in ${resolutions[@]}; do
   done
 done
 
-echo "models=( ${models[@]} )"
-echo "models_tags=( ${models_tags[@]} )"
-echo "models_preprocessing_tags=( ${models_preprocessing_tags[@]} )"
+#echo "models=( ${models[@]} )"
+#echo "models_tags=( ${models_tags[@]} )"
+#echo "models_preprocessing_tags=( ${models_preprocessing_tags[@]} )"
 
 # Modes.
 modes=( "performance" "accuracy" )
@@ -109,8 +127,8 @@ for i in $(seq 1 ${#models[@]}); do
     # Run (but before that print the exact command we are about to run).
     echo "Running '${model}' in '${mode}' mode ..."
     read -d '' CMD <<END_OF_CMD
-    ck benchmark program:image-classification-tflite-loadgen \
-    --speed --repetitions=1 \
+    ck benchmark program:${implementation} \
+    --speed --repetitions=1 ${android} \
     --env.CK_VERBOSE=${verbose} \
     --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
     --env.CK_LOADGEN_MODE=${mode_tag} \
