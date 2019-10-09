@@ -7,6 +7,7 @@ imagenet_size=50000
 scenario="singlestream"
 scenario_tag="SingleStream"
 
+# System, library.
 hostname=`hostname`
 if [ "${hostname}" = "diviniti" ]; then
   # Assume that host "diviniti" is always used to benchmark Android device "mate10pro".
@@ -20,15 +21,23 @@ else
   android=""
 fi
 
-if [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]; then
+# Library. NB: Currently, we only support TFLite v1.13 for Android.
+if [ "${android}" != "" ]; then
+  library="tflite-v1.13"
+  library_tags="tflite,v1.13"
+else
+  library="tflite-v1.15"
+  library_tags="tflite,v1.15"
+fi
+
+# Compiler. NB: Currently, we only support Clang 6 (NDK 17c) for Android.
+if [ "${system}" = "mate10pro" ]; then
+  compiler_tags="llvm,v6"
+elif [ "${system}" = "hikey960" ] || [ "${system}" = "firefly" ]; then
   compiler_tags="gcc,v7"
 else
   compiler_tags="gcc,v8"
 fi
-
-# Library.
-library="tflite-v1.15"
-library_tags="tflite,v1.15"
 
 # Implementation.
 implementation="image-classification-tflite-loadgen"
@@ -103,7 +112,7 @@ for i in $(seq 1 ${#models[@]}); do
     --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
     echo ${CMD}
-    eval ${CMD}
+    #eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then
