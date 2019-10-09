@@ -14,7 +14,7 @@ implementation_armnn_backend_opencl="opencl"
 
 # TODO: Add iteration over implementations and backends.
 implementation="${implementation_armnn}"
-implementation_armnn_backend=${implementation_armnn_backend_neon}
+implementation_armnn_backend=${implementation_armnn_backend_opencl}
 
 # System, library.
 hostname=`hostname`
