@@ -35,7 +35,7 @@
   "compiler_env": "CK_CXX",
   "compiler_flags_as_env": "$<<CK_COMPILER_FLAG_CPP14>>$ -Wall -Wno-sign-compare -Wno-psabi",
   "data_name": "image-classification-armnn-tflite-loadgen",
-  "extra_ld_vars": "$<<CK_ENV_LIB_TF_LIBS_DIRS>>$ $<<CK_ENV_LIB_TF_LIBS>>$ -L$<<CK_ENV_LIB_BOOST_LIB>>$ -lboost_log -lboost_filesystem -lboost_atomic -lboost_date_time -lboost_regex -lboost_thread -lboost_chrono -lboost_system $<<CK_ENV_LIB_ARMCL_CL_STUB_RPATH_LINK>>$ -L$<<CK_ENV_LIB_ARMNN_LIB>>$ -larmnn -pthread -larmnnTfLiteParser $<<CK_EXTRA_LIB_LOG>>$ -L$<<CK_ENV_LIB_MLPERF_LOADGEN_LIB>>$ -lmlperf_loadgen",
+  "extra_ld_vars": "$<<CK_ENV_LIB_TF_LIBS_DIRS>>$ $<<CK_ENV_LIB_TF_LIBS>>$ -L$<<CK_ENV_LIB_BOOST_LIB>>$ -lboost_log -lboost_filesystem -lboost_atomic -lboost_date_time -lboost_regex -lboost_thread -lboost_chrono -lboost_system $<<CK_ENV_LIB_ARMCL_CL_STUB_RPATH_LINK>>$ -L$<<CK_ENV_LIB_ARMNN_LIB>>$ -larmnn -pthread -larmnnTfLiteParser $<<CK_EXTRA_LIB_LOG>>$ -L$<<CK_ENV_LIB_MLPERF_LOADGEN_LIB>>$ -latomic -lmlperf_loadgen",
   "linker_add_lib_as_env": [
     "CK_CXX_EXTRA",
     "CK_ENV_LIB_STDCPP_DYNAMIC"
