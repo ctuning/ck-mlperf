@@ -2,7 +2,10 @@
 #   http://lint.travis-ci.org/
 
 os:         linux
-dist:       xenial
+dist:
+    - xenial
+    - bionic
+
 sudo:       false
 language:   python
 
