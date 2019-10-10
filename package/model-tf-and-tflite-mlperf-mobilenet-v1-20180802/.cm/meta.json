@@ -9,12 +9,20 @@
       "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1", 
       "MODULE_FILE": "mobilenet-model.py", 
       "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
+      "PACKAGE_URL": "https://zenodo.org/record/2269307/files",
+      "MODEL_MOBILENET_VERSION": "1",
 
-      "PACKAGE_URL": "https://zenodo.org/record/2269307/files"
+      "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$",
+      "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$",
+      "*PACKAGE_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$.tgz",
+      "*WEIGHTS_FILE": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$.ckpt"
     }, 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
-    "skip_file_check": "yes"
+    "skip_file_check": "yes",
+
+    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$",
+    "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$-2018_08_02)"
   }, 
   "end_full_path_universal": "mobilenet-model.py", 
   "only_for_host_os_tags": [], 
@@ -46,257 +54,113 @@
   "variations": {
     "v1-1.0-224": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-          "MODEL_MOBILENET_RESOLUTION": "224", 
-          "MODEL_IMAGE_HEIGHT": "224", 
-          "MODEL_IMAGE_WIDTH": "224", 
-          "PACKAGE_NAME": "mobilenet_v1_1.0_224.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_1.0_224.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-1.0-224-2018_08_02)", 
-        "version": "1.1.0.224"
+          "MODEL_MOBILENET_RESOLUTION": "224"
       },
       "extra_tags": [ "multiplier.1.0", "side.224" ]
     },
     "v1-1.0-192": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-          "MODEL_MOBILENET_RESOLUTION": "192", 
-          "MODEL_IMAGE_HEIGHT": "192", 
-          "MODEL_IMAGE_WIDTH": "192", 
-          "PACKAGE_NAME": "mobilenet_v1_1.0_192.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_1.0_192.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-1.0-192-2018_08_02)", 
-        "version": "1.1.0.192"
+          "MODEL_MOBILENET_RESOLUTION": "192"
       },
       "extra_tags": [ "multiplier.1.0", "side.192" ]
     },
     "v1-1.0-160": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-          "MODEL_MOBILENET_RESOLUTION": "160", 
-          "MODEL_IMAGE_HEIGHT": "160", 
-          "MODEL_IMAGE_WIDTH": "160", 
-          "PACKAGE_NAME": "mobilenet_v1_1.0_160.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_1.0_160.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-1.0-160-2018_08_02)", 
-        "version": "1.1.0.160"
+          "MODEL_MOBILENET_RESOLUTION": "160"
       },
       "extra_tags": [ "multiplier.1.0", "side.160" ]
     },
     "v1-1.0-128": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-          "MODEL_MOBILENET_RESOLUTION": "128", 
-          "MODEL_IMAGE_HEIGHT": "128", 
-          "MODEL_IMAGE_WIDTH": "128", 
-          "PACKAGE_NAME": "mobilenet_v1_1.0_128.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_1.0_128.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-1.0-128-2018_08_02)", 
-        "version": "1.1.0.128"
+          "MODEL_MOBILENET_RESOLUTION": "128"
       },
       "extra_tags": [ "multiplier.1.0", "side.128" ]
     },
     "v1-0.75-224": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.75", 
-          "MODEL_MOBILENET_RESOLUTION": "224", 
-          "MODEL_IMAGE_HEIGHT": "224", 
-          "MODEL_IMAGE_WIDTH": "224", 
-          "PACKAGE_NAME": "mobilenet_v1_0.75_224.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.75_224.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.75-224-2018_08_02)", 
-        "version": "1.0.75.224"
+          "MODEL_MOBILENET_RESOLUTION": "224"
       },
       "extra_tags": [ "multiplier.0.75", "side.224" ]
     },
     "v1-0.75-192": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.75", 
-          "MODEL_MOBILENET_RESOLUTION": "192", 
-          "MODEL_IMAGE_HEIGHT": "192", 
-          "MODEL_IMAGE_WIDTH": "192", 
-          "PACKAGE_NAME": "mobilenet_v1_0.75_192.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.75_192.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.75-192-2018_08_02)", 
-        "version": "1.0.75.192"
+          "MODEL_MOBILENET_RESOLUTION": "192"
       },
       "extra_tags": [ "multiplier.0.75", "side.192" ]
     },
     "v1-0.75-160": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.75", 
-          "MODEL_MOBILENET_RESOLUTION": "160", 
-          "MODEL_IMAGE_HEIGHT": "160", 
-          "MODEL_IMAGE_WIDTH": "160", 
-          "PACKAGE_NAME": "mobilenet_v1_0.75_160.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.75_160.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.75-160-2018_08_02)", 
-        "version": "1.0.75.160"
+          "MODEL_MOBILENET_RESOLUTION": "160"
       },
       "extra_tags": [ "multiplier.0.75", "side.160" ]
     },
     "v1-0.75-128": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.75", 
-          "MODEL_MOBILENET_RESOLUTION": "128", 
-          "MODEL_IMAGE_HEIGHT": "128", 
-          "MODEL_IMAGE_WIDTH": "128", 
-          "PACKAGE_NAME": "mobilenet_v1_0.75_128.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.75_128.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.75-128-2018_08_02)", 
-        "version": "1.0.75.128"
+          "MODEL_MOBILENET_RESOLUTION": "128"
       },
       "extra_tags": [ "multiplier.0.75", "side.128" ]
     },
     "v1-0.5-224": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.5", 
-          "MODEL_MOBILENET_RESOLUTION": "224", 
-          "MODEL_IMAGE_HEIGHT": "224", 
-          "MODEL_IMAGE_WIDTH": "224", 
-          "PACKAGE_NAME": "mobilenet_v1_0.5_224.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.5_224.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.5-224-2018_08_02)", 
-        "version": "1.0.5.224"
+          "MODEL_MOBILENET_RESOLUTION": "224"
       },
       "extra_tags": [ "multiplier.0.5", "side.224" ]
     },
     "v1-0.5-192": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.5", 
-          "MODEL_MOBILENET_RESOLUTION": "192", 
-          "MODEL_IMAGE_HEIGHT": "192", 
-          "MODEL_IMAGE_WIDTH": "192", 
-          "PACKAGE_NAME": "mobilenet_v1_0.5_192.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.5_192.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.5-192-2018_08_02)", 
-        "version": "1.0.5.192"
+          "MODEL_MOBILENET_RESOLUTION": "192"
       },
       "extra_tags": [ "multiplier.0.5", "side.192" ]
     },
     "v1-0.5-160": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.5", 
-          "MODEL_MOBILENET_RESOLUTION": "160", 
-          "MODEL_IMAGE_HEIGHT": "160", 
-          "MODEL_IMAGE_WIDTH": "160", 
-          "PACKAGE_NAME": "mobilenet_v1_0.5_160.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.5_160.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.5-160-2018_08_02)", 
-        "version": "1.0.5.160"
+          "MODEL_MOBILENET_RESOLUTION": "160"
       },
       "extra_tags": [ "multiplier.0.5", "side.160" ]
     },
     "v1-0.5-128": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.5", 
-          "MODEL_MOBILENET_RESOLUTION": "128", 
-          "MODEL_IMAGE_HEIGHT": "128", 
-          "MODEL_IMAGE_WIDTH": "128", 
-          "PACKAGE_NAME": "mobilenet_v1_0.5_128.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.5_128.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.5-128-2018_08_02)", 
-        "version": "1.0.5.128"
+          "MODEL_MOBILENET_RESOLUTION": "128"
       },
       "extra_tags": [ "multiplier.0.5", "side.128" ]
     },
     "v1-0.25-224": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.25", 
-          "MODEL_MOBILENET_RESOLUTION": "224", 
-          "MODEL_IMAGE_HEIGHT": "224", 
-          "MODEL_IMAGE_WIDTH": "224", 
-          "PACKAGE_NAME": "mobilenet_v1_0.25_224.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.25_224.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.25-224-2018_08_02)", 
-        "version": "1.0.25.224"
+          "MODEL_MOBILENET_RESOLUTION": "224"
       },
       "extra_tags": [ "multiplier.0.25", "side.224" ]
     },
     "v1-0.25-192": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.25", 
-          "MODEL_MOBILENET_RESOLUTION": "192", 
-          "MODEL_IMAGE_HEIGHT": "192", 
-          "MODEL_IMAGE_WIDTH": "192", 
-          "PACKAGE_NAME": "mobilenet_v1_0.25_192.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.25_192.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.25-192-2018_08_02)", 
-        "version": "1.0.25.192"
+          "MODEL_MOBILENET_RESOLUTION": "192"
       },
       "extra_tags": [ "multiplier.0.25", "side.192" ]
     },
     "v1-0.25-160": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.25", 
-          "MODEL_MOBILENET_RESOLUTION": "160", 
-          "MODEL_IMAGE_HEIGHT": "160", 
-          "MODEL_IMAGE_WIDTH": "160", 
-          "PACKAGE_NAME": "mobilenet_v1_0.25_160.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.25_160.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.25-160-2018_08_02)", 
-        "version": "1.0.25.160"
+          "MODEL_MOBILENET_RESOLUTION": "160"
       },
       "extra_tags": [ "multiplier.0.25", "side.160" ]
     },
     "v1-0.25-128": {
       "extra_env": {
-          "MODEL_MOBILENET_VERSION": "1", 
           "MODEL_MOBILENET_MULTIPLIER": "0.25", 
-          "MODEL_MOBILENET_RESOLUTION": "128", 
-          "MODEL_IMAGE_HEIGHT": "128", 
-          "MODEL_IMAGE_WIDTH": "128", 
-          "PACKAGE_NAME": "mobilenet_v1_0.25_128.tgz", 
-          "WEIGHTS_FILE": "mobilenet_v1_0.25_128.ckpt"
-      },
-      "extra_customize": {
-        "package_extra_name": " (mobilenet-v1-0.25-128-2018_08_02)", 
-        "version": "1.0.25.128"
+          "MODEL_MOBILENET_RESOLUTION": "128"
       },
       "extra_tags": [ "multiplier.0.25", "side.128" ]
     },
