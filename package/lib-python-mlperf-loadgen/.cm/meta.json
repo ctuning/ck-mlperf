@@ -16,6 +16,13 @@
       "sort": 10,
       "tags": "mlperf,inference,source"
     },
+    "compiler": {
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "C++ compiler",
+      "sort": 15,
+      "tags": "compiler,lang-cpp"
+    },
     "python": {
       "add_to_path": "yes",
       "local": "yes",

@@ -30,7 +30,8 @@ rm -rf "${EXTRA_PYTHON_SITE}"
 ######################################################################################
 echo "Building '${PYTHON_PACKAGE_NAME}' from source ..."
 cd ${CK_ENV_MLPERF_INFERENCE_LOADGEN}
-CFLAGS="-std=c++14" ${CK_ENV_COMPILER_PYTHON_FILE} setup.py bdist_wheel
+
+CC=$CK_CXX_FULL_PATH CFLAGS="-std=c++14" ${CK_ENV_COMPILER_PYTHON_FILE} setup.py bdist_wheel
 
 ######################################################################################
 echo "Installing '${PYTHON_PACKAGE_NAME}' and its dependencies to '${PACKAGE_LIB_DIR}' ..."
