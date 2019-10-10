@@ -12,16 +12,16 @@ python:
 
 matrix:
     include:
-        - name: "Python 3.6 on Bionic/amd64"
+        - name: "Python 3.6.7 on Bionic/amd64"
           os: linux
           arch: amd64
           dist: bionic
-          python: 3.6
-        - name: "Python 3.6 on Bionic/arm64"
+          python: 3.6.7
+        - name: "Python 3.6.7 on Bionic/arm64"
           os: linux
           arch: arm64
           dist: bionic
-          python: 3.6
+          python: 3.6.7
         - name: "Python 3.6 on OSX"
           os: osx
           osx_image: xcode9.2
