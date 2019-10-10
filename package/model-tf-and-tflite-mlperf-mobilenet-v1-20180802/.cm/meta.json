@@ -11,18 +11,19 @@
       "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
       "PACKAGE_URL": "https://zenodo.org/record/2269307/files",
       "MODEL_MOBILENET_VERSION": "1",
+      "QUANT_SUFFIX": "",
 
       "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$",
       "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$",
-      "*PACKAGE_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$.tgz",
-      "*WEIGHTS_FILE": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$.ckpt"
+      "*PACKAGE_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$$<<QUANT_SUFFIX>>$.tgz",
+      "*WEIGHTS_FILE": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$$<<QUANT_SUFFIX>>$.ckpt"
     }, 
     "no_os_in_suggested_path": "yes", 
     "no_ver_in_suggested_path": "yes", 
     "skip_file_check": "yes",
 
-    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$",
-    "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$-2018_08_02)"
+    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$$<<QUANT_SUFFIX>>$",
+    "*package_extra_name": " (mobilenet$<<QUANT_SUFFIX>>$-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$-2018_08_02)"
   }, 
   "end_full_path_universal": "mobilenet-model.py", 
   "only_for_host_os_tags": [], 
@@ -41,7 +42,6 @@
     "mobilenet-v1", 
     "revision.2018_08_02",
     "mlperf", 
-    "non-quantized", 
     "weights", 
     "python", 
     "frozen", 
@@ -52,6 +52,26 @@
     "module_uoa": "script"
   }, 
   "variations": {
+    "non-quantized": {
+      "extra_env": {
+        "QUANT_SUFFIX": ""
+      }
+    },
+    "quantized": {
+      "extra_env": {
+        "QUANT_SUFFIX": "_quant"
+      }
+    },
+    "from.google": {
+      "extra_env": {
+        "PACKAGE_URL": "http://download.tensorflow.org/models/mobilenet_v1_2018_08_02"
+      }
+    },
+    "from.zenodo": {
+      "extra_env": {
+        "PACKAGE_URL": "https://zenodo.org/record/2269307/files"
+      }
+    },
     "v1-1.0-224": {
       "extra_env": {
           "MODEL_MOBILENET_MULTIPLIER": "1.0", 
@@ -163,16 +183,6 @@
           "MODEL_MOBILENET_RESOLUTION": "128"
       },
       "extra_tags": [ "multiplier.0.25", "side.128" ]
-    },
-    "from.google": {
-      "extra_env": {
-        "PACKAGE_URL": "http://download.tensorflow.org/models/mobilenet_v1_2018_08_02"
-      }
-    }, 
-    "from.zenodo": {
-      "extra_env": {
-        "PACKAGE_URL": "https://zenodo.org/record/2269307/files"
-      }
     }
   }
 }

@@ -16,7 +16,6 @@
       "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$",
       "*PACKAGE_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$.tgz",
       "*WEIGHTS_FILE": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$.ckpt"
-
     },
     "no_os_in_suggested_path": "yes",
     "no_ver_in_suggested_path": "yes",
