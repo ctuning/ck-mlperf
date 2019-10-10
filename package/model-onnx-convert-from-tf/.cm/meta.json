@@ -56,9 +56,9 @@
       "sort": 100,
       "tags": "model,tf",
       "update_tags_if_env" : {
-        "object-detection,mlperf,ssd-mobilenet":                [ { "ML_MODEL_TO_CONVERT": "ssd-mobilenet" } ],
-        "image-classification,mlperf,mobilenet,non-quantized":  [ { "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224" } ],
-        "image-classification,mlperf,resnet":                   [ { "ML_MODEL_TO_CONVERT": "resnet50_v1" } ]
+        "object-detection,mlperf,ssd-mobilenet":                                [ { "ML_MODEL_TO_CONVERT": "ssd-mobilenet" } ],
+        "image-classification,mlperf,mobilenet-v1,v1-1.0-224,non-quantized":    [ { "ML_MODEL_TO_CONVERT": "mobilenet_v1_1.0_224" } ],
+        "image-classification,mlperf,resnet":                                   [ { "ML_MODEL_TO_CONVERT": "resnet50_v1" } ]
       }
     }
   },
