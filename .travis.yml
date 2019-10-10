@@ -17,17 +17,21 @@ matrix:
           arch: amd64
           dist: bionic
           python: 3.6.7
-        - name: "Python 3.6.7 on Bionic/arm64"
+        - name: "Python 3.6.5 on Bionic/arm64"
           os: linux
           arch: arm64
           dist: bionic
-          python: 3.6.7
+          python: 3.6.5
         - name: "Python 3.6 on OSX"
           os: osx
           osx_image: xcode9.2
           language: generic
           python:   3.6
           env:      WANTED_PYTHON_VERSION=3.6
+        - name: "Python 3.6 on Windows"
+          os: windows
+          language: python
+          python: 3.6
 
 addons:
     apt:
