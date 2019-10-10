@@ -12,13 +12,13 @@
       "PACKAGE_SUB_DIR": "inference",
       "PACKAGE_URL": "https://github.com/mlperf/inference"
     },
+    "package_extra_name": " (upstream repository - default)",
     "no_os_in_suggested_path": "yes",
     "no_ver_in_suggested_path": "yes",
     "use_git_revision": "yes",
     "version": "master"
   },
   "end_full_path_universal": "inference$#sep#$v0.5$#sep#$classification_and_detection$#sep#$optional_harness_ck$#sep#$classification$#sep#$README.md",
-  "package_extra_name": " (upstream repository)",
   "process_script": "install",
   "soft_uoa": "mlperf.inference.source",
   "suggested_path": "mlperf-inference",
