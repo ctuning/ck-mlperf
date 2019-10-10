@@ -54,7 +54,7 @@
         "package_extra_name": " (for the CK-tweaked MLPerf Inference vision app)"
       }
     },
-    "pr473": {
+    "upstream.pr473": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/guschmue/inference",
         "PACKAGE_GIT_CHECKOUT": "gs/submission"
