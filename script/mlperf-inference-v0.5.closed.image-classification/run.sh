@@ -45,6 +45,10 @@ if [ "${implementation}" == "${implementation_tflite}" ]; then
 elif [ "${implementation}" == ${implementation_armnn} ]; then
   library="armnn-v19.08"
   library_tags="armnn,tflite,neon,opencl,rel.19.08"
+  if [ "${system}" = "rpi4" ]; then
+    # NB: Force Neon backend on Raspberry Pi 4.
+    implementation_armnn_backend="${implementation_armnn_backend_neon}"
+  fi
   if [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_opencl}" ]; then
     armnn_backend="--env.USE_OPENCL=1"
   elif [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_neon}" ]; then
