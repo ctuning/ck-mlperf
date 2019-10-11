@@ -130,24 +130,24 @@ for i in $(seq 1 ${scenarios_len}); do
       fi
       profile_selection="--env.CK_PROFILE=${profile}"
       # Record.
-      record_uoa="mlperf.object-detection.${scenario_lowercase}.${backend_tags}.${model_tags}"
-      record_tags="mlperf,object-detection,${scenario_lowercase},${backend_tags},${model_tags}"
+      record_uoa="mlperf.open.object-detection.${backend_tags}.${model_tags}.${scenario_lowercase}"
+      record_tags="mlperf,open,object-detection,${backend_tags},${model_tags},${scenario_lowercase}"
       if [ ${enable_batch} = 1 ]; then
         record_uoa+=".batch-size${batch_size}"
         record_tags+=",batch-size${batch_size}"
       fi
       # Print all parameters.
       echo "experiment_idx: ${experiment_idx}"
-      echo "  scenario: ${scenario}"
-      echo "  scenario_lowercase: ${scenario_lowercase}"
-      echo "  scenario_selection: ${scenario_selection}"
-      echo "  batch_size: ${batch_size}"
-      echo "  batch_selection: ${batch_selection}"
       echo "  backend_tags: ${backend_tags}"
       echo "  backend_selection: ${backend_selection}"
       echo "  model_tags: ${model_tags}"
       echo "  model: ${model}"
       echo "  model_selection: ${model_selection}"
+      echo "  scenario: ${scenario}"
+      echo "  scenario_lowercase: ${scenario_lowercase}"
+      echo "  scenario_selection: ${scenario_selection}"
+      echo "  batch_size: ${batch_size}"
+      echo "  batch_selection: ${batch_selection}"
       echo "  profile: ${profile}"
       echo "  profile_selection: ${profile_selection}"
       echo "  record_uoa=${record_uoa}"
