@@ -1,0 +1,16 @@
+{
+  "backup_data_uid": "13458b870bfffd72", 
+  "backup_module_uid": "84e27ad9dd12e734", 
+  "backup_module_uoa": "script", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2019-10-11T09:06:49.113070", 
+    "version": [
+      "1", 
+      "10", 
+      "3", 
+      "1"
+    ]
+  }, 
+  "data_name": "mlperf-inference-v0.5.open.object-detection"
+}
