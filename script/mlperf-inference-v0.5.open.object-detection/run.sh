@@ -10,9 +10,13 @@ ck build docker:${IMAGE}
 ###############################################################################
 # 1. Configure paths.
 ###############################################################################
-# TODO: Assume $CK_REPOS is already defined and warn if not.
-CK_REPOS=$HOME/CK_REPOS
-# Create if if does not exist.
+
+if [ -z "$CK_REPOS" ]; then
+    echo "Please define and export CK_REPOS variable before running this script"
+    exit 1
+fi
+
+# Create if it does not exist.
 EXPERIMENTS_DIR=/data/$USER/mlperf-inference-vision-experiments
 echo "Creating '${EXPERIMENTS_DIR}' for storing experimental results ..."
 mkdir -p ${EXPERIMENTS_DIR}
@@ -21,13 +25,14 @@ mkdir -p ${EXPERIMENTS_DIR}
 ###############################################################################
 # 2. Configure scenarios (affects batch options).
 ###############################################################################
-# Uncomment for full run.
-scenarios=( 'SingleStream' 'Offline' )
-scenarios_lowercase=( 'singlestream' 'offline' )
 
-# Uncomment for debug run.
-#scenarios=( 'SingleStream' )
-#scenarios_lowercase=( 'singlestream' )
+if [ -n "$CK_QUICK_TEST" ]; then
+    scenarios=( 'SingleStream' )
+    scenarios_lowercase=( 'singlestream' )
+else
+    scenarios=( 'SingleStream' 'Offline' )
+    scenarios_lowercase=( 'singlestream' 'offline' )
+fi
 
 scenarios_selection=()
 for scenario in "${scenarios[@]}"; do
@@ -47,13 +52,15 @@ batch_count=2
 # NB: Somewhat counterintuitively, 'models' are actually tags for selecting
 # models, while 'models_tags' are tags for recording experimental results.
 ###############################################################################
-# Uncomment for full run.
-models=( 'rcnn,nas,lowproposals,vcoco' 'rcnn,resnet50,lowproposals' 'rcnn,resnet101,lowproposals' 'rcnn,inception-resnet-v2,lowproposals' 'rcnn,inception-v2' 'ssd,inception-v2' 'ssd,mobilenet-v1,quantized,mlperf,tf' 'ssd,mobilenet-v1,mlperf,non-quantized,tf' 'ssd,mobilenet-v1,fpn' 'ssd,resnet50,fpn' 'ssdlite,mobilenet-v2,vcoco' 'yolo-v3' )
-models_tags=( 'rcnn-nas-lowproposals'  'rcnn-resnet50-lowproposals' 'rcnn-resnet101-lowproposals' 'rcnn-inception-resnet-v2-lowproposals' 'rcnn-inception-v2' 'ssd-inception-v2' 'ssd-mobilenet-v1-quantized-mlperf'    'ssd-mobilenet-v1-non-quantized-mlperf'    'ssd-mobilenet-v1-fpn' 'ssd-resnet50-fpn' 'ssdlite-mobilenet-v2'       'yolo-v3' )
 
-# Uncomment for debug run.
-#models=( 'yolo-v3' )
-#models_tags=( 'yolo-v3' )
+if [ -n "$CK_QUICK_TEST" ]; then
+    models=( 'yolo-v3' )
+    models_tags=( 'yolo-v3' )
+else
+    models=( 'rcnn,nas,lowproposals,vcoco' 'rcnn,resnet50,lowproposals' 'rcnn,resnet101,lowproposals' 'rcnn,inception-resnet-v2,lowproposals' 'rcnn,inception-v2' 'ssd,inception-v2' 'ssd,mobilenet-v1,quantized,mlperf,tf' 'ssd,mobilenet-v1,mlperf,non-quantized,tf' 'ssd,mobilenet-v1,fpn' 'ssd,resnet50,fpn' 'ssdlite,mobilenet-v2,vcoco' 'yolo-v3' )
+    models_tags=( 'rcnn-nas-lowproposals'  'rcnn-resnet50-lowproposals' 'rcnn-resnet101-lowproposals' 'rcnn-inception-resnet-v2-lowproposals' 'rcnn-inception-v2' 'ssd-inception-v2' 'ssd-mobilenet-v1-quantized-mlperf'    'ssd-mobilenet-v1-non-quantized-mlperf'    'ssd-mobilenet-v1-fpn' 'ssd-resnet50-fpn' 'ssdlite-mobilenet-v2'       'yolo-v3' )
+fi
+
 
 models_selection=()
 for model in "${models[@]}"; do
@@ -70,13 +77,14 @@ done
 ###############################################################################
 # 4. Configure TensorFlow backends.
 ###############################################################################
-# Uncomment for full run.
-backends_selection=( '--dep_add_tags.lib-tensorflow=vcpu' '--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
-backends_tags=( 'cpu-prebuilt' 'cpu' 'cuda' 'tensorrt' 'tensorrt-dynamic' )
 
-# Uncomment for debug run.
-#backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
-#backends_tags=( 'tensorrt-dynamic' )
+if [ -n "$CK_QUICK_TEST" ]; then
+    backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
+    backends_tags=( 'tensorrt-dynamic' )
+else
+    backends_selection=( '--dep_add_tags.lib-tensorflow=vcpu' '--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
+    backends_tags=( 'cpu-prebuilt' 'cpu' 'cuda' 'tensorrt' 'tensorrt-dynamic' )
+fi
 
 
 ###############################################################################
@@ -154,7 +162,7 @@ for i in $(seq 1 ${scenarios_len}); do
       echo "  record_tags=${record_tags}"
       # NB: Prepend the next line with 'echo' to print the full command without executing it.
       docker run --runtime=nvidia --user=$(id -u):1500 \
-      --env-file ${CK_REPOS}/ck-object-detection/docker/${IMAGE}/env.list \
+      --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
       --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
       --rm ctuning/${IMAGE} \
         "ck benchmark program:mlperf-inference-vision --repetitions=1 --env.CK_METRIC_TYPE=COCO \
