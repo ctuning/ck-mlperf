@@ -7,7 +7,7 @@
       "sort": 0,
       "tags": "compiler,lang-cpp"
     },
-    "lib-armnn": {
+    "library": {
       "comment": "Dynamic library added automatically to the Android-push list due to 'dynamic_library' customization",
       "local": "yes",
       "name": "ArmNN library (with TFLite support)",
