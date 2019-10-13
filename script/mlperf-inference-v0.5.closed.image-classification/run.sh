@@ -11,8 +11,10 @@ scenario_tag="SingleStream"
 # TODO: Add iteration over implementations and backends. (Now, simply define which one is active.)
 implementation_tflite="image-classification-tflite-loadgen"
 implementation_armnn="image-classification-armnn-tflite-loadgen"
+implementation_armnn_no_loadgen="image-classification-armnn-tflite"
 implementation="${implementation_armnn}"
 # ArmNN backends.
+implementation_armnn_backend_ref="ref"
 implementation_armnn_backend_neon="neon"
 implementation_armnn_backend_opencl="opencl"
 implementation_armnn_backend=${implementation_armnn_backend_opencl}
@@ -42,7 +44,7 @@ if [ "${implementation}" == "${implementation_tflite}" ]; then
     library_tags="tflite,v1.15"
   fi
   armnn_backend=""
-elif [ "${implementation}" == ${implementation_armnn} ]; then
+elif [ "${implementation}" == "${implementation_armnn}" ] || [ "${implementation}" == "${implementation_armnn_no_loadgen}" ]; then
   library="armnn-v19.08"
   library_tags="armnn,tflite,neon,opencl,rel.19.08"
   if [ "${system}" = "rpi4" ]; then
@@ -53,6 +55,8 @@ elif [ "${implementation}" == ${implementation_armnn} ]; then
     armnn_backend="--env.USE_OPENCL=1"
   elif [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_neon}" ]; then
     armnn_backend="--env.USE_NEON=1"
+  elif [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_ref}" ]; then
+    armnn_backend=""
   else
     echo "ERROR: Unsupported ArmNN backend '${implementation_armnn_backend}'!"
     exit 1
@@ -112,6 +116,11 @@ for i in $(seq 1 ${#models[@]}); do
       buffer_size=1024
       verbose=1
     fi
+    if [ "${implementation}" == "${implementation_armnn_no_loadgen}" ]; then
+      batch_count="--env.CK_BATCH_COUNT=${dataset_size}"
+    else
+      batch_count=""
+    fi
     # Opportunity to skip by mode or model.
     #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
     # Configure record settings.
@@ -137,7 +146,7 @@ for i in $(seq 1 ${#models[@]}); do
     echo "Running '${model}' in '${mode}' mode ..."
     read -d '' CMD <<END_OF_CMD
     ck benchmark program:${implementation} \
-    --speed --repetitions=1 ${android} ${armnn_backend} \
+    --speed --repetitions=1 ${android} ${armnn_backend} ${batch_count} \
     --env.CK_VERBOSE=${verbose} \
     --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
     --env.CK_LOADGEN_MODE=${mode_tag} \
@@ -148,11 +157,12 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.compiler=${compiler_tags} \
     --dep_add_tags.images=${model_preprocessing_tags} \
     --dep_add_tags.python=v3 \
+    --dep_add_tags.mlperf-inference-src=upstream.master \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
     echo ${CMD}
-    #eval ${CMD}
+    eval ${CMD}
     echo
     # Check for errors.
     if [ "${?}" != "0" ]; then
