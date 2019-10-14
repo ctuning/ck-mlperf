@@ -183,8 +183,8 @@ RUN ck install package --tags=lib,python-package,mlperf,loadgen
 # FIXME: Do we really still need Pillow?
 RUN ck install package --tags=lib,python-package,pillow
 # Pull latest changes (keep swapping the repos order to avoid caching).
-RUN ck pull repo:ck-mlperf
 RUN ck pull repo:ck-object-detection
+RUN ck pull repo:ck-mlperf
 #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv#
 
 # Install the official vision app with CK modifications.
