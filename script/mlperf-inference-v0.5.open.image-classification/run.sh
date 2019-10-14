@@ -11,7 +11,7 @@ scenario_tag="SingleStream"
 # TODO: Add iteration over implementations and backends. (Now, simply define which one is active.)
 implementation_tflite="image-classification-tflite-loadgen"
 implementation_armnn="image-classification-armnn-tflite-loadgen"
-implementation="${implementation_armnn}"
+implementation="${implementation_tflite}"
 # ArmNN backends.
 implementation_armnn_backend_neon="neon"
 implementation_armnn_backend_opencl="opencl"
@@ -84,31 +84,36 @@ resolutions=( 224 192 160 128 )
 multipliers=( 1.0 0.75 0.5 0.25 )
 for resolution in ${resolutions[@]}; do
   for multiplier in ${multipliers[@]}; do
-    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+    if [ "${implementation}" == "${implementation_tflite}" ]; then
+      models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
+      models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
+      models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+    fi
   done
 done
-# MobileNet-v2.
-version=2
-resolutions=( 224 192 160 128 96 )
-multipliers=( 1.0 0.75 0.5 0.35 )
-for resolution in ${resolutions[@]}; do
-  for multiplier in ${multipliers[@]}; do
-    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
-  done
-done
-resolutions=( 224 )
-multipliers=( 1.4 1.3 )
-for resolution in ${resolutions[@]}; do
-  for multiplier in ${multipliers[@]}; do
-    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
-  done
-done
+## MobileNet-v2.
+#version=2
+#resolutions=( 224 192 160 128 96 )
+#multipliers=( 1.0 0.75 0.5 0.35 )
+#for resolution in ${resolutions[@]}; do
+#  for multiplier in ${multipliers[@]}; do
+#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+#  done
+#done
+#resolutions=( 224 )
+#multipliers=( 1.4 1.3 )
+#for resolution in ${resolutions[@]}; do
+#  for multiplier in ${multipliers[@]}; do
+#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+#  done
+#done
 
 #echo "models=( ${models[@]} )"
 #echo "models_tags=( ${models_tags[@]} )"
