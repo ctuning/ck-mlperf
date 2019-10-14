@@ -182,7 +182,11 @@ RUN ck install package --tags=lib,python-package,mlperf,loadgen
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
 # FIXME: Do we really still need Pillow?
 RUN ck install package --tags=lib,python-package,pillow
-# Pull latest changes (keep swapping the repos order to avoid caching).
+
+# Keep incrementing this number in order to rebuild the image starting from here
+RUN echo 17
+
+# Pull latest changes
 RUN ck pull repo:ck-object-detection
 RUN ck pull repo:ck-mlperf
 #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv#
