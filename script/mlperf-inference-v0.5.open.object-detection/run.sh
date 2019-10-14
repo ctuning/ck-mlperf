@@ -26,6 +26,21 @@ mkdir -p ${EXPERIMENTS_DIR}
 # 2. Configure scenarios (affects batch options).
 ###############################################################################
 
+division="open"
+task="object-detection"
+
+# System.
+hostname=`hostname`
+if [ "${hostname}" = "diviniti" ]; then
+  # Assume that host "diviniti" is always used to benchmark Android device "mate10pro".
+  system="mate10pro"
+elif [ "${hostname}" = "hikey961" ]; then
+  system="hikey960"
+else
+  system="${hostname}"
+fi
+
+
 if [ -n "$CK_QUICK_TEST" ]; then
     scenarios=( 'SingleStream' )
     scenarios_lowercase=( 'singlestream' )
@@ -138,8 +153,8 @@ for i in $(seq 1 ${scenarios_len}); do
       fi
       profile_selection="--env.CK_PROFILE=${profile}"
       # Record.
-      record_uoa="mlperf.open.object-detection.${backend_tags}.${model_tags}.${scenario_lowercase}"
-      record_tags="mlperf,open,object-detection,${backend_tags},${model_tags},${scenario_lowercase}"
+      record_uoa="mlperf.${division}.${task}.${system}.${backend_tags}.${model_tags}.${scenario_lowercase}"
+      record_tags="mlperf,${division},${task},${system},${backend_tags},${model_tags},${scenario_lowercase}"
       if [ ${enable_batch} = 1 ]; then
         record_uoa+=".batch-size${batch_size}"
         record_tags+=",batch-size${batch_size}"
