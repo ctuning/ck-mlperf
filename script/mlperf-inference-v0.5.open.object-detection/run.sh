@@ -44,10 +44,22 @@ fi
 if [ -n "$CK_QUICK_TEST" ]; then
     scenarios=( 'SingleStream' )
     scenarios_lowercase=( 'singlestream' )
+
+    modes=( 'AccuracyOnly' )
+    modes_lowercase=( 'accuracy' )
+    modes_selection=( "--env.CK_ACCURACY=YES" )
 else
     scenarios=( 'SingleStream' 'Offline' )
     scenarios_lowercase=( 'singlestream' 'offline' )
+
+    modes=( 'AccuracyOnly' 'PerformanceOnly' )
+    modes_lowercase=( 'accuracy' 'performance' )
+    modes_selection=( "--env.CK_ACCURACY=YES" "--env.CK_ACCURACY=NO" )
 fi
+
+mode=modes[0]
+mode_lowercase=modes_lowercase[0]
+mode_selection=modes_selection[0]
 
 scenarios_selection=()
 for scenario in "${scenarios[@]}"; do
@@ -153,8 +165,8 @@ for i in $(seq 1 ${scenarios_len}); do
       fi
       profile_selection="--env.CK_PROFILE=${profile}"
       # Record.
-      record_uoa="mlperf.${division}.${task}.${system}.${backend_tags}.${model_tags}.${scenario_lowercase}"
-      record_tags="mlperf,${division},${task},${system},${backend_tags},${model_tags},${scenario_lowercase}"
+      record_uoa="mlperf.${division}.${task}.${system}.${backend_tags}.${model_tags}.${scenario_lowercase}.${mode_lowercase}"
+      record_tags="mlperf,${division},${task},${system},${backend_tags},${model_tags},${scenario_lowercase},${mode_lowercase}"
       if [ ${enable_batch} = 1 ]; then
         record_uoa+=".batch-size${batch_size}"
         record_tags+=",batch-size${batch_size}"
@@ -169,6 +181,9 @@ for i in $(seq 1 ${scenarios_len}); do
       echo "  scenario: ${scenario}"
       echo "  scenario_lowercase: ${scenario_lowercase}"
       echo "  scenario_selection: ${scenario_selection}"
+      echo "  mode: ${mode}"
+      echo "  mode_lowercase: ${mode_lowercase}"
+      echo "  mode_selection: ${mode_selection}"
       echo "  batch_size: ${batch_size}"
       echo "  batch_selection: ${batch_selection}"
       echo "  profile: ${profile}"
@@ -181,7 +196,7 @@ for i in $(seq 1 ${scenarios_len}); do
       --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
       --rm ctuning/${IMAGE} \
         "ck benchmark program:mlperf-inference-vision --repetitions=1 --env.CK_METRIC_TYPE=COCO \
-        ${scenario_selection} ${batch_selection} ${model_selection} ${backend_selection} ${profile_selection} \
+        ${scenario_selection} ${mode_selection} ${batch_selection} ${model_selection} ${backend_selection} ${profile_selection} \
         --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags}"
       if [ "${?}" != "0" ] ; then
         echo "Error: Failed executing experiment ${experiment_idx} ..."
