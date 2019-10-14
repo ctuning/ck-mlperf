@@ -82,8 +82,8 @@ if [ -n "$CK_QUICK_TEST" ]; then
     backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
     backends_tags=( 'tensorrt-dynamic' )
 else
-    backends_selection=( '--dep_add_tags.lib-tensorflow=vcpu' '--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
-    backends_tags=( 'cpu-prebuilt' 'cpu' 'cuda' 'tensorrt' 'tensorrt-dynamic' )
+    backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_TF_GPU_MEMORY_PERCENT=99 --env.CK_ENABLE_TENSORRT=1 --env.CK_TENSORRT_DYNAMIC=1' )
+    backends_tags=( 'cpu' 'cuda' 'tensorrt' 'tensorrt-dynamic' )
 fi
 
 
