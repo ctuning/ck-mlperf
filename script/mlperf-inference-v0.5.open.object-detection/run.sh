@@ -57,9 +57,9 @@ else
     modes_selection=( "--env.CK_ACCURACY=YES" "--env.CK_ACCURACY=NO" )
 fi
 
-mode=modes[0]
-mode_lowercase=modes_lowercase[0]
-mode_selection=modes_selection[0]
+mode=$modes[0]
+mode_lowercase=$modes_lowercase[0]
+mode_selection=$modes_selection[0]
 
 scenarios_selection=()
 for scenario in "${scenarios[@]}"; do
