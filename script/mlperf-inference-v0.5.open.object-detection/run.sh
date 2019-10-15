@@ -190,7 +190,9 @@ for i in $(seq 1 ${scenarios_len}); do
       echo "  profile_selection: ${profile_selection}"
       echo "  record_uoa=${record_uoa}"
       echo "  record_tags=${record_tags}"
-      # NB: Prepend the next line with 'echo' to print the full command without executing it.
+      echo
+
+      read -d '' CMD <<END_OF_CMD
       docker run --runtime=nvidia --user=$(id -u):1500 \
       --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
       --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
@@ -198,12 +200,20 @@ for i in $(seq 1 ${scenarios_len}); do
         "ck benchmark program:mlperf-inference-vision --repetitions=1 --env.CK_METRIC_TYPE=COCO \
         ${scenario_selection} ${mode_selection} ${batch_selection} ${model_selection} ${backend_selection} ${profile_selection} \
         --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags}"
+END_OF_CMD
+      echo ${CMD}
+
+      if [ -z "$CK_DRY_RUN" ]; then
+        eval ${CMD}
+      fi
+
       if [ "${?}" != "0" ] ; then
         echo "Error: Failed executing experiment ${experiment_idx} ..."
         exit 1
       fi
+      echo
       echo "------------------"
       ((experiment_idx++))
-    done # for each backend
-  done # for each model
-done # for each batch size
+    done # for each model
+  done # for each backend
+done # for each scenario
