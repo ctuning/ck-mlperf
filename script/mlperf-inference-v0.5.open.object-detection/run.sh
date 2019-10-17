@@ -53,17 +53,16 @@ if [ -n "$CK_QUICK_TEST" ]; then
     modes_lowercase=( 'performance' )
     modes_selection=( "--env.CK_LOADGEN_MODE=''" )
 else
-    scenarios=( 'SingleStream' 'Offline' )
-    scenarios_lowercase=( 'singlestream' 'offline' )
+    #scenarios=( 'SingleStream' 'Offline' )
+    #scenarios_lowercase=( 'singlestream' 'offline' )
 
-    modes=( 'AccuracyOnly' 'PerformanceOnly' )
-    modes_lowercase=( 'accuracy' 'performance' )
-    modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" "--env.CK_LOADGEN_MODE=''" )
+    scenarios=( 'SingleStream' )
+    scenarios_lowercase=( 'singlestream' )
+
+    modes=( 'PerformanceOnly' 'AccuracyOnly' )
+    modes_lowercase=( 'performance' 'accuracy' )
+    modes_selection=( "--env.CK_LOADGEN_MODE=''" "--env.CK_LOADGEN_MODE='--accuracy'" )
 fi
-
-mode=${modes[0]}
-mode_lowercase=${modes_lowercase[0]}
-mode_selection=${modes_selection[0]}
 
 scenarios_selection=()
 for scenario in "${scenarios[@]}"; do
@@ -127,6 +126,7 @@ scenarios_len=${#scenarios[@]}
 #batch_sizes_len=${#batch_sizes[@]}
 backends_len=${#backends_selection[@]}
 models_len=${#models[@]}
+modes_len=${#modes[@]}
 
 echo "====================="
 echo "Starting full DSE ..."
@@ -171,6 +171,13 @@ for i in $(seq 1 ${scenarios_len}); do
         fi
       fi
       profile_selection="--env.CK_LOADGEN_REF_PROFILE=${profile}"
+
+      for m in $(seq 1 ${modes_len}); do
+        mode=${modes[$m-1]}
+        mode_lowercase=${modes_lowercase[$m-1]}
+        mode_selection=${modes_selection[$m-1]}
+
+
       # Record.
       record_uoa="mlperf.${division}.${task}.${system}.${backend_tags}.${model_tags}.${scenario_lowercase}.${mode_lowercase}"
       record_tags="mlperf,${division},${task},${system},${backend_tags},${model_tags},${scenario_lowercase},${mode_lowercase}"
@@ -221,6 +228,8 @@ END_OF_CMD
       echo
       echo "------------------"
       ((experiment_idx++))
+
+      done # for each mode
     done # for each model
   done # for each backend
 done # for each scenario
