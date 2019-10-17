@@ -45,13 +45,17 @@ if [ -n "$CK_QUICK_TEST" ]; then
     scenarios=( 'SingleStream' )
     scenarios_lowercase=( 'singlestream' )
 
-    #modes=( 'AccuracyOnly' )
-    #modes_lowercase=( 'accuracy' )
-    #modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" )
+    modes=( 'AccuracyOnly' )
+    modes_lowercase=( 'accuracy' )
+    modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" )
 
-    modes=( 'PerformanceOnly' )
-    modes_lowercase=( 'performance' )
-    modes_selection=( "--env.CK_LOADGEN_MODE=''" )
+#    modes=( 'PerformanceOnly' )
+#    modes_lowercase=( 'performance' )
+#    modes_selection=( "--env.CK_LOADGEN_MODE=''" )
+#
+#    modes=( 'AccuracyOnly' 'PerformanceOnly' )
+#    modes_lowercase=( 'accuracy' 'performance' )
+#    modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" "--env.CK_LOADGEN_MODE=''" )
 else
     #scenarios=( 'SingleStream' 'Offline' )
     #scenarios_lowercase=( 'singlestream' 'offline' )
