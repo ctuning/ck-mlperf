@@ -184,7 +184,7 @@ RUN ck install package --tags=lib,python-package,mlperf,loadgen
 RUN ck install package --tags=lib,python-package,pillow
 
 # Keep incrementing this number in order to rebuild the image starting from here
-RUN echo 28
+RUN echo 29
 
 # Pull latest changes
 RUN ck pull repo:ck-object-detection
