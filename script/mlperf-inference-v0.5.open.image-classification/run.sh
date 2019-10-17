@@ -84,9 +84,9 @@ resolutions=( 224 192 160 128 )
 multipliers=( 1.0 0.75 0.5 0.25 )
 for resolution in ${resolutions[@]}; do
   for multiplier in ${multipliers[@]}; do
-#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
     if [ "${implementation}" == "${implementation_tflite}" ]; then
       models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
       models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
@@ -94,26 +94,26 @@ for resolution in ${resolutions[@]}; do
     fi
   done
 done
-## MobileNet-v2.
-#version=2
-#resolutions=( 224 192 160 128 96 )
-#multipliers=( 1.0 0.75 0.5 0.35 )
-#for resolution in ${resolutions[@]}; do
-#  for multiplier in ${multipliers[@]}; do
-#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
-#  done
-#done
-#resolutions=( 224 )
-#multipliers=( 1.4 1.3 )
-#for resolution in ${resolutions[@]}; do
-#  for multiplier in ${multipliers[@]}; do
-#    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
-#    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-#    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
-#  done
-#done
+# MobileNet-v2.
+version=2
+resolutions=( 224 192 160 128 96 )
+multipliers=( 1.0 0.75 0.5 0.35 )
+for resolution in ${resolutions[@]}; do
+  for multiplier in ${multipliers[@]}; do
+    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+  done
+done
+resolutions=( 224 )
+multipliers=( 1.4 1.3 )
+for resolution in ${resolutions[@]}; do
+  for multiplier in ${multipliers[@]}; do
+    models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+    models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
+    models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
+  done
+done
 
 #echo "models=( ${models[@]} )"
 #echo "models_tags=( ${models_tags[@]} )"
@@ -179,6 +179,7 @@ for i in $(seq 1 ${#models[@]}); do
     --dep_add_tags.compiler=${compiler_tags} \
     --dep_add_tags.images=${model_preprocessing_tags} \
     --dep_add_tags.python=v3 \
+    --dep_add_tags.mlperf-inference-src=upstream.master \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
