@@ -12,8 +12,8 @@ ck build docker:${IMAGE}
 ###############################################################################
 
 if [ -z "$CK_REPOS" ]; then
-    echo "Please define and export CK_REPOS variable before running this script"
-    exit 1
+  echo "Please define and export CK_REPOS variable before running this script"
+  exit 1
 fi
 
 # Create if it does not exist.
@@ -42,43 +42,36 @@ fi
 
 
 if [ -n "$CK_QUICK_TEST" ]; then
-    scenarios=( 'SingleStream' )
-    scenarios_lowercase=( 'singlestream' )
+  scenarios=( 'SingleStream' )
+  scenarios_lowercase=( 'singlestream' )
 
-    modes=( 'AccuracyOnly' )
-    modes_lowercase=( 'accuracy' )
-    modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" )
+  modes=( 'AccuracyOnly' )
+  modes_lowercase=( 'accuracy' )
+  modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" )
 
-#    modes=( 'PerformanceOnly' )
-#    modes_lowercase=( 'performance' )
-#    modes_selection=( "--env.CK_LOADGEN_MODE=''" )
+#  modes=( 'PerformanceOnly' )
+#  modes_lowercase=( 'performance' )
+#  modes_selection=( "--env.CK_LOADGEN_MODE=''" )
 #
-#    modes=( 'AccuracyOnly' 'PerformanceOnly' )
-#    modes_lowercase=( 'accuracy' 'performance' )
-#    modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" "--env.CK_LOADGEN_MODE=''" )
+#  modes=( 'AccuracyOnly' 'PerformanceOnly' )
+#  modes_lowercase=( 'accuracy' 'performance' )
+#  modes_selection=( "--env.CK_LOADGEN_MODE='--accuracy'" "--env.CK_LOADGEN_MODE=''" )
 else
-    #scenarios=( 'SingleStream' 'Offline' )
-    #scenarios_lowercase=( 'singlestream' 'offline' )
+  #scenarios=( 'SingleStream' 'Offline' )
+  #scenarios_lowercase=( 'singlestream' 'offline' )
 
-    scenarios=( 'SingleStream' )
-    scenarios_lowercase=( 'singlestream' )
+  scenarios=( 'SingleStream' )
+  scenarios_lowercase=( 'singlestream' )
 
-    modes=( 'PerformanceOnly' 'AccuracyOnly' )
-    modes_lowercase=( 'performance' 'accuracy' )
-    modes_selection=( "--env.CK_LOADGEN_MODE=''" "--env.CK_LOADGEN_MODE='--accuracy'" )
+  modes=( 'PerformanceOnly' 'AccuracyOnly' )
+  modes_lowercase=( 'performance' 'accuracy' )
+  modes_selection=( "--env.CK_LOADGEN_MODE=''" "--env.CK_LOADGEN_MODE='--accuracy'" )
 fi
 
 scenarios_selection=()
 for scenario in "${scenarios[@]}"; do
   scenarios_selection+=( "--env.CK_LOADGEN_SCENARIO=${scenario}" )
 done
-
-# FIXME: Invalid batch sizes and counts.
-# NB: batch_sizes (#samples/query) must be 1 for SingleStream.
-# NB: batch_count (#queries) must be at least 1024 for SingleStream.
-# batch_sizes=( 1 2 4 8 16 32 )
-#batch_sizes=( 1 1 )
-#batch_count=2
 
 
 ###############################################################################
@@ -88,13 +81,13 @@ done
 ###############################################################################
 
 if [ -n "$CK_QUICK_TEST" ]; then
-    models=( 'yolo-v3' )
-    models_tags=( 'yolo-v3' )
-    #models=( 'rcnn,inception-v2' )
-    #models_tags=( 'rcnn-inception-v2' )
+  models=( 'yolo-v3' )
+  models_tags=( 'yolo-v3' )
+  #models=( 'rcnn,inception-v2' )
+  #models_tags=( 'rcnn-inception-v2' )
 else
-    models=( 'rcnn,nas,lowproposals,vcoco' 'rcnn,resnet50,lowproposals' 'rcnn,resnet101,lowproposals' 'rcnn,inception-resnet-v2,lowproposals' 'rcnn,inception-v2' 'ssd,inception-v2' 'ssd,mobilenet-v1,quantized,mlperf,tf' 'ssd,mobilenet-v1,mlperf,non-quantized,tf' 'ssd,mobilenet-v1,fpn' 'ssd,resnet50,fpn' 'ssdlite,mobilenet-v2,vcoco' 'yolo-v3' )
-    models_tags=( 'rcnn-nas-lowproposals'  'rcnn-resnet50-lowproposals' 'rcnn-resnet101-lowproposals' 'rcnn-inception-resnet-v2-lowproposals' 'rcnn-inception-v2' 'ssd-inception-v2' 'ssd-mobilenet-v1-quantized-mlperf'    'ssd-mobilenet-v1-non-quantized-mlperf'    'ssd-mobilenet-v1-fpn' 'ssd-resnet50-fpn' 'ssdlite-mobilenet-v2'       'yolo-v3' )
+  models=( 'rcnn,nas,lowproposals,vcoco' 'rcnn,resnet50,lowproposals' 'rcnn,resnet101,lowproposals' 'rcnn,inception-resnet-v2,lowproposals' 'rcnn,inception-v2' 'ssd,inception-v2' 'ssd,mobilenet-v1,quantized,mlperf,tf' 'ssd,mobilenet-v1,mlperf,non-quantized,tf' 'ssd,mobilenet-v1,fpn' 'ssd,resnet50,fpn' 'ssdlite,mobilenet-v2,vcoco' 'yolo-v3' )
+  models_tags=( 'rcnn-nas-lowproposals'  'rcnn-resnet50-lowproposals' 'rcnn-resnet101-lowproposals' 'rcnn-inception-resnet-v2-lowproposals' 'rcnn-inception-v2' 'ssd-inception-v2' 'ssd-mobilenet-v1-quantized-mlperf'    'ssd-mobilenet-v1-non-quantized-mlperf'    'ssd-mobilenet-v1-fpn' 'ssd-resnet50-fpn' 'ssdlite-mobilenet-v2'       'yolo-v3' )
 fi
 
 
@@ -115,11 +108,11 @@ done
 ###############################################################################
 
 if [ -n "$CK_QUICK_TEST" ]; then
-    backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1' )
-    backends_tags=( 'tensorrt-dynamic' )
+  backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1' )
+  backends_tags=( 'tensorrt-dynamic' )
 else
-    backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1 --env.CK_LOADGEN_BACKEND=tensorflow' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflow' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1' )
-    backends_tags=( 'cpu' 'cuda' 'tensorrt' 'tensorrt-dynamic' )
+  backends_selection=( '--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1 --env.CK_LOADGEN_BACKEND=tensorflow' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflow' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT' '--dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1' )
+  backends_tags=( 'cpu' 'cuda' 'tensorrt' 'tensorrt-dynamic' )
 fi
 
 
@@ -215,9 +208,11 @@ for i in $(seq 1 ${scenarios_len}); do
       --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
       --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
       --rm ctuning/${IMAGE} \
-        "ck benchmark program:mlperf-inference-vision --cmd_key=direct --repetitions=1 --env.CK_METRIC_TYPE=COCO \
+        "ck benchmark program:mlperf-inference-vision --cmd_key=direct --repetitions=1 \
+        --env.CK_LOADGEN_EXTRA_PARAMS='$EXTRA_PARAMS' --env.CK_METRIC_TYPE=COCO \
         ${scenario_selection} ${mode_selection} ${batch_selection} ${model_selection} ${backend_selection} ${profile_selection} \
-        --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} --env.CK_LOADGEN_EXTRA_PARAMS='$EXTRA_PARAMS'"
+        --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
+        --skip_print_timers --skip_stat_analysis --process_multi_keys"
 END_OF_CMD
       echo ${CMD}
 
