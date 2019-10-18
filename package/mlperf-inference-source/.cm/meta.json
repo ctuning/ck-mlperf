@@ -55,13 +55,13 @@
         "version": "vision_with_ck"
       }
     },
-    "upstream.pr473": {
+    "upstream.pr511": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/guschmue/inference",
-        "PACKAGE_GIT_CHECKOUT": "gs/submission"
+        "PACKAGE_GIT_CHECKOUT": "gs/checker"
       },
       "extra_customize": {
-        "package_extra_name": " (PR#473: submission aid)"
+        "package_extra_name": " (PR#511: checker fixes)"
       }
     }
   },
