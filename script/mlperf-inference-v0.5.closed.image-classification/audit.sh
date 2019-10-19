@@ -80,109 +80,127 @@ fi
 models=( "mobilenet" "resnet" )
 models_tags=( "model,tflite,mobilenet-v1-1.0-224,non-quantized" "model,tflite,resnet,no-argmax" )
 # Preferred preprocessing methods per model.
-models_preprocessing_tags=( "full,side.224,preprocessed,using-opencv" "full,side.224,preprocessed,using-tensorflow" )
+#models_preprocessing_tags=( "full,side.224,preprocessed,using-opencv" "full,side.224,preprocessed,using-tensorflow" )
 
 #echo "models=( ${models[@]} )"
 #echo "models_tags=( ${models_tags[@]} )"
 #echo "models_preprocessing_tags=( ${models_preprocessing_tags[@]} )"
 
 # Modes.
-modes=( "performance" "accuracy" )
-modes_tags=( "PerformanceOnly" "AccuracyOnly" )
+#modes=( "performance" "accuracy" )
+#modes_tags=( "PerformanceOnly" "AccuracyOnly" )
 
-# Iterate for each audit test.
+# Audit tests.
 v05_dir=$( ck cat env --tags=mlperf,inference,source,upstream.master | grep CK_ENV_MLPERF_INFERENCE_V05 | cut -d'=' -f2 )
 audit_dir="${v05_dir}/audit/nvidia"
 audit_tests=( "TEST01" "TEST03" "TEST04-A" "TEST04-B" "TEST05" )
-for audit_test in ${audit_tests[@]}; do
-  echo "========"
-  echo "${audit_test}"
-  echo "========"
-  audit_config="${audit_dir}"/"${audit_test}"/audit.config
-  cat ${audit_config}
-  echo "--------"
-done
 
-#  # Iterate for each model.
-#  for i in $(seq 1 ${#models[@]}); do
-#    # Configure the model.
-#    model=${models[${i}-1]}
-#    model_tags=${models_tags[${i}-1]}
-#    # Configure the preprocessing method.
-#    if [ "${system}" = "hikey960" ]; then
-#      model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
+# Iterate for each model.
+for i in $(seq 1 ${#models[@]}); do
+  # Configure the model.
+  model=${models[${i}-1]}
+  model_tags=${models_tags[${i}-1]}
+
+#  # Configure the preprocessing method.
+#  if [ "${system}" = "hikey960" ]; then
+#    model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
+#  else
+#    # By default, use the same preprocessing method for all models.
+#    model_preprocessing_tags=${models_preprocessing_tags[0]}
+#  fi
+#  # Iterate for each mode.
+#  for j in $(seq 1 ${#modes[@]}); do
+#    # Configure the mode.
+#    mode=${modes[${j}-1]}
+#    mode_tag=${modes_tags[${j}-1]}
+#    if [ "${mode}" = "accuracy" ]; then
+#      dataset_size=50000
+#      buffer_size=500
+#      verbose=2
 #    else
-#      # By default, use the same preprocessing method for all models.
-#      model_preprocessing_tags=${models_preprocessing_tags[0]}
+#      dataset_size=1024
+#      buffer_size=1024
+#      verbose=1
 #    fi
-#    # Iterate for each mode.
-#    for j in $(seq 1 ${#modes[@]}); do
-#      # Configure the mode.
-#      mode=${modes[${j}-1]}
-#      mode_tag=${modes_tags[${j}-1]}
-#      if [ "${mode}" = "accuracy" ]; then
-#        dataset_size=50000
-#        buffer_size=500
-#        verbose=2
-#      else
-#        dataset_size=1024
-#        buffer_size=1024
-#        verbose=1
-#      fi
-#      if [ "${implementation}" == "${implementation_armnn_no_loadgen}" ]; then
-#        batch_count="--env.CK_BATCH_COUNT=${dataset_size}"
-#      else
-#        batch_count=""
-#      fi
-#      # Opportunity to skip by mode or model.
-#      #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
-#      # Configure record settings.
-#      record_uoa="mlperf.${division}.${task}.${system}.${library}"
-#      record_tags="mlperf,${division},${task},${system},${library}"
-#      if [ "${implementation}" == "${implementation_armnn}" ]; then
-#        record_uoa+=".${implementation_armnn_backend}"
-#        record_tags+=",${implementation_armnn_backend}"
-#      fi
-#      record_uoa+=".${model}.${scenario}.${mode}"
-#      record_tags+=",${model},${scenario},${mode}"
-#      if [ "${mode}" = "accuracy" ]; then
-#        # Get substring after "preprocessed," to end.
-#        preprocessing="${model_preprocessing_tags##*preprocessed,}"
-#        record_uoa+=".${preprocessing}"
-#        record_tags+=",${preprocessing}"
-#      fi
-#      if [ "${mode}" = "accuracy" ] && [ "${dataset_size}" != "${imagenet_size}" ]; then
-#        record_uoa+=".${dataset_size}"
-#        record_tags+=",${dataset_size}"
-#      fi
-#      # Run (but before that print the exact command we are about to run).
-#      echo "Running '${model}' in '${mode}' mode ..."
-#      read -d '' CMD <<END_OF_CMD
-#      ck benchmark program:${implementation} \
-#      --speed --repetitions=1 ${android} ${armnn_backend} ${batch_count} \
-#      --env.CK_VERBOSE=${verbose} \
-#      --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
-#      --env.CK_LOADGEN_MODE=${mode_tag} \
-#      --env.CK_LOADGEN_DATASET_SIZE=${dataset_size} \
-#      --env.CK_LOADGEN_BUFFER_SIZE=${buffer_size} \
-#      --dep_add_tags.weights=${model_tags} \
-#      --dep_add_tags.library=${library_tags} \
-#      --dep_add_tags.compiler=${compiler_tags} \
-#      --dep_add_tags.images=${model_preprocessing_tags} \
-#      --dep_add_tags.python=v3 \
-#      --dep_add_tags.mlperf-inference-src=upstream.master \
-#      --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
-#      --skip_print_timers --skip_stat_analysis --process_multi_keys
-#END_OF_CMD
-#      echo ${CMD}
-#      eval ${CMD}
-#      echo
-#      # Check for errors.
-#      if [ "${?}" != "0" ]; then
-#        echo "ERROR: Failed running '${model}' in '${mode}' mode!"
-#        exit 1
-#      fi
-#    done # for each mode
-#  done # for each model
+#    if [ "${implementation}" == "${implementation_armnn_no_loadgen}" ]; then
+#      batch_count="--env.CK_BATCH_COUNT=${dataset_size}"
+#    else
+#      batch_count=""
+#    fi
+
+  # Instead of mode, iterate for each audit test.
+  for audit_test in ${audit_tests[@]}; do
+    #  LoadGen config file.
+    audit_config="${audit_dir}"/"${audit_test}"/audit.config
+    if test -f "${audit_config}"; then
+      config="${audit_config}"
+    else
+      config="user.conf" # TEST03
+    fi
+
+    if [ "${audit_test}" = "TEST03" ]; then
+      model_preprocessing_tags="full,side.224,preprocessed,using-opencv,audit.test.03"
+    else
+      model_preprocessing_tags="full,side.224,preprocessed,using-opencv,crop.875"
+    fi
+
+    # Configure record settings.
+    record_uoa="mlperf.${division}.${task}.${system}.${library}"
+    record_tags="mlperf,${division},${task},${system},${library}"
+    if [ "${implementation}" == "${implementation_armnn}" ]; then
+      record_uoa+=".${implementation_armnn_backend}"
+      record_tags+=",${implementation_armnn_backend}"
+    fi
+    record_uoa+=".${model}.${scenario}.audit.${audit_test}"
+    record_tags+=",${model},${scenario},audit,${audit_test}"
+
+#    record_uoa+=".${model}.${scenario}.${mode}"
+#    record_tags+=",${model},${scenario},${mode}"
+#    if [ "${mode}" = "accuracy" ]; then
+#      # Get substring after "preprocessed," to end.
+#      preprocessing="${model_preprocessing_tags##*preprocessed,}"
+#      record_uoa+=".${preprocessing}"
+#      record_tags+=",${preprocessing}"
+#    fi
+#    if [ "${mode}" = "accuracy" ] && [ "${dataset_size}" != "${imagenet_size}" ]; then
+#      record_uoa+=".${dataset_size}"
+#      record_tags+=",${dataset_size}"
+#    fi
+
+    # Opportunity to skip by mode or model.
+    #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
+
+    # Run (but before that print the exact command we are about to run).
+#    echo "Running '${model}' in '${mode}' mode ..."
+    echo "Running '${model}' for '${audit_test}' test ..."
+    read -d '' CMD <<END_OF_CMD
+    ck benchmark program:${implementation} \
+    --speed --repetitions=1 ${android} ${armnn_backend} ${batch_count} \
+    --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
+    --env.CK_LOADGEN_CONFIG=${config} \
+    --dep_add_tags.weights=${model_tags} \
+    --dep_add_tags.library=${library_tags} \
+    --dep_add_tags.compiler=${compiler_tags} \
+    --dep_add_tags.images=${model_preprocessing_tags} \
+    --dep_add_tags.python=v3 \
+    --dep_add_tags.mlperf-inference-src=upstream.master \
+    --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
+    --skip_print_timers --skip_stat_analysis --process_multi_keys
+END_OF_CMD
+#    --env.CK_VERBOSE=${verbose} \
+#    --env.CK_LOADGEN_MODE=${mode_tag} \
+#    --env.CK_LOADGEN_DATASET_SIZE=${dataset_size} \
+#    --env.CK_LOADGEN_BUFFER_SIZE=${buffer_size} \
+
+    echo ${CMD}
+    eval ${CMD}
+    echo
+    # Check for errors.
+    if [ "${?}" != "0" ]; then
+      echo "ERROR: Failed running '${model}' in '${mode}' mode!"
+      exit 1
+    fi
+  done # for each mode
+done # for each model
 
 #done # for each audit test
