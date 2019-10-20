@@ -139,7 +139,7 @@ for i in $(seq 1 ${#models[@]}); do
     fi
 
     if [ "${audit_test}" = "TEST03" ]; then
-      model_preprocessing_tags="full,side.224,preprocessed,using-opencv,audit.test.03"
+      model_preprocessing_tags="full,side.224,preprocessed,using-opencv,audit.test03"
     else
       model_preprocessing_tags="full,side.224,preprocessed,using-opencv,crop.875"
     fi
