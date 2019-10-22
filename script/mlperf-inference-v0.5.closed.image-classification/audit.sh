@@ -50,6 +50,7 @@ elif [ "${implementation}" == "${implementation_armnn}" ] || [ "${implementation
   if [ "${system}" = "rpi4" ]; then
     # NB: Force Neon backend on Raspberry Pi 4.
     implementation_armnn_backend="${implementation_armnn_backend_neon}"
+    library_tags="armnn,tflite,neon,rel.19.08"
   fi
   if [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_opencl}" ]; then
     armnn_backend="--env.USE_OPENCL=1"
