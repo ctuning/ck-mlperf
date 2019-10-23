@@ -342,6 +342,11 @@ void TestSingleStream(Program *prg) {
   //ts.min_duration_ms = 0;
   //ts.max_duration_ms = 2000;
 
+  const float ss_target_latency_ms = getenv_f("CK_LOADGEN_SS_TARGET_LATENCY_MS");
+  if (ss_target_latency_ms > 0.0) {
+    ts.single_stream_expected_latency_ns = ss_target_latency_ms * 1000 * 1000;
+  }
+
   const float max_duration_s = getenv_f("CK_LOADGEN_MAX_DURATION_S");
   if (max_duration_s > 0.0) {
     ts.max_duration_ms = max_duration_s * 1000;
