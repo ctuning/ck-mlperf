@@ -1,6 +1,5 @@
-# FIXME: Currently identical to: Object Detection TensorFlow (Python) Docker image
 
-[This image](https://hub.docker.com/r/ctuning/object-detection-tf-py.tensorrt.ubuntu-18.04) is based on
+[This image](https://hub.docker.com/r/ctuning/mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04) is based on
 [the TensorRT 19.07 image](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-07.html) from NVIDIA
 (which is in turn based on Ubuntu 18.04) with [CUDA](https://developer.nvidia.com/cuda-zone) 10.1 and [TensorRT](https://developer.nvidia.com/tensorrt) 5.1.5.
 
@@ -45,7 +44,7 @@ You will need to install [Collective Knowledge](http://cknowledge.org) to build 
 Please follow the [CK installation instructions](https://github.com/ctuning/ck#installation) and then pull our object detection repository:
 
 ```bash
-$ ck pull repo:ck-object-detection
+$ ck pull repo:ck-mlperf
 ```
 
 **NB:** Refresh all CK repositories after any updates (e.g. bug fixes):
@@ -54,12 +53,24 @@ $ ck pull all
 ```
 (This only updates CK repositories on the host system. To update the Docker image, [rebuild](#build) it using the `--no-cache` flag.)
 
+### Set up environment variables
+
+Set up the variable to contain the image name:
+```bash
+$ export IMAGE=mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04
+```
+
+Set up the variable that points to the directory that contains your CK repositories (usually ~/CK or ~/CK_REPOS):
+```bash
+$ export CK_REPOS=${HOME}/CK
+```
+
 <a name="image_download"></a>
 ## Download from Docker Hub
 
 To download a prebuilt image from Docker Hub, run:
 ```
-$ docker pull ctuning/object-detection-tf-py.tensorrt.ubuntu-18.04
+$ docker pull ctuning/${IMAGE}
 ```
 
 **NB:** As the prebuilt TensorFlow variant does not support AVX2 instructions, we advise to use the TensorFlow variant built from sources on compatible hardware.
@@ -72,50 +83,82 @@ to [rebuild](#build) the image on your system.
 
 To build an image on your system, run:
 ```bash
-$ ck build docker:object-detection-tf-py.tensorrt.ubuntu-18.04
+$ ck build docker:${IMAGE}
 ```
 
 **NB:** This CK command is equivalent to:
 ```bash
-$ cd `ck find docker:object-detection-tf-py.tensorrt.ubuntu-18.04`
-$ docker build --no-cache -f Dockerfile -t ctuning/object-detection-tf-py.tensorrt.ubuntu-18.04 .
+$ cd `ck find docker:${IMAGE}`
+$ docker build --no-cache -f Dockerfile -t ctuning/${IMAGE} .
 ```
 
 <a name="usage"></a>
 # Usage
 
 <a name="run"></a>
-## Run inference once
+## Run inference once (on CPU, on GPU/CUDA, using TensorRT and TensorRT/dynamic) :
 
-Once you have downloaded or built an image, you can run inference on the CPU e.g. as follows:
+Once you have downloaded or built an image, you can run inference on the CPU as follows:
 ```bash
-$ docker run --rm ctuning/object-detection-tf-py.tensorrt.ubuntu-18.04 \
-    "ck run program:object-detection-tf-py \
-        --dep_add_tags.lib-tensorflow=vprebuilt \
-        --dep_add_tags.weights=ssd-mobilenet,quantized \
-        --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=50 \
-    "
+$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+        "ck run program:mlperf-inference-vision --cmd_key=direct \
+        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+        --env.CK_METRIC_TYPE=COCO \
+        --env.CK_LOADGEN_SCENARIO=SingleStream \
+        --env.CK_LOADGEN_MODE='--accuracy' \
+        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
+        --dep_add_tags.lib-tensorflow=vcpu --env.CUDA_VISIBLE_DEVICES=-1 --env.CK_LOADGEN_BACKEND=tensorflow \
+        --env.CK_LOADGEN_REF_PROFILE=default_tf_object_det_zoo \
+        --skip_print_timers"
 ```
 Here, we run inference on 50 images on the CPU using the quantized SSD-MobileNet model.
 
 **NB:** This is equivalent to the default run command:
 ```bash
-$ ck run docker:object-detection-tf-py.tensorrt.ubuntu-18.04
+$ docker run --rm ctuning/$IMAGE
 ```
 
-To run inference on the GPU, add the `--runtime=nvidia` flag:
-
+To run inference on the GPU with CUDA, we need to make a couple of changes:
 ```bash
-$ docker run --runtime=nvidia --rm ctuning/object-detection-tf-py.tensorrt.ubuntu-18.04 \
-    "ck run program:object-detection-tf-py \
-        --dep_add_tags.lib-tensorflow=vsrc \
-        --dep_add_tags.weights=ssd-mobilenet,quantized \
-        --env.CK_BATCH_SIZE=1 --env.CK_BATCH_COUNT=50 \
-        --env.CK_ENABLE_TENSORRT=1 \
-        --env.CK_TENSORRT_DYNAMIC=1 \
-    "
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+        "ck run program:mlperf-inference-vision --cmd_key=direct \
+        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+        --env.CK_METRIC_TYPE=COCO \
+        --env.CK_LOADGEN_SCENARIO=SingleStream \
+        --env.CK_LOADGEN_MODE='--accuracy' \
+        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
+        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflow \
+        --env.CK_LOADGEN_REF_PROFILE=default_tf_object_det_zoo \
+        --skip_print_timers"
 ```
-Here, we additionally request to use TensorRT in the [dynamic mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode).
+
+Now let's use TensorRT backend in [static mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode):
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+        "ck run program:mlperf-inference-vision --cmd_key=direct \
+        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+        --env.CK_METRIC_TYPE=COCO \
+        --env.CK_LOADGEN_SCENARIO=SingleStream \
+        --env.CK_LOADGEN_MODE='--accuracy' \
+        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
+        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT \
+        --env.CK_LOADGEN_REF_PROFILE=default_tf_trt_object_det_zoo \
+        --skip_print_timers"
+```
+
+Finally, TensorRT backend in [dynamic mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode):
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+        "ck run program:mlperf-inference-vision --cmd_key=direct \
+        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+        --env.CK_METRIC_TYPE=COCO \
+        --env.CK_LOADGEN_SCENARIO=SingleStream \
+        --env.CK_LOADGEN_MODE='--accuracy' \
+        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
+        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1 \
+        --env.CK_LOADGEN_REF_PROFILE=default_tf_trt_object_det_zoo \
+        --skip_print_timers"
+```
 
 We describe all supported [models](#models) and [flags](#flags) below.
 
@@ -148,38 +191,48 @@ For example, to run inference on the quantized SSD-MobileNet model, add `--dep_a
 
 | Env Flag                    | Possible Values  | Default Value | Description |
 |-|-|-|-|
-| `--env.CK_CUSTOM_MODEL`     | 0,1              | 0 | Specifies whether the model comes from the TensorFlow zoo (`0`) or from another source (`1`). (Models from other sources have to implement their own preprocess, postprocess and get tensor functions, as explained in the [application documentation](https://github.com/ctuning/ck-tensorflow/blob/master/program/object-detection-tf-py/README.md#support-for-custom-models).) |
-| `--env.CK_ENABLE_BATCH`     | 0,1              | 0 | Specifies whether batching should be enabled (must be used for `--env.CK_BATCH_SIZE` to take effect). |
-| `--env.CK_BATCH_SIZE`       | positive integer | 1 | Specifies the number of images to process in a single batch (if not `1`, must be used with `--env.CK_ENABLE_BATCH=1`). |
-| `--env.CK_BATCH_COUNT`      | positive integer | 1 | Specifies the number of batches to be processed. |
-| `--env.CK_ENV_IMAGE_WIDTH`, `--env.CK_ENV_IMAGE_HEIGHT` | positive integer | Model-specific (set by CK) | These parameters can be used to resize at runtime the input images to a different size than the default size for the model. (This usually decreases the accuracy.) |
-| `--env.CK_ENABLE_TENSORRT`  | 0,1              | 0 | Enables the TensorRT backend (only to be used with TensorFlow built from sources). |
-| `--env.CK_TENSORRT_DYNAMIC` | 0,1              | 0 | Enables the [TensorRT dynamic mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode) (must be used with `--env.CK_ENABLE_TENSORRT=1`). |
+| `--env.CK_LOADGEN_BACKEND`  | tensorflow,tensorflowRT | tensorflow | Disable/Enable TensorRT backend (only to be used with TensorFlow built from sources). |
+| `--env.CK_LOADGEN_TENSORRT_DYNAMIC` | 0,1             | 0 | Enables the [TensorRT dynamic mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode) (must be used with `--env.CK_ENABLE_TENSORRT=1`). |
 | `--env.CUDA_VISIBLE_DEVICES`| list of integers | N/A | Specifies which GPUs should be used by TensorFlow; `-1` forces TensorFlow to use the CPU (even with TensorFlow built from sources). |
+| `--env.CK_LOADGEN_REF_PROFILE` | mobilenet-tf,default_tf_object_det_zoo,default_tf_trt_object_det_zoo,tf_yolo,tf_yolo_trt | mobilenet-tf | The "LoadGen profile" - combines aspects of model and backend |
+| `--env.CK_LOADGEN_SCENARIO` | SingleStream,Offline,MultiStream | SingleStream | The LoadGen testing scenario |
+| `--env.CK_LOADGEN_MODE` | "--accuracy","" | "--accuracy" | LoadGen mode - empty line stands for Performance mode |
 
 
 <a name="benchmark"></a>
 ## Benchmark models individually
 
-When you run inference using `ck run`, the result gets printed but not saved.
-You can use `ck benchmark` to save the result on the host system as CK experiment entries (JSON files) e.g. as follows:
+When you run inference using `ck run`, the results get printed but not saved (and some won't be even printed).
+You can use `ck benchmark` to save the results on the host system as CK experiment entries (JSON files).
+
+Let's set up a variable that points to the directory on the host computer where you want to collect the experiments from,
+making sure $USER has write access to it:
 
 ```bash
-$ docker run --runtime=nvidia \
-    --env-file `ck find docker:object-detection-tf-py.tensorrt.ubuntu-18.04`/env.list \
-    --volume=<folder_for_results>:/home/dvdt/CK_REPOS/local/experiment \
-    --user=$(id -u):1500 \
-    --rm ctuning/object-detection-tf-py.tensorrt.ubuntu-18.04 \
-    "ck benchmark program:object-detection-tf-py \
-        --dep_add_tags.lib-tensorflow=vsrc \
-        --dep_add_tags.weights=ssd-mobilenet,quantized \
-        --env.CK_BATCH_COUNT=50 \
-        --repetitions=1 \
-        --record \
-        --record_repo=local \
-        --record_uoa=object-detection-tf-py-ssd-mobilenet-quantized-accuracy \
-        --tags=object-detection,tf-py,ssd-mobilenet,quantized,accuracy \
-    "
+$ export EXPERIMENTS_DIR=/data/$USER/mlperf-inference-vision-experiments
+
+$ mkdir -p ${EXPERIMENTS_DIR}
+```
+
+When running `ck benchmark` via Docker, we map the internal output directory to `$EXPERIMENTS_DIR` on the host
+in order to access the results easier (using parameters for a custom Yolo v3 model for a change) :
+
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
+        --user=$(id -u):1500 --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
+        --rm ctuning/${IMAGE} \
+        "ck benchmark program:mlperf-inference-vision --cmd_key=direct --repetitions=1 \
+        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+        --env.CK_METRIC_TYPE=COCO \
+        --env.CK_LOADGEN_SCENARIO=SingleStream \
+        --env.CK_LOADGEN_MODE='--accuracy' \
+        --dep_add_tags.weights=yolo-v3 \
+        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1 \
+        --env.CK_LOADGEN_REF_PROFILE=tf_yolo_trt \
+        --record --record_repo=local \
+        --record_uoa=mlperf.open.object-detection.tensorrt-dynamic.yolo_v3_coco.singlestream.accuracy \
+        --tags=mlperf,open,object-detection,tensorrt-dynamic,yolo_v3_coco,singlestream,accuracy \
+        --skip_print_timers --skip_stat_analysis --process_multi_keys"
 ```
 
 <a name="parameters_docker"></a>
@@ -204,11 +257,10 @@ Therefore, you can retrieve the results of a container run under your user id fr
 
 - `--dep_add_tags.lib-tensorflow`: specify `vsrc` to use TensorFlow built from sources controlling its execution via [flags](#flags) and `vprebuilt` to use prebuilt TensorFlow on the CPU.
 - `--dep_add_tags.weights`: specify the tags for a particular [model](#models).
-- `--env.CK_BATCH_COUNT`: the number of batches to be processed; assuming `--env.CK_BATCH_SIZE=1`, we typically use `--env.CK_BATCH_COUNT=5000` for experiments that measure accuracy over the COCO 2017 validation set and e.g. `--env.CK_BATCH_COUNT=2` for experiments that measure performance. (With TensorFlow, the first batch is usually slower than all subsequent batches. Therefore, its execution time has to be discarded. The execution times of subsequent batches will be averaged.)
 - `--repetitions`: the number of times to run an experiment (3 by default); we typically use `--repetitions=1` for experiments that measure accuracy and e.g. `--repetitions=10` for experiments that measure performance.
 - `--record`, `--record_repo=local`: must be present to have the results saved in the mounted volume.
-- `--record_uoa`: a unique name for each CK experiment entry; here, `object-detection-tf-py` (the name of the program) is the same for all experiments, `ssd-mobilenet-quantized` is unique for each model, `accuracy` indicates the accuracy mode.
-- `--tags`: specify the tags for each CK experiment entry; we typically make them similar to the experiment entry name.
+- `--record_uoa`: a unique name for each CK experiment entry; here, `mlperf.open.object-detection` is the common prefix for all experiments, `tensorrt-dynamic` is the backend, `ssd-mobilenet-quantized` is unique for each model, `accuracy` indicates the accuracy mode.
+- `--tags`: specify the comma-separated tags for each CK experiment entry; we typically use parts of the experiment entry name.
 
 
 <a name="explore"></a>
