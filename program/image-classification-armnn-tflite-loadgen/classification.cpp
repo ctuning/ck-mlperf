@@ -347,7 +347,7 @@ void TestSingleStream(Program *prg) {
   std::cout << "Config path: " << config_file_path << std::endl;
   std::cout << "Guenther Model Name: " << guenther_model_name << std::endl;
   std::cout << "LoadGen Scenario: " << scenario_string << std::endl;
-  std::cout << "LoadGen Mode: " << mode_string << std::endl;
+  std::cout << "LoadGen Mode: " << ( mode_string != "" ? mode_string : "(empty string)" ) << std::endl;
 
   mlperf::TestSettings ts;
 
@@ -358,7 +358,8 @@ void TestSingleStream(Program *prg) {
               : ( scenario_string == "Server")          ? mlperf::TestScenario::Server
               : ( scenario_string == "Offline")         ? mlperf::TestScenario::Offline : mlperf::TestScenario::SingleStream;
 
-  ts.mode     = ( mode_string == "SubmissionRun")       ? mlperf::TestMode::SubmissionRun
+  if( mode_string != "")
+    ts.mode   = ( mode_string == "SubmissionRun")       ? mlperf::TestMode::SubmissionRun
               : ( mode_string == "AccuracyOnly")        ? mlperf::TestMode::AccuracyOnly
               : ( mode_string == "PerformanceOnly")     ? mlperf::TestMode::PerformanceOnly
               : ( mode_string == "FindPeakPerformance") ? mlperf::TestMode::FindPeakPerformance : mlperf::TestMode::SubmissionRun;
