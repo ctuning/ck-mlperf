@@ -3,6 +3,7 @@
 division="closed"
 task="image-classification"
 imagenet_size=50000
+record_uoa_tail=".V2"
 
 scenario="singlestream"
 scenario_tag="SingleStream"
@@ -136,7 +137,7 @@ for i in $(seq 1 ${#models[@]}); do
     if test -f "${audit_config}"; then
       config="${audit_config}"
     else
-      config="user.conf" # TEST03
+      config="../user.conf" # TEST03
     fi
 
     if [ "${audit_test}" = "TEST03" ]; then
@@ -152,7 +153,7 @@ for i in $(seq 1 ${#models[@]}); do
       record_uoa+=".${implementation_armnn_backend}"
       record_tags+=",${implementation_armnn_backend}"
     fi
-    record_uoa+=".${model}.${scenario}.audit.${audit_test}"
+    record_uoa+=".${model}.${scenario}.audit.${audit_test}${record_uoa_tail}"
     record_tags+=",${model},${scenario},audit,${audit_test}"
 
 #    record_uoa+=".${model}.${scenario}.${mode}"
@@ -178,7 +179,7 @@ for i in $(seq 1 ${#models[@]}); do
     ck benchmark program:${implementation} \
     --speed --repetitions=1 ${android} ${armnn_backend} ${batch_count} \
     --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
-    --env.CK_LOADGEN_CONFIG=${config} \
+    --env.CK_LOADGEN_CONF_FILE=${config} \
     --dep_add_tags.weights=${model_tags} \
     --dep_add_tags.library=${library_tags} \
     --dep_add_tags.compiler=${compiler_tags} \
