@@ -95,7 +95,8 @@ models_tags=( "model,tflite,mobilenet-v1-1.0-224,non-quantized" "model,tflite,re
 # Audit tests.
 v05_dir=$( ck cat env --tags=mlperf,inference,source,upstream.master | grep CK_ENV_MLPERF_INFERENCE_V05 | cut -d'=' -f2 )
 audit_dir="${v05_dir}/audit/nvidia"
-audit_tests=( "TEST01" "TEST03" "TEST04-A" "TEST04-B" "TEST05" )
+#audit_tests=( "TEST01" "TEST03" "TEST04-A" "TEST04-B" "TEST05" )
+audit_tests=( "TEST01" "TEST04-A" "TEST04-B" "TEST05" )
 
 # Iterate for each model.
 for i in $(seq 1 ${#models[@]}); do
