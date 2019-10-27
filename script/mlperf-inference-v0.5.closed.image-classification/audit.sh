@@ -49,11 +49,11 @@ fi
 # Image classification models (for the closed division).
 models=( "mobilenet" "resnet" )
 models_tags=( "model,tflite,mobilenet-v1-1.0-224,non-quantized" "model,tflite,resnet,no-argmax" )
+models_target_latency_ms=( 50 200 ) # Expected latencies with ArmNN-OpenCL on HiKey960.
 
 # Audit tests.
 v05_dir=$( ck cat env --tags=mlperf,inference,source,upstream.master | grep CK_ENV_MLPERF_INFERENCE_V05 | cut -d'=' -f2 )
 audit_dir="${v05_dir}/audit/nvidia"
-#audit_tests=( "TEST03" )
 audit_tests=( "TEST01" "TEST03" "TEST04-A" "TEST04-B" "TEST05" )
 
 # Iterate for each implementation.
@@ -98,6 +98,7 @@ for implementation in ${implementations[@]}; do
       # Configure the model.
       model=${models[${i}-1]}
       model_tags=${models_tags[${i}-1]}
+      model_target_latency_ms=${models_target_latency_ms[${i}-1]}
 
       # Iterate for each audit test.
       for audit_test in ${audit_tests[@]}; do
@@ -139,6 +140,7 @@ for implementation in ${implementations[@]}; do
         --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
         --env.CK_LOADGEN_CONF_FILE=${config} \
         --env.CK_LOADGEN_MODE=${mode_tag} \
+        --env.CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS=${model_target_latency_ms} \
         --dep_add_tags.weights=${model_tags} \
         --dep_add_tags.library=${library_tags} \
         --dep_add_tags.compiler=${compiler_tags} \
