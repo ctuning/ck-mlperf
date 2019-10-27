@@ -152,10 +152,10 @@ for implementation in ${implementations[@]}; do
         fi
         # TODO: Document how to install/detect datasets.
         if [ "${audit_test}" = "TEST03" ]; then
-          model_preprocessing_tags+="audit.test03"
+          model_preprocessing_tags+=",audit.test03"
           mode_tag="SubmissionRun"
         else
-          model_preprocessing_tags+="crop.875"
+          model_preprocessing_tags+=",crop.875"
           mode_tag="PerformanceOnly"
         fi
 
