@@ -27,13 +27,18 @@ hostname=`hostname`
 if [ "${hostname}" = "diviniti" ]; then
   # Assume that host "diviniti" is always used to benchmark Android device "mate10pro".
   system="mate10pro"
-  android="--target_os=android24-arm64 --env.CK_LOADGEN_CONF_FILE=user.conf" # FIXME: Pick the right config for audit tests.
+  android="--target_os=android24-arm64"
 elif [ "${hostname}" = "hikey961" ]; then
   system="hikey960"
   android=""
 else
   system="${hostname}"
   android=""
+fi
+if [ "${android}" != "" ]; then
+  conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
+else
+  conf_file="--env.CK_LOADGEN_CONF_FILE=../user.conf"
 fi
 
 # Compiler.
@@ -102,12 +107,10 @@ for implementation in ${implementations[@]}; do
 
       # Iterate for each audit test.
       for audit_test in ${audit_tests[@]}; do
-        # Select LoadGen config file.
+        # Pick up the right LoadGen config file for all the tests except TEST03.
         audit_config="${audit_dir}"/"${audit_test}"/audit.config
         if test -f "${audit_config}"; then
-          config="${audit_config}"
-        else
-          config="../user.conf" # TEST03
+          conf_file="--env.CK_LOADGEN_CONF_FILE=${audit_config}"
         fi
         # TODO: Document how to install/detect datasets.
         if [ "${audit_test}" = "TEST03" ]; then
@@ -129,16 +132,15 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" != "TEST03" ]; then continue; fi
-        if [ "${implementation}" == "${implementation_tflite}" ] &&  [ "${model}" == "resnet" ]; then continue; fi
+        if [ "${audit_test}" == "TEST03" ]; then continue; fi
+        #if [ "${implementation}" == "${implementation_tflite}" ] && [ "${model}" == "resnet" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
         echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
         read -d '' CMD <<END_OF_CMD
         ck benchmark program:${implementation} \
-        --speed --repetitions=1 ${android} ${armnn_backend} \
+        --speed --repetitions=1 ${armnn_backend} ${android} ${conf_file} \
         --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
-        --env.CK_LOADGEN_CONF_FILE=${config} \
         --env.CK_LOADGEN_MODE=${mode_tag} \
         --env.CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS=${model_target_latency_ms} \
         --dep_add_tags.weights=${model_tags} \
