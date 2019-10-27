@@ -170,7 +170,7 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" == "TEST03" ]; then continue; fi
+        if [ "${audit_test}" != "TEST01" ]; then continue; fi
         #if [ "${implementation}" == "${implementation_tflite}" ] && [ "${model}" == "resnet" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
