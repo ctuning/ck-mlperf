@@ -36,9 +36,9 @@ else
   android=""
 fi
 if [ "${android}" != "" ]; then
-  conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
+  default_conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
 else
-  conf_file="--env.CK_LOADGEN_CONF_FILE=../user.conf"
+  default_conf_file="--env.CK_LOADGEN_CONF_FILE=../user.conf"
 fi
 
 # Compiler.
@@ -59,7 +59,7 @@ models_target_latency_ms=( 50 200 ) # Expected latencies with ArmNN-OpenCL on Hi
 # Audit tests.
 v05_dir=$( ck cat env --tags=mlperf,inference,source,upstream.master | grep CK_ENV_MLPERF_INFERENCE_V05 | cut -d'=' -f2 )
 audit_dir="${v05_dir}/audit/nvidia"
-audit_tests=( "TEST01" "TEST03" "TEST04-A" "TEST04-B" "TEST05" )
+audit_tests=( "TEST01" "TEST04-A" "TEST04-B" "TEST05" "TEST03" )
 
 # Iterate for each implementation.
 for implementation in ${implementations[@]}; do
@@ -111,6 +111,8 @@ for implementation in ${implementations[@]}; do
         audit_config="${audit_dir}"/"${audit_test}"/audit.config
         if test -f "${audit_config}"; then
           conf_file="--env.CK_LOADGEN_CONF_FILE=${audit_config}"
+        else
+          conf_file="${default_conf_file}"
         fi
         # TODO: Document how to install/detect datasets.
         if [ "${audit_test}" = "TEST03" ]; then
@@ -132,8 +134,8 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" == "TEST03" ]; then continue; fi
-        #if [ "${implementation}" == "${implementation_tflite}" ] && [ "${model}" == "resnet" ]; then continue; fi
+        if [ "${audit_test}" != "TEST03" ]; then continue; fi
+        if [ "${implementation}" == "${implementation_tflite}" ] || [ "${model}" == "resnet" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
         echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
