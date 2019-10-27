@@ -99,7 +99,8 @@ for implementation in ${implementations[@]}; do
     models_preprocessing_tags=()
     # MobileNet-v1.
     version=1
-    resolutions=( 224 192 160 128 )
+    #resolutions=( 224 192 160 128 )
+    resolutions=( 224 )
     multipliers=( 1.0 0.75 0.5 0.25 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -115,7 +116,8 @@ for implementation in ${implementations[@]}; do
     done
     # MobileNet-v2.
     version=2
-    resolutions=( 224 192 160 128 96 )
+    #resolutions=( 224 192 160 128 96 )
+    resolutions=( 224 )
     multipliers=( 1.0 0.75 0.5 0.35 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
