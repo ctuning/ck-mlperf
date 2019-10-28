@@ -45,10 +45,10 @@ $ ck pull all
 
 Set up the variable to contain the image name:
 ```bash
-$ export IMAGE=mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04
+$ export IMAGE=mlperf-inference-vision-with-ck.intel.ubuntu-18.04
 ```
 
-Set up the variable that points to the directory that contains your CK repositories (usually ~/CK or ~/CK_REPOS):
+Set up the variable that points to the directory that contains your CK repositories (usually `~/CK` or `~/CK_REPOS`):
 ```bash
 $ export CK_REPOS=${HOME}/CK
 ```
@@ -84,7 +84,7 @@ $ docker build --no-cache -f Dockerfile -t ctuning/${IMAGE} .
 # Usage
 
 <a name="run"></a>
-## Run inference once (on CPU, on GPU/CUDA, using TensorRT and TensorRT/dynamic) :
+## Run inference once
 
 Once you have downloaded or built an image, you can run inference on the CPU as follows:
 ```bash
@@ -104,48 +104,6 @@ Here, we run inference on 50 images on the CPU using the quantized SSD-MobileNet
 **NB:** This is equivalent to the default run command:
 ```bash
 $ docker run --rm ctuning/$IMAGE
-```
-
-To run inference on the GPU with CUDA, we need to make a couple of changes:
-```bash
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
-        "ck run program:mlperf-inference-vision --cmd_key=direct \
-        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
-        --env.CK_METRIC_TYPE=COCO \
-        --env.CK_LOADGEN_SCENARIO=SingleStream \
-        --env.CK_LOADGEN_MODE='--accuracy' \
-        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
-        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflow \
-        --env.CK_LOADGEN_REF_PROFILE=default_tf_object_det_zoo \
-        --skip_print_timers"
-```
-
-Now let's use TensorRT backend in [static mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode):
-```bash
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
-        "ck run program:mlperf-inference-vision --cmd_key=direct \
-        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
-        --env.CK_METRIC_TYPE=COCO \
-        --env.CK_LOADGEN_SCENARIO=SingleStream \
-        --env.CK_LOADGEN_MODE='--accuracy' \
-        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
-        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT \
-        --env.CK_LOADGEN_REF_PROFILE=default_tf_trt_object_det_zoo \
-        --skip_print_timers"
-```
-
-Finally, TensorRT backend in [dynamic mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode):
-```bash
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
-        "ck run program:mlperf-inference-vision --cmd_key=direct \
-        --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
-        --env.CK_METRIC_TYPE=COCO \
-        --env.CK_LOADGEN_SCENARIO=SingleStream \
-        --env.CK_LOADGEN_MODE='--accuracy' \
-        --dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
-        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1 \
-        --env.CK_LOADGEN_REF_PROFILE=default_tf_trt_object_det_zoo \
-        --skip_print_timers"
 ```
 
 We describe all supported [models](#models) and [flags](#flags) below.
@@ -179,9 +137,7 @@ For example, to run inference on the quantized SSD-MobileNet model, add `--dep_a
 
 | Env Flag                    | Possible Values  | Default Value | Description |
 |-|-|-|-|
-| `--env.CK_LOADGEN_BACKEND`  | tensorflow,tensorflowRT | tensorflow | Disable/Enable TensorRT backend (only to be used with TensorFlow built from sources). |
-| `--env.CK_LOADGEN_TENSORRT_DYNAMIC` | 0,1             | 0 | Enables the [TensorRT dynamic mode](https://docs.nvidia.com/deeplearning/frameworks/tf-trt-user-guide/index.html#static-dynamic-mode) (must be used with `--env.CK_ENABLE_TENSORRT=1`). |
-| `--env.CUDA_VISIBLE_DEVICES`| list of integers | N/A | Specifies which GPUs should be used by TensorFlow; `-1` forces TensorFlow to use the CPU (even with TensorFlow built from sources). |
+| `--env.CK_LOADGEN_BACKEND`  | tensorflow | tensorflow |  |
 | `--env.CK_LOADGEN_REF_PROFILE` | mobilenet-tf,default_tf_object_det_zoo,default_tf_trt_object_det_zoo,tf_yolo,tf_yolo_trt | mobilenet-tf | The "LoadGen profile" - combines aspects of model and backend |
 | `--env.CK_LOADGEN_SCENARIO` | SingleStream,Offline,MultiStream | SingleStream | The LoadGen testing scenario |
 | `--env.CK_LOADGEN_MODE` | "--accuracy","" | "--accuracy" | LoadGen mode - empty line stands for Performance mode |
@@ -206,7 +162,7 @@ When running `ck benchmark` via Docker, we map the internal output directory to 
 in order to access the results easier (using parameters for a custom Yolo v3 model for a change) :
 
 ```bash
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
+$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
         --user=$(id -u):1500 --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
         --rm ctuning/${IMAGE} \
         "ck benchmark program:mlperf-inference-vision --cmd_key=direct --repetitions=1 \
@@ -215,11 +171,12 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/e
         --env.CK_LOADGEN_SCENARIO=SingleStream \
         --env.CK_LOADGEN_MODE='--accuracy' \
         --dep_add_tags.weights=yolo-v3 \
-        --dep_add_tags.lib-tensorflow=vcuda --env.CK_LOADGEN_BACKEND=tensorflowRT --env.CK_LOADGEN_TENSORRT_DYNAMIC=1 \
+        --dep_add_tags.lib-tensorflow=vcpu \
+        --env.CK_LOADGEN_BACKEND=tensorflow \
         --env.CK_LOADGEN_REF_PROFILE=tf_yolo_trt \
         --record --record_repo=local \
-        --record_uoa=mlperf.open.object-detection.tensorrt-dynamic.yolo_v3_coco.singlestream.accuracy \
-        --tags=mlperf,open,object-detection,tensorrt-dynamic,yolo_v3_coco,singlestream,accuracy \
+        --record_uoa=mlperf.open.object-detection.cpu.yolo_v3_coco.singlestream.accuracy \
+        --tags=mlperf,open,object-detection,cpu,yolo_v3_coco,singlestream,accuracy \
         --skip_print_timers --skip_stat_analysis --process_multi_keys"
 ```
 
@@ -247,28 +204,19 @@ Therefore, you can retrieve the results of a container run under your user id fr
 - `--dep_add_tags.weights`: specify the tags for a particular [model](#models).
 - `--repetitions`: the number of times to run an experiment (3 by default); we typically use `--repetitions=1` for experiments that measure accuracy and e.g. `--repetitions=10` for experiments that measure performance.
 - `--record`, `--record_repo=local`: must be present to have the results saved in the mounted volume.
-- `--record_uoa`: a unique name for each CK experiment entry; here, `mlperf.open.object-detection` is the common prefix for all experiments, `tensorrt-dynamic` is the backend, `ssd-mobilenet-quantized` is unique for each model, `accuracy` indicates the accuracy mode.
+- `--record_uoa`: a unique name for each CK experiment entry; here, `mlperf.open.object-detection` is the common prefix for all experiments, `cpu` is the TensorFlow backend, `ssd-mobilenet-quantized` is unique for each model, `accuracy` indicates the accuracy mode.
 - `--tags`: specify the comma-separated tags for each CK experiment entry; we typically use parts of the experiment entry name.
 
 
 <a name="explore"></a>
 ## Explore design space
 
-Putting this all together, we provide two shell scripts that launch full design space exploration
-in the accuracy mode (`--repetitions=1`) and the performance mode (`--repetitions=10`)
-with the corresponding experiment names and tags:
-- prebuilt CPU (no AVX2 FMA), CPU, CUDA, TensorRT with the dynamic mode disabled, TensorRT with the dynamic mode enabled.
-- over all the object detection [models](#models).
-- in the performance mode, over several batch sizes (1, 2, 4, 8, 16).
-
-The scripts can be found under:
+Putting this all together, we provide a shell script which can be found under:
 ```
-$ ck find script:<script_name>
+$ ck find script:mlperf-inference-v0.5.open.object-detection
 ```
-where `<script_name>` is either 'dse-acc' or 'dse-perf'
 
-To use the script, you have to modify the first lines in order to adapt the path to the your host system.
-You can also modify other parameters, like the list of models to test or the batch sizes and counts.
+The script launches full design space explorationo ver all the object detection [models](#models) and available TensorFlow backends.
 
 
 <a name="analyze"></a>
