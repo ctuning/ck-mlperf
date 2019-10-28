@@ -140,7 +140,6 @@ for implementation in ${implementations[@]}; do
       # Configure the model.
       model=${models[${i}-1]}
       model_tags=${models_tags[${i}-1]}
-      model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
       #model_target_latency_ms=${models_target_latency_ms[${i}-1]}
 
       # Iterate for each audit test.
@@ -153,6 +152,7 @@ for implementation in ${implementations[@]}; do
 	  conf_file="${default_conf_file}"
         fi
         # TODO: Document how to install/detect datasets.
+        model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
         if [ "${audit_test}" = "TEST03" ]; then
           model_preprocessing_tags+=",audit.test03"
           mode_tag="SubmissionRun"
@@ -172,7 +172,7 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" == "TEST01" ]; then continue; fi
+        if [ "${audit_test}" != "TEST03" ]; then continue; fi
         #if [ "${implementation}" == "${implementation_tflite}" ] && [ "${model}" == "resnet" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
