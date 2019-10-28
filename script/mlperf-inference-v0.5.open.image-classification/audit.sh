@@ -36,9 +36,9 @@ else
   android=""
 fi
 if [ "${android}" != "" ]; then
-  conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
+  default_conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
 else
-  conf_file="--env.CK_LOADGEN_CONF_FILE=../user.conf"
+  default_conf_file="--env.CK_LOADGEN_CONF_FILE=../user.conf"
 fi
 
 # Compiler.
@@ -149,6 +149,8 @@ for implementation in ${implementations[@]}; do
         audit_config="${audit_dir}"/"${audit_test}"/audit.config
         if test -f "${audit_config}"; then
           conf_file="--env.CK_LOADGEN_CONF_FILE=${audit_config}"
+        else
+	  conf_file="${default_conf_file}"
         fi
         # TODO: Document how to install/detect datasets.
         if [ "${audit_test}" = "TEST03" ]; then
@@ -170,7 +172,7 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" != "TEST01" ]; then continue; fi
+        if [ "${audit_test}" == "TEST01" ]; then continue; fi
         #if [ "${implementation}" == "${implementation_tflite}" ] && [ "${model}" == "resnet" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
