@@ -71,7 +71,7 @@
         "run_cmd_main": "$#BIN_FILE#$",
         "run_input_files": [
           "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
-          "$<<CK_LOADGEN_CONFIG_FILE>>$"
+          "$<<CK_ENV_LOADGEN_CONFIG_FILE>>$"
         ],
         "run_output_files": [
             "mlperf_log_accuracy.json",

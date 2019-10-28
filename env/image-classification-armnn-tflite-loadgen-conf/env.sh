@@ -10,6 +10,6 @@ ALREADY_LOADED_FLAG=${ALREADY_LOADED_NAME}
 
 if [ "$1" != "1" ] && [ "$ALREADY_LOADED_FLAG" == "1" ]; then return; fi;
 
-export CK_LOADGEN_CONFIG_FILE=${PATH_TO_THIS_ENTRY_DIR}/user.conf
+export CK_ENV_LOADGEN_CONFIG_FILE=${PATH_TO_THIS_ENTRY_DIR}/user.conf
 
 export ${ALREADY_LOADED_NAME}=1

@@ -335,7 +335,7 @@ void TestSingleStream(Program *prg) {
 
   const std::string config_file_path = conf_override_file_path != ""
       ? conf_override_file_path
-      : getenv_s("CK_LOADGEN_CONFIG_FILE"); // this one comes from a resolved dependency IF the above has not been provided
+      : getenv_s("CK_ENV_LOADGEN_CONFIG_FILE"); // this one comes from a resolved dependency IF the above has not been provided
 
 
   std::string guenther_model_name = "anything_else";

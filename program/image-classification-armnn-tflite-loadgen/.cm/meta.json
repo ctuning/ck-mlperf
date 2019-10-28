@@ -92,7 +92,7 @@
             "$<<CK_ENV_LIB_BOOST>>$/lib/libboost_unit_test_framework.so.1.64.0",
             "$<<CK_ENV_LIB_ARMNN>>$/lib/libarmnnTfLiteParser.so",
             "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
-            "$<<CK_LOADGEN_CONFIG_FILE>>$"
+            "$<<CK_ENV_LOADGEN_CONFIG_FILE>>$"
         ],
         "run_output_files": [
             "mlperf_log_accuracy.json",

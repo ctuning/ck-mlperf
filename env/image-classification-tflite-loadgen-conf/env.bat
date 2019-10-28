@@ -10,7 +10,7 @@ for /f %%j in ("%PATH_TO_THIS_ENTRY_DIR:~0,-1%") do set ALREADY_LOADED_NAME=CK_S
 
 if not [%1] == [1] (if defined %ALREADY_LOADED_NAME% exit /b 0)
 
-set CK_LOADGEN_CONFIG_FILE=%PATH_TO_THIS_ENTRY_DIR%\user.conf
+set CK_ENV_LOADGEN_CONFIG_FILE=%PATH_TO_THIS_ENTRY_DIR%\user.conf
 
 set %ALREADY_LOADED_NAME%=1
 
