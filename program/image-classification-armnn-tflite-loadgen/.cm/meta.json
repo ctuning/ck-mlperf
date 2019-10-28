@@ -1,5 +1,6 @@
 {
   "backup_data_uid": "84e819ca2d19b0a8",
+  "pass_env_to_resolve": "yes",
   "compile_deps": {
     "compiler": {
       "local": "yes",
