@@ -1,21 +1,13 @@
-# MLPerf Inference - Object Detection - TensorFlow with NVIDIA TensorRT
+# MLPerf Inference - Object Detection - TensorFlow with Intel MKL
 
-[This image](https://hub.docker.com/r/ctuning/mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04) is based on
-[the TensorRT 19.07 image](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-07.html) from NVIDIA
-(which is in turn based on Ubuntu 18.04) with [CUDA](https://developer.nvidia.com/cuda-zone) 10.1 and [TensorRT](https://developer.nvidia.com/tensorrt) 5.1.5.
+[This image](https://hub.docker.com/r/ctuning/mlperf-inference-vision-with-ck.intel.ubuntu-18.04) is based on
+[the MKL-optimized TensorFlow image](https://hub.docker.com/r/intelaipg/intel-optimized-tensorflow/) from Intel
+(which is in turn based on Ubuntu 18.04).
 
 The image includes about a dozen of [TensorFlow models for object detection](#models), the [COCO 2017 validation dataset](http://cocodataset.org),
-and two [TensorFlow 1.14.0](https://github.com/tensorflow/tensorflow/releases/tag/v1.14.0) variants:
-- TensorFlow prebuilt for the CPU (installed via pip).
-- TensorFlow built from sources for the GPU, with TensorRT support enabled.
-
-**NB:** The latter variant can be forced to run on the CPU. We used to have two
-separate Docker images based on Ubuntu 18.04 to measure the performance of
-prebuilt TensorFlow vs TensorFlow built from sources on the CPU, but it is
-easier to manage a single image.
+and one MKL-optimized [TensorFlow 1.14.0](https://github.com/tensorflow/tensorflow/releases/tag/v1.14.0) variant.
 
 1. [Setup](#setup)
-    - [Set up NVIDIA Docker](#setup_nvidia)
     - [Set up Collective Knowledge](#setup_ck)
     - [Download](#image_download) and/or [Build](#image_build) images
 1. [Usage](#usage)
@@ -30,11 +22,6 @@ easier to manage a single image.
 
 <a name="setup"></a>
 # Setup
-
-<a name="setup_nvidia"></a>
-## Set up NVIDIA Docker
-
-As our GPU image is based on [nvidia-docker](https://github.com/NVIDIA/nvidia-docker), please follow instructions there to set up your system.
 
 Note that you may need to run commands below with `sudo`, unless you [manage Docker as a non-root user](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user).
 
