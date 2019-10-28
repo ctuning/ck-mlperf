@@ -1,0 +1,57 @@
+{
+  "auto_detect": "no",
+  "customize": {
+    "check_that_exists": "yes",
+    "ck_version": 10,
+    "env_prefix": "CK_ENV_LOADGEN_CONFIG",
+    "skip_version": "yes",
+    "soft_file_universal": "audit.config"
+  },
+  "soft_name": "LoadGen Configuration file",
+  "deps": {
+    "mlperf-inference-src": {
+      "force_target_as_host": "yes",
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "sort": 10,
+      "tags": "mlperf,inference,source"
+    }
+  },
+  "tags": [
+    "loadgen",
+    "config"
+  ],
+  "variations": {
+    "test01": {
+      "extra_customize": {
+        "soft_name": "LoadGen Configuration file for audit TEST01",
+        "soft_file_universal": "audit$#sep#$nvidia$#sep#$TEST01$#sep#$audit.config"
+      }
+    },
+    "test04a": {
+      "extra_customize": {
+        "soft_name": "LoadGen Configuration file for audit TEST04-A",
+        "soft_file_universal": "audit$#sep#$nvidia$#sep#$TEST04-A$#sep#$audit.config"
+      }
+    },
+    "test04b": {
+      "extra_customize": {
+        "soft_name": "LoadGen Configuration file for audit TEST04-B",
+        "soft_file_universal": "audit$#sep#$nvidia$#sep#$TEST04-B$#sep#$audit.config"
+      }
+    },
+    "test05": {
+      "extra_customize": {
+        "soft_name": "LoadGen Configuration file for audit TEST05",
+        "soft_file_universal": "audit$#sep#$nvidia$#sep#$TEST05$#sep#$audit.config"
+      }
+    },
+    "original.mlperf.conf": {
+      "extra_customize": {
+        "soft_name": "LoadGen Configuration file - the original mlperf.conf",
+        "soft_file_universal": "mlperf.conf"
+      }
+    }
+  }
+}
