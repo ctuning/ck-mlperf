@@ -91,8 +91,7 @@
             "$<<CK_ENV_LIB_BOOST>>$/lib/libboost_unit_test_framework.so.1.64.0",
             "$<<CK_ENV_LIB_ARMNN>>$/lib/libarmnnTfLiteParser.so",
             "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
-            "$<<CK_ENV_MLPERF_INFERENCE_V05>>$/mlperf.conf",
-            "$<<>>$../user.conf"
+            "$<<CK_LOADGEN_CONFIG_FILE>>$"
         ],
         "run_output_files": [
             "mlperf_log_accuracy.json",
@@ -147,13 +146,16 @@
       "sort": 60,
       "tags": "lib,python-package,numpy"
     },
-    "mlperf-inference-src": {
+    "loadgen-config-file": {
+      "enable_if_env": [
+        { "CK_LOADGEN_CONF_FILE": [""] }
+      ],
       "force_target_as_host": "yes",
       "add_to_path": "no",
       "local": "yes",
-      "name": "MLPerf Inference source",
+      "name": "Loadgen config file",
       "sort": 40,
-      "tags": "mlperf,inference,source"
+      "tags": "loadgen,config"
     },
     "python": {
       "force_target_as_host": "yes",
@@ -175,7 +177,7 @@
     "USE_NEON": "NO",
     "USE_OPENCL": "NO",
     "CK_LOADGEN_BUFFER_SIZE": 1024,
-    "CK_LOADGEN_CONF_FILE": "../user.conf",
+    "CK_LOADGEN_CONF_FILE": "",
     "CK_LOADGEN_DATASET_SIZE": 0,
     "CK_LOADGEN_MAX_DURATION_S": 0,
     "CK_LOADGEN_MODE": "",
