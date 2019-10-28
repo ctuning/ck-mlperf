@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "8488a5a4ea18dd82",
+  "backup_module_uid": "9b9b3208ac44b891",
+  "backup_module_uoa": "env",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2019-10-28T12:14:10.823824",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "image-classification-tflite-loadgen-conf"
+}

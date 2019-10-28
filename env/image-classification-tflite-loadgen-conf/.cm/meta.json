@@ -1,0 +1,9 @@
+{
+  "tags": [
+    "static-env",
+    "loadgen",
+    "config",
+    "image-classification",
+    "tflite"
+  ]
+}
