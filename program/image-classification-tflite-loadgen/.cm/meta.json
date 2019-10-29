@@ -108,6 +108,14 @@
       "sort": 40,
       "tags": "loadgen,config"
     },
+    "mlperf-inference-src": {
+      "force_target_as_host": "yes",
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "sort": 45,
+      "tags": "mlperf,inference,source"
+    },
     "weights": {
       "force_target_as_host": "yes",
       "local": "yes",
