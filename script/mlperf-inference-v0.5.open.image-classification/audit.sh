@@ -100,7 +100,7 @@ for implementation in ${implementations[@]}; do
     # MobileNet-v1.
     version=1
     #resolutions=( 224 192 160 128 )
-    resolutions=( 224 )
+    resolutions=( 192 160 128 )
     multipliers=( 1.0 0.75 0.5 0.25 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -117,7 +117,7 @@ for implementation in ${implementations[@]}; do
     # MobileNet-v2.
     version=2
     #resolutions=( 224 192 160 128 96 )
-    resolutions=( 224 )
+    resolutions=( 192 160 128 96 )
     multipliers=( 1.0 0.75 0.5 0.35 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -126,7 +126,8 @@ for implementation in ${implementations[@]}; do
         models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
       done
     done
-    resolutions=( 224 )
+    #resolutions=( 224 )
+    resolutions=( )
     multipliers=( 1.4 1.3 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -172,8 +173,7 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" != "TEST03" ]; then continue; fi
-        #if [ "${implementation}" == "${implementation_tflite}" ] && [ "${model}" == "resnet" ]; then continue; fi
+        if [ "${audit_test}" == "TEST03" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
         echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
