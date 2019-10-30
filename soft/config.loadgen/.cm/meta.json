@@ -10,6 +10,10 @@
   "soft_name": "LoadGen Configuration file",
   "deps": {
     "mlperf-inference-src": {
+      "update_tags_if_env": {
+        "upstream.pr518": [ { "CK_MLPERF_INFERENCE_BRANCH": "upstream.pr518" } ],
+        "upstream.master": [ { "CK_MLPERF_INFERENCE_BRANCH": "upstream.master" } ]
+      },
       "force_target_as_host": "yes",
       "add_to_path": "no",
       "local": "yes",
@@ -20,9 +24,20 @@
   },
   "tags": [
     "loadgen",
-    "config"
+    "config",
+    "detected"
   ],
   "variations": {
+    "from.inference.pr518": {
+      "extra_env": {
+        "CK_MLPERF_INFERENCE_BRANCH": "upstream.pr518"
+      }
+    },
+    "from.inference.master": {
+      "extra_env": {
+        "CK_MLPERF_INFERENCE_BRANCH": "upstream.master"
+      }
+    },
     "test01": {
       "extra_customize": {
         "soft_name": "LoadGen Configuration file for audit TEST01",
