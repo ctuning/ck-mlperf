@@ -3,7 +3,7 @@
 division="closed"
 task="image-classification"
 #imagenet_size=50000
-#record_uoa_tail=".V2"
+#record_uoa_tail=".first.20"
 
 # Scenarios.
 scenario="singlestream"
@@ -34,11 +34,6 @@ elif [ "${hostname}" = "hikey961" ]; then
 else
   system="${hostname}"
   android=""
-fi
-if [ "${android}" != "" ]; then
-  default_conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
-else
-  default_conf_file="--env.CK_LOADGEN_CONF_FILE=../user.conf"
 fi
 
 # Compiler.
@@ -76,11 +71,14 @@ for implementation in ${implementations[@]}; do
     implementation_armnn_backends=( "${implementation_armnn_backend_dummy}" )
   elif [ "${implementation}" == "${implementation_armnn}" ] || [ "${implementation}" == "${implementation_armnn_no_loadgen}" ]; then
     library="armnn-v19.08"
-    library_tags="armnn,tflite,neon,opencl,rel.19.08"
     if [ "${system}" = "rpi4" ]; then
       # NB: Only use Neon backend on Raspberry Pi 4.
+      library_tags="armnn,tflite,rel.19.08,neon"
       implementation_armnn_backends=( "${implementation_armnn_backend_neon}" )
-      library_tags="armnn,tflite,neon,rel.19.08"
+    elif [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_ref}" ]; then
+      library_tags="armnn,tflite,rel.19.08"
+    else
+      library_tags="armnn,tflite,rel.19.08,neon,opencl"
     fi
   else
     echo "ERROR: Unsupported implementation '${implementation}'!"
@@ -104,25 +102,34 @@ for implementation in ${implementations[@]}; do
       model=${models[${i}-1]}
       model_tags=${models_tags[${i}-1]}
       model_target_latency_ms=${models_target_latency_ms[${i}-1]}
-
       # Iterate for each audit test.
       for audit_test in ${audit_tests[@]}; do
-        # Pick up the right LoadGen config file for all the tests except TEST03.
-        audit_config="${audit_dir}"/"${audit_test}"/audit.config
-        if test -f "${audit_config}"; then
-          conf_file="--env.CK_LOADGEN_CONF_FILE=${audit_config}"
-        else
-          conf_file="${default_conf_file}"
-        fi
         # TODO: Document how to install/detect datasets.
-        if [ "${audit_test}" = "TEST03" ]; then
-          model_preprocessing_tags="full,side.224,preprocessed,using-opencv,audit.test03"
+        model_preprocessing_tags="full,side.224,preprocessed,using-opencv"
+        if [ "${audit_test}" == "TEST03" ]; then
+          model_preprocessing_tags+=",audit.test03"
           mode_tag="SubmissionRun"
+          if [ "${implementation}" == "${implementation_tflite}" ]; then
+            config_tag="image-classification-tflite"
+          elif [ "${implementation}" == "${implementation_armnn}" ]; then
+            config_tag="image-classification-armnn-tflite"
+          fi
         else
-          model_preprocessing_tags="full,side.224,preprocessed,using-opencv,crop.875"
+          model_preprocessing_tags+=",crop.875"
           mode_tag="PerformanceOnly"
+          if [ "${audit_test}" == "TEST01" ]; then
+            config_tag="test01"
+          elif [ "${audit_test}" == "TEST04-A" ]; then
+            config_tag="test04a"
+          elif [ "${audit_test}" == "TEST04-B" ]; then
+            config_tag="test04b"
+          elif [ "${audit_test}" == "TEST05" ]; then
+            config_tag="test05"
+          else
+            echo "ERROR: Unsupported audit '${audit_test}'!"
+            exit 1
+          fi
         fi
-
         # Configure record settings.
         record_uoa="mlperf.${division}.${task}.${system}.${library}"
         record_tags="mlperf,${division},${task},${system},${library}"
@@ -134,17 +141,19 @@ for implementation in ${implementations[@]}; do
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
         # Opportunity to skip.
-        if [ "${audit_test}" != "TEST03" ]; then continue; fi
-        if [ "${implementation}" == "${implementation_tflite}" ] || [ "${model}" == "resnet" ]; then continue; fi
+        if [ "${audit_test}" == "TEST03" ] || [ "${implementation}" != "${implementation_armnn}" ]; then continue; fi
+        ## For the long-running TEST03 with ResNet and ArmNN (Neon+OpenCL) remaining for the closed division to run overnight.
+        #if [ "${audit_test}" != "TEST03" ] || [ "${model}" != "resnet" ] || [ "${implementation_armnn_backend}" != "${implementation_armnn_backend_neon}" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
         echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
         read -d '' CMD <<END_OF_CMD
         ck benchmark program:${implementation} \
-        --speed --repetitions=1 ${armnn_backend} ${android} ${conf_file} \
+        --speed --repetitions=1 ${armnn_backend} ${android} \
         --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
-        --env.CK_LOADGEN_MODE=${mode_tag} \
         --env.CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS=${model_target_latency_ms} \
+        --env.CK_LOADGEN_MODE=${mode_tag} \
+        --dep_add_tags.loadgen-config-file=${config_tag} \
         --dep_add_tags.weights=${model_tags} \
         --dep_add_tags.library=${library_tags} \
         --dep_add_tags.compiler=${compiler_tags} \
