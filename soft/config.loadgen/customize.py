@@ -12,12 +12,16 @@ import os
 
 def dirs(i):
 
-    mlperf_source_repo_env = i['cfg']['deps']['mlperf-inference-src']['dict']['env']
+    config_source = i.get('install_env', {}).get('LOADGEN_CONFIG_SOURCE', 'MLPERF_INFERENCE_GIT_CHECKOUT')
+
+    if config_source == 'MLPERF_INFERENCE_GIT_CHECKOUT':
+        mlperf_source_repo_env  = i['cfg']['deps']['mlperf-inference-src']['dict']['env']
+        search_in_path          = mlperf_source_repo_env['CK_ENV_MLPERF_INFERENCE_V05']
+    elif config_source == 'SOFT_ENTRY_INTERNAL':
+        search_in_path          = i['soft_entry_path']
 
 #    from pprint import pprint
 #    pprint(mlperf_source_repo_env)
-
-    search_in_path = mlperf_source_repo_env['CK_ENV_MLPERF_INFERENCE_V05']
 
     return {'return': 0, 'dirs': [ search_in_path ] }
 
