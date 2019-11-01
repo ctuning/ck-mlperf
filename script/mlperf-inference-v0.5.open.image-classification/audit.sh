@@ -172,6 +172,13 @@ for implementation in ${implementations[@]}; do
         record_uoa+=".${model}.${scenario}.audit.${audit_test}${record_uoa_tail}"
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
+        # Skip if experiment record already exists.
+        record_dir=$(ck list local:experiment:${record_uoa})
+        if [ "${record_dir}" != "" ]; then
+          echo "Skipping '${model}' for audit '${audit_test}' with '${implementation}' ..."
+          continue
+        fi
+
         # Opportunity to skip.
         if [ "${audit_test}" == "TEST03" ]; then continue; fi
 
