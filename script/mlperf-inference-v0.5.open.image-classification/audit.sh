@@ -207,7 +207,7 @@ for implementation in ${implementations[@]}; do
 END_OF_CMD
 #        --env.CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS=${model_target_latency_ms} \
         echo ${CMD}
-        #eval ${CMD}
+        eval ${CMD}
         # Check for errors.
         if [ "${?}" != "0" ]; then
           echo "ERROR: Failed running '${model}' for audit '${audit_test}' with '${implementation}'!"
@@ -218,6 +218,6 @@ END_OF_CMD
     done # for each model
   done # for each implementation backend
 done # for each implementation
-# 650 experiments on firefly/hikey960:
-# (54 models with tflite + 38 models with armnn-neon + 38 models with armnn-opencl) * 5 audit tests.
+# - 650 experiments on firefly/hikey960: (54 models with tflite + 38 models with armnn-neon + 38 models with armnn-opencl) * 5 audit tests.
+# - 460 experiments on rpi4: (54 models with tflite + 38 models with armnn-neon) * 5 audit tests.
 echo "[`date`] Done."
