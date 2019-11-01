@@ -56,6 +56,7 @@ v05_dir=$( ck cat env --tags=mlperf,inference,source,upstream.master | grep CK_E
 audit_dir="${v05_dir}/audit/nvidia"
 audit_tests=( "TEST01" "TEST04-A" "TEST04-B" "TEST05" "TEST03" )
 
+experiment_id=1
 # Iterate for each implementation.
 for implementation in ${implementations[@]}; do
   # Select library and backends based on implementation.
@@ -140,21 +141,27 @@ for implementation in ${implementations[@]}; do
         record_uoa+=".${model}.${scenario}.audit.${audit_test}${record_uoa_tail}"
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
+        echo "[`date`] Experiment #"${experiment_id}": ${record_uoa} ..."
+        experiment_id=$((${experiment_id}+1))
+
         # Skip automatically if experiment record already exists.
         record_dir=$(ck list local:experiment:${record_uoa})
         if [ "${record_dir}" != "" ]; then
-          echo "Skipping '${model}' for audit '${audit_test}' with '${implementation}' ..."
+          echo "[`date`] - skipping ..."
+          echo
           continue
         fi
 
         # Skip manually.
-        #if [ "${implementation}" == "${implementation_tflite}" ]; then continue; fi
-
         # For the long-running TEST03 with ResNet and ArmNN (Neon+OpenCL) remaining for the closed division to run overnight.
-        if [ "${audit_test}" != "TEST03" ] || [ "${model}" != "resnet" ] || [ "${implementation_armnn_backend}" != "${implementation_armnn_backend_opencl}" ]; then continue; fi
+        if [ "${audit_test}" != "TEST03" ] || [ "${model}" != "resnet" ] || [ "${implementation_armnn_backend}" != "${implementation_armnn_backend_opencl}" ]; then
+          echo "[`date`] - skipping ..."
+          echo
+          continue
+        fi
 
         # Run (but before that print the exact command we are about to run).
-        echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
+        echo "[`date`] - running ..."
         read -d '' CMD <<END_OF_CMD
         ck benchmark program:${implementation} \
         --speed --repetitions=1 ${armnn_backend} ${android} \
@@ -173,14 +180,14 @@ for implementation in ${implementations[@]}; do
 END_OF_CMD
         echo ${CMD}
         eval ${CMD}
-        echo
         # Check for errors.
         if [ "${?}" != "0" ]; then
           echo "ERROR: Failed running '${model}' for audit '${audit_test}' with '${implementation}'!"
           exit 1
         fi
+        echo
       done # for each audit test
     done # for each model
   done # for each implementation backend
 done # for each implementation
-echo "Done: `date`"
+echo "[`date`] Done."
