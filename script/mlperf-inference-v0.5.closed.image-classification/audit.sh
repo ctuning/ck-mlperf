@@ -140,10 +140,18 @@ for implementation in ${implementations[@]}; do
         record_uoa+=".${model}.${scenario}.audit.${audit_test}${record_uoa_tail}"
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
-        # Opportunity to skip.
-        if [ "${audit_test}" == "TEST03" ] || [ "${implementation}" != "${implementation_armnn}" ]; then continue; fi
-        ## For the long-running TEST03 with ResNet and ArmNN (Neon+OpenCL) remaining for the closed division to run overnight.
-        #if [ "${audit_test}" != "TEST03" ] || [ "${model}" != "resnet" ] || [ "${implementation_armnn_backend}" != "${implementation_armnn_backend_neon}" ]; then continue; fi
+        # Skip automatically if experiment record already exists.
+        record_dir=$(ck list local:experiment:${record_uoa})
+        if [ "${record_dir}" != "" ]; then
+          echo "Skipping '${model}' for audit '${audit_test}' with '${implementation}' ..."
+          continue
+        fi
+
+        # Skip manually.
+        #if [ "${implementation}" == "${implementation_tflite}" ]; then continue; fi
+
+        # For the long-running TEST03 with ResNet and ArmNN (Neon+OpenCL) remaining for the closed division to run overnight.
+        if [ "${audit_test}" != "TEST03" ] || [ "${model}" != "resnet" ] || [ "${implementation_armnn_backend}" != "${implementation_armnn_backend_opencl}" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
         echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
