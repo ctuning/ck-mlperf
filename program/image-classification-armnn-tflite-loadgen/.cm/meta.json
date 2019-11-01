@@ -74,6 +74,9 @@
           "script_name": "schindler"
         },
         "run_cmd_main": "$#BIN_FILE#$",
+        "run_delete_files": [
+            "audit.config"
+        ],
         "run_input_files": [
             "$<<CK_ENV_LIB_STDCPP_DYNAMIC>>$",
             "$<<CK_ENV_LIB_BOOST>>$/lib/libboost_log.so.1.64.0",
