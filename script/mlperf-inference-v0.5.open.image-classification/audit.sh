@@ -35,6 +35,7 @@ else
   system="${hostname}"
   android=""
 fi
+# TODO: Update similar to closed.
 if [ "${android}" != "" ]; then
   default_conf_file="--env.CK_LOADGEN_CONF_FILE=user.conf"
 else
@@ -56,6 +57,7 @@ v05_dir=$( ck cat env --tags=mlperf,inference,source,upstream.master | grep CK_E
 audit_dir="${v05_dir}/audit/nvidia"
 audit_tests=( "TEST01" "TEST04-A" "TEST04-B" "TEST05" "TEST03" )
 
+experiment_id=1
 # Iterate for each implementation.
 for implementation in ${implementations[@]}; do
   # Select library and backends based on implementation.
@@ -99,8 +101,7 @@ for implementation in ${implementations[@]}; do
     models_preprocessing_tags=()
     # MobileNet-v1.
     version=1
-    #resolutions=( 224 192 160 128 )
-    resolutions=( 192 160 128 )
+    resolutions=( 224 192 160 128 )
     multipliers=( 1.0 0.75 0.5 0.25 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -116,8 +117,7 @@ for implementation in ${implementations[@]}; do
     done
     # MobileNet-v2.
     version=2
-    #resolutions=( 224 192 160 128 96 )
-    resolutions=( 192 160 128 96 )
+    resolutions=( 224 192 160 128 96 )
     multipliers=( 1.0 0.75 0.5 0.35 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -126,8 +126,7 @@ for implementation in ${implementations[@]}; do
         models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" )
       done
     done
-    #resolutions=( 224 )
-    resolutions=( )
+    resolutions=( 224 )
     multipliers=( 1.4 1.3 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -172,18 +171,26 @@ for implementation in ${implementations[@]}; do
         record_uoa+=".${model}.${scenario}.audit.${audit_test}${record_uoa_tail}"
         record_tags+=",${model},${scenario},audit,${audit_test}"
 
-        # Skip if experiment record already exists.
+        echo "[`date`] Experiment #"${experiment_id}": ${record_uoa} ..."
+        experiment_id=$((${experiment_id}+1))
+
+        # Skip automatically if experiment record already exists.
         record_dir=$(ck list local:experiment:${record_uoa})
         if [ "${record_dir}" != "" ]; then
-          echo "Skipping '${model}' for audit '${audit_test}' with '${implementation}' ..."
+          echo "[`date`] - skipping ..."
+          echo
           continue
         fi
 
-        # Opportunity to skip.
-        if [ "${audit_test}" == "TEST03" ]; then continue; fi
+        # Skip manually.
+        if [ "${audit_test}" == "TEST03" ]; then
+          echo "[`date`] - skipping ..."
+          echo
+          continue
+        fi
 
         # Run (but before that print the exact command we are about to run).
-        echo "Running '${model}' for audit '${audit_test}' with '${implementation}' ..."
+        echo "[`date`] - running ..."
         read -d '' CMD <<END_OF_CMD
         ck benchmark program:${implementation} \
         --speed --repetitions=1 ${armnn_backend} ${android} ${conf_file} \
@@ -200,16 +207,17 @@ for implementation in ${implementations[@]}; do
 END_OF_CMD
 #        --env.CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS=${model_target_latency_ms} \
         echo ${CMD}
-        eval ${CMD}
-        echo
+        #eval ${CMD}
         # Check for errors.
         if [ "${?}" != "0" ]; then
           echo "ERROR: Failed running '${model}' for audit '${audit_test}' with '${implementation}'!"
           exit 1
         fi
+        echo
       done # for each audit test
     done # for each model
   done # for each implementation backend
 done # for each implementation
-# 650 experiments: (54 models with tflite + 38 models with armnn-neon + 38 models with armnn-opencl) * 5 audit tests.
-echo "Done: `date`"
+# 650 experiments on firefly/hikey960:
+# (54 models with tflite + 38 models with armnn-neon + 38 models with armnn-opencl) * 5 audit tests.
+echo "[`date`] Done."
