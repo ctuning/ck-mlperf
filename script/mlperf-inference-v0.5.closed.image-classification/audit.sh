@@ -2,7 +2,6 @@
 
 division="closed"
 task="image-classification"
-#imagenet_size=50000
 #record_uoa_tail=".first.20"
 
 # Scenarios.
@@ -105,8 +104,9 @@ for implementation in ${implementations[@]}; do
       model_target_latency_ms=${models_target_latency_ms[${i}-1]}
       # Iterate for each audit test.
       for audit_test in ${audit_tests[@]}; do
-        # TODO: Document how to install/detect datasets.
+        # TODO: Document how to install/detect datasets with expected tags.
         model_preprocessing_tags="full,side.224,preprocessed,using-opencv"
+        #model_preprocessing_tags="first.20,side.224,preprocessed,using-opencv"
         if [ "${audit_test}" == "TEST03" ]; then
           model_preprocessing_tags+=",audit.test03"
           mode_tag="SubmissionRun"
