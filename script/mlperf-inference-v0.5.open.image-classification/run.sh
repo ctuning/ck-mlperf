@@ -102,11 +102,11 @@ for implementation in ${implementations[@]}; do
       for multiplier in ${multipliers[@]}; do
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-        models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
         if [ "${implementation}" == "${implementation_tflite}" ]; then
           models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
           models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
-          models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+          models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
         fi
       done
     done
@@ -119,7 +119,7 @@ for implementation in ${implementations[@]}; do
       for multiplier in ${multipliers[@]}; do
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-        models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
       done
     done
     #resolutions=( 224 )
@@ -129,7 +129,7 @@ for implementation in ${implementations[@]}; do
       for multiplier in ${multipliers[@]}; do
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-        models_preprocessing_tags+=( "side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
       done
     done
     # Iterate for each model.
