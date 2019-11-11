@@ -1,0 +1,43 @@
+{
+  "backup_data_uid": "3e2d49b2b9d791db",
+  "build_compiler_vars": {},
+  "data_name": "example-loadgen-py",
+  "main_language": "python",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../example_loadgen_program.py --scenario=$<<CK_LOADGEN_SCENARIO>>$ --mode=$<<CK_LOADGEN_MODE>>$ --samples_in_mem=$<<CK_LOADGEN_BUFFER_SIZE>>$ --config_file=$<<CK_LOADGEN_CONF_FILE>>$"
+      }
+    }
+  },
+  "run_deps": {
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 20,
+      "tags": "lib,python-package,numpy"
+    },
+    "lib-python-loadgen": {
+      "local": "yes",
+      "name": "Python LoadGen library",
+      "sort": 30,
+      "tags": "lib,python-package,loadgen"
+    }
+  },
+  "run_vars": {
+    "CK_LOADGEN_SCENARIO": "SingleStream",
+    "CK_LOADGEN_MODE": "AccuracyOnly",
+    "CK_LOADGEN_BUFFER_SIZE": 8,
+    "CK_LOADGEN_CONF_FILE": ""
+  },
+  "tags": [
+    "loadgen",
+    "example",
+    "lang-python"
+  ]
+}
