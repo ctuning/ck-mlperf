@@ -5,6 +5,7 @@
 import argparse
 import array
 import random
+import time
 
 import numpy as np
 import mlperf_loadgen as lg
@@ -15,6 +16,7 @@ labelset        = [10*i+random.randint(0,1) for i in range(dataset_size)]
 
 
 def predict_label(x_vector):
+    time.sleep(0.030)   # fractional seconds
     return int(x_vector/10)+1
 
 
@@ -40,7 +42,6 @@ def issue_queries(query_samples):
         response_array = array.array("B", np.array(predicted_results[query_index], np.float32).tobytes())
         bi = response_array.buffer_info()
         response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
-    print("LG: response = {}".format(response))
     lg.QuerySamplesComplete(response)
 
 
@@ -48,7 +49,25 @@ def flush_queries():
     print("LG called flush_queries()")
 
 def process_latencies(latencies_ns):
-    print("LG called process_latencies({})".format(process_latencies))
+    print("LG called process_latencies({})".format(latencies_ns))
+
+    latencies_size      = len(latencies_ns)
+    latencies_avg       = int(sum(latencies_ns)/latencies_size)
+    latencies_sorted    = sorted(latencies_ns)
+
+    print("--------------------------------------------------------------------")
+    print("|                LATENCIES (in nanoseconds and fps)                |")
+    print("--------------------------------------------------------------------")
+    latencies_p50 = int(latencies_size * 0.5);
+    latencies_p90 = int(latencies_size * 0.9);
+    print("Number of queries run:       {:9d}".format(latencies_size))
+    print("Min latency:                 {:9d} ns   ({:.3f} fps)".format(latencies_sorted[0], 1e9/latencies_sorted[0]))
+    print("Median latency:              {:9d} ns   ({:.3f} fps)".format(latencies_sorted[latencies_p50], 1e9/latencies_sorted[latencies_p50]))
+    print("Average latency:             {:9d} ns   ({:.3f} fps)".format(latencies_avg, 1e9/latencies_avg))
+    print("90 percentile latency:       {:9d} ns   ({:.3f} fps)".format(latencies_sorted[latencies_p90], 1e9/latencies_sorted[latencies_p90]))
+    print("Max latency:                 {:9d} ns   ({:.3f} fps)".format(latencies_sorted[-1], 1e9/latencies_sorted[-1]))
+    print("--------------------------------------------------------------------")
+
 
 
 def load_query_samples(sample_indices):
