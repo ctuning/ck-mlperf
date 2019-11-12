@@ -11,7 +11,13 @@
     "default": {
       "ignore_return_code": "no", 
       "run_time": {
-        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../tensorrt_classify_loadgen.py"
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../tensorrt_classify_loadgen.py",
+        "fine_grain_timer_file": "tmp-ck-timer.json",
+        "post_process_via_ck": {
+          "data_uoa": "b98ee24399ef4c3a",
+          "module_uoa": "script",
+          "script_name": "loadgen_postprocess"
+        }
       }
     }
   }, 
@@ -59,6 +65,21 @@
       "name": "TensorRT model", 
       "sort": 30, 
       "tags": "tensorrt,model,image-classification"
+    },
+    "python": {
+      "force_target_as_host": "yes",
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 100,
+      "tags": "compiler,lang-python"
+    },
+    "mlperf-inference-src": {
+      "force_target_as_host": "yes",
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "sort": 110,
+      "tags": "mlperf,inference,source"
     }
   }, 
   "run_vars": {
