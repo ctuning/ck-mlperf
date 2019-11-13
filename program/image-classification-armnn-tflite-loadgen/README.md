@@ -10,14 +10,14 @@ $ ck detect soft --tags=config,loadgen,image-classification-armnn-tflite
 ## Run once
 ```
 firefly $ ck benchmark program:image-classification-armnn-tflite-loadgen \
---speed --repetitions=1 \
+--speed --repetitions=1 --env.USE_NEON=1 \
 --env.CK_VERBOSE=1 \
 --env.CK_LOADGEN_SCENARIO=SingleStream \
 --env.CK_LOADGEN_MODE=PerformanceOnly \
 --env.CK_LOADGEN_DATASET_SIZE=1024 \
 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
---dep_add_tags.weights=model,tflite,resnet \
---dep_add_tags.library=tflite,v1.15 \
+--dep_add_tags.weights=tflite,resnet \
+--dep_add_tags.library=armnn,rel.19.08,tflite,neon \
 --dep_add_tags.compiler=gcc,v7 \
 --dep_add_tags.images=side.224,preprocessed \
 --dep_add_tags.loadgen-config-file=image-classification-armnn-tflite \
@@ -28,12 +28,38 @@ firefly $ ck benchmark program:image-classification-armnn-tflite-loadgen \
 |            LATENCIES (in nanoseconds and fps)            |
 ------------------------------------------------------------
 Number of queries run: 1024
-Min latency:                      397952762ns  (2.51286 fps)
-Median latency:                   426440993ns  (2.34499 fps)
-Average latency:                  433287227ns  (2.30794 fps)
-90 percentile latency:            460194271ns  (2.173 fps)
-Max latency:                      679467557ns  (1.47174 fps)
------------------------------------------------------------- 
+Min latency:                      389050347ns  (2.57036 fps)
+Median latency:                   390678334ns  (2.55965 fps)
+Average latency:                  390866753ns  (2.55842 fps)
+90 percentile latency:            392202776ns  (2.54970 fps)
+Max latency:                      409035981ns  (2.44477 fps)
+------------------------------------------------------------
+
+firefly $ ck benchmark program:image-classification-armnn-tflite-loadgen \
+--speed --repetitions=1 --env.USE_OPENCL=1 \
+--env.CK_VERBOSE=1 \
+--env.CK_LOADGEN_SCENARIO=SingleStream \
+--env.CK_LOADGEN_MODE=PerformanceOnly \
+--env.CK_LOADGEN_DATASET_SIZE=1024 \
+--env.CK_LOADGEN_BUFFER_SIZE=1024 \
+--dep_add_tags.weights=tflite,resnet \
+--dep_add_tags.library=armnn,rel.19.08,tflite,opencl \
+--dep_add_tags.compiler=gcc,v7 \
+--dep_add_tags.images=side.224,preprocessed \
+--dep_add_tags.loadgen-config-file=image-classification-armnn-tflite \
+--dep_add_tags.python=v3 \
+--skip_print_timers
+...
+------------------------------------------------------------
+|            LATENCIES (in nanoseconds and fps)            |
+------------------------------------------------------------
+Number of queries run: 1024
+Min latency:                      435802872ns  (2.29462 fps)
+Median latency:                   439844466ns  (2.27353 fps)
+Average latency:                  442231513ns  (2.26126 fps)
+90 percentile latency:            447810153ns  (2.23309 fps)
+Max latency:                      463122016ns  (2.15926 fps)
+------------------------------------------------------------
 ```
 
 ## Explore different models
