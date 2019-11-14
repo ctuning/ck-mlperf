@@ -64,6 +64,21 @@ def get_raw_data(i):
 
     """
 
+    # We cache the results table as a zip file in this module's directory.
+    cache_repo_uoa    = 'ck-mlperf'
+    cache_module_uoa  = 'module'
+    cache_data_uoa    = 'mlperf.mobilenets'
+    r = ck.access({'action':'find',
+        'repo_uoa':cache_repo_uoa, 'module_uoa':cache_module_uoa, 'data_uoa':cache_data_uoa})
+    if r['return']>0:
+        ck.out('Error: %s' % r['error'])
+        exit(1)
+    cache_path = r['path']
+    # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_pickle.html
+    cache_compression = 'zip'
+    cache_name        = '{}.{}'.format(cache_data_uoa, str(cache_compression))
+    cache_protocol    = 2 # Supported since Python 2.3
+
     cpu_code_to_cpu_name_cache = {}
     prefilter_mode  = i.get('prefilter_mode', 'all')
 
@@ -385,16 +400,25 @@ def get_raw_data(i):
             record.update( {n:v for n,v in zip(df.index.names, index) } )
             yield record
 
-    default_selected_repo = ''
-    default_selected_repo = 'mlperf-mobilenets'
+    cache = os.path.join(cache_path, cache_name)
+    if os.path.exists(cache):
+        # Load the table from cache.
+        ck.out("Loading the results table from cache at '%s' ..." % cache)
+        df_merged = pd.read_pickle(cache)
+    else:
+        default_selected_repo = ''
+        default_selected_repo = 'mlperf-mobilenets'
+        # TODO: Deal with kernel_tuner='DEFAULT' not being contained in the accuracy data.
+        #default_selected_repo = 'linaro-hikey960-18.11-b9abeae08-mobilenet-v1-1.00-224'
 
-    # TODO: Deal with kernel_tuner='DEFAULT' not being contained in the accuracy data.
-    #default_selected_repo = 'linaro-hikey960-18.11-b9abeae08-mobilenet-v1-1.00-224'
+        selected_repo = i.get('selected_repo', default_selected_repo)
+        df_acc  = get_experimental_results(repo_uoa=selected_repo, tags='accuracy',    accuracy=True)
+        df_perf = get_experimental_results(repo_uoa=selected_repo, tags='performance', accuracy=False)
+        df_merged = merge_performance_to_accuracy(df_perf, df_acc)
 
-    selected_repo = i.get('selected_repo', default_selected_repo)
-
-    df_acc  = get_experimental_results(repo_uoa=selected_repo, tags='accuracy',    accuracy=True)
-    df_perf = get_experimental_results(repo_uoa=selected_repo, tags='performance', accuracy=False)
+        # Store the merged table to cache.
+        ck.out("Storing the results table to cache at '%s' ..." % cache)
+        df_merged.to_pickle(cache, protocol=cache_protocol, compression=cache_compression)
 
     def to_value(i):
         if type(i) is np.ndarray:
@@ -408,7 +432,6 @@ def get_raw_data(i):
 
         return i
 
-    df_merged = merge_performance_to_accuracy(df_perf, df_acc)
 
     debug_output = i.get('out')=='con'
     table = []
