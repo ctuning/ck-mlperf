@@ -1,0 +1,102 @@
+{
+  "actions": {
+    "get_raw_config": {
+      "desc": "get raw config for repo widget",
+      "for_web": "yes"
+    },
+    "get_raw_data": {
+      "desc": "get raw data for widget",
+      "for_web": "yes"
+    }
+  },
+  "data_config": {
+    "dimensions": [
+      {
+        "key":      "ID",
+        "name":     "ID",
+        "view_key": "ID"
+      },
+      {
+        "key":      "Submitter",
+        "name":     "Submitter",
+        "view_key": "Submitter"
+      },
+      {
+        "format":   "%.2f",
+        "key":      "P_IC1_SS",
+        "name":     "P_IC1_SS",
+        "view_key": "P_IC1_SS"
+      },
+      {
+        "format":   "%.3f",
+        "key":      "A_IC1_SS",
+        "name":     "A_IC1_SS",
+        "view_key": "A_IC1_SS"
+      },
+      {
+        "format":   "%.2f",
+        "key":      "P_OD1_SS",
+        "name":     "P_OD1_SS",
+        "view_key": "P_OD1_SS"
+      },
+      {
+        "format":   "%.3f",
+        "key":      "A_OD1_SS",
+        "name":     "A_OD1_SS",
+        "view_key": "A_OD1_SS"
+      }
+    ],
+    "selector": [],
+    "selector2": [
+      {
+        "key":  "Submitter",
+        "name": "Submitter"
+      }
+    ],
+    "selector3": [
+      {
+        "key": "plot_dimension1",
+        "name": "Plot dimension 1 (X)"
+      },
+      {
+        "key": "plot_dimension2",
+        "name": "Plot dimension 2 (Y)"
+      }
+    ],
+    "table_view": [
+      {
+        "key":    "ID",
+        "name":   "ID"
+      },
+      {
+        "key":    "Submitter",
+        "name":   "Submitter"
+      },
+      {
+        "format": "%.2f",
+        "key":    "P_IC1_SS",
+        "name":   "P_IC1_SS"
+      },
+      {
+        "format": "%.3f",
+        "key":    "A_IC1_SS",
+        "name":   "A_IC1_SS"
+      },
+      {
+        "format": "%.2f",
+        "key":    "P_OD1_SS",
+        "name":   "P_OD1_SS"
+      },
+      {
+        "format": "%.3f",
+        "key":    "A_OD1_SS",
+        "name":   "A_OD1_SS"
+      }
+    ]
+  },
+  "desc": "Raw data (JSON) access for MLPerf Inference visualization widget",
+  "prefilter_config": {
+    "image-classification-single-stream": {},
+    "object-detection-single-stream": {}
+  }
+}
