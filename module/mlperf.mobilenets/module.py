@@ -63,6 +63,7 @@ def get_raw_data(i):
             }
 
     """
+    prefilter_mode  = i.get('prefilter_mode', 'all')
 
     # We cache the results table as a zip file in this module's directory.
     cache_repo_uoa    = 'ck-mlperf'
@@ -76,12 +77,10 @@ def get_raw_data(i):
     cache_path = r['path']
     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_pickle.html
     cache_compression = 'zip'
-    cache_name        = '{}.{}'.format(cache_data_uoa, str(cache_compression))
+    cache_name        = '{}.{}.{}'.format(cache_data_uoa, prefilter_mode, str(cache_compression))
     cache_protocol    = 2 # Supported since Python 2.3
 
     cpu_code_to_cpu_name_cache = {}
-    prefilter_mode  = i.get('prefilter_mode', 'all')
-
     def map_cpu_code_to_cpu_name( cpu_code ):
 
         def search_platform_cpu_by( field_name ):
