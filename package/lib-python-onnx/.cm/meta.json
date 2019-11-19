@@ -13,6 +13,16 @@
       "name": "Python interpreter", 
       "sort": 10, 
       "tags": "compiler,python"
+    },
+    "protobuf": {
+      "enable_if_env": [
+        { "BUILDING_FROM_SOURCE": ["on", "ON", "yes", "YES", "true", "TRUE", "1"] }
+      ],
+      "add_to_path": "yes",
+      "local": "yes",
+      "name": "Protobuf",
+      "sort": 20,
+      "tags": "lib,protobuf-host"
     }
   }, 
   "end_full_path_universal": "build$#sep#$onnx$#sep#$__init__.py", 
@@ -30,6 +40,20 @@
     "onnx", 
     "vmaster"
   ], 
+  "variations": {
+    "precompiled": {
+        "on_by_default": "yes",
+        "extra_env": {
+            "BUILDING_FROM_SOURCE": "NO"
+        }
+    },
+    "from_source": {
+        "comment": "When installing on ARM architecture, use this variation",
+        "extra_env": {
+            "BUILDING_FROM_SOURCE": "YES"
+        }
+    }
+  },
   "use_scripts_from_another_entry": {
     "data_uoa": "e4d8d3d2c4c67902", 
     "module_uoa": "package"
