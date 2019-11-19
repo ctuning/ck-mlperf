@@ -47,7 +47,7 @@
             "BUILDING_FROM_SOURCE": "NO"
         }
     },
-    "from_source": {
+    "from-source": {
         "comment": "When installing on ARM architecture, use this variation",
         "extra_env": {
             "BUILDING_FROM_SOURCE": "YES"
