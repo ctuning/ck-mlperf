@@ -48,7 +48,7 @@
       "local": "yes",
       "name": "TensorFlow library",
       "sort": 30,
-      "tags": "lib,tensorflow,vprebuilt"
+      "tags": "lib,tensorflow"
     },
     "model-source": {
       "local": "yes",
