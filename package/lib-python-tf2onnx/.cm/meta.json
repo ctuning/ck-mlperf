@@ -23,7 +23,7 @@
   ], 
   "process_script": "install", 
   "soft_uoa": "4d96c5ec4d0e0893", 
-  "suggested_path": "lib-python-onnx", 
+  "suggested_path": "lib-python-tf2onnx",
   "tags": [
     "lib", 
     "python-package", 
