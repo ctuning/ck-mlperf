@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "227ae1bd0143cc98",
+  "backup_module_uid": "1dc07ee0f4742028",
+  "backup_module_uoa": "package",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2019-11-19T17:32:05.466847",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "model-onnx-mlperf-resnet50"
+}

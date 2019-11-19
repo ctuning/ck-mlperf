@@ -1,0 +1,47 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "install_env": {
+      "PACKAGE_WGET": "YES",
+      "PACKAGE_URL": "https://www.dropbox.com/s/moedbv6u9cwlhbv/",
+      "PACKAGE_NAME": "resnet50_v1_softmax.onnx.gz",
+      "PACKAGE_UNGZIP": "YES",
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES",
+      "PACKAGE_SKIP_LINUX_MAKE": "YES",
+
+      "ML_MODEL_DATA_LAYOUT": "NCHW",
+      "MODEL_IMAGE_HEIGHT": "224",
+      "MODEL_IMAGE_WIDTH": "224",
+      "MODEL_INPUT_LAYER_NAME": "input_tensor:0",
+      "MODEL_OUTPUT_LAYER_NAME": "softmax_tensor:0",
+      "MODEL_NORMALIZE_DATA": "0",
+      "MODEL_SUBTRACT_MEAN": "YES",
+      "ML_MODEL_GIVEN_CHANNEL_MEANS": "123.68 116.78 103.94",
+      "PACKAGE_VERSION": "1.5"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "skip_file_check": "yes"
+  },
+  "end_full_path_universal": "resnet50_v1_softmax.onnx",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [],
+  "package_extra_name": " (resnet50_v1_softmax)",
+  "process_script": "install",
+  "soft_uoa": "bcaac306e9041879",
+  "suggested_path": "model-onnx-resnet-mlperf-downloaded",
+  "tags": [
+    "model",
+    "image-classification",
+    "onnx",
+    "nchw",
+    "resnet",
+    "resnet50",
+    "mlperf",
+    "downloaded"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "download-and-install-package",
+    "module_uoa": "script"
+  }
+}
