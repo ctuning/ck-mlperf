@@ -83,6 +83,7 @@
     }
   }, 
   "run_vars": {
+    "CK_BATCH_SIZE": 1,
     "CK_LOADGEN_BUFFER_SIZE": 8, 
     "CK_LOADGEN_CONF_FILE": "", 
     "CK_LOADGEN_MODE": "AccuracyOnly", 

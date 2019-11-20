@@ -18,6 +18,7 @@ LOADGEN_SCENARIO        = os.getenv('CK_LOADGEN_SCENARIO', 'SingleStream')
 LOADGEN_MODE            = os.getenv('CK_LOADGEN_MODE', 'AccuracyOnly')
 LOADGEN_BUFFER_SIZE     = int(os.getenv('CK_LOADGEN_BUFFER_SIZE', '8'))
 LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
+BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
 ## Model properties:
 #
@@ -93,7 +94,9 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
                 else:
                     img -= np.mean(img)
 
-        preprocessed_image_buffer[sample_index] = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
+        nhwc_img = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
+
+        preprocessed_image_buffer[sample_index] = np.array(nhwc_img).ravel().astype(np.float32)
         print('l', end='')
     print('')
 
@@ -110,6 +113,8 @@ def initialize_predictor():
     global bg_class_offset
     global execution_context
     global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
+    global BATCH_SIZE
+    global max_batch_size
 
     # Load the TensorRT model from file
     default_context = pycuda.tools.make_default_context()
@@ -126,10 +131,15 @@ def initialize_predictor():
 
     model_input_shape   = trt_engine.get_binding_shape(0)
     model_output_shape  = trt_engine.get_binding_shape(1)
+    max_batch_size      = trt_engine.max_batch_size
+
+    if BATCH_SIZE>max_batch_size:
+        default_context.pop()
+        raise RuntimeError("Desired batch_size ({}) exceeds max_batch_size of the model ({})".format(BATCH_SIZE,max_batch_size))
 
     IMAGE_DATATYPE      = np.float32
-    h_input             = cuda.pagelocked_empty(trt.volume(model_input_shape), dtype=IMAGE_DATATYPE)
-    h_output            = cuda.pagelocked_empty(trt.volume(model_output_shape), dtype=IMAGE_DATATYPE)
+    h_input             = cuda.pagelocked_empty(max_batch_size*trt.volume(model_input_shape), dtype=IMAGE_DATATYPE)
+    h_output            = cuda.pagelocked_empty(max_batch_size*trt.volume(model_output_shape), dtype=IMAGE_DATATYPE)
     print('Allocated device memory buffers: input_size={} output_size={}'.format(h_input.nbytes, h_output.nbytes))
     d_input             = cuda.mem_alloc(h_input.nbytes)
     d_output            = cuda.mem_alloc(h_output.nbytes)
@@ -147,46 +157,62 @@ def initialize_predictor():
     execution_context   = trt_engine.create_execution_context()
 
 
-def predict_label(image_data):
+def predict_labels_for_batch(batch_image_map):
     global default_context
     global h_input, h_output, d_input, d_output, cuda_stream
     global bg_class_offset
     global execution_context
+    global max_batch_size
 
-    h_input = np.array(image_data).ravel().astype(np.float32)
+    items_this_batch    = len(batch_image_map)
+    query_indices       = list(batch_image_map.keys())
+    h_input             = np.ravel(list(batch_image_map.values()))
 
     cuda.memcpy_htod_async(d_input, h_input, cuda_stream)
-    execution_context.execute_async(bindings=[int(d_input), int(d_output)], stream_handle=cuda_stream.handle)
+    execution_context.execute_async(bindings=[int(d_input), int(d_output)], batch_size=items_this_batch, stream_handle=cuda_stream.handle)
     cuda.memcpy_dtoh_async(h_output, d_output, cuda_stream)
     cuda_stream.synchronize()
 
-    softmax_vector = h_output[bg_class_offset:]
+    softmax_matrix      = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
+    batch_argmax_map    = {}
+    for k in range(items_this_batch):
+        softmax_vector = softmax_matrix[k][bg_class_offset:]
+        batch_argmax_map[query_indices[k]] = np.argmax(softmax_vector)
 
-    return np.argmax(softmax_vector)
+    return batch_argmax_map
 
 
 def issue_queries(query_samples):
 
+    global BATCH_SIZE
+
     printable_query = [(qs.index, qs.id) for qs in query_samples]
     if VERBOSITY_LEVEL:
         print("issue_queries( {} )".format(printable_query))
-    print('Q', end='')
+    print('Q'+(str(len(query_samples)) if len(query_samples)>1 else ''), end='')
 
-    predicted_results = {}
     response = []
-    for qs in query_samples:
-        query_index, query_id = qs.index, qs.id
+    response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
+    for j in range(0, len(query_samples), BATCH_SIZE):
+        batch = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
+        batch_image_map = {}
+        for qs in batch:
+            query_index, query_id = qs.index, qs.id
+            batch_image_map[query_index] = preprocessed_image_buffer[query_index]
 
-        image_data      = preprocessed_image_buffer[query_index]
-        predicted_results[query_index] = predict_label(image_data)
-        print('p', end='')
+        predicted_batch_results = predict_labels_for_batch(batch_image_map)
+        print('p'+(str(len(batch)) if BATCH_SIZE>1 else ''), end='')
+        if VERBOSITY_LEVEL:
+            print("predicted_batch_results = {}".format(predicted_batch_results))
 
-        response_array = array.array("B", np.array(predicted_results[query_index], np.float32).tobytes())
-        bi = response_array.buffer_info()
-        response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
+        for qs in batch:
+            query_index, query_id = qs.index, qs.id
+
+            response_array = array.array("B", np.array(predicted_batch_results[query_index], np.float32).tobytes())
+            response_array_refs.append(response_array)
+            bi = response_array.buffer_info()
+            response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
     lg.QuerySamplesComplete(response)
-    if VERBOSITY_LEVEL:
-        print("predicted_results = {}".format(predicted_results))
 
 
 def flush_queries():
