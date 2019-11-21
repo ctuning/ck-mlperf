@@ -16,9 +16,10 @@ import mlperf_loadgen as lg
 #
 LOADGEN_SCENARIO        = os.getenv('CK_LOADGEN_SCENARIO', 'SingleStream')
 LOADGEN_MODE            = os.getenv('CK_LOADGEN_MODE', 'AccuracyOnly')
-LOADGEN_BUFFER_SIZE     = int(os.getenv('CK_LOADGEN_BUFFER_SIZE', '8'))
+LOADGEN_BUFFER_SIZE     = int(os.getenv('CK_LOADGEN_BUFFER_SIZE'))          # set to how many samples are you prepared to keep in memory at once
+LOADGEN_DATASET_SIZE    = int(os.getenv('CK_LOADGEN_DATASET_SIZE'))         # set to how many total samples to choose from (0 = full set)
 LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
-LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')
+LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')       # if not set, use value from LoadGen's config file
 BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
 ## Model properties:
@@ -53,6 +54,7 @@ VERBOSITY_LEVEL         = int(os.getenv('CK_VERBOSE', '0'))
 # Load preprocessed image filepaths:
 with open(IMAGE_LIST_FILE, 'r') as f:
     image_path_list = [ os.path.join(IMAGE_DIR, s.strip()) for s in f ]
+LOADGEN_DATASET_SIZE = LOADGEN_DATASET_SIZE or len(image_path_list)
 
 
 def load_labels(labels_filepath):
@@ -270,7 +272,7 @@ def benchmark_using_loadgen():
         ts.multi_stream_samples_per_query = int(LOADGEN_MULTISTREAMNESS)
 
     sut = lg.ConstructSUT(issue_queries, flush_queries, process_latencies)
-    qsl = lg.ConstructQSL(20, LOADGEN_BUFFER_SIZE, load_query_samples, unload_query_samples)
+    qsl = lg.ConstructQSL(LOADGEN_DATASET_SIZE, LOADGEN_BUFFER_SIZE, load_query_samples, unload_query_samples)
 
     log_settings = lg.LogSettings()
     log_settings.enable_trace = False
