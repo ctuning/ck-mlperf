@@ -18,6 +18,7 @@ LOADGEN_SCENARIO        = os.getenv('CK_LOADGEN_SCENARIO', 'SingleStream')
 LOADGEN_MODE            = os.getenv('CK_LOADGEN_MODE', 'AccuracyOnly')
 LOADGEN_BUFFER_SIZE     = int(os.getenv('CK_LOADGEN_BUFFER_SIZE', '8'))
 LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
+LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')
 BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
 ## Model properties:
@@ -260,10 +261,13 @@ def benchmark_using_loadgen():
     }[LOADGEN_MODE]
 
     ts = lg.TestSettings()
-    if(LOADGEN_CONF_FILE):
+    if LOADGEN_CONF_FILE:
         ts.FromConfig(LOADGEN_CONF_FILE, 'random_model_name', LOADGEN_SCENARIO)
     ts.scenario = scenario
     ts.mode     = mode
+
+    if LOADGEN_MULTISTREAMNESS:
+        ts.multi_stream_samples_per_query = int(LOADGEN_MULTISTREAMNESS)
 
     sut = lg.ConstructSUT(issue_queries, flush_queries, process_latencies)
     qsl = lg.ConstructQSL(20, LOADGEN_BUFFER_SIZE, load_query_samples, unload_query_samples)
