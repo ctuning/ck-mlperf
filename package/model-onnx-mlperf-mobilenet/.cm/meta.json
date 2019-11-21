@@ -33,6 +33,7 @@
     "onnx", 
     "nchw",
     "mobilenet",
+    "non-quantized",
     "mlperf",
     "downloaded"
   ], 
@@ -43,14 +44,14 @@
   "variations": {
     "from-zenodo": {
       "extra_env": {
-	"PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx",
+	    "PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx",
         "PACKAGE_URL": "https://zenodo.org/record/3157894/files",
         "PACKAGE_UNGZIP": "NO"
       }
     },
     "from-dropbox": {
       "extra_env": {
-	"COMMENT": "This model is converted similarly to the one at zenodo.org but is NOT the same!",
+	    "COMMENT": "This model is converted similarly to the one at zenodo.org but is NOT the same!",
         "PACKAGE_NAME": "mobilenet_v1_1.0_224.onnx.gz",
         "PACKAGE_URL": "https://www.dropbox.com/s/eu7g3xt0yg12q3o",
         "PACKAGE_UNGZIP": "YES"

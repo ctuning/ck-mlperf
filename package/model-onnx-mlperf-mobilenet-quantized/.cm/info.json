@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "4362796f0004273b",
+  "backup_module_uid": "1dc07ee0f4742028",
+  "backup_module_uoa": "package",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2019-11-21T18:09:11.742357",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "model-onnx-mlperf-mobilenet-quantized"
+}
