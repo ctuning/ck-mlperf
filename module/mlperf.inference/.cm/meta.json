@@ -113,6 +113,26 @@
       {
         "key":  "Benchmark",
         "name": "Benchmark"
+      },
+      {
+        "key":  "Accelerator",
+        "name": "Accelerator"
+      },
+      {
+        "key":  "FF_M",
+        "name": "Mobile/Handheld"
+      },
+      {
+        "key":  "FF_E",
+        "name": "Edge/Embedded"
+      },
+      {
+        "key":  "FF_D",
+        "name": "Desktop/Workstation"
+      },
+      {
+        "key":  "FF_S",
+        "name": "Server/Cloud"
       }
     ],
     "selector3": [
@@ -187,6 +207,54 @@
         "format": "%.3f",
         "key":    "A_NMT",
         "name":   "Machine Translation accuracy<br>(WMT'16 En-De - BLEU)"
+      },
+      {
+        "key":    "Processor",
+        "name":   "Processor"
+      },
+      {
+        "key":    "Processor #",
+        "name":   "Processor #"
+      },
+      {
+        "key":    "Accelerator",
+        "name":   "Accelerator"
+      },
+      {
+        "key":    "Accelerator #",
+        "name":   "Accelerator #"
+      },
+      {
+        "key":    "Software",
+        "name":   "Software"
+      },
+      {
+        "key":    "FF_M",
+        "name":   "Form Factor - Mobile/Handheld"
+      },
+      {
+        "key":    "FF_E",
+        "name":   "Form Factor - Edge/Embedded"
+      },
+      {
+        "key":    "FF_D",
+        "name":   "Form Factor - Desktop/Workstation"
+      },
+      {
+        "key":    "FF_S",
+        "name":   "Form Factor - Server/Cloud"
+      },
+      {
+        "key":    "Details",
+        "name":   "Details"
+      },
+      {
+        "key":    "Code",
+        "name":   "Code"
+      },
+      {
+        "key":    "Notes",
+        "name":   "Notes"
       }
     ]
   },
