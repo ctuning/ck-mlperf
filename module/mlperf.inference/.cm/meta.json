@@ -37,9 +37,19 @@
         "view_key": "System"
       },
       {
+        "key":      "Task",
+        "name":     "Task",
+        "view_key": "Task"
+      },
+      {
         "key":      "Benchmark",
         "name":     "Benchmark",
         "view_key": "Benchmark"
+      },
+      {
+        "key":      "Scenario",
+        "name":     "Scenario",
+        "view_key": "Scenario"
       },
       {
         "format":   "%.2f",
@@ -232,6 +242,54 @@
         "key":      "A_OD2_O",
         "name":     "A_OD2_O",
         "view_key": "A_OD2_O"
+      },
+      {
+        "format":   "%.2f",
+        "key":      "P_NMT_SS",
+        "name":     "P_NMT_SS",
+        "view_key": "P_NMT_SS"
+      },
+      {
+        "format":   "%.3f",
+        "key":      "A_NMT_SS",
+        "name":     "A_NMT_SS",
+        "view_key": "A_NMT_SS"
+      },
+      {
+        "format":   "%.2f",
+        "key":      "P_NMT_MS",
+        "name":     "P_NMT_MS",
+        "view_key": "P_NMT_MS"
+      },
+      {
+        "format":   "%.3f",
+        "key":      "A_NMT_MS",
+        "name":     "A_NMT_MS",
+        "view_key": "A_NMT_MS"
+      },
+      {
+        "format":   "%.2f",
+        "key":      "P_NMT_S",
+        "name":     "P_NMT_S",
+        "view_key": "P_NMT_S"
+      },
+      {
+        "format":   "%.3f",
+        "key":      "A_NMT_S",
+        "name":     "A_NMT_S",
+        "view_key": "A_NMT_S"
+      },
+      {
+        "format":   "%.2f",
+        "key":      "P_NMT_O",
+        "name":     "P_NMT_O",
+        "view_key": "P_NMT_O"
+      },
+      {
+        "format":   "%.3f",
+        "key":      "A_NMT_O",
+        "name":     "A_NMT_O",
+        "view_key": "A_NMT_O"
       }
     ],
     "selector": [],
@@ -249,8 +307,16 @@
         "name": "Submitter"
       },
       {
+        "key":  "Task",
+        "name": "Task"
+      },
+      {
         "key":  "Benchmark",
         "name": "Benchmark"
+      },
+      {
+        "key":  "Scenario",
+        "name": "Scenario"
       }
     ],
     "selector3": [
@@ -285,8 +351,16 @@
         "name":   "System"
       },
       {
+        "key":    "Task",
+        "name":   "Task"
+      },
+      {
         "key":    "Benchmark",
         "name":   "Benchmark"
+      },
+      {
+        "key":    "Scenario",
+        "name":   "Scenario"
       },
       {
         "format": "%.2f",
@@ -447,6 +521,46 @@
         "format": "%.3f",
         "key":    "A_OD2_O",
         "name":   "A_OD2_O"
+      },
+      {
+        "format": "%.2f",
+        "key":    "P_NMT_SS",
+        "name":   "P_NMT_SS"
+      },
+      {
+        "format": "%.3f",
+        "key":    "A_NMT_SS",
+        "name":   "A_NMT_SS"
+      },
+      {
+        "format": "%.2f",
+        "key":    "P_NMT_MS",
+        "name":   "P_NMT_MS"
+      },
+      {
+        "format": "%.3f",
+        "key":    "A_NMT_MS",
+        "name":   "A_NMT_MS"
+      },
+      {
+        "format": "%.2f",
+        "key":    "P_NMT_S",
+        "name":   "P_NMT_S"
+      },
+      {
+        "format": "%.3f",
+        "key":    "A_NMT_S",
+        "name":   "A_NMT_S"
+      },
+      {
+        "format": "%.2f",
+        "key":    "P_NMT_O",
+        "name":   "P_NMT_O"
+      },
+      {
+        "format": "%.3f",
+        "key":    "A_NMT_O",
+        "name":   "A_NMT_O"
       }
     ]
   },

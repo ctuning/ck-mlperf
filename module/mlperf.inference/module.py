@@ -116,7 +116,9 @@ def get_raw_data(i):
             'Category',
             'Submitter',
             'System',
-            'Benchmark'
+            'Task',
+            'Benchmark',
+            'Scenario'
         ]
         for prop in props:
             row[prop] = to_value(record.get(prop, ''))
@@ -156,6 +158,15 @@ def get_raw_data(i):
         row['A_OD2_S' ] = np.nan_to_num(record.get('A_OD2_S',  0.0))
         row['P_OD2_O' ] = np.nan_to_num(record.get('P_OD2_O',  0.0))
         row['A_OD2_O' ] = np.nan_to_num(record.get('A_OD2_O',  0.0))
+
+        row['P_NMT_SS'] = np.nan_to_num(record.get('P_NMT_SS', 0.0))
+        row['A_NMT_SS'] = np.nan_to_num(record.get('A_NMT_SS', 0.0))
+        row['P_NMT_MS'] = np.nan_to_num(record.get('P_NMT_MS', 0.0))
+        row['A_NMT_MS'] = np.nan_to_num(record.get('A_NMT_MS', 0.0))
+        row['P_NMT_S' ] = np.nan_to_num(record.get('P_NMT_S',  0.0))
+        row['A_NMT_S' ] = np.nan_to_num(record.get('A_NMT_S',  0.0))
+        row['P_NMT_O' ] = np.nan_to_num(record.get('P_NMT_O',  0.0))
+        row['A_NMT_O' ] = np.nan_to_num(record.get('A_NMT_O',  0.0))
 
         table.append(row)
         if debug_output:
