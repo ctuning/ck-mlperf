@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2018 cTuning foundation.
+# Copyright (c) 2019 cTuning foundation.
 # See CK COPYRIGHT.txt for copyright details.
 #
 # SPDX-License-Identifier: BSD-3-Clause.
@@ -83,7 +83,6 @@ def get_raw_data(i):
             df = pd.read_pickle(cache_path)
         else:
             df = pd.DataFrame()
-        pprint(df.dtypes)
         return df
 
     def df_as_record(df):
@@ -105,6 +104,7 @@ def get_raw_data(i):
         return i
 
     df = get_experimental_results_from_cache()
+    df = df.set_index('ID', drop=True)
     
     debug_output = i.get('out')=='con'
     table = []
@@ -112,15 +112,50 @@ def get_raw_data(i):
         row = {}
         props = [
             'ID',
-            'Submitter'
+            'Division',
+            'Category',
+            'Submitter',
+            'System',
+            'Benchmark'
         ]
         for prop in props:
             row[prop] = to_value(record.get(prop, ''))
 
         row['P_IC1_SS'] = np.nan_to_num(record.get('P_IC1_SS', 0.0))
         row['A_IC1_SS'] = np.nan_to_num(record.get('A_IC1_SS', 0.0))
+        row['P_IC1_MS'] = np.nan_to_num(record.get('P_IC1_MS', 0.0))
+        row['A_IC1_MS'] = np.nan_to_num(record.get('A_IC1_MS', 0.0))
+        row['P_IC1_S' ] = np.nan_to_num(record.get('P_IC1_S',  0.0))
+        row['A_IC1_S' ] = np.nan_to_num(record.get('A_IC1_S',  0.0))
+        row['P_IC1_O' ] = np.nan_to_num(record.get('P_IC1_O',  0.0))
+        row['A_IC1_O' ] = np.nan_to_num(record.get('A_IC1_O',  0.0))
+
+        row['P_IC2_SS'] = np.nan_to_num(record.get('P_IC2_SS', 0.0))
+        row['A_IC2_SS'] = np.nan_to_num(record.get('A_IC2_SS', 0.0))
+        row['P_IC2_MS'] = np.nan_to_num(record.get('P_IC2_MS', 0.0))
+        row['A_IC2_MS'] = np.nan_to_num(record.get('A_IC2_MS', 0.0))
+        row['P_IC2_S' ] = np.nan_to_num(record.get('P_IC2_S',  0.0))
+        row['A_IC2_S' ] = np.nan_to_num(record.get('A_IC2_S',  0.0))
+        row['P_IC2_O' ] = np.nan_to_num(record.get('P_IC2_O',  0.0))
+        row['A_IC2_O' ] = np.nan_to_num(record.get('A_IC2_O',  0.0))
+
         row['P_OD1_SS'] = np.nan_to_num(record.get('P_OD1_SS', 0.0))
         row['A_OD1_SS'] = np.nan_to_num(record.get('A_OD1_SS', 0.0))
+        row['P_OD1_MS'] = np.nan_to_num(record.get('P_OD1_MS', 0.0))
+        row['A_OD1_MS'] = np.nan_to_num(record.get('A_OD1_MS', 0.0))
+        row['P_OD1_S' ] = np.nan_to_num(record.get('P_OD1_S',  0.0))
+        row['A_OD1_S' ] = np.nan_to_num(record.get('A_OD1_S',  0.0))
+        row['P_OD1_O' ] = np.nan_to_num(record.get('P_OD1_O',  0.0))
+        row['A_OD1_O' ] = np.nan_to_num(record.get('A_OD1_O',  0.0))
+           
+        row['P_OD2_SS'] = np.nan_to_num(record.get('P_OD2_SS', 0.0))
+        row['A_OD2_SS'] = np.nan_to_num(record.get('A_OD2_SS', 0.0))
+        row['P_OD2_MS'] = np.nan_to_num(record.get('P_OD2_MS', 0.0))
+        row['A_OD2_MS'] = np.nan_to_num(record.get('A_OD2_MS', 0.0))
+        row['P_OD2_S' ] = np.nan_to_num(record.get('P_OD2_S',  0.0))
+        row['A_OD2_S' ] = np.nan_to_num(record.get('A_OD2_S',  0.0))
+        row['P_OD2_O' ] = np.nan_to_num(record.get('P_OD2_O',  0.0))
+        row['A_OD2_O' ] = np.nan_to_num(record.get('A_OD2_O',  0.0))
 
         table.append(row)
         if debug_output:
