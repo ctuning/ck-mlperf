@@ -59,7 +59,8 @@ def get_raw_data(i):
               (error)      - error text if return > 0
             }
     """
-    prefilter_mode = i.get('prefilter_mode', 'image-classification-single-stream')
+    prefilter_mode = i.get('prefilter_mode', 'image_classification_single_stream')
+    prefilter_config = cfg['prefilter_config'][prefilter_mode]
 
     def get_experimental_results_from_cache(cache_path=None):
         if cache_path is None:
@@ -123,50 +124,9 @@ def get_raw_data(i):
         for prop in props:
             row[prop] = to_value(record.get(prop, ''))
 
-        row['P_IC1_SS'] = np.nan_to_num(record.get('P_IC1_SS', 0.0))
-        row['A_IC1_SS'] = np.nan_to_num(record.get('A_IC1_SS', 0.0))
-        row['P_IC1_MS'] = np.nan_to_num(record.get('P_IC1_MS', 0.0))
-        row['A_IC1_MS'] = np.nan_to_num(record.get('A_IC1_MS', 0.0))
-        row['P_IC1_S' ] = np.nan_to_num(record.get('P_IC1_S',  0.0))
-        row['A_IC1_S' ] = np.nan_to_num(record.get('A_IC1_S',  0.0))
-        row['P_IC1_O' ] = np.nan_to_num(record.get('P_IC1_O',  0.0))
-        row['A_IC1_O' ] = np.nan_to_num(record.get('A_IC1_O',  0.0))
-
-        row['P_IC2_SS'] = np.nan_to_num(record.get('P_IC2_SS', 0.0))
-        row['A_IC2_SS'] = np.nan_to_num(record.get('A_IC2_SS', 0.0))
-        row['P_IC2_MS'] = np.nan_to_num(record.get('P_IC2_MS', 0.0))
-        row['A_IC2_MS'] = np.nan_to_num(record.get('A_IC2_MS', 0.0))
-        row['P_IC2_S' ] = np.nan_to_num(record.get('P_IC2_S',  0.0))
-        row['A_IC2_S' ] = np.nan_to_num(record.get('A_IC2_S',  0.0))
-        row['P_IC2_O' ] = np.nan_to_num(record.get('P_IC2_O',  0.0))
-        row['A_IC2_O' ] = np.nan_to_num(record.get('A_IC2_O',  0.0))
-
-        row['P_OD1_SS'] = np.nan_to_num(record.get('P_OD1_SS', 0.0))
-        row['A_OD1_SS'] = np.nan_to_num(record.get('A_OD1_SS', 0.0))
-        row['P_OD1_MS'] = np.nan_to_num(record.get('P_OD1_MS', 0.0))
-        row['A_OD1_MS'] = np.nan_to_num(record.get('A_OD1_MS', 0.0))
-        row['P_OD1_S' ] = np.nan_to_num(record.get('P_OD1_S',  0.0))
-        row['A_OD1_S' ] = np.nan_to_num(record.get('A_OD1_S',  0.0))
-        row['P_OD1_O' ] = np.nan_to_num(record.get('P_OD1_O',  0.0))
-        row['A_OD1_O' ] = np.nan_to_num(record.get('A_OD1_O',  0.0))
-           
-        row['P_OD2_SS'] = np.nan_to_num(record.get('P_OD2_SS', 0.0))
-        row['A_OD2_SS'] = np.nan_to_num(record.get('A_OD2_SS', 0.0))
-        row['P_OD2_MS'] = np.nan_to_num(record.get('P_OD2_MS', 0.0))
-        row['A_OD2_MS'] = np.nan_to_num(record.get('A_OD2_MS', 0.0))
-        row['P_OD2_S' ] = np.nan_to_num(record.get('P_OD2_S',  0.0))
-        row['A_OD2_S' ] = np.nan_to_num(record.get('A_OD2_S',  0.0))
-        row['P_OD2_O' ] = np.nan_to_num(record.get('P_OD2_O',  0.0))
-        row['A_OD2_O' ] = np.nan_to_num(record.get('A_OD2_O',  0.0))
-
-        row['P_NMT_SS'] = np.nan_to_num(record.get('P_NMT_SS', 0.0))
-        row['A_NMT_SS'] = np.nan_to_num(record.get('A_NMT_SS', 0.0))
-        row['P_NMT_MS'] = np.nan_to_num(record.get('P_NMT_MS', 0.0))
-        row['A_NMT_MS'] = np.nan_to_num(record.get('A_NMT_MS', 0.0))
-        row['P_NMT_S' ] = np.nan_to_num(record.get('P_NMT_S',  0.0))
-        row['A_NMT_S' ] = np.nan_to_num(record.get('A_NMT_S',  0.0))
-        row['P_NMT_O' ] = np.nan_to_num(record.get('P_NMT_O',  0.0))
-        row['A_NMT_O' ] = np.nan_to_num(record.get('A_NMT_O',  0.0))
+        for score in prefilter_config['score_columns']:
+            score_no_scenario = score[0:5] # e.g. A_NMT
+            row[score_no_scenario] = np.nan_to_num(record.get(score, 0.0))
 
         table.append(row)
         if debug_output:

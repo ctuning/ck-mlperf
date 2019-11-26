@@ -53,247 +53,51 @@
       },
       {
         "format":   "%.2f",
-        "key":      "P_IC1_SS",
-        "name":     "P_IC1_SS",
-        "view_key": "P_IC1_SS"
+        "key":      "P_IC1",
+        "name":     "Image Classification performance",
+        "view_key": "P_IC1"
       },
       {
         "format":   "%.3f",
-        "key":      "A_IC1_SS",
-        "name":     "A_IC1_SS",
-        "view_key": "A_IC1_SS"
+        "key":      "A_IC1",
+        "name":     "Image Classification accuracy (Top1, %)",
+        "view_key": "A_IC1"
       },
       {
         "format":   "%.2f",
-        "key":      "P_IC1_MS",
-        "name":     "P_IC1_MS",
-        "view_key": "P_IC1_MS"
+        "key":      "P_OD1",
+        "name":     "Object Detection performance",
+        "view_key": "P_OD1"
       },
       {
         "format":   "%.3f",
-        "key":      "A_IC1_MS",
-        "name":     "A_IC1_MS",
-        "view_key": "A_IC1_MS"
+        "key":      "A_OD1",
+        "name":     "Object Detection accuracy (mAP, %)",
+        "view_key": "A_OD1"
       },
       {
         "format":   "%.2f",
-        "key":      "P_IC1_S",
-        "name":     "P_IC1_S",
-        "view_key": "P_IC1_S"
+        "key":      "P_NMT",
+        "name":     "Machine Translation performance",
+        "view_key": "P_NMT"
       },
       {
         "format":   "%.3f",
-        "key":      "A_IC1_S",
-        "name":     "A_IC1_S",
-        "view_key": "A_IC1_S"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_IC1_O",
-        "name":     "P_IC1_O",
-        "view_key": "P_IC1_O"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_IC1_O",
-        "name":     "A_IC1_O",
-        "view_key": "A_IC1_O"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_IC2_SS",
-        "name":     "P_IC2_SS",
-        "view_key": "P_IC2_SS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_IC2_SS",
-        "name":     "A_IC2_SS",
-        "view_key": "A_IC2_SS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_IC2_MS",
-        "name":     "P_IC2_MS",
-        "view_key": "P_IC2_MS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_IC2_MS",
-        "name":     "A_IC2_MS",
-        "view_key": "A_IC2_MS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_IC2_S",
-        "name":     "P_IC2_S",
-        "view_key": "P_IC2_S"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_IC2_S",
-        "name":     "A_IC2_S",
-        "view_key": "A_IC2_S"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_IC2_O",
-        "name":     "P_IC2_O",
-        "view_key": "P_IC2_O"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_IC2_O",
-        "name":     "A_IC2_O",
-        "view_key": "A_IC2_O"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD1_SS",
-        "name":     "P_OD1_SS",
-        "view_key": "P_OD1_SS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD1_SS",
-        "name":     "A_OD1_SS",
-        "view_key": "A_OD1_SS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD1_MS",
-        "name":     "P_OD1_MS",
-        "view_key": "P_OD1_MS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD1_MS",
-        "name":     "A_OD1_MS",
-        "view_key": "A_OD1_MS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD1_S",
-        "name":     "P_OD1_S",
-        "view_key": "P_OD1_S"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD1_S",
-        "name":     "A_OD1_S",
-        "view_key": "A_OD1_S"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD1_O",
-        "name":     "P_OD1_O",
-        "view_key": "P_OD1_O"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD1_O",
-        "name":     "A_OD1_O",
-        "view_key": "A_OD1_O"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD2_SS",
-        "name":     "P_OD2_SS",
-        "view_key": "P_OD2_SS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD2_SS",
-        "name":     "A_OD2_SS",
-        "view_key": "A_OD2_SS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD2_MS",
-        "name":     "P_OD2_MS",
-        "view_key": "P_OD2_MS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD2_MS",
-        "name":     "A_OD2_MS",
-        "view_key": "A_OD2_MS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD2_S",
-        "name":     "P_OD2_S",
-        "view_key": "P_OD2_S"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD2_S",
-        "name":     "A_OD2_S",
-        "view_key": "A_OD2_S"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_OD2_O",
-        "name":     "P_OD2_O",
-        "view_key": "P_OD2_O"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_OD2_O",
-        "name":     "A_OD2_O",
-        "view_key": "A_OD2_O"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_NMT_SS",
-        "name":     "P_NMT_SS",
-        "view_key": "P_NMT_SS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_NMT_SS",
-        "name":     "A_NMT_SS",
-        "view_key": "A_NMT_SS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_NMT_MS",
-        "name":     "P_NMT_MS",
-        "view_key": "P_NMT_MS"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_NMT_MS",
-        "name":     "A_NMT_MS",
-        "view_key": "A_NMT_MS"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_NMT_S",
-        "name":     "P_NMT_S",
-        "view_key": "P_NMT_S"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_NMT_S",
-        "name":     "A_NMT_S",
-        "view_key": "A_NMT_S"
-      },
-      {
-        "format":   "%.2f",
-        "key":      "P_NMT_O",
-        "name":     "P_NMT_O",
-        "view_key": "P_NMT_O"
-      },
-      {
-        "format":   "%.3f",
-        "key":      "A_NMT_O",
-        "name":     "A_NMT_O",
-        "view_key": "A_NMT_O"
+        "key":      "A_NMT",
+        "name":     "Machine Translation accuracy (BLEU)",
+        "view_key": "A_NMT"
       }
     ],
     "selector": [],
     "selector2": [
+      {
+        "key":  "Task",
+        "name": "Task"
+      },
+      {
+        "key":  "Scenario",
+        "name": "Scenario"
+      },
       {
         "key":  "Division",
         "name": "Division"
@@ -307,16 +111,8 @@
         "name": "Submitter"
       },
       {
-        "key":  "Task",
-        "name": "Task"
-      },
-      {
         "key":  "Benchmark",
         "name": "Benchmark"
-      },
-      {
-        "key":  "Scenario",
-        "name": "Scenario"
       }
     ],
     "selector3": [
@@ -364,209 +160,109 @@
       },
       {
         "format": "%.2f",
-        "key":    "P_IC1_SS",
-        "name":   "P_IC1_SS"
+        "key":    "P_IC1",
+        "name":   "Image Classification performance (see the metric above the plot)"
       },
       {
         "format": "%.3f",
-        "key":    "A_IC1_SS",
-        "name":   "A_IC1_SS"
+        "key":    "A_IC1",
+        "name":   "Image Classification accuracy<br>(ImageNet'12 val - Top1, %)"
       },
       {
         "format": "%.2f",
-        "key":    "P_IC1_MS",
-        "name":   "P_IC1_MS"
+        "key":    "P_OD1",
+        "name":   "Object Detection performance (see the metric above the plot)"
       },
       {
         "format": "%.3f",
-        "key":    "A_IC1_MS",
-        "name":   "A_IC1_MS"
+        "key":    "A_OD1",
+        "name":   "Object Detection accuracy<br>(COCO'17 val - mAP, %)"
       },
       {
         "format": "%.2f",
-        "key":    "P_IC1_S",
-        "name":   "P_IC1_S"
+        "key":    "P_NMT",
+        "name":   "Machine Translation performance (see the metric above the plot)"
       },
       {
         "format": "%.3f",
-        "key":    "A_IC1_S",
-        "name":   "A_IC1_S"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_IC1_O",
-        "name":   "P_IC1_O"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_IC1_O",
-        "name":   "A_IC1_O"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_IC2_SS",
-        "name":   "P_IC2_SS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_IC2_SS",
-        "name":   "A_IC2_SS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_IC2_MS",
-        "name":   "P_IC2_MS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_IC2_MS",
-        "name":   "A_IC2_MS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_IC2_S",
-        "name":   "P_IC2_S"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_IC2_S",
-        "name":   "A_IC2_S"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_IC2_O",
-        "name":   "P_IC2_O"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_IC2_O",
-        "name":   "A_IC2_O"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD1_SS",
-        "name":   "P_OD1_SS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD1_SS",
-        "name":   "A_OD1_SS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD1_MS",
-        "name":   "P_OD1_MS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD1_MS",
-        "name":   "A_OD1_MS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD1_S",
-        "name":   "P_OD1_S"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD1_S",
-        "name":   "A_OD1_S"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD1_O",
-        "name":   "P_OD1_O"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD1_O",
-        "name":   "A_OD1_O"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD2_SS",
-        "name":   "P_OD2_SS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD2_SS",
-        "name":   "A_OD2_SS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD2_MS",
-        "name":   "P_OD2_MS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD2_MS",
-        "name":   "A_OD2_MS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD2_S",
-        "name":   "P_OD2_S"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD2_S",
-        "name":   "A_OD2_S"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_OD2_O",
-        "name":   "P_OD2_O"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_OD2_O",
-        "name":   "A_OD2_O"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_NMT_SS",
-        "name":   "P_NMT_SS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_NMT_SS",
-        "name":   "A_NMT_SS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_NMT_MS",
-        "name":   "P_NMT_MS"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_NMT_MS",
-        "name":   "A_NMT_MS"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_NMT_S",
-        "name":   "P_NMT_S"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_NMT_S",
-        "name":   "A_NMT_S"
-      },
-      {
-        "format": "%.2f",
-        "key":    "P_NMT_O",
-        "name":   "P_NMT_O"
-      },
-      {
-        "format": "%.3f",
-        "key":    "A_NMT_O",
-        "name":   "A_NMT_O"
+        "key":    "A_NMT",
+        "name":   "Machine Translation accuracy<br>(WMT'16 En-De - BLEU)"
       }
     ]
   },
   "desc": "Raw data (JSON) access for MLPerf Inference visualization widget",
   "prefilter_config": {
-    "image-classification-single-stream": {},
-    "object-detection-single-stream": {}
+    "image_classification_single_stream": {
+      "score_columns": [
+        "P_IC1_SS",
+	"A_IC1_SS"
+      ]
+    },
+    "image_classification_multi_stream": {
+      "score_columns": [
+        "P_IC1_MS",
+	"A_IC1_MS"
+      ]
+    },
+    "image_classification_server": {
+      "score_columns": [
+        "P_IC1_S",
+	"A_IC1_S"
+      ]
+    },
+    "image_classification_offline": {
+      "score_columns": [
+        "P_IC1_O",
+	"A_IC1_O"
+      ]
+    },
+    "object_detection_single_stream": {
+      "score_columns": [
+        "P_OD1_SS",
+	"A_OD1_SS"
+      ]
+    },
+    "object_detection_multi_stream": {
+      "score_columns": [
+        "P_OD1_MS",
+	"A_OD1_MS"
+      ]
+    },
+    "object_detection_server": {
+      "score_columns": [
+        "P_OD1_S",
+	"A_OD1_S"
+      ]
+    },
+    "object_detection_offline": {
+      "score_columns": [
+        "P_OD1_O",
+	"A_OD1_O"
+      ]
+    },
+    "machine_translation_single_stream": {
+      "score_columns": [
+        "P_NMT_SS",
+	"A_NMT_SS"
+      ]
+    },
+    "machine_translation_multi_stream": {
+      "score_columns": [
+        "P_NMT_MS",
+	"A_NMT_MS"
+      ]
+    },
+    "machine_translation_server": {
+      "score_columns": [
+        "P_NMT_S",
+	"A_NMT_S"
+      ]
+    },
+    "machine_translation_offline": {
+      "score_columns": [
+        "P_NMT_O",
+	"A_NMT_O"
+      ]
+    }
   }
 }
