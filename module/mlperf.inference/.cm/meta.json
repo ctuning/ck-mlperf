@@ -281,13 +281,13 @@
   },
   "desc": "Raw data (JSON) access for MLPerf Inference visualization widget",
   "prefilter_config": {
-    "image_classification_single_stream": {
+    "image_classification_singlestream": {
       "score_columns": [
         "P_IC1_SS",
 	"A_IC1_SS"
       ]
     },
-    "image_classification_multi_stream": {
+    "image_classification_multistream": {
       "score_columns": [
         "P_IC1_MS",
 	"A_IC1_MS"
@@ -305,13 +305,13 @@
 	"A_IC1_O"
       ]
     },
-    "object_detection_single_stream": {
+    "object_detection_singlestream": {
       "score_columns": [
         "P_OD1_SS",
 	"A_OD1_SS"
       ]
     },
-    "object_detection_multi_stream": {
+    "object_detection_multistream": {
       "score_columns": [
         "P_OD1_MS",
 	"A_OD1_MS"
@@ -329,13 +329,13 @@
 	"A_OD1_O"
       ]
     },
-    "machine_translation_single_stream": {
+    "machine_translation_singlestream": {
       "score_columns": [
         "P_NMT_SS",
 	"A_NMT_SS"
       ]
     },
-    "machine_translation_multi_stream": {
+    "machine_translation_multistream": {
       "score_columns": [
         "P_NMT_MS",
 	"A_NMT_MS"

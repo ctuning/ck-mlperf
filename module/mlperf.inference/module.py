@@ -59,7 +59,7 @@ def get_raw_data(i):
               (error)      - error text if return > 0
             }
     """
-    prefilter_mode = i.get('prefilter_mode', 'image_classification_single_stream')
+    prefilter_mode = i.get('prefilter_mode', 'image_classification_singlestream')
     prefilter_config = cfg['prefilter_config'][prefilter_mode]
 
     def get_experimental_results_from_cache(cache_path=None):
