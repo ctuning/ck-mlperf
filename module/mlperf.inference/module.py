@@ -127,7 +127,7 @@ def get_raw_data(i):
             'Processor #',
             'Accelerator',
             'Accelerator #',
-            'Software',
+#            'Software',
             'FF_M',
             'FF_E',
             'FF_D',
@@ -138,9 +138,7 @@ def get_raw_data(i):
         ]
         for prop in props:
             row[prop] = to_value(record.get(prop, ''))
-
-#        note = record.get('Notes')
-#        row['Notes'] = { 'title': 'Note', 'cmd': note if (type(note) is str) else ' ' }
+        row['Software'] = { 'title': 'Software', 'cmd':  record.get('Software', '') }
 
         for score in prefilter_config['score_columns']:
             score_no_scenario = score[0:5] # e.g. A_NMT

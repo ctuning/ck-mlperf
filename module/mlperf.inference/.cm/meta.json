@@ -120,12 +120,12 @@
         "name": "Scenario"
       },
       {
-        "key":  "Division",
-        "name": "Division"
-      },
-      {
         "key":  "Category",
         "name": "Category"
+      },
+      {
+        "key":  "Division",
+        "name": "Division"
       },
       {
         "key":  "Submitter",
