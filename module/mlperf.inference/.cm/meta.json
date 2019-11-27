@@ -168,10 +168,6 @@
     ],
     "table_view": [
       {
-        "key":    "ID",
-        "name":   "ID"
-      },
-      {
         "key":    "Division",
         "name":   "Division"
       },
