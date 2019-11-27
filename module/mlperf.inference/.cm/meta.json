@@ -37,6 +37,26 @@
         "view_key": "System"
       },
       {
+        "key":      "Processor",
+        "name":     "Processor",
+        "view_key": "Processor"
+      },
+      {
+        "key":      "Processor #",
+        "name":     "Processor #",
+        "view_key": "Processor #"
+      },
+      {
+        "key":      "Accelerator",
+        "name":     "Accelerator",
+        "view_key": "Accelerator"
+      },
+      {
+        "key":      "Accelerator #",
+        "name":     "Accelerator #",
+        "view_key": "Accelerator #"
+      },
+      {
         "key":      "Task",
         "name":     "Task",
         "view_key": "Task"
@@ -88,7 +108,8 @@
         "view_key": "A_NMT"
       }
     ],
-    "selector": [],
+    "selector": [
+    ],
     "selector2": [
       {
         "key":  "Task",
