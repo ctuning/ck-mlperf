@@ -12,7 +12,7 @@ scenario_tag="SingleStream"
 implementation_tflite="image-classification-tflite-loadgen"
 implementation_armnn="image-classification-armnn-tflite-loadgen"
 implementation_armnn_no_loadgen="image-classification-armnn-tflite"
-implementation="${implementation_armnn}"
+implementation="${implementation_tflite}"
 # ArmNN backends.
 implementation_armnn_backend_ref="ref"
 implementation_armnn_backend_neon="neon"
@@ -108,7 +108,7 @@ for i in $(seq 1 ${#models[@]}); do
     mode=${modes[${j}-1]}
     mode_tag=${modes_tags[${j}-1]}
     if [ "${mode}" = "accuracy" ]; then
-      dataset_size=50000
+      dataset_size=500
       buffer_size=500
       verbose=2
     else
