@@ -195,8 +195,6 @@ def issue_queries(query_samples):
         print("issue_queries( {} )".format(printable_query))
     print('Q'+(str(len(query_samples)) if len(query_samples)>1 else ''), end='')
 
-    response = []
-    response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
     for j in range(0, len(query_samples), BATCH_SIZE):
         batch = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
         batch_image_map = {}
@@ -209,6 +207,8 @@ def issue_queries(query_samples):
         if VERBOSITY_LEVEL:
             print("predicted_batch_results = {}".format(predicted_batch_results))
 
+        response = []
+        response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
         for qs in batch:
             query_index, query_id = qs.index, qs.id
 
@@ -216,8 +216,8 @@ def issue_queries(query_samples):
             response_array_refs.append(response_array)
             bi = response_array.buffer_info()
             response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
-    lg.QuerySamplesComplete(response)
-    print('R{}'.format(len(response)), end='')
+        lg.QuerySamplesComplete(response)
+        print('R{}'.format(len(response)), end='')
     sys.stdout.flush()
 
 
