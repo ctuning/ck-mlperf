@@ -3,6 +3,7 @@
 import array
 import numpy as np
 import os
+import sys
 
 import tensorrt as trt
 import pycuda.driver as cuda
@@ -216,6 +217,8 @@ def issue_queries(query_samples):
             bi = response_array.buffer_info()
             response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
     lg.QuerySamplesComplete(response)
+    print('R{}'.format(len(response)), end='')
+    sys.stdout.flush()
 
 
 def flush_queries():
