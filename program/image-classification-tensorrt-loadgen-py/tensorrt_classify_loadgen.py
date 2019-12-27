@@ -66,6 +66,10 @@ def load_labels(labels_filepath):
     return my_labels
 
 
+def tick(letter, quantity=1):
+    print(letter + (str(quantity) if quantity>1 else ''), end='')
+
+
 # Currently loaded preprocessed images are stored in a dictionary:
 preprocessed_image_buffer = {}
 
@@ -75,7 +79,7 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
     print("load_query_samples({})".format(sample_indices))
 
-    print('B', end='')
+    tick('B', len(sample_indices))
 
     for sample_index in sample_indices:
         img_filename = image_path_list[sample_index]
@@ -101,14 +105,15 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
         nhwc_img = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
 
         preprocessed_image_buffer[sample_index] = np.array(nhwc_img).ravel().astype(np.float32)
-        print('l', end='')
+        tick('l')
     print('')
 
 
 def unload_query_samples(sample_indices):
     #print("unload_query_samples({})".format(sample_indices))
     preprocessed_image_buffer = {}
-    print('U')
+    tick('U')
+    print('')
 
 
 def initialize_predictor():
@@ -193,7 +198,7 @@ def issue_queries(query_samples):
     printable_query = [(qs.index, qs.id) for qs in query_samples]
     if VERBOSITY_LEVEL:
         print("issue_queries( {} )".format(printable_query))
-    print('Q'+(str(len(query_samples)) if len(query_samples)>1 else ''), end='')
+    tick('Q', len(query_samples))
 
     for j in range(0, len(query_samples), BATCH_SIZE):
         batch = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
@@ -203,7 +208,7 @@ def issue_queries(query_samples):
             batch_image_map[query_index] = preprocessed_image_buffer[query_index]
 
         predicted_batch_results = predict_labels_for_batch(batch_image_map)
-        print('p'+(str(len(batch)) if BATCH_SIZE>1 else ''), end='')
+        tick('p', len(batch))
         if VERBOSITY_LEVEL:
             print("predicted_batch_results = {}".format(predicted_batch_results))
 
@@ -217,7 +222,7 @@ def issue_queries(query_samples):
             bi = response_array.buffer_info()
             response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
         lg.QuerySamplesComplete(response)
-        print('R{}'.format(len(response)), end='')
+        #tick('R', len(response))
     sys.stdout.flush()
 
 
