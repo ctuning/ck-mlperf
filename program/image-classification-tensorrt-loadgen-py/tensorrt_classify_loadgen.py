@@ -25,11 +25,12 @@ BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
 ## Model properties:
 #
-
 MODEL_PATH              = os.environ['CK_ENV_TENSORRT_MODEL_FILENAME']
 MODEL_DATA_LAYOUT       = os.getenv('ML_MODEL_DATA_LAYOUT', 'NCHW')
 LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 MODEL_COLOURS_BGR       = os.getenv('ML_MODEL_COLOUR_CHANNELS_BGR', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
+MODEL_SOFTMAX_LAYER     = os.getenv('CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME', os.getenv('CK_ENV_TENSORFLOW_MODEL_OUTPUT_LAYER_NAME', ''))
+
 
 ## Image normalization:
 #
@@ -117,16 +118,16 @@ def unload_query_samples(sample_indices):
 
 
 def initialize_predictor():
-    global default_context
-    global h_input, h_output, d_input, d_output, cuda_stream
+    global pycuda_context
+    global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
     global num_labels
-    global execution_context
+    global trt_context
     global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
     global BATCH_SIZE
     global max_batch_size
 
     # Load the TensorRT model from file
-    default_context = pycuda.tools.make_default_context()
+    pycuda_context = pycuda.tools.make_default_context()
 
     TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
     try:
@@ -135,47 +136,62 @@ def initialize_predictor():
             trt_engine = runtime.deserialize_cuda_engine(serialized_engine)
             print('[TRT] successfully loaded')
     except:
-        print('[TRT] file {} is not found or corrupted'.format(MODEL_PATH))
-        raise
+        pycuda_context.pop()
+        raise RuntimeError('TensorRT model file {} is not found or corrupted'.format(MODEL_PATH))
 
-    model_input_shape   = trt_engine.get_binding_shape(0)
-    model_output_shape  = trt_engine.get_binding_shape(1)
     max_batch_size      = trt_engine.max_batch_size
 
     if BATCH_SIZE>max_batch_size:
-        default_context.pop()
+        pycuda_context.pop()
         raise RuntimeError("Desired batch_size ({}) exceeds max_batch_size of the model ({})".format(BATCH_SIZE,max_batch_size))
 
-    IMAGE_DATATYPE      = np.float32
-    h_input             = cuda.pagelocked_empty(max_batch_size*trt.volume(model_input_shape), dtype=IMAGE_DATATYPE)
-    h_output            = cuda.pagelocked_empty(max_batch_size*trt.volume(model_output_shape), dtype=IMAGE_DATATYPE)
-    print('Allocated device memory buffers: input_size={} output_size={}'.format(h_input.nbytes, h_output.nbytes))
-    d_input             = cuda.mem_alloc(h_input.nbytes)
-    d_output            = cuda.mem_alloc(h_output.nbytes)
-    cuda_stream         = cuda.Stream()
+    d_inputs, h_d_outputs, model_bindings = [], [], []
+    for interface_layer in trt_engine:
+        dtype   = trt_engine.get_binding_dtype(interface_layer)
+        shape   = trt_engine.get_binding_shape(interface_layer)
+        size    = trt.volume(shape) * max_batch_size
 
-    num_labels          = len(load_labels(LABELS_PATH))
+        dev_mem = cuda.mem_alloc(size * dtype.itemsize)
+        model_bindings.append( int(dev_mem) )
+
+        if trt_engine.binding_is_input(interface_layer):
+            interface_type = 'Input'
+            d_inputs.append(dev_mem)
+            model_input_shape   = shape
+        else:
+            interface_type = 'Output'
+            host_mem    = cuda.pagelocked_empty(size, trt.nptype(dtype))
+            h_d_outputs.append({ 'host_mem': host_mem, 'dev_mem': dev_mem })
+            if MODEL_SOFTMAX_LAYER=='' or interface_layer == MODEL_SOFTMAX_LAYER:
+                model_output_shape  = shape
+                h_output            = host_mem
+
+        print("{} layer {}: dtype={}, shape={}, elements_per_max_batch={}".format(interface_type, interface_layer, dtype, shape, size))
+
+    cuda_stream = cuda.Stream()
+    num_labels  = len(load_labels(LABELS_PATH))
 
     if MODEL_DATA_LAYOUT == 'NHWC':
         (MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS) = model_input_shape
     else:
         (MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH) = model_input_shape
 
-    execution_context   = trt_engine.create_execution_context()
+    trt_context   = trt_engine.create_execution_context()
 
 
 def predict_labels_for_batch(batch_data):
-    global h_output, d_input, d_output, cuda_stream
+    global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
     global num_labels
-    global execution_context
+    global trt_context
     global max_batch_size
 
     batch_size          = len(batch_data)
     flat_float_batch    = np.ravel(batch_data)
 
-    cuda.memcpy_htod_async(d_input, flat_float_batch, cuda_stream)
-    execution_context.execute_async(bindings=[int(d_input), int(d_output)], batch_size=batch_size, stream_handle=cuda_stream.handle)
-    cuda.memcpy_dtoh_async(h_output, d_output, cuda_stream)
+    cuda.memcpy_htod_async(d_inputs[0], flat_float_batch, cuda_stream)  # assuming one input layer for image classification
+    trt_context.execute_async(bindings=model_bindings, batch_size=batch_size, stream_handle=cuda_stream.handle)
+    for output in h_d_outputs:
+        cuda.memcpy_dtoh_async(output['host_mem'], output['dev_mem'], cuda_stream)
     cuda_stream.synchronize()
 
     softmax_matrix          = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
@@ -200,7 +216,7 @@ def issue_queries(query_samples):
         batch_predicted_labels = predict_labels_for_batch(batch_data)
         tick('p', len(batch))
         if VERBOSITY_LEVEL:
-            print("predicted_batch_results = {}".format(predicted_batch_results))
+            print("predicted_batch_results = {}".format(batch_predicted_labels))
 
         response = []
         response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
@@ -243,7 +259,7 @@ def process_latencies(latencies_ns):
 def benchmark_using_loadgen():
     "Perform the benchmark using python API for the LoadGen library"
 
-    global default_context
+    global pycuda_context
     initialize_predictor()
 
     scenario = {
@@ -277,7 +293,7 @@ def benchmark_using_loadgen():
 
     lg.DestroyQSL(qsl)
     lg.DestroySUT(sut)
-    default_context.pop()
+    pycuda_context.pop()
 
 
 benchmark_using_loadgen()
