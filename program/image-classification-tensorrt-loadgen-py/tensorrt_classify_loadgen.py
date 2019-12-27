@@ -119,7 +119,7 @@ def unload_query_samples(sample_indices):
 def initialize_predictor():
     global default_context
     global h_input, h_output, d_input, d_output, cuda_stream
-    global bg_class_offset
+    global num_labels
     global execution_context
     global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
     global BATCH_SIZE
@@ -154,9 +154,7 @@ def initialize_predictor():
     d_output            = cuda.mem_alloc(h_output.nbytes)
     cuda_stream         = cuda.Stream()
 
-    model_classes       = model_output_shape[0]
-    labels              = load_labels(LABELS_PATH)
-    bg_class_offset     = model_classes-len(labels)  # 1 means the labels represent classes 1..1000 and the background class 0 has to be skipped
+    num_labels          = len(load_labels(LABELS_PATH))
 
     if MODEL_DATA_LAYOUT == 'NHWC':
         (MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS) = model_input_shape
@@ -166,61 +164,52 @@ def initialize_predictor():
     execution_context   = trt_engine.create_execution_context()
 
 
-def predict_labels_for_batch(batch_image_map):
-    global default_context
-    global h_input, h_output, d_input, d_output, cuda_stream
-    global bg_class_offset
+def predict_labels_for_batch(batch_data):
+    global h_output, d_input, d_output, cuda_stream
+    global num_labels
     global execution_context
     global max_batch_size
 
-    items_this_batch    = len(batch_image_map)
-    query_indices       = list(batch_image_map.keys())
-    h_input             = np.ravel(list(batch_image_map.values()))
+    batch_size          = len(batch_data)
+    flat_float_batch    = np.ravel(batch_data)
 
-    cuda.memcpy_htod_async(d_input, h_input, cuda_stream)
-    execution_context.execute_async(bindings=[int(d_input), int(d_output)], batch_size=items_this_batch, stream_handle=cuda_stream.handle)
+    cuda.memcpy_htod_async(d_input, flat_float_batch, cuda_stream)
+    execution_context.execute_async(bindings=[int(d_input), int(d_output)], batch_size=batch_size, stream_handle=cuda_stream.handle)
     cuda.memcpy_dtoh_async(h_output, d_output, cuda_stream)
     cuda_stream.synchronize()
 
-    softmax_matrix      = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
-    batch_argmax_map    = {}
-    for k in range(items_this_batch):
-        softmax_vector = softmax_matrix[k][bg_class_offset:]
-        batch_argmax_map[query_indices[k]] = np.argmax(softmax_vector)
+    softmax_matrix          = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
+    batch_predicted_labels  = [ np.argmax(softmax_matrix[k][-num_labels:]) for k in range(batch_size) ]
 
-    return batch_argmax_map
+    return batch_predicted_labels
 
 
 def issue_queries(query_samples):
 
     global BATCH_SIZE
 
-    printable_query = [(qs.index, qs.id) for qs in query_samples]
     if VERBOSITY_LEVEL:
+        printable_query = [(qs.index, qs.id) for qs in query_samples]
         print("issue_queries( {} )".format(printable_query))
     tick('Q', len(query_samples))
 
     for j in range(0, len(query_samples), BATCH_SIZE):
-        batch = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
-        batch_image_map = {}
-        for qs in batch:
-            query_index, query_id = qs.index, qs.id
-            batch_image_map[query_index] = preprocessed_image_buffer[query_index]
+        batch       = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
+        batch_data  = [ preprocessed_image_buffer[qs.index] for qs in batch ]
 
-        predicted_batch_results = predict_labels_for_batch(batch_image_map)
+        batch_predicted_labels = predict_labels_for_batch(batch_data)
         tick('p', len(batch))
         if VERBOSITY_LEVEL:
             print("predicted_batch_results = {}".format(predicted_batch_results))
 
         response = []
         response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
-        for qs in batch:
-            query_index, query_id = qs.index, qs.id
+        for qs, predicted_label in zip(batch, batch_predicted_labels):
 
-            response_array = array.array("B", np.array(predicted_batch_results[query_index], np.float32).tobytes())
+            response_array = array.array("B", np.array(predicted_label, np.float32).tobytes())
             response_array_refs.append(response_array)
             bi = response_array.buffer_info()
-            response.append(lg.QuerySampleResponse(query_id, bi[0], bi[1]))
+            response.append(lg.QuerySampleResponse(qs.id, bi[0], bi[1]))
         lg.QuerySamplesComplete(response)
         #tick('R', len(response))
     sys.stdout.flush()
