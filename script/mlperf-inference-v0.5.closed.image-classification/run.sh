@@ -108,7 +108,7 @@ for i in $(seq 1 ${#models[@]}); do
     mode=${modes[${j}-1]}
     mode_tag=${modes_tags[${j}-1]}
     if [ "${mode}" = "accuracy" ]; then
-      dataset_size=500
+      dataset_size=50000
       buffer_size=500
       verbose=2
     else
