@@ -38,8 +38,9 @@
     }
   },
   "run_vars": {
-    "CK_VAR1": 123,
-    "CK_VAR2": 666
+    "CK_MLPERF_SUBMISSION_REPO": "",
+    "CK_MLPERF_SUBMISSION_ROOT": "/home/anton/projects/mlperf/inference_results_v0.5_dividiti",
+    "CK_MLPERF_SUBMISSION_SUBMITTER": "dividiti"
   },
   "tags": [
     "program",

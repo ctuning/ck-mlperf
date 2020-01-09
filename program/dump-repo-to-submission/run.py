@@ -91,7 +91,6 @@ def display_in_full(df):
 
 import matplotlib.pyplot as plt
 from matplotlib import cm
-#get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[ ]:
@@ -1372,15 +1371,11 @@ repos_object_detection_open = [
 
 upstream_path=os.environ.get('CK_ENV_MLPERF_INFERENCE','')
 
-
 # In[ ]:
 
+root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 
 def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', submitter='dividiti', path=None, audit=False):
-    if not path:
-        path_list = get_ipython().getoutput('ck find repo:$repo_uoa')
-        path = path_list[0]
-    root_dir = os.path.join(path, 'submissions_inference_0_5')
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
     
@@ -1803,11 +1798,10 @@ submitter = 'dividiti'
 
 # In[ ]:
 
-
-# # repos = repos_image_classification_closed + repos_image_classification_open + repos_object_detection_open
-# repos = [ 'mlperf.open.image-classification.firefly.tflite-v1.15.mobilenet-v1-quantized' ]
-# for repo_uoa in repos:
-#     check_experimental_results(repo_uoa, path=path, submitter=submitter, audit=False)
+repo = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
+repos = [ repo ] if repo != '' else []
+for repo_uoa in repos:
+    check_experimental_results(repo_uoa, path=path, submitter=submitter, audit=False)
 
 
 # ### Extract audit repos
@@ -1831,7 +1825,6 @@ submission_checker_py = os.path.join(upstream_path, 'v0.5', 'tools', 'submission
 # The checker has a weird bug. When submitting to open, 'closed/<organization>/results' must exist on disk.
 # Vice versa, When submitting to closed, 'open/<organization>/results' must exist on disk. 
 # Therefore, create both directories if they do not exist before invoking the checker.
-root_dir = os.path.join(path, 'submissions_inference_0_5')
 open_org_results_dir = os.path.join(root_dir, 'open', submitter, 'results')
 closed_org_results_dir = os.path.join(root_dir, 'closed', submitter, 'results')
 get_ipython().system('mkdir -p $open_org_results_dir')
