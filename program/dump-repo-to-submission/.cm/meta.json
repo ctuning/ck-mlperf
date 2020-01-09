@@ -1,0 +1,48 @@
+{
+  "backup_data_uid": "3db416d9cce4ba90",
+  "build_compiler_vars": {},
+  "compile_deps": {
+    "python": {
+      "local": "yes",
+      "name": "Python",
+      "tags": "compiler,lang-python"
+    }
+  },
+  "data_name": "dump-repo-to-submission",
+  "main_language": "python",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "print_files_after_run": [
+    "stderr.log",
+    "stdout.log"
+  ],
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "run_cmd_main": "$<<CK_PYTHON_IPYTHON_BIN_FULL>>$ ..$#dir_sep#$run.py",
+        "run_cmd_out1": "stdout.log",
+        "run_cmd_out2": "stderr.log",
+        "run_output_files": [
+          "stdout.log",
+          "stderr.log"
+        ]
+      }
+    }
+  },
+  "run_vars": {
+    "CK_VAR1": 123,
+    "CK_VAR2": 666
+  },
+  "tags": [
+    "program",
+    "lang-python",
+    "mlperf-inference-submission",
+    "mlperf-inference",
+    "mlperf",
+    "inference",
+    "submission"
+  ]
+}
