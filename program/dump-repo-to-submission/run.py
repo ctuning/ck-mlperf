@@ -437,6 +437,8 @@ for division in divisions:
             libraries = [ 'tensorflow-v1.14' ]
         elif platform == 'mate10pro':
             libraries = [ 'tflite-v1.13', 'armnn-v19.08' ]
+        elif platform == 'rpi4':
+            libraries = [ 'tflite-v1.15.0', 'tflite-v1.15', 'armnn-v19.08' ]
         else:
             libraries = [ 'tflite-v1.15', 'armnn-v19.08' ]
         for library in libraries:
@@ -458,6 +460,7 @@ for division in divisions:
                     'armnn-v19.08-neon' : 'ArmNN v19.08 (Neon)',
                     'tflite-v1.13': 'TFLite v1.13.1',
                     'tflite-v1.15': 'TFLite v1.15.0-rc2',
+                    'tflite-v1.15.0': 'TFLite v1.15.0',
                     'tensorflow-v1.14-cpu': 'TensorFlow v1.14 (CPU)',
                     'tensorflow-v1.14-cuda': 'TensorFlow v1.14 (CUDA)',
                     'tensorflow-v1.14-tensorrt': 'TensorFlow v1.14 (TensorRT-static)',
