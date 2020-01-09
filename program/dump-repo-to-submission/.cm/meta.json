@@ -6,6 +6,11 @@
       "local": "yes",
       "name": "Python",
       "tags": "compiler,lang-python"
+    },
+    "mlperf-inference-source": {
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "tags": "mlperf,inference,source,upstream.master"
     }
   },
   "data_name": "dump-repo-to-submission",

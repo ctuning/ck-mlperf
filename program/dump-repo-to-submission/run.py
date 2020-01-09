@@ -1370,17 +1370,7 @@ repos_object_detection_open = [
 
 # In[ ]:
 
-
-# Locate upstream master.
-# r = ck.access({'action':'locate', 'module_uoa':'env', 'tags':'mlperf,inference,source,upstream.master'})
-# Locate variation with audit test fixes.
-r = ck.access({'action':'locate', 'module_uoa':'env', 'tags':'mlperf,inference,source,upstream.pr518'})
-if r['return']>0:
-    print('Error: %s' % r['error'])
-    exit(1)
-# Pick any source location and look under 'inference/v0.5/mlperf.conf'.
-upstream_path = os.path.join(list(r['install_locations'].values())[0], 'inference')
-upstream_path
+upstream_path=os.environ.get('CK_ENV_MLPERF_INFERENCE','')
 
 
 # In[ ]:
