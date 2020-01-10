@@ -1,0 +1,54 @@
+{
+  "backup_data_uid": "41802fe04ec7fc80",
+  "build_compiler_vars": {},
+  "compile_deps": {
+    "mlperf-inference-source": {
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "tags": "mlperf,inference,source,upstream.master"
+    },
+    "python": {
+      "local": "yes",
+      "name": "Python",
+      "tags": "compiler,lang-python"
+    }
+  },
+  "data_name": "dump-submissions-to-dashboard",
+  "main_language": "python",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "print_files_after_run": [
+    "stderr.log",
+    "stdout.log"
+  ],
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "run_cmd_main": "$<<CK_PYTHON_IPYTHON_BIN_FULL>>$ ..$#dir_sep#$run.py",
+        "run_cmd_out1": "stdout.log",
+        "run_cmd_out2": "stderr.log",
+        "run_output_files": [
+          "stdout.log",
+          "stderr.log"
+        ]
+      }
+    }
+  },
+  "run_vars": {
+    "CK_MLPERF_SUBMISSION_ROOT": "$HOME/projects/mlperf/inference_results_v0.5_dividiti",
+    "CK_MLPERF_DASHBOARD_FILE": "mlperf-inference-v0.5-results.zip",
+    "CK_MLPERF_DASHBOARD_DIR": ""
+  },
+  "tags": [
+    "program",
+    "lang-python",
+    "mlperf-inference-dashboard",
+    "mlperf-inference",
+    "mlperf",
+    "inference",
+    "dashboard"
+  ]
+}
