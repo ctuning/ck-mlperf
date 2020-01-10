@@ -466,11 +466,17 @@ for division in divisions:
                     'tensorflow-v1.14-tensorrt': 'TensorFlow v1.14 (TensorRT-static)',
                     'tensorflow-v1.14-tensorrt-dynamic': 'TensorFlow v1.14 (TensorRT-dynamic)',
                 }
+                if library_backend == 'tensorflow-v1.14-cpu':
+                    status = 'RDI'
+                elif library_backend == 'tflite-v1.15.0':
+                    status = 'unofficial'
+                else:
+                    status = 'available'
                 template = deepcopy(platform_templates[platform])
                 template.update({
                     'division'  : division,
                     'submitter' : 'dividiti', # 'dividiti' if platform != 'velociti' else 'dividiti, Politecnico di Milano'
-                    'status'    : 'available' if library_backend != 'tensorflow-v1.14-cpu' else 'RDI',
+                    'status'    : status,
                     'framework' : frameworks[library_backend]
                 })
                 if (not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl'))                 or library_backend.endswith('cpu'):
