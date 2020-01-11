@@ -62,9 +62,9 @@ def get_raw_data(i):
     prefilter_mode = i.get('prefilter_mode', 'image_classification_singlestream')
     prefilter_config = cfg['prefilter_config'][prefilter_mode]
 
-    def get_experimental_results_from_cache(cache_path=None):
-        if cache_path is None:
-            # We cache the results table as a zip file in this module's directory.
+    def get_experimental_results_from_cache(cache_dir=None, cache_file=None):
+        if cache_dir is None:
+            # Check this module's directory.
             cache_repo_uoa    = 'ck-mlperf'
             cache_module_uoa  = 'module'
             cache_data_uoa    = 'mlperf.inference'
@@ -73,16 +73,27 @@ def get_raw_data(i):
             if r['return']>0:
                 ck.out('Error: %s' % r['error'])
                 exit(1)
-            cache_name        = 'mlperf-inference-v0.5-results.zip'
-            cache_path        = os.path.join(r['path'], cache_name)
-            cache_compression = 'zip'
-            cache_protocol    = 2 # Supported since Python 2.3
+            cache_dir = r['path']
 
-        if os.path.exists(cache_path):
-            # Load the table from cache.
-            ck.out("Loading the results table from cache at '%s' ..." % cache_path)
-            df = pd.read_pickle(cache_path)
+        if os.path.exists(cache_dir):
+            ck.out("Loading the results table(s) from cache at '%s' ..." % cache_dir)
+            if cache_file is None:
+                # Check all zip files in the cache directory.
+                dfs = []
+                for cache_file in os.listdir(cache_dir):
+                    if cache_file.endswith(".zip"):
+                        ck.out("- '%s'" % cache_file)
+                        cache_path = os.path.join(cache_dir, cache_file)
+                        df = pd.read_pickle(cache_path)
+                        df['Cache'] = cache_file
+                        df.set_index('Cache', drop=True, append=True, inplace=True)
+                        dfs.append(df)
+                df = pd.concat(dfs)
+            else:
+                cache_path = os.path.join(cache_dir, cache_file)
+                df = pd.read_pickle(cache_path)
         else:
+            ck.out("No cache at '%s' ..." % cache_dir)
             df = pd.DataFrame()
         return df
 
@@ -107,8 +118,11 @@ def get_raw_data(i):
 
         return i
 
-    df = get_experimental_results_from_cache()
-    df = df.set_index('ID', drop=True)
+    # Only the official v0.5 results which are cached in this module's directory.
+#    df = get_experimental_results_from_cache(cache_file='mlperf-inference-v0.5-results.zip')
+#    df = df.set_index('ID', drop=True)
+    # All the results in this module's directory.
+    df = get_experimental_results_from_cache(cache_file=None)
     
     debug_output = i.get('out')=='con'
     table = []
