@@ -95,8 +95,7 @@ for implementation in ${implementations[@]}; do
     models_preprocessing_tags=()
     # MobileNet-v1.
     version=1
-    #resolutions=( 224 192 160 128 )
-    resolutions=( 224 )
+    resolutions=( 224 192 160 128 )
     multipliers=( 1.0 0.75 0.5 0.25 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -112,8 +111,7 @@ for implementation in ${implementations[@]}; do
     done
     # MobileNet-v2.
     version=2
-    #resolutions=( 224 192 160 128 96 )
-    resolutions=( 224 )
+    resolutions=( 224 192 160 128 96 )
     multipliers=( 1.0 0.75 0.5 0.35 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -122,8 +120,7 @@ for implementation in ${implementations[@]}; do
         models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
       done
     done
-    #resolutions=( 224 )
-    resolutions=( )
+    resolutions=( 224 )
     multipliers=( 1.4 1.3 )
     for resolution in ${resolutions[@]}; do
       for multiplier in ${multipliers[@]}; do
@@ -187,7 +184,7 @@ for implementation in ${implementations[@]}; do
         fi
 
         # Skip manually.
-        if [ "${implementation}" == "${implementation_tflite}" ] || [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_neon}" ] ; then
+        if [ "${implementation}" == "${implementation_armnn}" ] || [ "${implementation_armnn_backend}" == "${implementation_armnn_backend_neon}" ] ; then
           echo "[`date`] - skipping ..."
           echo
           continue
@@ -225,6 +222,6 @@ END_OF_CMD
     done # for each model
   done # for each implementation backend
 done # for each implementation
-# - 130 experiments on firefly/hikey960: (54 models with tflite + 38 models with armnn-neon + 38 models with armnn-opencl).
-# - 92 experiments on rpi4: (54 models with tflite + 38 models with armnn-neon).
+# - 130 performance/accuracy pairs of experiments on firefly/hikey960: (54 models with tflite + 38 models with armnn-neon + 38 models with armnn-opencl).
+# - 92 performance/accuracy pairs of experiments on rpi4: (54 models with tflite + 38 models with armnn-neon).
 echo "[`date`] Done."
