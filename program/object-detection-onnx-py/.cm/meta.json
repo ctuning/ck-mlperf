@@ -97,7 +97,7 @@
   },
   "tags": [
     "object-detection",
-    "tf",
+    "onnx",
     "lang-python"
   ],
   "template": "yes",
