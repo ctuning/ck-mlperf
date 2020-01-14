@@ -49,6 +49,7 @@
     "nhwc",
     "vcoco",
     "channel-stable",
+    "side.300",
     "downloaded"
   ],
   "use_scripts_from_another_entry": {
