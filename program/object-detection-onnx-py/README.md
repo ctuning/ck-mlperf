@@ -29,7 +29,7 @@ $ ck install package --tags=dataset,object-detection,preprocessed,side.1200
 ## Running
 
 ```bash
-$ ck run object-detection-onnx-py
+$ ck run program:object-detection-onnx-py
 ```
 
 ### Program parameters
