@@ -15,6 +15,7 @@ MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
+NON_MLPERF_SIDELOAD_JSON = 'non-mlperf_sideload.json'
 
 def ck_postprocess(i):
   print('\n--------------------------------')
@@ -91,6 +92,12 @@ def ck_postprocess(i):
   #       ck.out('mAP=%.3f%% (from the results for %s)' % (scenario.get('mAP', 0.0) * 100.0, scenario_key))
 
   # save_dict['execution_time'] = save_dict['execution_time_s']
+
+
+  if os.path.exists(NON_MLPERF_SIDELOAD_JSON):
+    with open(NON_MLPERF_SIDELOAD_JSON, 'r') as sideload_fd:
+      save_dict['sideload'] = json.load(sideload_fd)
+
 
   with open('tmp-ck-timer.json', 'w') as save_file:
     json.dump(save_dict, save_file, indent=2, sort_keys=True)
