@@ -96,7 +96,10 @@ def ck_postprocess(i):
 
   if os.path.exists(NON_MLPERF_SIDELOAD_JSON):
     with open(NON_MLPERF_SIDELOAD_JSON, 'r') as sideload_fd:
-      save_dict['sideload'] = json.load(sideload_fd)
+      sideloaded_data = json.load(sideload_fd)
+  else:
+      sideloaded_data = {}
+  save_dict['sideloaded_data'] = sideloaded_data
 
 
   with open('tmp-ck-timer.json', 'w') as save_file:
