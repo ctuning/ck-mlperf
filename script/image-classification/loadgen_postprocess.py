@@ -15,12 +15,13 @@ MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
-NON_MLPERF_SIDELOAD_JSON = 'non-mlperf_sideload.json'
+
 
 def ck_postprocess(i):
   print('\n--------------------------------')
 
-  env = i['env']
+  env               = i['env']
+  SIDELOAD_JSON     = env.get('CK_LOADGEN_SIDELOAD_JSON', '')
 
   save_dict = {}
 
@@ -94,12 +95,13 @@ def ck_postprocess(i):
   # save_dict['execution_time'] = save_dict['execution_time_s']
 
 
-  if os.path.exists(NON_MLPERF_SIDELOAD_JSON):
-    with open(NON_MLPERF_SIDELOAD_JSON, 'r') as sideload_fd:
-      sideloaded_data = json.load(sideload_fd)
-  else:
-      sideloaded_data = {}
-  save_dict['sideloaded_data'] = sideloaded_data
+  if SIDELOAD_JSON:
+    if os.path.exists(SIDELOAD_JSON):
+      with open(SIDELOAD_JSON, 'r') as sideload_fd:
+        sideloaded_data = json.load(sideload_fd)
+    else:
+        sideloaded_data = {}
+    save_dict['sideloaded_data'] = sideloaded_data
 
 
   with open('tmp-ck-timer.json', 'w') as save_file:
