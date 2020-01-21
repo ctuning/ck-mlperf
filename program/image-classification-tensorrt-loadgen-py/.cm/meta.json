@@ -95,6 +95,8 @@
     "loadgen", 
     "image-classification", 
     "tensorrt",
+    "trt",
+    "standalone",
     "lang-python"
   ]
 }
