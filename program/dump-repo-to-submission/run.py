@@ -62,64 +62,15 @@ from copy import deepcopy
 import IPython as ip
 import pandas as pd
 import numpy as np
-import matplotlib as mp
-import seaborn as sb
-
-
-# In[ ]:
 
 
 print ('IPython version: %s' % ip.__version__)
 print ('Pandas version: %s' % pd.__version__)
 print ('NumPy version: %s' % np.__version__)
-print ('Matplotlib version: %s' % mp.__version__)
-print ('Seaborn version: %s' % sb.__version__)
-
-
-# In[ ]:
-
-
-from IPython.display import Image, display
-def display_in_full(df):
-    pd.options.display.max_columns = len(df.columns)
-    pd.options.display.max_rows = len(df.index)
-    display(df)
-
-
-# In[ ]:
-
-
-import matplotlib.pyplot as plt
-from matplotlib import cm
-
-
-# In[ ]:
-
-
-default_colormap = cm.autumn
-default_fontsize = 16
-default_barwidth = 0.8
-default_figwidth = 24
-default_figheight = 3
-default_figdpi = 200
-default_figsize = [default_figwidth, default_figheight]
-
-
-# In[ ]:
-
-
-if mp.__version__[0]=='2': mp.style.use('classic')
-mp.rcParams['figure.max_open_warning'] = 200
-mp.rcParams['figure.dpi'] = default_figdpi
-mp.rcParams['font.size'] = default_fontsize
-mp.rcParams['legend.fontsize'] = 'medium'
-
-
-# In[ ]:
 
 
 # FIXME: Do not hardcode - locate via CK.
-pythonpath_coco = '/home/anton/CK_TOOLS/tool-coco-master-gcc-8.3.0-compiler.python-3.6.9-linux-64/'
+pythonpath_coco = '/home/anton/CK_TOOLS/tool-coco-master-gcc-8.3.0-compiler.python-3.6.10-linux-64/'
 sys.path.append(pythonpath_coco)
 from pycocotools.coco import COCO
 
