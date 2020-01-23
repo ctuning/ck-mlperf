@@ -69,9 +69,9 @@ print ('Pandas version: %s' % pd.__version__)
 print ('NumPy version: %s' % np.__version__)
 
 
-# FIXME: Do not hardcode - locate via CK.
-pythonpath_coco = '/home/anton/CK_TOOLS/tool-coco-master-gcc-8.3.0-compiler.python-3.6.10-linux-64/'
-sys.path.append(pythonpath_coco)
+# No need to hardcode - automatically gets added to the Python path via the dependency.
+#pythonpath_coco = '/home/anton/CK_TOOLS/tool-coco-master-gcc-8.3.0-compiler.python-3.6.10-linux-64/'
+#sys.path.append(pythonpath_coco)
 from pycocotools.coco import COCO
 
 
