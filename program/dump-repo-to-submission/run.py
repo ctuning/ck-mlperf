@@ -69,11 +69,17 @@ print ('Pandas version: %s' % pd.__version__)
 print ('NumPy version: %s' % np.__version__)
 
 
-# No need to hardcode - automatically gets added to the Python path via the dependency.
-#pythonpath_coco = '/home/anton/CK_TOOLS/tool-coco-master-gcc-8.3.0-compiler.python-3.6.10-linux-64/'
-#sys.path.append(pythonpath_coco)
+# No need to hardcode e.g. as:
+#   sys.path.append('$CK_TOOLS/tool-coco-master-gcc-8.3.0-compiler.python-3.6.10-linux-64/')
+# since it gets added to the Python path automatically via the dependency.
 from pycocotools.coco import COCO
 
+# No need to hardcode e.g. as '$CK_TOOLS/dataset-imagenet-ilsvrc2012-aux/val.txt',
+# since it gets added to the path automatically via the dependency.
+imagenet_val_file = os.environ.get('CK_CAFFE_IMAGENET_VAL_TXT','')
+if imagenet_val_file=='':
+    print('Error: Path to ImageNet labels not defined!')
+    exit(1)
 
 # ### Collective Knowledge
 
@@ -1680,7 +1686,6 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
                 if task == 'image-classification':
                     accuracy_imagenet_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
-                    imagenet_val_file = '$HOME/CK_TOOLS/dataset-imagenet-ilsvrc2012-aux/val.txt' # FIXME: Do not hardcode - locate via CK.
                     accuracy_txt = get_ipython().getoutput('python3 $accuracy_imagenet_py --imagenet-val-file $imagenet_val_file --mlperf-accuracy-file $accuracy_json_path')
                     # The last (and only line) is e.g. "accuracy=76.442%, good=38221, total=50000".
                     accuracy_line = accuracy_txt[-1]
@@ -1689,7 +1694,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 elif task == 'object-detection':
                     accuracy_coco_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-coco.py')
                     coco_dir = '/home/anton/CK_TOOLS/dataset-coco-2017-val' # FIXME: Do not hardcode - locate via CK.
-                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
+#                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
                     accuracy_txt = get_ipython().getoutput('python3 $accuracy_coco_py --coco-dir $coco_dir --mlperf-accuracy-file $accuracy_json_path')
                     # The last line is e.g. "mAP=13.323%".
                     accuracy_line = accuracy_txt[-1]
