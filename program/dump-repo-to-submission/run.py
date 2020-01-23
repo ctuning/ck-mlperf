@@ -74,7 +74,14 @@ print ('NumPy version: %s' % np.__version__)
 # since it gets added to the Python path automatically via the dependency.
 from pycocotools.coco import COCO
 
-# No need to hardcode e.g. as '$CK_TOOLS/dataset-imagenet-ilsvrc2012-aux/val.txt',
+# No need to hardcode (e.g. as '$CK_TOOLS/dataset-coco-2017-val'),
+# since it gets added to the path automatically via the dependency.
+coco_dir = os.environ.get('CK_ENV_DATASET_COCO','')
+if coco_dir=='':
+    print('Error: Path to COCO dataset not defined!')
+    exit(1)
+
+# No need to hardcode (e.g. as '$CK_TOOLS/dataset-imagenet-ilsvrc2012-aux/val.txt'),
 # since it gets added to the path automatically via the dependency.
 imagenet_val_file = os.environ.get('CK_CAFFE_IMAGENET_VAL_TXT','')
 if imagenet_val_file=='':
@@ -1693,7 +1700,6 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     accuracy_pc = float(match.group(1))
                 elif task == 'object-detection':
                     accuracy_coco_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-coco.py')
-                    coco_dir = '/home/anton/CK_TOOLS/dataset-coco-2017-val' # FIXME: Do not hardcode - locate via CK.
 #                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
                     accuracy_txt = get_ipython().getoutput('python3 $accuracy_coco_py --coco-dir $coco_dir --mlperf-accuracy-file $accuracy_json_path')
                     # The last line is e.g. "mAP=13.323%".
