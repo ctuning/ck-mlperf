@@ -1757,23 +1757,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
     return
 
 
-# In[ ]:
-
-
-# The path is where mlperf/submissions_inference_0_5 is cloned under.
-path = '/home/anton/projects/mlperf/'
-submitter = 'dividiti'
-
-
-# ### Extract submission repos
-
-# In[ ]:
-
 repo = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
-    check_experimental_results(repo_uoa, path=path, submitter=submitter, audit=False)
+    check_experimental_results(repo_uoa, audit=False)
 
+submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
 
 # ### Extract audit repos
 
