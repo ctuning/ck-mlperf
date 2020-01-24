@@ -1524,17 +1524,36 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         else:
             raise "Invalid measurements README!"
         
-        # Copy 'user.conf' from implementation source.
-        user_conf_name = 'user.conf'
-        implementation_path = implementation_paths.get(implementation, '')
-#         pprint(implementation)
-#         pprint(implementation_paths)
-        if implementation_path != '':
+        # Try to find environment for 'user.conf'.
+        loadgen_config_tags='loadgen,config,'+implementation
+        lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
+        if lgc['return']>0:
+            print('Error: %s' % lgc['error'])
+            exit(1)
+        envs = lgc['lst']
+        if len(envs) > 1:
+           # Found several environments.
+           print('Error: More than one environment found with tags=\'%s\'' % loadgen_config_tags)
+           exit(1)
+        elif len(envs) == 1:
+            # Found exactly one environment.
+            lgc = ck.access({'action':'load', 'module_uoa':'env', 'data_uoa':envs[0]['data_uoa']})
+            if lgc['return']>0:
+                print('Error: %s' % lgc['error'])
+                exit(1)
+            # CK_ENV_LOADGEN_CONFIG=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf
+            # CK_ENV_LOADGEN_CONFIG_FILE=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf/user.conf
+            user_conf_path=lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG_FILE']
+            user_conf_name=user_conf_path[len(lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG'])+1:]
+        elif len(envs) == 0:
+            # Not found any environments: copy 'user.conf' from implementation source.
+            user_conf_name = 'user.conf'
+            implementation_path = implementation_paths.get(implementation, '')
+            if implementation_path == '':
+                raise "Invalid implementation path!"
             user_conf_path = os.path.join(implementation_path, user_conf_name)
-            copy2(user_conf_path, scenario_dir)
-            print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
-        else:
-            raise "Invalid implementation path!"
+        copy2(user_conf_path, scenario_dir)
+        print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
         
         # Copy 'mlperf.conf' from MLPerf Inference source.
         mlperf_conf_name = 'mlperf.conf'
