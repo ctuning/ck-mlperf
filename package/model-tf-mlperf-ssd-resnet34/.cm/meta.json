@@ -3,15 +3,20 @@
   "customize": {
     "extra_dir": "",
     "install_env": {
+      "ML_MODEL_DATA_LAYOUT": "NCHW",
       "DATASET_TYPE": "coco",
       "DEFAULT_HEIGHT": "1200",
       "DEFAULT_WIDTH": "1200",
       "FROZEN_GRAPH": "resnet34_tf.22.1.pb",
       "LABELMAP_FILE": "mscoco_label_map.pbtxt",
       "MODEL_NAME": "MLPerf SSD-ResNet34",
+
+      "PACKAGE_URL": "https://zenodo.org/record/3345892/files",
       "PACKAGE_NAME": "tf_ssd_resnet34_22.1.zip",
-      "PACKAGE_NAME1": "tf_ssd_resnet34_22.1",
-      "PACKAGE_URL": "https://zenodo.org/record/3345892/files"
+      "PACKAGE_SUB_DIR": "tf_ssd_resnet34_22.1",
+      "PACKAGE_WGET": "YES",
+      "PACKAGE_UNZIP": "YES",
+      "PACKAGE_SKIP_LINUX_MAKE": "YES"
     },
     "no_os_in_suggested_path": "yes",
     "no_ver_in_suggested_path": "yes",
@@ -25,7 +30,7 @@
     }
   },
   "end_full_path": {
-    "linux": "resnet34_tf.22.1.pb"
+    "linux": "tf_ssd_resnet34_22.1/resnet34_tf.22.1.pb"
   },
   "only_for_host_os_tags": [
     "linux"
@@ -53,7 +58,7 @@
     "channel-stable"
   ],
   "use_scripts_from_another_entry": {
-    "data_uoa": "c412930408fb8271",
+    "data_uoa": "download-and-install-package",
     "module_uoa": "script"
   }
 }
