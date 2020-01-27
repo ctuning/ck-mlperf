@@ -41,8 +41,9 @@
   "package_extra_name": " (MLPerf SSD-ResNet34)",
   "process_script": "install",
   "soft_uoa": "3fc0c4b9ba63de2f",
-  "suggested_path": "model-tf-mlperf-ssd-resnet34",
+  "suggested_path": "model-tf-mlperf-ssd-resnet34-downloaded",
   "tags": [
+    "downloaded",
     "model",
     "tensorflow",
     "tf",
