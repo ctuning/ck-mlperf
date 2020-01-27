@@ -1,0 +1,59 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "extra_dir": "",
+    "install_env": {
+      "DATASET_TYPE": "coco",
+      "DEFAULT_HEIGHT": "1200",
+      "DEFAULT_WIDTH": "1200",
+      "FROZEN_GRAPH": "resnet34_tf.22.1.pb",
+      "LABELMAP_FILE": "mscoco_label_map.pbtxt",
+      "MODEL_NAME": "MLPerf SSD-ResNet34",
+      "PACKAGE_NAME": "tf_ssd_resnet34_22.1.zip",
+      "PACKAGE_NAME1": "tf_ssd_resnet34_22.1",
+      "PACKAGE_URL": "https://zenodo.org/record/3345892/files"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "version": "reference"
+  },
+  "deps": {
+    "labelmap": {
+      "local": "yes",
+      "name": "Labelmap for COCO dataset",
+      "tags": "labelmap,vcoco"
+    }
+  },
+  "end_full_path": {
+    "linux": "resnet34_tf.22.1.pb"
+  },
+  "only_for_host_os_tags": [
+    "linux"
+  ],
+  "only_for_target_os_tags": [
+    "linux"
+  ],
+  "package_extra_name": " (MLPerf SSD-ResNet34)",
+  "process_script": "install",
+  "soft_uoa": "3fc0c4b9ba63de2f",
+  "suggested_path": "model-tf-mlperf-ssd-resnet34",
+  "tags": [
+    "model",
+    "tensorflow",
+    "tf",
+    "object-detection",
+    "mlperf",
+    "ssd-resnet",
+    "ssd-resnet34",
+    "ssd",
+    "resnet",
+    "resnet34",
+    "non-quantized",
+    "vcoco",
+    "channel-stable"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "c412930408fb8271",
+    "module_uoa": "script"
+  }
+}
