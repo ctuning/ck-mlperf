@@ -29,7 +29,13 @@ MODEL_PATH              = os.environ['CK_ENV_TENSORRT_MODEL_FILENAME']
 MODEL_DATA_LAYOUT       = os.getenv('ML_MODEL_DATA_LAYOUT', 'NCHW')
 LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
 MODEL_COLOURS_BGR       = os.getenv('ML_MODEL_COLOUR_CHANNELS_BGR', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
+MODEL_DATA_TYPE         = os.getenv('ML_MODEL_DATA_TYPE', 'float32')
 MODEL_SOFTMAX_LAYER     = os.getenv('CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME', os.getenv('CK_ENV_TENSORFLOW_MODEL_OUTPUT_LAYER_NAME', ''))
+
+
+## Internal processing:
+#
+INTERMEDIATE_DATA_TYPE  = np.float32
 
 
 ## Image normalization:
@@ -38,7 +44,7 @@ MODEL_NORMALIZE_DATA    = os.getenv('ML_MODEL_NORMALIZE_DATA') in ('YES', 'yes',
 SUBTRACT_MEAN           = os.getenv('ML_MODEL_SUBTRACT_MEAN', 'YES') in ('YES', 'yes', 'ON', 'on', '1')
 GIVEN_CHANNEL_MEANS     = os.getenv('ML_MODEL_GIVEN_CHANNEL_MEANS', '')
 if GIVEN_CHANNEL_MEANS:
-    GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=np.float32)
+    GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=INTERMEDIATE_DATA_TYPE)
     if MODEL_COLOURS_BGR:
         GIVEN_CHANNEL_MEANS = GIVEN_CHANNEL_MEANS[::-1]     # swapping Red and Blue colour channels
 
@@ -90,7 +96,7 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
             img = img[...,::-1]     # swapping Red and Blue colour channels
 
         if IMAGE_DATA_TYPE != 'float32':
-            img = img.astype(np.float32)
+            img = img.astype(INTERMEDIATE_DATA_TYPE)
 
             # Normalize
             if MODEL_NORMALIZE_DATA:
@@ -101,11 +107,14 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
                 if len(GIVEN_CHANNEL_MEANS):
                     img -= GIVEN_CHANNEL_MEANS
                 else:
-                    img -= np.mean(img)
+                    img -= np.mean(img, axis=(0,1), keepdims=True)
+
+        if MODEL_DATA_TYPE == 'int8':
+            img = np.clip(img, -128, 127)
 
         nhwc_img = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
 
-        preprocessed_image_buffer[sample_index] = np.array(nhwc_img).ravel().astype(np.float32)
+        preprocessed_image_buffer[sample_index] = np.array(nhwc_img).ravel().astype(MODEL_DATA_TYPE)
         tick('l')
     print('')
 
@@ -120,7 +129,7 @@ def unload_query_samples(sample_indices):
 def initialize_predictor():
     global pycuda_context
     global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
-    global num_labels
+    global num_labels, model_classes
     global trt_context
     global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
     global BATCH_SIZE
@@ -168,8 +177,9 @@ def initialize_predictor():
 
         print("{} layer {}: dtype={}, shape={}, elements_per_max_batch={}".format(interface_type, interface_layer, dtype, shape, size))
 
-    cuda_stream = cuda.Stream()
-    num_labels  = len(load_labels(LABELS_PATH))
+    cuda_stream     = cuda.Stream()
+    num_labels      = len(load_labels(LABELS_PATH))
+    model_classes   = trt.volume(model_output_shape)
 
     if MODEL_DATA_LAYOUT == 'NHWC':
         (MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS) = model_input_shape
@@ -181,7 +191,7 @@ def initialize_predictor():
 
 def predict_labels_for_batch(batch_data):
     global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
-    global num_labels
+    global num_labels, model_classes
     global trt_context
     global max_batch_size
 
@@ -194,8 +204,12 @@ def predict_labels_for_batch(batch_data):
         cuda.memcpy_dtoh_async(output['host_mem'], output['dev_mem'], cuda_stream)
     cuda_stream.synchronize()
 
-    softmax_matrix          = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
-    batch_predicted_labels  = [ np.argmax(softmax_matrix[k][-num_labels:]) for k in range(batch_size) ]
+    batch_results           = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
+
+    if model_classes==1:
+        batch_predicted_labels  = batch_results[:batch_size]
+    else:
+        batch_predicted_labels  = [ np.argmax(batch_results[k][-num_labels:]) for k in range(batch_size) ]
 
     return batch_predicted_labels
 
