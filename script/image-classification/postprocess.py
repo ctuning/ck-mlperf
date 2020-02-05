@@ -33,8 +33,8 @@ def ck_postprocess(i):
   CLASSES_LIST = []
   VALUES_MAP = {}
   IMAGE_FILE = my_env('CK_IMAGE_FILE')
-  FULL_REPORT = my_env('CK_SILENT_MODE') != 'YES'
-  NO_LOADGEN = my_env('CK_LOADGEN_SUPPORT') not in ('YES', 'yes', 'ON', 'on', '1', 1)
+  FULL_REPORT = my_env('CK_SILENT_MODE') not in ('TRUE', 'True', 'true', 'YES', 'Yes', 'yes', 'ON', 'On', 'on', '1', 1)
+  NO_LOADGEN = my_env('CK_LOADGEN_SUPPORT') not in ('TRUE', 'True', 'true', 'YES', 'Yes', 'yes', 'ON', 'On', 'on', '1', 1)
 
   # Loads ImageNet classes and correct predictions
   def load_ImageNet_classes():
