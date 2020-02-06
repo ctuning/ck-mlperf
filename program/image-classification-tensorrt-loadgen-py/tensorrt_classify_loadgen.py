@@ -4,6 +4,7 @@ import array
 import numpy as np
 import os
 import sys
+import time
 
 import tensorrt as trt
 import pycuda.driver as cuda
@@ -198,11 +199,17 @@ def predict_labels_for_batch(batch_data):
     batch_size          = len(batch_data)
     flat_float_batch    = np.ravel(batch_data)
 
+    begin_time = time.time()
+
     cuda.memcpy_htod_async(d_inputs[0], flat_float_batch, cuda_stream)  # assuming one input layer for image classification
     trt_context.execute_async(bindings=model_bindings, batch_size=batch_size, stream_handle=cuda_stream.handle)
     for output in h_d_outputs:
         cuda.memcpy_dtoh_async(output['host_mem'], output['dev_mem'], cuda_stream)
     cuda_stream.synchronize()
+
+    classification_time = time.time() - begin_time
+
+    print("[batch of {}] inference={:.2f} ms".format(batch_size, classification_time*1000))
 
     batch_results           = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
 
