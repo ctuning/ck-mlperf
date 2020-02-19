@@ -40,14 +40,19 @@ def ck_postprocess(i):
 
   # get some parameters directly from the deps' environment:
   #
-  MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
-  if MODEL_ROOT:
+  if dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT"):
+    MODEL_ROOT = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_ROOT")
     LABELMAP_FILE       = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_TENSORFLOW_MODEL_LABELMAP_FILE') or "")
     MODEL_DATASET_TYPE  = dep_env('weights', "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE")
-  else:
+
+  elif dep_env('weights', "CK_ENV_ONNX_MODEL_ROOT"):
     MODEL_ROOT          = dep_env('weights', "CK_ENV_ONNX_MODEL_ROOT")
     LABELMAP_FILE       = os.path.join(MODEL_ROOT, dep_env('weights', 'CK_ENV_ONNX_MODEL_CLASSES_LABELS') or "")
     MODEL_DATASET_TYPE  = dep_env('weights', "CK_ENV_ONNX_MODEL_DATASET_TYPE")
+
+  elif dep_env('weights', "CK_ENV_TENSORRT_MODEL_ROOT"):
+    LABELMAP_FILE       = dep_env('weights', 'ML_MODEL_CLASS_LABELS')
+    MODEL_DATASET_TYPE  = 'coco'
 
   # Annotations can be a directory or a single file, depending on dataset type:
   ANNOTATIONS_PATH      = dep_env('dataset', "CK_ENV_DATASET_ANNOTATIONS")
@@ -60,7 +65,7 @@ def ck_postprocess(i):
   RESULTS_OUT_DIR       = my_env('CK_RESULTS_OUT_DIR')
   ANNOTATIONS_OUT_DIR   = my_env('CK_ANNOTATIONS_OUT_DIR')
 
-  DATASET_TYPE          = dep_env('dataset', "CK_ENV_DATASET_TYPE")
+  DATASET_TYPE          = dep_env('dataset', "CK_ENV_DATASET_TYPE") or 'coco'
   METRIC_TYPE           = (my_env("CK_METRIC_TYPE") or DATASET_TYPE).lower()
 
   FULL_REPORT           = not set_in_my_env("CK_SILENT_MODE")
