@@ -37,7 +37,8 @@ MODEL_SOFTMAX_LAYER     = os.getenv('CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME', os.ge
 
 ## Internal processing:
 #
-INTERMEDIATE_DATA_TYPE  = np.float32
+INTERMEDIATE_DATA_TYPE  = np.float32    # default for internal conversion
+#INTERMEDIATE_DATA_TYPE  = np.int8       # affects the accuracy a bit
 
 
 ## Image normalization:
@@ -46,7 +47,7 @@ MODEL_NORMALIZE_DATA    = os.getenv('ML_MODEL_NORMALIZE_DATA') in ('YES', 'yes',
 SUBTRACT_MEAN           = os.getenv('ML_MODEL_SUBTRACT_MEAN', 'YES') in ('YES', 'yes', 'ON', 'on', '1')
 GIVEN_CHANNEL_MEANS     = os.getenv('ML_MODEL_GIVEN_CHANNEL_MEANS', '')
 if GIVEN_CHANNEL_MEANS:
-    GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=INTERMEDIATE_DATA_TYPE)
+    GIVEN_CHANNEL_MEANS = np.fromstring(GIVEN_CHANNEL_MEANS, dtype=np.float32, sep=' ').astype(INTERMEDIATE_DATA_TYPE)
     if MODEL_COLOURS_BGR:
         GIVEN_CHANNEL_MEANS = GIVEN_CHANNEL_MEANS[::-1]     # swapping Red and Blue colour channels
 
@@ -98,7 +99,7 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
             img = img[...,::-1]     # swapping Red and Blue colour channels
 
         if IMAGE_DATA_TYPE != 'float32':
-            img = img.astype(INTERMEDIATE_DATA_TYPE)
+            img = img.astype(np.float32)
 
             # Normalize
             if MODEL_NORMALIZE_DATA:
@@ -111,8 +112,8 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
                 else:
                     img -= np.mean(img, axis=(0,1), keepdims=True)
 
-        if MODEL_INPUT_DATA_TYPE == 'int8':
-            img = np.clip(img, -128, 127)
+        if MODEL_INPUT_DATA_TYPE == 'int8' or INTERMEDIATE_DATA_TYPE==np.int8:
+            img = np.clip(img, -128, 127).astype(INTERMEDIATE_DATA_TYPE)
 
         nhwc_img = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
 
