@@ -33,6 +33,14 @@ LABELS_PATH             = os.environ['ML_MODEL_CLASS_LABELS']
 MODEL_COLOURS_BGR       = os.getenv('ML_MODEL_COLOUR_CHANNELS_BGR', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
 MODEL_INPUT_DATA_TYPE   = os.getenv('ML_MODEL_INPUT_DATA_TYPE', 'float32')
 MODEL_DATA_TYPE         = os.getenv('ML_MODEL_DATA_TYPE', '(unknown)')
+MODEL_MAX_PREDICTIONS   = int(os.getenv('ML_MODEL_MAX_PREDICTIONS', 100))
+MODEL_SKIPPED_CLASSES   = os.getenv("ML_MODEL_SKIPS_ORIGINAL_DATASET_CLASSES", None)
+
+if (MODEL_SKIPPED_CLASSES):
+    SKIPPED_CLASSES = [int(x) for x in MODEL_SKIPPED_CLASSES.split(",")]
+else:
+    SKIPPED_CLASSES = None
+
 
 if MODEL_PLUGIN_PATH:
     import ctypes
@@ -51,12 +59,22 @@ INTERMEDIATE_DATA_TYPE  = np.float32
 ## Image normalization:
 #
 MODEL_NORMALIZE_DATA    = os.getenv('ML_MODEL_NORMALIZE_DATA') in ('YES', 'yes', 'ON', 'on', '1')
+MODEL_NORMALIZE_LOWER   = float(os.getenv('ML_MODEL_NORMALIZE_LOWER', -1.0))
+MODEL_NORMALIZE_UPPER   = float(os.getenv('ML_MODEL_NORMALIZE_UPPER',  1.0))
 SUBTRACT_MEAN           = os.getenv('ML_MODEL_SUBTRACT_MEAN', 'YES') in ('YES', 'yes', 'ON', 'on', '1')
 GIVEN_CHANNEL_MEANS     = os.getenv('ML_MODEL_GIVEN_CHANNEL_MEANS', '')
 if GIVEN_CHANNEL_MEANS:
     GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=INTERMEDIATE_DATA_TYPE)
     if MODEL_COLOURS_BGR:
         GIVEN_CHANNEL_MEANS = GIVEN_CHANNEL_MEANS[::-1]     # swapping Red and Blue colour channels
+
+GIVEN_CHANNEL_STDS      = os.getenv('ML_MODEL_GIVEN_CHANNEL_STDS', '')
+if GIVEN_CHANNEL_STDS:
+    GIVEN_CHANNEL_STDS = np.array(GIVEN_CHANNEL_STDS.split(' '), dtype=INTERMEDIATE_DATA_TYPE)
+    if MODEL_COLOURS_BGR:
+        GIVEN_CHANNEL_STDS  = GIVEN_CHANNEL_STDS[::-1]      # swapping Red and Blue colour channels
+
+
 
 ## Input image properties:
 #
@@ -102,6 +120,10 @@ def tick(letter, quantity=1):
 # Currently loaded preprocessed images are stored in a dictionary:
 preprocessed_image_buffer = {}
 
+class_map = None
+
+bg_class_offset = 1
+
 
 def load_query_samples(sample_indices):     # 0-based indices in our whole dataset
     global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
@@ -122,7 +144,8 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
             # Normalize
             if MODEL_NORMALIZE_DATA:
-                img = img/127.5 - 1.0
+                #img = img/127.5 - 1.0
+                img = img*(MODEL_NORMALIZE_UPPER-MODEL_NORMALIZE_LOWER)/255.0+MODEL_NORMALIZE_LOWER
 
             # Subtract mean value
             if SUBTRACT_MEAN:
@@ -130,6 +153,9 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
                     img -= GIVEN_CHANNEL_MEANS
                 else:
                     img -= np.mean(img, axis=(0,1), keepdims=True)
+
+            if len(GIVEN_CHANNEL_STDS):
+                img /= GIVEN_CHANNEL_STDS
 
         if MODEL_INPUT_DATA_TYPE == 'int8':
             img = np.clip(img, -128, 127)
@@ -143,6 +169,8 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
 def unload_query_samples(sample_indices):
     #print("unload_query_samples({})".format(sample_indices))
+    global preprocessed_image_buffer
+
     preprocessed_image_buffer = {}
     tick('U')
     print('')
@@ -156,6 +184,7 @@ def initialize_predictor():
     global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
     global BATCH_SIZE
     global max_batch_size
+    global class_map
 
     # Load the TensorRT model from file
     pycuda_context = pycuda.tools.make_default_context()
@@ -203,6 +232,13 @@ def initialize_predictor():
     num_labels      = len(load_labels(LABELS_PATH))
     model_classes   = trt.volume(model_output_shape)
 
+    ## Workaround for SSD-Resnet34 model incorrectly trained on filtered labels
+    if (SKIPPED_CLASSES):
+        class_map = []
+        for i in range(num_labels + bg_class_offset):
+            if i not in SKIPPED_CLASSES:
+                class_map.append(i)
+
     if MODEL_DATA_LAYOUT == 'NHWC':
         (MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS) = model_input_shape
     else:
@@ -232,8 +268,7 @@ def predict_labels_for_batch(batch_data):
 
     print("[batch of {}] inference={:.2f} ms".format(this_batch_size, inference_time*1000))
 
-#    batch_results   = np.split(h_output, max_batch_size)  # where each row contains up-to-100 box predictions
-    trimmed_batch_results  = h_output.reshape(max_batch_size, 100*7+1)[:this_batch_size]
+    trimmed_batch_results  = h_output.reshape(max_batch_size, MODEL_MAX_PREDICTIONS*7+1)[:this_batch_size]
 
     return trimmed_batch_results
 
@@ -260,15 +295,17 @@ def issue_queries(query_samples):
         response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
         for qs, all_boxes_for_this_sample in zip(batch, predictions_for_a_batch):
 
-            num_active_boxes_for_this_sample = all_boxes_for_this_sample[100*7].view('int32')
+            num_active_boxes_for_this_sample = all_boxes_for_this_sample[MODEL_MAX_PREDICTIONS*7].view('int32')
             global_image_index = qs.index
             width_orig, height_orig = original_w_h[global_image_index]
             reformed_active_boxes_for_this_sample = []
             for i in range(num_active_boxes_for_this_sample):
                 (image_id, ymin, xmin, ymax, xmax, confidence_score, class_number) = all_boxes_for_this_sample[i*7:(i+1)*7]
+
+                if class_map:
+                    class_number = float(class_map[int(class_number)])
+
                 reformed_active_boxes_for_this_sample += [
-                    # float(global_image_index), xmin*width_orig, ymin*height_orig, xmax*width_orig, ymax*height_orig, confidence_score, class_number ]
-                    #float(global_image_index), ymin*height_orig, xmin*width_orig, ymax*height_orig, xmax*width_orig, confidence_score, class_number ]
                     float(global_image_index), ymin, xmin, ymax, xmax, confidence_score, class_number ]
 
             response_array = array.array("B", np.array(reformed_active_boxes_for_this_sample, np.float32).tobytes())

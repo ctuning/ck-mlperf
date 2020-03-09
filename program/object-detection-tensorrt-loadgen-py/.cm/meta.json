@@ -54,7 +54,7 @@
       "local": "yes",
       "name": "ImageNet dataset (preprocessed subset)",
       "sort": 20,
-      "tags": "dataset,preprocessed,object-detection"
+      "tags": "dataset,preprocessed,object-detection,coco"
     },
     "lib-python-numpy": {
       "local": "yes",
@@ -82,7 +82,7 @@
     },
     "weights": {
       "local": "yes",
-      "name": "TensorRT model",
+      "name": "TensorRT object detection model",
       "sort": 30,
       "tags": "tensorrt,model,object-detection"
     }
