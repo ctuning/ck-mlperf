@@ -125,6 +125,8 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
 def unload_query_samples(sample_indices):
     #print("unload_query_samples({})".format(sample_indices))
+    global preprocessed_image_buffer
+
     preprocessed_image_buffer = {}
     tick('U')
     print('')
