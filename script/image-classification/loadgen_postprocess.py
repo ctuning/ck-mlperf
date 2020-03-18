@@ -15,6 +15,7 @@ MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
+ACCURACY_TXT             = 'accuracy.txt'
 
 
 def ck_postprocess(i):
@@ -75,12 +76,15 @@ def ck_postprocess(i):
     output = check_output(command).decode('ascii')
 
     print(output)
-    
+
+    with open(ACCURACY_TXT, 'w') as accuracy_file:
+      accuracy_file.write(output)
+
     matchObj  = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', output)
     save_dict['accuracy'] = float( matchObj.group(1) )
     save_dict['good']     = int( matchObj.group(2) )
     save_dict['total']    = int( matchObj.group(3) )
-    
+
   # for scenario in [ 'SingleStream', 'MultiStream', 'Server', 'Offline' ]:
   #   scenario_key = 'TestScenario.%s' % scenario
   #   scenario = save_dict['results'].get(scenario_key, None)
