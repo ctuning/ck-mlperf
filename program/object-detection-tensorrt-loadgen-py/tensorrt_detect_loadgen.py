@@ -27,7 +27,7 @@ BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 ## Model properties:
 #
 MODEL_PATH              = os.environ['CK_ENV_TENSORRT_MODEL_FILENAME']
-MODEL_PLUGIN_PATH       = os.getenv('ML_MODEL_TENSORRT_PLUGIN','')
+MODEL_PLUGIN_PATH       = os.getenv('CK_ENV_TENSORRT_PLUGIN_PATH', os.getenv('ML_MODEL_TENSORRT_PLUGIN',''))
 MODEL_DATA_LAYOUT       = os.getenv('ML_MODEL_DATA_LAYOUT', 'NCHW')
 LABELS_PATH             = os.environ['ML_MODEL_CLASS_LABELS']
 MODEL_COLOURS_BGR       = os.getenv('ML_MODEL_COLOUR_CHANNELS_BGR', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
