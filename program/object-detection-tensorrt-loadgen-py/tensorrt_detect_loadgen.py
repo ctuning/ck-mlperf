@@ -21,6 +21,7 @@ LOADGEN_MODE            = os.getenv('CK_LOADGEN_MODE', 'AccuracyOnly')
 LOADGEN_BUFFER_SIZE     = int(os.getenv('CK_LOADGEN_BUFFER_SIZE'))          # set to how many samples are you prepared to keep in memory at once
 LOADGEN_DATASET_SIZE    = int(os.getenv('CK_LOADGEN_DATASET_SIZE'))         # set to how many total samples to choose from (0 = full set)
 LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
+LOADGEN_COUNT_OVERRIDE  = os.getenv('CK_LOADGEN_COUNT_OVERRIDE', '')        # if not set, use value from LoadGen's config file
 LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')       # if not set, use value from LoadGen's config file
 BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
@@ -369,6 +370,10 @@ def benchmark_using_loadgen():
 
     if LOADGEN_MULTISTREAMNESS:
         ts.multi_stream_samples_per_query = int(LOADGEN_MULTISTREAMNESS)
+
+    if LOADGEN_COUNT_OVERRIDE:
+        ts.min_query_count = int(LOADGEN_COUNT_OVERRIDE)
+        ts.max_query_count = int(LOADGEN_COUNT_OVERRIDE)
 
     sut = lg.ConstructSUT(issue_queries, flush_queries, process_latencies)
     qsl = lg.ConstructQSL(LOADGEN_DATASET_SIZE, LOADGEN_BUFFER_SIZE, load_query_samples, unload_query_samples)
