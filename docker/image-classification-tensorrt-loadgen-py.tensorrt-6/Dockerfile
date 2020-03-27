@@ -91,7 +91,7 @@ RUN ck detect soft:lib.tensorrt --full_path=/usr/lib/x86_64-linux-gnu/libnvinfer
 RUN ck detect soft:lib.python.tensorrt --full_path=/usr/lib/python3.6/dist-packages/tensorrt/__init__.py
 
 #-----------------------------------------------------------------------------#
-# Step 4. Download and preprocess the first 500 images of the ImageNet 2012 
+# Step 4. Download and preprocess the first 500 images of the ImageNet 2012
 # validation dataset.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=dataset,imagenet,aux
@@ -105,12 +105,11 @@ RUN ck install package --tags=mlperf,inference,source
 RUN ck install package --tags=mlperf,loadgen,python-package
 
 #-----------------------------------------------------------------------------#
-# Step 6. Make the final preparations to run the Image Classification TensorRT program.
+# Step 6. Make final preparations to run Image Classification with TensorRT.
 #-----------------------------------------------------------------------------#
-# Install the official MLPerf ONNX model and convert it to TensorRT with predefined options.
+# Install the official MLPerf ResNet ONNX model.
 RUN ck install package --tags=model,onnx,resnet,downloaded
-#RUN ck install package --tags=model,tensorrt,resnet,converted-from-onnx,maxbatch.20,fp32
-# Allow the program create tmp files when running under an external user.
+# Allow the program to create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find program:image-classification-tensorrt-loadgen-py`
 
 ## Print CUDA device info.
@@ -121,6 +120,6 @@ CMD [ "ck run program:image-classification-tensorrt-loadgen-py --skip_print_time
 --env.CK_LOADGEN_CONF_FILE=`ck find program:image-classification-tensorrt-loadgen-py`/user.conf \
 --env.CK_LOADGEN_MODE=AccuracyOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
 --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
---env.CK_LOADGEN_MULTISTREAMNESS=20 --env.CK_BATCH_SIZE=20 \
---dep_add_tags.weights=model,resnet,converted-from-onnx,fp32,maxbatch.20 \
+--env.CK_LOADGEN_MULTISTREAMNESS=32 --env.CK_BATCH_SIZE=32 \
+--dep_add_tags.weights=model,resnet,converted-from-onnx,fp32,maxbatch.32 \
 && head -n 12 `ck find program:image-classification-tensorrt-loadgen-py`/tmp/mlperf_log_summary.txt" ]
