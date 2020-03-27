@@ -49,7 +49,8 @@ RUN git clone https://github.com/ctuning/ck.git ${CK_ROOT}
 RUN cd ${CK_ROOT}\
  && ${CK_PYTHON} setup.py install --user\
  && ${CK_PYTHON} -c "import ck.kernel as ck; print ('Collective Knowledge v%s' % ck.__version__)"\
- && chmod -R g+rx /home/dvdt/.local
+ && chmod -R g+rx /home/dvdt/.local \
+ && umask 002 && chgrp dvdtg ${CK_TOOLS} && chmod g+ws ${CK_TOOLS}
 
 # Explicitly create a CK experiment entry, a folder that will be mounted
 # (with '--volume=<folder_for_results>:/home/dvdt/CK_REPOS/local/experiment').
@@ -109,12 +110,16 @@ RUN ck install package --tags=mlperf,loadgen,python-package
 #-----------------------------------------------------------------------------#
 # Install the official MLPerf ResNet ONNX model.
 RUN ck install package --tags=model,onnx,resnet,downloaded
-# Allow the program to create tmp files when running under an external user.
+# Allow to create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find program:image-classification-tensorrt-loadgen-py`
+# Allow to create new environments when running under an external user.
+RUN chmod -R g+rwx $CK_REPOS/local/env
 
 ## Print CUDA device info.
 #RUN ck compile program:tool-print-cuda-devices
 #CMD [ "ck run program:tool-print-cuda-devices" ]
+
+RUN ck pull repo:ck-tensorrt
 
 CMD [ "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
 --env.CK_LOADGEN_CONF_FILE=`ck find program:image-classification-tensorrt-loadgen-py`/user.conf \
