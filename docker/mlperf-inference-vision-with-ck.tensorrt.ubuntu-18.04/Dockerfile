@@ -208,7 +208,7 @@ CMD ["ck run program:mlperf-inference-vision --cmd_key=direct \
 --env.CK_METRIC_TYPE=COCO \
 --env.CK_LOADGEN_SCENARIO=SingleStream \
 --env.CK_LOADGEN_MODE='--accuracy' \
---dep_add_tags.weights=ssd,mobilenet-v1,quantized,mlperf,tf \
+--dep_add_tags.weights=ssd,mobilenet-v1,fpn \
 --dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1 --env.CK_LOADGEN_BACKEND=tensorflow \
 --env.CK_LOADGEN_REF_PROFILE=default_tf_object_det_zoo \
 --skip_print_timers"]
