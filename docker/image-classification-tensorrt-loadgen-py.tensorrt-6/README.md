@@ -156,9 +156,6 @@ Average latency:              51209991 ns   (19.527 fps)
 Max latency:                  56571231 ns   (17.677 fps)
 --------------------------------------------------------------------
 ...
---------------------------------------------------------------------------------
-mlperf_log_summary.txt
---------------------------------------------------------------------------------
 ================================================
 MLPerf Results Summary
 ================================================
@@ -213,6 +210,30 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/e
   --record_uoa=mlperf.closed.image-classification.tensorrt.resnet.multistream.performance \
   --tags=mlperf,closed,image-classification,tensorrt,resnet,multistream,performance \
   --skip_print_timers --skip_stat_analysis --process_multi_keys"
+...
+--------------------------------------------------------------------
+|                LATENCIES (in milliseconds and fps)               |
+--------------------------------------------------------------------
+Number of samples run:           43200
+Min latency:                     43.52 ms   (22.977 fps)
+Median latency:                  44.74 ms   (22.350 fps)
+Average latency:                 44.00 ms   (22.727 fps)
+90 percentile latency:           45.21 ms   (22.120 fps)
+99 percentile latency:           45.61 ms   (21.926 fps)
+Max latency:                     52.87 ms   (18.914 fps)
+--------------------------------------------------------------------
+...
+================================================
+MLPerf Results Summary
+================================================
+SUT name : PySUT
+Scenario : Multi Stream
+Mode     : Performance
+Samples per query : 30
+Result is : INVALID
+  Performance constraints satisfied : Yes
+  Min duration satisfied : Yes
+  Min queries satisfied : Yes
 ```
 
 <a name="parameters_docker"></a>
