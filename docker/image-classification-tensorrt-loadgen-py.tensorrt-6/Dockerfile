@@ -119,8 +119,6 @@ RUN chmod -R g+rwx $CK_REPOS/local/env
 #RUN ck compile program:tool-print-cuda-devices
 #CMD [ "ck run program:tool-print-cuda-devices" ]
 
-RUN ck pull repo:ck-tensorrt
-
 CMD [ "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
 --env.CK_LOADGEN_CONF_FILE=`ck find program:image-classification-tensorrt-loadgen-py`/user.conf \
 --env.CK_LOADGEN_MODE=AccuracyOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
