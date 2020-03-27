@@ -262,7 +262,7 @@ def flush_queries():
 
 
 def process_latencies(latencies_ns):
-    latencies_ms = openme_data['loadgen_measured_latencies_ms'] = [ns/1.0e6 for ns in latencies_ns]
+    latencies_ms = [ (ns * 1e-6) for ns in latencies_ns ]
     print("LG called process_latencies({})".format(latencies_ms))
 
     latencies_size      = len(latencies_ms)
