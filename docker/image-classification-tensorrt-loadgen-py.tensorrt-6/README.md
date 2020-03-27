@@ -146,14 +146,15 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/e
   && echo ''"
 ...
 --------------------------------------------------------------------
-|                LATENCIES (in nanoseconds and fps)                |
+|                LATENCIES (in milliseconds and fps)               |
 --------------------------------------------------------------------
-Number of queries run:           46080
-Min latency:                  47174403 ns   (21.198 fps)
-Median latency:               52104957 ns   (19.192 fps)
-Average latency:              51209991 ns   (19.527 fps)
-90 percentile latency:        53049435 ns   (18.850 fps)
-Max latency:                  56571231 ns   (17.677 fps)
+Number of samples run:           46080
+Min latency:                     46.68 ms   (21.420 fps)
+Median latency:                  48.96 ms   (20.427 fps)
+Average latency:                 50.00 ms   (20.000 fps)
+90 percentile latency:           53.00 ms   (18.869 fps)
+99 percentile latency:           53.64 ms   (18.641 fps)
+Max latency:                     57.20 ms   (17.481 fps)
 --------------------------------------------------------------------
 ...
 ================================================
