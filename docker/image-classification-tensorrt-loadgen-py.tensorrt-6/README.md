@@ -29,21 +29,20 @@ Note that you may need to run commands below with `sudo`, unless you [manage Doc
 ## Set up Collective Knowledge
 
 You will need to install [Collective Knowledge](http://cknowledge.org) to build images and save benchmarking results.
-Please follow the [CK installation instructions](https://github.com/ctuning/ck#installation) and then pull our object detection repository:
-
+Please follow the [CK installation instructions](https://github.com/ctuning/ck#installation) and then pull this CK-MLPerf repository:
 ```bash
 $ ck pull repo:ck-mlperf
 ```
 
-**NB:** Refresh all CK repositories after any updates (e.g. bug fixes):
+To refresh all CK repositories after any updates (e.g. bug fixes), run:
 ```bash
 $ ck pull all
 ```
-(This only updates CK repositories on the host system. To update the Docker image, [rebuild](#build) it using the `--no-cache` flag.)
+**NB:** This only updates CK repositories on the host system. To update the Docker image, [rebuild](#build) it using the `--no-cache` flag.
 
 ### Set up environment variables
 
-Set up the variable to contain the image name:
+Set up the variable to this Docker image name:
 ```bash
 $ export IMAGE=image-classification-tensorrt-loadgen-py.tensorrt-6
 ```
@@ -117,6 +116,14 @@ No warnings encountered during test.
 No errors encountered during test.
 ```
 
+Here, we run inference on 500 images using a TensorRT plan converted on-the-fly
+from the reference ResNet ONNX model.
+
+**NB:** This is equivalent to the default run command:
+```bash
+$ docker run --rm ctuning/$IMAGE
+```
+
 #### Performance mode
 
 ```bash
@@ -168,16 +175,12 @@ Recommendations:
 ...
 ```
 
-Here, we run inference on 500 images using a TensorRT plan converted on-the-fly from the reference ResNet ONNX model.
-
-**NB:** This is equivalent to the default run command:
-```bash
-$ docker run --rm ctuning/$IMAGE
-```
-
-In this example (on the NVIDIA GTX1080), the 99th percentile latency exceeds 50 ms in the MultiStream scenario,
+In this example (on the NVIDIA GTX1080), the 99th percentile latency exceeds 50 ms,
 which unfortunately makes the performance run **INVALID** according to the
-[MLPerf Inference rules](https://github.com/mlperf/inference_policies/blob/master/inference_rules.adoc#41-benchmarks) for the ResNet workload.
+[MLPerf Inference rules](https://github.com/mlperf/inference_policies/blob/master/inference_rules.adoc#41-benchmarks)
+for the ResNet workload in the MultiStream scenario. As per the LoadGen recommendation, the number of samples per query (32 in the above example), should be reduced.
+However, we do not know whether it should be reduced by only one sample per query or more.
+To find out, we should benchmark this workload with several values of this parameter, and analyze the results.
 
 
 <a name="benchmark"></a>
@@ -187,7 +190,6 @@ When you run inference using `ck run`, the results get printed but not saved.
 You can use `ck benchmark` to save the results on the host system as CK experiment entries (JSON files).
 
 Create a directory on the host computer where you want to store experiment entries e.g.:
-```
 ```bash
 $ export EXPERIMENTS_DIR=/data/$USER/tensorrt-experiments
 $ mkdir -p ${EXPERIMENTS_DIR}
@@ -231,7 +233,8 @@ Therefore, you can retrieve the results of a container run under your user id fr
 
 <a name="explore"></a>
 ## Explore
+**TODO**
 
 <a name="analyze"></a>
 ## Analyze
-
+**TODO**
