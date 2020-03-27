@@ -262,23 +262,26 @@ def flush_queries():
 
 
 def process_latencies(latencies_ns):
-    print("LG called process_latencies({})".format(latencies_ns))
+    latencies_ms = openme_data['loadgen_measured_latencies_ms'] = [ns/1.0e6 for ns in latencies_ns]
+    print("LG called process_latencies({})".format(latencies_ms))
 
-    latencies_size      = len(latencies_ns)
-    latencies_avg       = int(sum(latencies_ns)/latencies_size)
-    latencies_sorted    = sorted(latencies_ns)
+    latencies_size      = len(latencies_ms)
+    latencies_avg       = int(sum(latencies_ms)/latencies_size)
+    latencies_sorted    = sorted(latencies_ms)
     latencies_p50       = int(latencies_size * 0.5);
     latencies_p90       = int(latencies_size * 0.9);
+    latencies_p99       = int(latencies_size * 0.99);
 
     print("--------------------------------------------------------------------")
-    print("|                LATENCIES (in nanoseconds and fps)                |")
+    print("|                LATENCIES (in milliseconds and fps)               |")
     print("--------------------------------------------------------------------")
-    print("Number of queries run:       {:9d}".format(latencies_size))
-    print("Min latency:                 {:9d} ns   ({:.3f} fps)".format(latencies_sorted[0], 1e9/latencies_sorted[0]))
-    print("Median latency:              {:9d} ns   ({:.3f} fps)".format(latencies_sorted[latencies_p50], 1e9/latencies_sorted[latencies_p50]))
-    print("Average latency:             {:9d} ns   ({:.3f} fps)".format(latencies_avg, 1e9/latencies_avg))
-    print("90 percentile latency:       {:9d} ns   ({:.3f} fps)".format(latencies_sorted[latencies_p90], 1e9/latencies_sorted[latencies_p90]))
-    print("Max latency:                 {:9d} ns   ({:.3f} fps)".format(latencies_sorted[-1], 1e9/latencies_sorted[-1]))
+    print("Number of samples run:       {:9d}".format(latencies_size))
+    print("Min latency:                 {:9.2f} ms   ({:.3f} fps)".format(latencies_sorted[0], 1e3/latencies_sorted[0]))
+    print("Median latency:              {:9.2f} ms   ({:.3f} fps)".format(latencies_sorted[latencies_p50], 1e3/latencies_sorted[latencies_p50]))
+    print("Average latency:             {:9.2f} ms   ({:.3f} fps)".format(latencies_avg, 1e3/latencies_avg))
+    print("90 percentile latency:       {:9.2f} ms   ({:.3f} fps)".format(latencies_sorted[latencies_p90], 1e3/latencies_sorted[latencies_p90]))
+    print("99 percentile latency:       {:9.2f} ms   ({:.3f} fps)".format(latencies_sorted[latencies_p99], 1e3/latencies_sorted[latencies_p99]))
+    print("Max latency:                 {:9.2f} ms   ({:.3f} fps)".format(latencies_sorted[-1], 1e3/latencies_sorted[-1]))
     print("--------------------------------------------------------------------")
 
 
