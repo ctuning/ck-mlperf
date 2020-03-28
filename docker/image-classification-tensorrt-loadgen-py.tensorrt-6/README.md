@@ -44,7 +44,7 @@ $ ck pull all
 
 Set up the variable to this Docker image name:
 ```bash
-$ export IMAGE=image-classification-tensorrt-loadgen-py.tensorrt-6
+$ export CK_IMAGE=image-classification-tensorrt-loadgen-py.tensorrt-6
 ```
 
 Set up the variable that points to the directory that contains your CK repositories (usually `~/CK` or `~/CK_REPOS`):
@@ -57,7 +57,7 @@ $ export CK_REPOS=${HOME}/CK
 
 To download a prebuilt image from Docker Hub, run:
 ```
-$ docker pull ctuning/${IMAGE}
+$ docker pull ctuning/${CK_IMAGE}
 ```
 
 <a name="image_build"></a>
@@ -65,13 +65,13 @@ $ docker pull ctuning/${IMAGE}
 
 To build an image on your system, run:
 ```bash
-$ ck build docker:${IMAGE}
+$ ck build docker:${CK_IMAGE}
 ```
 
 **NB:** This CK command is equivalent to:
 ```bash
-$ cd `ck find docker:${IMAGE}`
-$ docker build --no-cache -f Dockerfile -t ctuning/${IMAGE} .
+$ cd `ck find docker:${CK_IMAGE}`
+$ docker build --no-cache -f Dockerfile -t ctuning/${CK_IMAGE} .
 ```
 
 <a name="usage"></a>
@@ -85,7 +85,7 @@ Once you have downloaded or built an image, you can run inference in the accurac
 ### Accuracy mode
 
 ```bash
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
   "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
   --env.CK_LOADGEN_MODE=AccuracyOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
   --env.CK_LOADGEN_MULTISTREAMNESS=32 --env.CK_BATCH_SIZE=32 \
@@ -121,13 +121,13 @@ from the reference ResNet ONNX model.
 
 **NB:** This is equivalent to the default run command:
 ```bash
-$ docker run --rm ctuning/$IMAGE
+$ docker run --rm ctuning/$CK_IMAGE
 ```
 
 #### Performance mode
 
 ```bash
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
   "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
   --env.CK_LOADGEN_MODE=PerformanceOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
   --env.CK_LOADGEN_MULTISTREAMNESS=32 --env.CK_BATCH_SIZE=32 \
@@ -189,17 +189,18 @@ You can use `ck benchmark` to save the results on the host system as CK experime
 
 Create a directory on the host computer where you want to store experiment entries e.g.:
 ```bash
-$ export EXPERIMENTS_DIR=/data/$USER/tensorrt-experiments
-$ mkdir -p ${EXPERIMENTS_DIR}
+$ export CK_EXPERIMENTS_DIR=/data/$USER/tensorrt-experiments
+$ mkdir -p ${CK_EXPERIMENTS_DIR}
 ```
 (**NB:** `USER` must have write access to this directory.)
 
-When running `ck benchmark` via Docker, map the internal output directory to `$EXPERIMENTS_DIR` on the host:
+When running `ck benchmark` via Docker, map the internal output directory to `$CK_EXPERIMENTS_DIR` on the host:
 
 ```bash
 $ export NUM_STREAMS=30
-$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
-  --user=$(id -u):1500 --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment --rm ctuning/${IMAGE} \
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list \
+  --user=$(id -u):1500 --volume ${CK_EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
+  --rm ctuning/${CK_IMAGE} \
   "ck benchmark program:image-classification-tensorrt-loadgen-py --repetitions=1 --env.CK_SILENT_MODE \
   --env.CK_LOADGEN_MODE=PerformanceOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
   --env.CK_LOADGEN_MULTISTREAMNESS=${NUM_STREAMS} --env.CK_BATCH_SIZE=${NUM_STREAMS} \
