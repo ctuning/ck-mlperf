@@ -12,6 +12,7 @@
     - [Run once](#run)
     - [Benchmark](#benchmark)
         - [Docker parameters](#parameters_docker)
+        - [LoadGen parameters](#parameters_loadgen)
     - [Explore](#explore)
     - [Analyze](#analyze)
 
@@ -241,11 +242,19 @@ Result is : INVALID
 <a name="parameters_docker"></a>
 ### Docker parameters
 
-- `--env-file`: the path to the `env.list` file, which is usually located in the same folder as the Dockerfile. (Currently, the `env.list` files are identical for all the images.)
-- `--volume`: a folder with read/write permissions for the user that serves as shared space ("volume") between the host and the container.
-- `--user`: your user id on the host system and a fixed group id (1500) needed to access files in the container.
+#### `--env-file`
 
-#### Gory details
+The path to the `env.list` file, which is usually located in the same folder as `Dockerfile`. (Currently, the `env.list` files are identical for all the images.)
+
+#### `--user` / `USER`
+
+Your user id on the host system and a fixed group id (`1500`) needed to access files in the container.
+
+#### `--volume` / `CK_EXPERIMENTS_DIR`
+
+A directory with read/write permissions for the user that serves as shared space ("volume") between the host and the container.
+
+##### Gory details
 
 We ask you to launch a container with `--user=$(id -u):1500`, where `$(id -u)` gives your
 user id on the host system and `1500` is the fixed group id of the `dvdtg` group in the image.
@@ -254,9 +263,21 @@ This folder gets mapped to the `/home/dvdt/CK_REPOS/local/experiment` folder in 
 While the `experiment` folder belongs to the `dvdt` user, it is made accessible to the `dvdtg` group.
 Therefore, you can retrieve the results of a container run under your user id from this folder.
 
+<a name="parameters_docker"></a>
+### LoadGen parameters
+**TODO**
+
+
 <a name="explore"></a>
 ## Explore
-**TODO**
+
+```bash
+$ export CK_IMAGE=`ck find ck-mlperf:experiment:image-classification-tensorrt-loadgen-py.tensorrt-6
+$ export CK_REPOS=$HOME/CK
+$ export CK_EXPERIMENTS_DIR=$HOME/tensorrt-experiments
+$ cd `ck find ck-mlperf:docker:${CK_IMAGE}`
+$ CK_BATCH_SIZES="30 31 32" ./explore.sh
+``
 
 <a name="analyze"></a>
 ## Analyze
