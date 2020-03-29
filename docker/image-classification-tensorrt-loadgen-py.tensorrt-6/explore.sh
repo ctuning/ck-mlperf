@@ -152,6 +152,15 @@ echo "- preprocessing tags: ${preprocessing_tags}"
 timestamp=$(date +%Y%m%d-%H%M%S)
 echo "- timestamp: ${timestamp}"
 
+# File to print after each iteration.
+file_to_print=${CK_FILE_TO_PRINT:-""}
+if [ -z "${file_to_print}" ]; then
+  if [ "${mode_tag}" = "accuracy" ]; then
+    file_to_print="accuracy.txt"
+  else
+    file_to_print="mlperf_log_summary.txt"
+  fi
+fi
 
 # Prepare record UOA and tags.
 mlperf="mlperf"
@@ -205,9 +214,9 @@ for batch_size in ${batch_sizes[@]}; do
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys \
   && echo '--------------------------------------------------------------------------------' \
-  && echo 'mlperf_log_summary.txt' \
+  && echo '${file_to_print}' \
   && echo '--------------------------------------------------------------------------------' \
-  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/${program}/tmp/mlperf_log_summary.txt \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/${program}/tmp/${file_to_print} \
   && echo ''"
 END_OF_CMD
   echo ${CMD}
