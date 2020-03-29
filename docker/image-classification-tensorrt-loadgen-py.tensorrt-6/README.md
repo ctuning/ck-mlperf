@@ -378,3 +378,11 @@ Archive:  mlperf.closed.image-classification.velociti.tensorrt.zip
   inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/ckp-3368d49d0824b41e.features.json
 ...
 ```
+
+### Convert the results into the submission format
+
+```bash
+$ ck run ck-mlperf:program:dump-repo-to-submission \
+--env.CK_MLPERF_SUBMISSION_REPO=mlperf.closed.image-classification.velociti.tensorrt \
+--env.CK_MLPERF_SUBMISSION_ROOT=$HOME/mlperf.closed.image-classification.velociti.tensorrt-submission
+```
