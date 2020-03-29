@@ -421,7 +421,7 @@ $ ck run ck-mlperf:program:dump-repo-to-submission \
 ```bash
 $ ck run ck-mlperf:program:dump-submissions-to-dashboard \
 --env.CK_MLPERF_SUBMISSION_ROOT=$HOME/mlperf.closed.image-classification.velociti.tensorrt-submission \
---env.CK_MLPERF_DASHBOARD_FILE=mlperf-inference-unofficial-tensorrt-results.zip \
+--env.CK_MLPERF_DASHBOARD_FILE=mlperf-inference-unofficial-results.tensorrt.zip \
 --env.CK_MLPERF_DASHBOARD_DIR=$HOME
 ```
 
@@ -437,6 +437,6 @@ drwxrwxr-x 2 anton dvdt  4096 Dec 19 11:55 .cm
 -rw-rw-r-- 1 anton dvdt 21873 Dec 19 11:55 mlperf-inference-v0.5-results.zip
 -rw-rw-r-- 1 anton dvdt  5649 Jan 24 12:47 module.py
 
-$ scp -P <port> <host>:<home>/mlperf-inference-unofficial-tensorrt-results.zip \
+$ scp -P <port> <hostname>:/home/<user>/mlperf-inference-unofficial-results.tensorrt.zip \
   `ck find ck-mlperf:module:mlperf.inference`
 ```
