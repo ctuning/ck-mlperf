@@ -322,7 +322,7 @@ velociti = {
     "accelerator_on-chip_memories": "20x48 KiB",
     "cooling": "standard",
     "hw_notes": "The Intel CPU has reached its end-of-life (EOL). http://h20195.www2.hp.com/v2/default.aspx?cc=ie&lc=en&oid=7528701; https://ark.intel.com/products/81705/Intel-Xeon-Processor-E5-2650-v3-25M-Cache-2_30-GHz; http://www.cpu-world.com/CPUs/Xeon/Intel-Xeon%20E5-2650%20v3.html; http://www.geforce.co.uk/hardware/10series/geforce-gtx-1080/",
-    
+
     "framework": "TensorFlow v1.14",
     "operating_system": "Ubuntu 16.04.6 LTS; kernel 4.4.0-112-generic #135-Ubuntu SMP (Fri Jan 19 11:48:36 UTC 2018)",
     "other_software_stack": "Driver 430.50; CUDA 10.1; TensorRT 5.1.5; Docker 19.03.3 (build a872fc2); GCC 7.4.0; Python 3.5.2",
@@ -398,7 +398,7 @@ platforms = [ 'firefly', 'hikey960', 'mate10pro', 'rpi4', 'velociti' ]
 for division in divisions:
     for platform in platforms:
         if platform == 'velociti':
-            libraries = [ 'tensorflow-v1.14' ]
+            libraries = [ 'tensorflow-v1.14', 'tensorrt-v6.0' ]
         elif platform == 'mate10pro':
             libraries = [ 'tflite-v1.13', 'armnn-v19.08' ]
         elif platform == 'rpi4':
@@ -425,6 +425,7 @@ for division in divisions:
                     'tflite-v1.13': 'TFLite v1.13.1',
                     'tflite-v1.15': 'TFLite v1.15.0-rc2',
                     'tflite-v1.15.0': 'TFLite v1.15.0',
+                    'tensorrt-v6.0' : 'TensorRT v6.0',
                     'tensorflow-v1.14-cpu': 'TensorFlow v1.14 (CPU)',
                     'tensorflow-v1.14-cuda': 'TensorFlow v1.14 (CUDA)',
                     'tensorflow-v1.14-tensorrt': 'TensorFlow v1.14 (TensorRT-static)',
@@ -432,7 +433,7 @@ for division in divisions:
                 }
                 if library_backend == 'tensorflow-v1.14-cpu':
                     status = 'RDI'
-                elif library_backend == 'tflite-v1.15.0':
+                elif library_backend == 'tflite-v1.15.0' or library_backend == 'tensorrt-v6.0':
                     status = 'unofficial'
                 else:
                     status = 'available'
@@ -443,7 +444,7 @@ for division in divisions:
                     'status'    : status,
                     'framework' : frameworks[library_backend]
                 })
-                if (not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl'))                 or library_backend.endswith('cpu'):
+                if (not library_backend.startswith('tensorrt') and not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl')) or library_backend.endswith('cpu'):
                     template.update({
                         'accelerator_frequency' : '-',
                         'accelerator_memory_capacity' : '-',
@@ -546,6 +547,17 @@ for implementation in [ 'image-classification-tflite', 'image-classification-arm
     add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.3, resolution=224)
     add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.4, resolution=224)
 
+for implementation in [ 'image-classification-tensorrt-loadgen-py']:
+    # Add ResNet.
+    implementation_resnet = implementation+'-'+'resnet'
+    implementation_benchmarks[implementation_resnet] = {
+        "input_data_types": "int8",
+        "weight_data_types": "int8",
+        "retraining": "no",
+        "starting_weights_filename": "https://zenodo.org/record/2535873/files/resnet50_v1.pb",
+        "weight_transformations": "ONNX -> TensorRT"
+    }
+
 
 # ### Object detection
 
@@ -629,7 +641,7 @@ object_detection_benchmarks = {
         "provenance" : "https://github.com/YunYang1994/tensorflow-yolov3/"
     }
 }
-    
+
 # For each object detection implementation.
 for implementation in [ 'mlperf-inference-vision' ]:
     for benchmark in object_detection_benchmarks.keys():
@@ -643,7 +655,7 @@ for implementation in [ 'mlperf-inference-vision' ]:
             "weight_transformations": "None (TensorFlow)"
         }
 
-# from pprint import pprint
+from pprint import pprint
 # pprint(implementation_benchmarks)
 
 
@@ -671,6 +683,13 @@ This C++ implementation uses ArmNN with the TFLite frontend to run TFLite models
 - [Instructions](https://github.com/ARM-software/armnn-mlperf/blob/master/README.md).
 """
 
+implementation_readmes['image-classification-tensorrt-loadgen-py'] = """# MLPerf Inference - Image Classification - TensorRT
+This Python implementation uses TensorRT to run models Image Classification on Arm Cortex CPUs and Arm Mali GPUs.
+
+### Links
+- [Source code](https://github.com/ctuning/ck-mlperf/tree/master/program/image-classification-tensorrt-loadgen-py).
+"""
+
 implementation_readmes['mlperf-inference-vision'] = """# MLPerf Inference - Object Detection - TensorFlow
 
 This Python implementation is the official MLPerf Inference vision application, modified to support other
@@ -683,15 +702,15 @@ object detection models and run with TensorRT.
 - [Jupyter notebook](https://nbviewer.jupyter.org/urls/dl.dropbox.com/s/1xlv5oacgobrfd4/mlperf-inference-v0.5-dividiti.ipynb)
 """
 
-
 # In[ ]:
 
 
 implementation_paths = {}
-for implementation in [ 'image-classification-tflite', 'image-classification-armnn-tflite', 'mlperf-inference-vision' ]:
+for implementation in [ 'image-classification-tflite', 'image-classification-armnn-tflite', 'image-classification-tensorrt-loadgen-py', 'mlperf-inference-vision' ]:
     implementation_uoa = implementation
     if implementation.startswith('image-classification'):
-        implementation_uoa += '-loadgen'
+        if implementation.endswith('tflite'):
+            implementation_uoa += '-loadgen'
         repo_uoa = 'ck-mlperf'
     else: # TODO: move to ck-mlperf, then no need for special case.
         repo_uoa = 'ck-object-detection'
@@ -730,7 +749,7 @@ The most relevant repositories and their latest revisions on the submission date
 - [Bash script](https://github.com/ctuning/ck-mlperf/tree/master/script/mlperf-inference-v0.5.{}.image-classification) used to invoke benchmarking on Linux systems or Android devices.
 '''.format(division_upper, division_lower)
 
-    
+
 task = 'object-detection'
 for division_upper in [ 'Closed', 'Open' ]:
     division_lower = division_upper.lower()
@@ -818,10 +837,10 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/3md826fk7k1taf3/mlperf.closed.image-classification.firefly.tflite-v1.15.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.firefly.tflite-v1.15.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/jusoz329mhixpxm/mlperf.closed.image-classification.firefly.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.firefly.armnn-v19.08.neon.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/08lzbz7jl2w5jhu/mlperf.closed.image-classification.firefly.armnn-v19.08.opencl.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.firefly.armnn-v19.08.opencl.zip
 # ```
@@ -831,10 +850,10 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/lqnffl6wbaeceul/mlperf.closed.image-classification.hikey960.tflite-v1.15.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.hikey960.tflite-v1.15.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/6m6uv1d33yc82f8/mlperf.closed.image-classification.hikey960.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.hikey960.armnn-v19.08.neon.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/bz56y4damfqggr8/mlperf.closed.image-classification.hikey960.armnn-v19.08.opencl.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.hikey960.armnn-v19.08.opencl.zip
 # ```
@@ -844,7 +863,7 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/ig97x9cqoxfs3ne/mlperf.closed.image-classification.rpi4.tflite-v1.15.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.rpi4.tflite-v1.15.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/ohcuyes409h66tx/mlperf.closed.image-classification.rpi4.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.rpi4.armnn-v19.08.neon.zip
 # ```
@@ -854,7 +873,7 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/r7hss1sd0268b9j/mlperf.closed.image-classification.mate10pro.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.mate10pro.armnn-v19.08.neon.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/iflzxbxcv3qka9x/mlperf.closed.image-classification.mate10pro.armnn-v19.08.opencl.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.mate10pro.armnn-v19.08.opencl.zip
 # ```
@@ -875,7 +894,7 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/bi2owxxpcfm6n2s/mlperf.closed.image-classification.mate10pro.armnn-v19.08.opencl.BAD_RESNET.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.mate10pro.armnn-v19.08.opencl.BAD_RESNET.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/t2o2elqdyitqlpi/mlperf.closed.image-classification.mate10pro.armnn-v19.08.neon.BAD_RESNET.zip
 # $ ck add repo --zip=mlperf.closed.image-classification.mate10pro.armnn-v19.08.neon.BAD_RESNET.zip
 # ```
@@ -888,13 +907,13 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/q8ieqgnr3zn6w4y/mlperf.open.image-classification.firefly.tflite-v1.15.zip
 # $ ck add repo --zip=mlperf.open.image-classification.firefly.tflite-v1.15.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/zpenduz1i4qt651/mlperf.open.image-classification.firefly.tflite-v1.15.mobilenet-v1-quantized.zip
 # $ ck add repo --zip=mlperf.open.image-classification.firefly.tflite-v1.15.mobilenet-v1-quantized.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/3mmefvxc15m9o5b/mlperf.open.image-classification.firefly.armnn-v19.08.opencl.zip
 # $ ck add repo --zip=mlperf.open.image-classification.firefly.armnn-v19.08.opencl.zip
-# 
+#  
 # $ wget https://www.dropbox.com/s/hrupp4o4apo3dfa/mlperf.open.image-classification.firefly.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.open.image-classification.firefly.armnn-v19.08.neon.zip
 # ```
@@ -1370,10 +1389,15 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         #print(tags)
         backend = ''
         preprocessing = ''
+#        pprint(tags)
         if 'velociti' in tags:
             # Expected format: [ "mlperf", "open", "object-detection", "velociti", "cpu", "rcnn-inception-resnet-v2-lowproposals", "singlestream", "accuracy" ]
             (_, division, task, platform, backend, benchmark, scenario, mode) = tags
-            library = 'tensorflow-v1.14'
+            if task == 'object-detection':
+                library = 'tensorflow-v1.14'
+            else:
+                library = 'tensorrt-v6.0'
+                backend = ''
         elif 'accuracy' in tags:
             # FIXME: With the benefit of hindsight, [ ..., "armnn-v19.08", "neon", ... ] should have come 
             # as one tag "armnn-v19.08-neon", since we join them in this notebook anyway.
@@ -1414,10 +1438,11 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             implementation = task+'-tflite'
         elif library.startswith('armnn'):
             implementation = task+'-armnn-tflite'
+        elif library.startswith('tensorrt'):
+            implementation = task+'-tensorrt-loadgen-py'
         else: # Official app with CK adaptations.
             implementation = 'mlperf-inference-vision'
         implementation_benchmark = implementation+'-'+benchmark
-        
         #
         # Directory structure according to the Inference section of the General MLPerf Submission Rules:
         # https://github.com/mlperf/policies/blob/master/submission_rules.adoc#552-inference
@@ -1439,8 +1464,8 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         system_json_name = '%s.json' % system
         system_json_path = os.path.join(systems_dir, system_json_name)
         with open(system_json_path, 'w') as system_json_file:
-#             pprint(division_system)
-#             pprint(division_systems)
+#            pprint(division_system)
+#            pprint(division_systems)
             system_json = division_systems.get(division_system, default_system_json)
             json.dump(system_json, system_json_file, indent=2)
             print('%s' % systems_dir)
@@ -1449,7 +1474,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 raise
             else:
                 print('  |_ %s [%s]' % (system_json_name, division_system))
-        
+
         #
         #     "code"/
         #       <benchmark_name_per_reference>/
@@ -1460,7 +1485,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if not os.path.exists(code_dir): os.mkdir(code_dir)
         # FIXME: For now, not always "per reference".
         benchmark_dir = os.path.join(code_dir, benchmark)
-        if not os.path.exists(benchmark_dir): os.mkdir(benchmark_dir)            
+        if not os.path.exists(benchmark_dir): os.mkdir(benchmark_dir)
         implementation_dir = os.path.join(benchmark_dir, implementation)
         if not os.path.exists(implementation_dir): os.mkdir(implementation_dir)
         print('%s' % code_dir)
@@ -1500,19 +1525,20 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         scenario_dir = os.path.join(benchmark_dir, scenario)
         if not os.path.exists(scenario_dir): os.mkdir(scenario_dir)
         print(scenario_dir)
-        
+
         # Create '<system_desc_id>_<implementation_id>.json'.
         system_implementation_json_name = system+'_'+implementation+'.json'
         system_implementation_json_path = os.path.join(scenario_dir, system_implementation_json_name)
         with open(system_implementation_json_path, 'w') as system_implementation_json_file:
             implementation_benchmark_json = implementation_benchmarks.get(implementation_benchmark, default_implementation_benchmark_json)
+#            pprint(implementation_benchmark)
             if implementation_benchmark_json != default_implementation_benchmark_json:
                 print('  |_ %s [for %s]' % (system_implementation_json_name, implementation_benchmark))
                 json.dump(implementation_benchmark_json, system_implementation_json_file, indent=2)
             else:
                 print('  |_ %s [DEFAULT]' % system_implementation_json_name)
                 raise "Default implementation!"
-        
+
         # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
         measurements_readme_name = 'README.md'
         measurements_readme_path = os.path.join(scenario_dir, measurements_readme_name)
@@ -1523,7 +1549,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             print('  |_ %s [for %s %s]' % (measurements_readme_name, division, task))
         else:
             raise "Invalid measurements README!"
-        
+
         # Try to find environment for 'user.conf'.
         loadgen_config_tags='loadgen,config,'+implementation
         lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
@@ -1554,7 +1580,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             user_conf_path = os.path.join(implementation_path, user_conf_name)
         copy2(user_conf_path, scenario_dir)
         print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
-        
+
         # Copy 'mlperf.conf' from MLPerf Inference source.
         mlperf_conf_name = 'mlperf.conf'
         mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
@@ -1569,7 +1595,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             print('  |_ %s [from %s]' % (mlperf_conf_name, upstream_mlperf_conf_path))
 
         # Write submission_checklist.txt into the same directory later, once accuracy.txt is parsed.
-        
+
         #
         #     "results"/
         #       <system_desc_id>/
@@ -1595,7 +1621,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         mode_dir = os.path.join(scenario_dir, mode)
         if not os.path.exists(mode_dir): os.mkdir(mode_dir)
         print(mode_dir)
-        
+
         if audit:
             # Deal with a subset of audit tests.
 #             if test not in [ 'TEST03' ]: # [ 'TEST01', 'TEST03', 'TEST04-A', 'TEST04-B', 'TEST05' ]:
@@ -1739,11 +1765,11 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 # Extract LoadGen revision from the second line of e.g.
                 # "pid": 28660, "tid": 28660, "ts": 8750ns : version : .5a1 @ 61220457de
                 # FIXME: In practice, the revision may be different for accuracy and performance runs
-                # (happened on rpi4 due to a late LoadGen fix). We would prefer to use one from 
+                # (happened on rpi4 due to a late LoadGen fix). We would prefer to use one from
                 # the performance one, as it may be more critical for performance evaluation.
                 # However, as we only write the checklist from the accuracy run, we are somewhat stuck.
                 loadgen_revision = detail[1].split('@')[1].strip()
-                
+
                 # FIXME: The actual performance_sample_count can be extracted from the performance run.
                 # Again, this is not available to us here.
                 # We could check in user.conf, but we would need to parse it.
@@ -1802,7 +1828,7 @@ submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
 print("*" * 100)
 submission_checker_py = os.path.join(upstream_path, 'v0.5', 'tools', 'submission', 'submission-checker.py')
 # The checker has a weird bug. When submitting to open, 'closed/<organization>/results' must exist on disk.
-# Vice versa, When submitting to closed, 'open/<organization>/results' must exist on disk. 
+# Vice versa, When submitting to closed, 'open/<organization>/results' must exist on disk.
 # Therefore, create both directories if they do not exist before invoking the checker.
 open_org_results_dir = os.path.join(root_dir, 'open', submitter, 'results')
 closed_org_results_dir = os.path.join(root_dir, 'closed', submitter, 'results')
