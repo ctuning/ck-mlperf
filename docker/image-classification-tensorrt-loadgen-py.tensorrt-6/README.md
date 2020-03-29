@@ -244,7 +244,21 @@ Result is : INVALID
 
 #### `--env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list`
 
-The path to the `env.list` file, which is usually located in the same directory as `Dockerfile`. (Currently, the `env.list` files are identical for all the images.)
+The path to an `env.list` file, which is usually located in the same directory as `Dockerfile`.
+
+The `env.list` files are currently identical for all [dividiti](http://dividiti.com)'s images:
+```
+HOME=/home/dvdt
+CK_ROOT=/home/dvdt/CK
+CK_REPOS=/home/dvdt/CK_REPOS
+CK_TOOLS=/home/dvdt/CK_TOOLS
+PATH=/bin:/home/dvdt/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+CK_PYTHON=python3
+CK_CC=gcc
+GIT_USER="dividiti"
+GIT_EMAIL="info@dividiti.com"
+LANG=C.UTF-8
+```
 
 #### `--user=$(id -u):1500`
 
@@ -260,8 +274,8 @@ that serves as shared space ("volume") between the host and the container.
 This directory gets mapped to the `/home/dvdt/CK_REPOS/local/experiment`
 directory in the image, which belongs to the `dvdt` user but is also made
 accessible to the `dvdtg` group.  Therefore, you can retrieve from
-`${CK_EXPERIMENTS_DIR}` the results of a container run stored under your user
-id.
+`${CK_EXPERIMENTS_DIR}` the results of a container run, which receive your user
+id and the `1500` group id.
 
 
 <a name="parameters_loadgen"></a>
