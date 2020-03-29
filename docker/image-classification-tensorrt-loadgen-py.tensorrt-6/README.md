@@ -4,17 +4,20 @@
 [the TensorRT 19.12 image](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-12.html) from NVIDIA
 (which is in turn based on Ubuntu 18.04) with [CUDA](https://developer.nvidia.com/cuda-zone) 10.2 and [TensorRT](https://developer.nvidia.com/tensorrt) 6.0.1.
 
-1. [Setup](#setup)
+1. [Set up](#setup)
     - [Set up NVIDIA Docker](#setup_nvidia)
     - [Set up Collective Knowledge](#setup_ck)
     - [Download](#image_download) and/or [Build](#image_build) images
-1. [Usage](#usage)
+1. [Use](#use)
     - [Run once](#run)
     - [Benchmark](#benchmark)
         - [Docker parameters](#parameters_docker)
         - [LoadGen parameters](#parameters_loadgen)
     - [Explore](#explore)
-    - [Analyze](#analyze)
+1. [Prepare for analysis](#analyze)
+    - [On the same machine](#analyze_same)
+    - [On another machine](#analyze_another)
+1. [Visualize](#visualize)
 
 <a name="setup"></a>
 # Setup
@@ -75,8 +78,8 @@ $ cd `ck find docker:${CK_IMAGE}`
 $ docker build --no-cache -f Dockerfile -t ctuning/${CK_IMAGE} .
 ```
 
-<a name="usage"></a>
-# Usage
+<a name="use"></a>
+# Use
 
 <a name="run"></a>
 ## Run inference once
@@ -378,25 +381,29 @@ ckp-c57a441db2d845f0.0001.json-          "Samples per query": "32",
 But we can do much better than that!
 
 <a name="analyze"></a>
-## Analyze
+# Prepare for analysis
 
-### Copy the results to another machine for analysis
+<a name="analyze_same"></a>
+## On the same machine
 
-Once you have accumulated some experiment entries in `CK_EXPERIMENTS_DIR`, archive them e.g.:
+### Prepare a CK repository with the experimental results
+
+If you have previously created `repo:mlperf.closed.image-classification.velociti.tensorrt` and set `CK_EXPERIMENTS_DIR` to its location, you should have nothing to do. Otherwise:
+
+- Archive experiment entries in `CK_EXPERIMENTS_DIR` e.g.:
 ```bash
 $ cd $CK_EXPERIMENTS_DIR
 $ zip -rv mlperf.closed.image-classification.velociti.tensorrt.zip {.cm,*}
 ```
-and copy the resulting archive to a machine where you would like to analyze them.
 
-On that machine, create a new repository with a placeholder for experiment entries:
+- Create a new repository with a placeholder for experiment entries:
 ```bash
 $ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
 $ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
 $ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
 ```
 
-Finally, extract the archived results into the new repository:
+- Extract the archive into the new repository:
 ```bash
 $ unzip mlperf.closed.image-classification.velociti.tensorrt.zip \
 -d `ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
@@ -406,6 +413,32 @@ Archive:  mlperf.closed.image-classification.velociti.tensorrt.zip
    creating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/
   inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/ckp-3368d49d0824b41e.features.json
 ...
+```
+
+<a name="analyze_another"</a>
+## On another machine
+
+### Prepare a CK repository with the experimental results
+
+- On the machine with the Docker image, archive experiment entries in `CK_EXPERIMENTS_DIR` e.g.:
+```bash
+$ cd $CK_EXPERIMENTS_DIR
+$ zip -rv mlperf.closed.image-classification.velociti.tensorrt.zip {.cm,*}
+```
+
+- Copy the resulting archive to a machine where you would like to analyze them.
+
+- On that machine, create a new repository with a placeholder for experiment entries:
+```bash
+$ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
+$ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
+$ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
+```
+
+- Extract the archive results into the new repository:
+```bash
+$ unzip mlperf.closed.image-classification.velociti.tensorrt.zip \
+-d `ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
 ```
 
 ### Convert the results into the submission format
@@ -425,7 +458,12 @@ $ ck run ck-mlperf:program:dump-submissions-to-dashboard \
 --env.CK_MLPERF_DASHBOARD_DIR=$HOME
 ```
 
-### Copy the results to the dashboard plugin
+<a name="visualize"></a>
+## Visualize
+
+### Locate the dashboard plugin
+
+The dashboard plugin directory contains the official MLPerf Inference v0.5 results in a custom ([pickle](https://docs.python.org/3/library/pickle.html)d [pandas.DataFrame](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html)) format:
 
 ```bash
 $ ls -la `ck find ck-mlperf:module:mlperf.inference`
@@ -436,7 +474,28 @@ drwxrwxr-x 2 anton dvdt  4096 Dec 19 11:55 .cm
 -rw-rw-r-- 1 anton dvdt    59 Nov 25 12:27 .gitignore
 -rw-rw-r-- 1 anton dvdt 21873 Dec 19 11:55 mlperf-inference-v0.5-results.zip
 -rw-rw-r-- 1 anton dvdt  5649 Jan 24 12:47 module.py
+```
 
+### Copy your results to the dashboard plugin
+
+Add your unofficial results there. 
+
+#### From a remote machine
+
+```bash
 $ scp -P <port> <hostname>:/home/<user>/mlperf-inference-unofficial-results.tensorrt.zip \
   `ck find ck-mlperf:module:mlperf.inference`
+```
+
+#### From a local machine
+
+```bash
+$ cp mlperf-inference-unofficial-results.tensorrt.zip \
+   `ck find ck-mlperf:module:mlperf.inference`
+```
+
+### Open the dashboard
+
+```bash
+$ ck display dashboard --scenario=mlperf.inference
 ```
