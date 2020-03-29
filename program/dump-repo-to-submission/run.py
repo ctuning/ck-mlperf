@@ -1550,6 +1550,15 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         else:
             raise "Invalid measurements README!"
 
+        # Create 'NOTES.txt'.
+        measurements_notes_name = 'NOTES.txt'
+        measurements_notes_path = os.path.join(scenario_dir, measurements_notes_name)
+        measurements_notes = notes
+        if measurements_notes != '':
+            with open(measurements_notes_path, 'w') as measurements_notes_file:
+                measurements_notes_file.writelines(measurements_notes)
+            print('  |_ %s [for %s %s]' % (measurements_notes_name, division, task))
+
         # Try to find environment for 'user.conf'.
         loadgen_config_tags='loadgen,config,'+implementation
         lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
