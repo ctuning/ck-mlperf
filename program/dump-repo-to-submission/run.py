@@ -1671,6 +1671,18 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 run_dir = os.path.join(mode_dir, 'run_%d' % point_idx)
                 if not os.path.exists(run_dir): os.mkdir(run_dir)
                 last_dir = run_dir
+                # Performance notes. Should ideally go inside the run_x dir, but the checker complains.
+                if 'velociti' in tags and 'tensorrt' in tags:
+                    num_streams = point_data_raw['choices']['env'].get('CK_LOADGEN_MULTISTREAMNESS', '')
+                    if num_streams == '': num_streams = '?'
+                    pprint(point_data_raw['characteristics_list'][0]['run']['mlperf_log'])
+                    result_is = point_data_raw['characteristics_list'][0]['run']['parsed_summary']['Result is']
+                    performance_notes = 'uid={}, #streams={}, {}'.format(point, num_streams, result_is)
+                    performance_notes_name = run_dir + '.txt'
+                    performance_notes_path = os.path.join(mode_dir, performance_notes_name)
+                    with open(performance_notes_path, 'w') as performance_notes_file:
+                        performance_notes_file.writelines(performance_notes)
+                        print('  |_ %s' % performance_notes_name)
             else:
                 last_dir = mode_dir
             print(last_dir)
