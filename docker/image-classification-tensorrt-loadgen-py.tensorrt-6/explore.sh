@@ -160,13 +160,11 @@ library="tensorrt"
 benchmark=${model_name}
 record_uoa="${mlperf}.${division}.${task}.${platform}.${library}.${benchmark}.${scenario_tag}.${mode_tag}"
 record_tags="${mlperf},${division},${task},${platform},${library},${benchmark},${scenario_tag},${mode_tag}"
-if [ "${mode_tag}" = "accuracy" ]; then
+if [ "${mode_tag}" = "accuracy_" ]; then # FIXME: This part is intentionally disabled for the tim being.
   # Get substring after "preprocessed," to end, i.e. "using-opencv" here.
   preprocessing="${preprocessing_tags##*preprocessed,}"
   record_uoa+=".${preprocessing}"
   record_tags+=",${preprocessing}"
-fi
-if [ "${mode_tag}" = "accuracy" ]; then
   if [ "${task}" = "image-classification" ] && [ "${dataset_size}" != "${imagenet_size}" ]; then
     record_uoa+=".${dataset_size}"
     record_tags+=",${dataset_size}"
