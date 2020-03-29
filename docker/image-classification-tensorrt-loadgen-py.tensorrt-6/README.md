@@ -15,8 +15,8 @@
         - [LoadGen parameters](#parameters_loadgen)
     - [Explore](#explore)
 1. [Prepare for analysis](#analyze)
-    - [On the same machine](#analyze_same)
-    - [On another machine](#analyze_another)
+    - [On any machine](#analyze_any)
+    - [Using the same Docker image](#analyze_docker)
 1. [Visualize](#visualize)
 
 <a name="setup"></a>
@@ -383,39 +383,8 @@ But we can do much better than that!
 <a name="analyze"></a>
 # Prepare for analysis
 
-<a name="analyze_same"></a>
-## On the same machine
 
-### Prepare a CK repository with the experimental results
-
-If you have previously created `repo:mlperf.closed.image-classification.velociti.tensorrt` and set `CK_EXPERIMENTS_DIR` to its location, you should have nothing to do. Otherwise:
-
-- Archive experiment entries in `CK_EXPERIMENTS_DIR` e.g.:
-```bash
-$ cd $CK_EXPERIMENTS_DIR
-$ zip -rv mlperf.closed.image-classification.velociti.tensorrt.zip {.cm,*}
-```
-
-- Create a new repository with a placeholder for experiment entries:
-```bash
-$ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
-$ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
-$ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
-```
-
-- Extract the archive into the new repository:
-```bash
-$ unzip mlperf.closed.image-classification.velociti.tensorrt.zip \
--d `ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
-Archive:  mlperf.closed.image-classification.velociti.tensorrt.zip
-  inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/.cm/alias-u-892d289465870473
- extracting: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/.cm/alias-a-mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
-   creating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/
-  inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/ckp-3368d49d0824b41e.features.json
-...
-```
-
-<a name="analyze_another"</a>
+<a name="analyze_another"></a>
 ## On another machine
 
 ### Prepare a CK repository with the experimental results
@@ -457,6 +426,51 @@ $ ck run ck-mlperf:program:dump-submissions-to-dashboard \
 --env.CK_MLPERF_DASHBOARD_FILE=mlperf-inference-unofficial-results.tensorrt.zip \
 --env.CK_MLPERF_DASHBOARD_DIR=$HOME
 ```
+
+<a name="analyze_docker"></a>
+## `WORK IN PROGRESS` Using the same Docker image
+
+### Prepare a CK repository with the experimental results
+
+If you have previously created `repo:mlperf.closed.image-classification.velociti.tensorrt` and set `CK_EXPERIMENTS_DIR` to its location, you should have nothing to do. Otherwise:
+
+- Archive experiment entries in `CK_EXPERIMENTS_DIR` e.g.:
+```bash
+$ cd $CK_EXPERIMENTS_DIR
+$ zip -rv mlperf.closed.image-classification.velociti.tensorrt.zip {.cm,*}
+```
+
+- Create a new repository with a placeholder for experiment entries:
+```bash
+$ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
+$ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
+$ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
+```
+
+- Extract the archive into the new repository:
+```bash
+$ unzip mlperf.closed.image-classification.velociti.tensorrt.zip \
+-d `ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
+Archive:  mlperf.closed.image-classification.velociti.tensorrt.zip
+  inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/.cm/alias-u-892d289465870473
+ extracting: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/.cm/alias-a-mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
+   creating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/
+  inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/ckp-3368d49d0824b41e.features.json
+...
+```
+### Convert the results into the submission format
+
+```bash
+$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list \
+  --user=$(id -u):1500 --volume ${CK_EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
+  --rm ctuning/${CK_IMAGE} \
+  "ck run ck-mlperf:program:dump-repo-to-submission \
+  --env.CK_MLPERF_SUBMISSION_REPO=local \
+  --env.CK_MLPERF_SUBMISSION_ROOT=/home/dvdt/CK_REPOS/local/experiment/SUBMISSION"
+```
+**NB:** Currently, this downloads the COCO 2017 validation dataset, etc., and fails on not finding `repo:ck-object-detection`.
+It should do so only when object detection is needed, i.e. not for this image.
+
 
 <a name="visualize"></a>
 ## Visualize

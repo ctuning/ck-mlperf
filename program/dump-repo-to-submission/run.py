@@ -1389,6 +1389,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         #print(tags)
         backend = ''
         preprocessing = ''
+        notes = ''
 #        pprint(tags)
         if 'velociti' in tags:
             # Expected format: [ "mlperf", "open", "object-detection", "velociti", "cpu", "rcnn-inception-resnet-v2-lowproposals", "singlestream", "accuracy" ]
@@ -1398,6 +1399,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             else:
                 library = 'tensorrt-v6.0'
                 backend = ''
+                notes = 'Demo'
         elif 'accuracy' in tags:
             # FIXME: With the benefit of hindsight, [ ..., "armnn-v19.08", "neon", ... ] should have come 
             # as one tag "armnn-v19.08-neon", since we join them in this notebook anyway.

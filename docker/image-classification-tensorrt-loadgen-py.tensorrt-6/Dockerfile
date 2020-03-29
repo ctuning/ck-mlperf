@@ -110,10 +110,15 @@ RUN ck install package --tags=mlperf,loadgen,python-package
 #-----------------------------------------------------------------------------#
 # Install the official MLPerf ResNet ONNX model.
 RUN ck install package --tags=model,onnx,resnet,downloaded
-# Allow to create tmp files when running under an external user.
-RUN chmod -R g+rwx `ck find program:image-classification-tensorrt-loadgen-py`
 # Allow to create new environments when running under an external user.
 RUN chmod -R g+rwx $CK_REPOS/local/env
+# Allow a few programs to create tmp files when running under an external user.
+RUN chmod -R g+rwx `ck find program:image-classification-tensorrt-loadgen-py`
+#RUN chmod -R g+rwx `ck find program:dump-repo-to-submission`
+#RUN chmod -R g+rwx `ck find program:dump-submissions-to-dashboard`
+## Need pandas and ipython for dumping submissions.
+#RUN ${CK_PYTHON} -m pip install pandas --user
+#RUN ${CK_PYTHON} -m pip install ipython --user
 
 ## Print CUDA device info.
 #RUN ck compile program:tool-print-cuda-devices
