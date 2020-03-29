@@ -103,10 +103,7 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_detail.txt \
   && echo ''"
 ...
---------------------------------
 accuracy=75.200%, good=376, total=500
-
---------------------------------
 ...
 --------------------------------------------------------------------------------
 mlperf_log_summary.txt
@@ -125,7 +122,7 @@ from the reference ResNet ONNX model.
 $ docker run --rm ctuning/$CK_IMAGE
 ```
 
-#### Performance mode
+### Performance mode
 
 ```bash
 $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
@@ -185,7 +182,7 @@ To find out, we should benchmark this workload with several values of this param
 <a name="benchmark"></a>
 ## Benchmark with parameters
 
-When you run inference using `ck run`, the results get printed but not saved.
+When you run inference using `ck run`, the results get printed to the terminal but not saved.
 You can use `ck benchmark` to save the results on the host system as CK experiment entries (JSON files).
 
 Create a directory on the host computer where you want to store experiment entries e.g.:
@@ -195,7 +192,30 @@ $ mkdir -p ${CK_EXPERIMENTS_DIR}
 ```
 (**NB:** `USER` must have write access to this directory.)
 
-When running `ck benchmark` via Docker, map the internal directory `/home/dvdt/CK_REPOS/local/experiment` to `$CK_EXPERIMENTS_DIR` on the host:
+When running `ck benchmark` via Docker, map the internal directory `/home/dvdt/CK_REPOS/local/experiment` to `$CK_EXPERIMENTS_DIR` on the host.
+
+### Accuracy mode
+
+```bash
+$ export NUM_STREAMS=30
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list \
+  --user=$(id -u):1500 --volume ${CK_EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
+  --rm ctuning/${CK_IMAGE} \
+  "ck benchmark program:image-classification-tensorrt-loadgen-py --repetitions=1 --env.CK_SILENT_MODE \
+  --env.CK_LOADGEN_MODE=AccuracyOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
+  --env.CK_LOADGEN_MULTISTREAMNESS=${NUM_STREAMS} --env.CK_BATCH_SIZE=${NUM_STREAMS} \
+  --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
+  --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
+  --dep_add_tags.weights=model,tensorrt,resnet,converted-from-onnx,fp32,maxbatch.${NUM_STREAMS} \
+  --record --record_repo=local \
+  --record_uoa=mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.accuracy \
+  --tags=mlperf,closed,image-classification,velociti,tensorrt,resnet,multistream,accuracy \
+  --skip_print_timers --skip_stat_analysis --process_multi_keys"
+...
+accuracy=75.200%, good=376, total=500
+```
+
+### Performance mode
 
 ```bash
 $ export NUM_STREAMS=30
@@ -210,8 +230,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-from-onnx,fp32,maxbatch.${NUM_STREAMS} \
   --record --record_repo=local \
-  --record_uoa=mlperf.closed.image-classification.tensorrt.resnet.multistream.performance \
-  --tags=mlperf,closed,image-classification,tensorrt,resnet,multistream,performance \
+  --record_uoa=mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance \
+  --tags=mlperf,closed,image-classification,velociti,tensorrt,resnet,multistream,performance \
   --skip_print_timers --skip_stat_analysis --process_multi_keys"
 ...
 --------------------------------------------------------------------
@@ -291,7 +311,8 @@ $ export CK_REPOS=$HOME/CK
 $ export CK_IMAGE=`ck find ck-mlperf:experiment:image-classification-tensorrt-loadgen-py.tensorrt-6
 $ export CK_EXPERIMENTS_DIR=$HOME/tensorrt-experiments
 $ cd `ck find ck-mlperf:docker:${CK_IMAGE}`
-$ CK_BATCH_SIZES="1 30 31 32" ./explore.sh
+$ CK_BATCH_SIZES="1 30 31 32" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
+$ CK_BATCH_SIZES="1" CK_LOADGEN_MODE=AccuracyOnly ./explore.sh
 ```
 
 The results get accumulated under `$CK_EXPERIMENTS_DIR`:
@@ -301,10 +322,18 @@ total 16
 drwxrwxr-x  4 anton dvdt  4096 Mar 28 00:10 .
 drwxr-xr-x 14 anton anton 4096 Mar 28 00:09 ..
 drwxr-xr-x  2 anton  1500 4096 Mar 28 00:10 .cm
+drwxr-xr-x  3 anton  1500 4096 Mar 29 18:28 mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.accuracy
 drwxr-xr-x  3 anton  1500 4096 Mar 28 00:49 mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
 
 $ tree $CK_EXPERIMENTS_DIR
 /data/anton/tensorrt-experiments
+├── mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.accuracy
+│   ├── ckp-f6af4c77a2b50fde.0001.json
+│   ├── ckp-f6af4c77a2b50fde.features_flat.json
+│   ├── ckp-f6af4c77a2b50fde.features.json
+│   ├── ckp-f6af4c77a2b50fde.flat.json
+│   ├── desc.json
+│   └── pipeline.json
 └── mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
     ├── ckp-0cc49387454691a5.0001.json
     ├── ckp-0cc49387454691a5.features_flat.json
