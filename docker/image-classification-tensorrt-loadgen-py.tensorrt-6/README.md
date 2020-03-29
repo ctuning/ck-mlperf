@@ -195,7 +195,7 @@ $ mkdir -p ${CK_EXPERIMENTS_DIR}
 ```
 (**NB:** `USER` must have write access to this directory.)
 
-When running `ck benchmark` via Docker, map the internal output directory to `$CK_EXPERIMENTS_DIR` on the host:
+When running `ck benchmark` via Docker, map the internal directory `/home/dvdt/CK_REPOS/local/experiment` to `$CK_EXPERIMENTS_DIR` on the host:
 
 ```bash
 $ export NUM_STREAMS=30
@@ -240,30 +240,31 @@ Result is : INVALID
 ```
 
 <a name="parameters_docker"></a>
-### Docker parameters
+### Docker parameters explained
 
-#### `--env-file`
+#### `--env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list`
 
-The path to the `env.list` file, which is usually located in the same folder as `Dockerfile`. (Currently, the `env.list` files are identical for all the images.)
+The path to the `env.list` file, which is usually located in the same directory as `Dockerfile`. (Currently, the `env.list` files are identical for all the images.)
 
-#### `--user` / `USER`
+#### `--user=$(id -u):1500`
 
-Your user id on the host system and a fixed group id (`1500`) needed to access files in the container.
+`id -u` returns your user id on the host system (`USER`). `1500` is the fixed
+group id of the `dvdtg` group in the image. When you launch a container with
+this parameter, your can access all files accessible to the `dvdtg` group.
 
-#### `--volume` / `CK_EXPERIMENTS_DIR`
 
-A directory with read/write permissions for the user that serves as shared space ("volume") between the host and the container.
+#### `--volume ${CK_EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment`
 
-##### Gory details
+`CK_EXPERIMENTS_DIR` is a directory with read/write permissions for the user
+that serves as shared space ("volume") between the host and the container.
+This directory gets mapped to the `/home/dvdt/CK_REPOS/local/experiment`
+directory in the image, which belongs to the `dvdt` user but is also made
+accessible to the `dvdtg` group.  Therefore, you can retrieve from
+`${CK_EXPERIMENTS_DIR}` the results of a container run stored under your user
+id.
 
-We ask you to launch a container with `--user=$(id -u):1500`, where `$(id -u)` gives your
-user id on the host system and `1500` is the fixed group id of the `dvdtg` group in the image.
-We also ask you to mount a folder with read/write permissions with `--volume=<folder_for_results>`.
-This folder gets mapped to the `/home/dvdt/CK_REPOS/local/experiment` folder in the image.
-While the `experiment` folder belongs to the `dvdt` user, it is made accessible to the `dvdtg` group.
-Therefore, you can retrieve the results of a container run under your user id from this folder.
 
-<a name="parameters_docker"></a>
+<a name="parameters_loadgen"></a>
 ### LoadGen parameters
 **TODO**
 
