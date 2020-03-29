@@ -287,13 +287,94 @@ id and the `1500` group id.
 ## Explore
 
 ```bash
-$ export CK_IMAGE=`ck find ck-mlperf:experiment:image-classification-tensorrt-loadgen-py.tensorrt-6
 $ export CK_REPOS=$HOME/CK
+$ export CK_IMAGE=`ck find ck-mlperf:experiment:image-classification-tensorrt-loadgen-py.tensorrt-6
 $ export CK_EXPERIMENTS_DIR=$HOME/tensorrt-experiments
 $ cd `ck find ck-mlperf:docker:${CK_IMAGE}`
-$ CK_BATCH_SIZES="30 31 32" ./explore.sh
-``
+$ CK_BATCH_SIZES="1 30 31 32" ./explore.sh
+```
+
+The results get accumulated under `$CK_EXPERIMENTS_DIR`:
+```
+$ ls -la $CK_EXPERIMENTS_DIR
+total 16
+drwxrwxr-x  4 anton dvdt  4096 Mar 28 00:10 .
+drwxr-xr-x 14 anton anton 4096 Mar 28 00:09 ..
+drwxr-xr-x  2 anton  1500 4096 Mar 28 00:10 .cm
+drwxr-xr-x  3 anton  1500 4096 Mar 28 00:49 mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
+
+$ tree $CK_EXPERIMENTS_DIR
+/data/anton/tensorrt-experiments
+└── mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
+    ├── ckp-0cc49387454691a5.0001.json
+    ├── ckp-0cc49387454691a5.features_flat.json
+    ├── ckp-0cc49387454691a5.features.json
+    ├── ckp-0cc49387454691a5.flat.json
+    ├── ckp-3368d49d0824b41e.0001.json
+    ├── ckp-3368d49d0824b41e.features_flat.json
+    ├── ckp-3368d49d0824b41e.features.json
+    ├── ckp-3368d49d0824b41e.flat.json
+    ├── ckp-89accfd6c6f3fd9e.0001.json
+    ├── ckp-89accfd6c6f3fd9e.features_flat.json
+    ├── ckp-89accfd6c6f3fd9e.features.json
+    ├── ckp-89accfd6c6f3fd9e.flat.json
+    ├── ckp-c57a441db2d845f0.0001.json
+    ├── ckp-c57a441db2d845f0.features_flat.json
+    ├── ckp-c57a441db2d845f0.features.json
+    ├── ckp-c57a441db2d845f0.flat.json
+    ├── desc.json
+    └── pipeline.json
+```
+
+Here's a quick-and-cheap way to ascertain that 31 samples per query was the optimum number of streams:
+```bash
+$ cd $CK_EXPERIMENTS_DIR/*.performance && grep "Result is\"" -RH -A2
+ckp-89accfd6c6f3fd9e.0001.json:          "Result is": "VALID",
+ckp-89accfd6c6f3fd9e.0001.json-          "SUT name": "PySUT",
+ckp-89accfd6c6f3fd9e.0001.json-          "Samples per query": "1",
+--
+ckp-3368d49d0824b41e.0001.json:          "Result is": "VALID",
+ckp-3368d49d0824b41e.0001.json-          "SUT name": "PySUT",
+ckp-3368d49d0824b41e.0001.json-          "Samples per query": "31",
+--
+ckp-0cc49387454691a5.0001.json:          "Result is": "VALID",
+ckp-0cc49387454691a5.0001.json-          "SUT name": "PySUT",
+ckp-0cc49387454691a5.0001.json-          "Samples per query": "30",
+--
+ckp-c57a441db2d845f0.0001.json:          "Result is": "INVALID",
+ckp-c57a441db2d845f0.0001.json-          "SUT name": "PySUT",
+ckp-c57a441db2d845f0.0001.json-          "Samples per query": "32",
+```
+
+But we can do much better than that!
 
 <a name="analyze"></a>
 ## Analyze
-**TODO**
+
+### Copy the results to another machine for analysis
+
+Once you have accumulated some experiment entries in `CK_EXPERIMENTS_DIR`, archive them e.g.:
+```bash
+$ cd $CK_EXPERIMENTS_DIR
+$ zip -rv mlperf.closed.image-classification.velociti.tensorrt.zip {.cm,*}
+```
+and copy the resulting archive to a machine where you would like to analyze them.
+
+On that machine, create a new repository with a placeholder for experiment entries:
+```bash
+$ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
+$ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
+$ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
+```
+
+Finally, extract the archived results into the new repository:
+```bash
+$ unzip mlperf.closed.image-classification.velociti.tensorrt.zip \
+-d `ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
+Archive:  mlperf.closed.image-classification.velociti.tensorrt.zip
+  inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/.cm/alias-u-892d289465870473
+ extracting: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/.cm/alias-a-mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance
+   creating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/
+  inflating: /home/anton/CK_REPOS/mlperf.closed.image-classification.velociti.tensorrt/experiment/mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance/ckp-3368d49d0824b41e.features.json
+...
+```
