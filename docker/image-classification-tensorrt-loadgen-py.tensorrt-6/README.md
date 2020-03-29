@@ -415,3 +415,28 @@ $ ck run ck-mlperf:program:dump-repo-to-submission \
 --env.CK_MLPERF_SUBMISSION_REPO=mlperf.closed.image-classification.velociti.tensorrt \
 --env.CK_MLPERF_SUBMISSION_ROOT=$HOME/mlperf.closed.image-classification.velociti.tensorrt-submission
 ```
+
+### Convert from the submission format to the dashboard format
+
+```bash
+$ ck run ck-mlperf:program:dump-submissions-to-dashboard \
+--env.CK_MLPERF_SUBMISSION_ROOT=$HOME/mlperf.closed.image-classification.velociti.tensorrt-submission \
+--env.CK_MLPERF_DASHBOARD_FILE=mlperf-inference-unofficial-tensorrt-results.zip \
+--env.CK_MLPERF_DASHBOARD_DIR=$HOME
+```
+
+### Copy the results to the dashboard plugin
+
+```bash
+$ ls -la `ck find ck-mlperf:module:mlperf.inference`
+total 56
+drwxrwxr-x 3 anton dvdt  4096 Mar 29 20:01 .
+drwxrwxr-x 6 anton dvdt  4096 Nov 25 12:27 ..
+drwxrwxr-x 2 anton dvdt  4096 Dec 19 11:55 .cm
+-rw-rw-r-- 1 anton dvdt    59 Nov 25 12:27 .gitignore
+-rw-rw-r-- 1 anton dvdt 21873 Dec 19 11:55 mlperf-inference-v0.5-results.zip
+-rw-rw-r-- 1 anton dvdt  5649 Jan 24 12:47 module.py
+
+$ scp -P <port> <host>:<home>/mlperf-inference-unofficial-tensorrt-results.zip \
+  `ck find ck-mlperf:module:mlperf.inference`
+```
