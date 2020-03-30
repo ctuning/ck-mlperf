@@ -88,6 +88,8 @@ Once you have downloaded or built an image, you can run inference in the accurac
 
 ### Accuracy mode
 
+#### ResNet, fp32, 32 samples per batch
+
 ```bash
 $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
   "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
@@ -118,11 +120,74 @@ No errors encountered during test.
 ```
 
 Here, we run inference on 500 images using a TensorRT plan converted on-the-fly
-from the reference ResNet ONNX model.
+from the reference ResNet ONNX model. We use 32 samples per batch, the maximum
+batch size supported by the model.
 
 **NB:** This is equivalent to the default run command:
 ```bash
 $ docker run --rm ctuning/$CK_IMAGE
+```
+
+#### ResNet, int8, 15 samples per batch
+
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
+  "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
+  --env.CK_LOADGEN_MODE=AccuracyOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
+  --env.CK_LOADGEN_MULTISTREAMNESS=15 --env.CK_BATCH_SIZE=15 \
+  --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
+  --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
+  --dep_add_tags.weights=model,tensorrt,resnet,converted-by.nvidia,for.gtx1080,int8 \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_summary.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_summary.txt \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_detail.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_detail.txt \
+  && echo ''"
+...
+accuracy=74.000%, good=370, total=500
+...
+--------------------------------------------------------------------------------
+mlperf_log_summary.txt
+--------------------------------------------------------------------------------
+
+No warnings encountered during test.
+
+No errors encountered during test.
+```
+
+#### MobileNet, int8
+
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
+  "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
+  --env.CK_LOADGEN_MODE=AccuracyOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
+  --env.CK_LOADGEN_MULTISTREAMNESS=250 --env.CK_BATCH_SIZE=250 \
+  --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
+  --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
+  --dep_add_tags.weights=model,tensorrt,mobilenet,converted-by.nvidia,for.gtx1080,int8 \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_summary.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_summary.txt \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_detail.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_detail.txt \
+  && echo ''"
+...
+accuracy=69.000%, good=345, total=500
+...
+--------------------------------------------------------------------------------
+mlperf_log_summary.txt
+--------------------------------------------------------------------------------
+
+No warnings encountered during test.
+
+No errors encountered during test.
 ```
 
 ### Performance mode
