@@ -531,7 +531,7 @@ CK_BATCH_SIZES="30 31 32" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
 
 ```bash
 $ CK_LOADGEN_MODEL_NAME=mobilenet CK_MODEL_TAGS=mobilenet,converted-by.nvidia,for.gtx1080 CK_PRECISION=int8 \
-CK_BATCH_SIZES="120 130 140 150" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
+CK_BATCH_SIZES="120 130 140 150 160 170 180 190 200" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
 ```
 
 <a name="analyze"></a>
