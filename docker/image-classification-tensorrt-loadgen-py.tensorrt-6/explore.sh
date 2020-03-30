@@ -2,8 +2,8 @@
 
 echo "Tunable parameters:"
 
-# Batch size.
-batch_sizes=( ${CK_BATCH_SIZES:-$(seq 30 32)} ) # use parentheses to interpret the string as an array 
+# Batch sizes.
+batch_sizes=( ${CK_BATCH_SIZES:-$(seq 1 2)} ) # use parentheses to interpret the string as an array
 echo "- batch sizes: ${batch_sizes}"
 
 echo
@@ -50,7 +50,7 @@ model_name=${CK_LOADGEN_MODEL_NAME:-"resnet"}
 echo "- model name: ${model_name}"
 
 # Model tags.
-model_tags=${CK_MODEL_TAGS:-"converted-from-onnx"}
+model_tags=${CK_MODEL_TAGS:-"resnet,converted-from-onnx,maxbatch.32"}
 echo "- model tags: ${model_tags}"
 
 # LoadGen scenario: SingleStream, MultiStream, Server, Offline.
@@ -136,13 +136,9 @@ if [ "${mode}" = "PerformanceOnly" ]; then
 fi
 echo "- count override: ${count_override} ('${COUNT_OVERRIDE}')"
 
-# Maximum batch size that the TensorRT model supports.
-maxbatch=${CK_WEIGHTS_MAXBATCH:-32}
-echo "- weights maxbatch: ${maxbatch}"
-
 # Numerical precision of the TensorRT model.
-precision=${CK_WEIGHTS_PRECISION:-fp32}
-echo "- weights precision: ${precision}"
+precision=${CK_PRECISION:-fp32}
+echo "- precision: ${precision}"
 
 # Input preprocessing.
 preprocessing_tags=${CK_PREPROCESSING_TAGS:-"rgb8,side.224,preprocessed,using-opencv"}
@@ -169,7 +165,7 @@ library="tensorrt"
 benchmark=${model_name}
 record_uoa="${mlperf}.${division}.${task}.${platform}.${library}.${benchmark}.${scenario_tag}.${mode_tag}"
 record_tags="${mlperf},${division},${task},${platform},${library},${benchmark},${scenario_tag},${mode_tag}"
-if [ "${mode_tag}" = "accuracy_" ]; then # FIXME: This part is intentionally disabled for the tim being.
+if [ "${mode_tag}" = "accuracy_" ]; then # FIXME: This part is intentionally disabled for the time being.
   # Get substring after "preprocessed," to end, i.e. "using-opencv" here.
   preprocessing="${preprocessing_tags##*preprocessed,}"
   record_uoa+=".${preprocessing}"
@@ -209,7 +205,7 @@ for batch_size in ${batch_sizes[@]}; do
     --env.CK_LOADGEN_COUNT_OVERRIDE=${count_override} \
     --env.CK_LOADGEN_DATASET_SIZE=${dataset_size} --env.CK_LOADGEN_BUFFER_SIZE=${buffer_size} \
     --env.CK_LOADGEN_CONF_FILE=${program_dir}/user.conf \
-    --dep_add_tags.weights=${model_tags},maxbatch.${maxbatch},${precision} \
+    --dep_add_tags.weights=model,tensorrt,${model_tags},${precision} \
     --dep_add_tags.lib-python-tensorrt=python-package,tensorrt \
     --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
     --skip_print_timers --skip_stat_analysis --process_multi_keys \

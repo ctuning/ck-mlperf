@@ -367,12 +367,12 @@ We recommend creating a new CK repository with a placeholder for experiment entr
 $ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
 $ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
 $ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
-$ export CK_EXPERIMENTS_DIR=`ck find repo:mlperf.closed.image-classification.velociti.tensorrt:experiment`
+$ export CK_EXPERIMENTS_DIR=`ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
 ```
 
 Alternatively, create a directory where you want to store experiment entries e.g.:
 ```bash
-$ export CK_EXPERIMENTS_DIR=/data/$USER/tensorrt-experiments
+$ export CK_EXPERIMENTS_DIR=/home/$USER/ck-experiments
 $ mkdir -p ${CK_EXPERIMENTS_DIR}
 ```
 (**NB:** `USER` must have write access to this directory.)
@@ -497,12 +497,45 @@ id and the `1500` group id.
 
 ```bash
 $ export CK_REPOS=$HOME/CK
-$ export CK_IMAGE=`ck find ck-mlperf:experiment:image-classification-tensorrt-loadgen-py.tensorrt-6
-$ export CK_EXPERIMENTS_DIR=$HOME/tensorrt-experiments
+$ export CK_IMAGE=image-classification-tensorrt-loadgen-py.tensorrt-6
+$ export CK_EXPERIMENTS_DIR=`ck find repo:mlperf.closed.image-classification.velociti.tensorrt`/experiment
 $ cd `ck find ck-mlperf:docker:${CK_IMAGE}`
-$ CK_BATCH_SIZES="1 30 31 32" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
-$ CK_BATCH_SIZES="1" CK_LOADGEN_MODE=AccuracyOnly ./explore.sh
 ```
+
+### Accuracy mode
+
+#### ResNet, fp32
+
+```bash
+$ CK_LOADGEN_MODEL_NAME=resnet50 CK_MODEL_TAGS=resnet,converted-from-onnx,maxbatch.32 CK_PRECISION=fp32 \
+CK_BATCH_SIZES=32 CK_LOADGEN_MODE=AccuracyOnly ./explore.sh
+```
+
+#### MobileNet, int8
+
+```bash
+$ CK_LOADGEN_MODEL_NAME=mobilenet CK_MODEL_TAGS=mobilenet,converted-by.nvidia,for.gtx1080 CK_PRECISION=int8 \
+CK_BATCH_SIZES=250 CK_LOADGEN_MODE=AccuracyOnly ./explore.sh
+```
+
+### Performance mode
+
+#### ResNet, fp32
+
+```bash
+$ CK_LOADGEN_MODEL_NAME=resnet50 CK_MODEL_TAGS=resnet,converted-from-onnx,maxbatch.32 CK_PRECISION=fp32 \
+CK_BATCH_SIZES="30 31 32" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
+```
+
+#### MobileNet, int8
+
+```bash
+$ CK_LOADGEN_MODEL_NAME=mobilenet CK_MODEL_TAGS=mobilenet,converted-by.nvidia,for.gtx1080 CK_PRECISION=int8 \
+CK_BATCH_SIZES="120 130 140 150" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
+```
+
+<a name="analyze"></a>
+# Prepare for analysis
 
 The results get accumulated under `$CK_EXPERIMENTS_DIR`:
 ```
@@ -532,10 +565,6 @@ $ tree $CK_EXPERIMENTS_DIR
     ├── ckp-3368d49d0824b41e.features_flat.json
     ├── ckp-3368d49d0824b41e.features.json
     ├── ckp-3368d49d0824b41e.flat.json
-    ├── ckp-89accfd6c6f3fd9e.0001.json
-    ├── ckp-89accfd6c6f3fd9e.features_flat.json
-    ├── ckp-89accfd6c6f3fd9e.features.json
-    ├── ckp-89accfd6c6f3fd9e.flat.json
     ├── ckp-c57a441db2d845f0.0001.json
     ├── ckp-c57a441db2d845f0.features_flat.json
     ├── ckp-c57a441db2d845f0.features.json
@@ -547,10 +576,6 @@ $ tree $CK_EXPERIMENTS_DIR
 Here's a quick-and-cheap way to ascertain that 31 samples per query was the optimum number of streams:
 ```bash
 $ cd $CK_EXPERIMENTS_DIR/*.performance && grep "Result is\"" -RH -A2
-ckp-89accfd6c6f3fd9e.0001.json:          "Result is": "VALID",
-ckp-89accfd6c6f3fd9e.0001.json-          "SUT name": "PySUT",
-ckp-89accfd6c6f3fd9e.0001.json-          "Samples per query": "1",
---
 ckp-3368d49d0824b41e.0001.json:          "Result is": "VALID",
 ckp-3368d49d0824b41e.0001.json-          "SUT name": "PySUT",
 ckp-3368d49d0824b41e.0001.json-          "Samples per query": "31",
@@ -565,9 +590,6 @@ ckp-c57a441db2d845f0.0001.json-          "Samples per query": "32",
 ```
 
 But we can do much better than that!
-
-<a name="analyze"></a>
-# Prepare for analysis
 
 
 <a name="analyze_any"></a>
