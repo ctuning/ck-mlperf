@@ -4,7 +4,7 @@ echo "Tunable parameters:"
 
 # Batch sizes.
 batch_sizes=( ${CK_BATCH_SIZES:-$(seq 1 2)} ) # use parentheses to interpret the string as an array
-echo "- batch sizes: ${batch_sizes}"
+echo "- batch sizes: ${batch_sizes[@]}"
 
 echo
 
