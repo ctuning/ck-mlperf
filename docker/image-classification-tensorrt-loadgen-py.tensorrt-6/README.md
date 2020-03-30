@@ -627,7 +627,7 @@ $ unzip mlperf.closed.image-classification.velociti.tensorrt.zip \
 ### Convert the results into the submission format
 
 ```bash
-$ ck run ck-mlperf:program:dump-repo-to-submission \
+$ ck run ck-mlperf:program:dump-repo-to-submission --dep_add_tags.python=v3.6 \
 --env.CK_MLPERF_SUBMISSION_REPO=mlperf.closed.image-classification.velociti.tensorrt \
 --env.CK_MLPERF_SUBMISSION_ROOT=$HOME/mlperf-inference-unofficial-results.tensorrt
 ```
@@ -635,7 +635,7 @@ $ ck run ck-mlperf:program:dump-repo-to-submission \
 ### Convert from the submission format to the dashboard format
 
 ```bash
-$ ck run ck-mlperf:program:dump-submissions-to-dashboard \
+$ ck run ck-mlperf:program:dump-submissions-to-dashboard --dep_add_tags.python=v3.6 \
 --env.CK_MLPERF_SUBMISSION_ROOT=$HOME/mlperf-inference-unofficial-results.tensorrt \
 --env.CK_MLPERF_DASHBOARD_FILE=mlperf-inference-unofficial-results.tensorrt.zip \
 --env.CK_MLPERF_DASHBOARD_DIR=$HOME
