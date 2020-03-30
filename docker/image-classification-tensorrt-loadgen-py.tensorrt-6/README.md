@@ -359,14 +359,25 @@ Result is : INVALID
 When you run inference using `ck run`, the results get printed to the terminal but not saved.
 You can use `ck benchmark` to save the results on the host system as CK experiment entries (JSON files).
 
-Create a directory on the host computer where you want to store experiment entries e.g.:
+<a name="experiments_dir"></a>
+### Create a directory for experimental results
+
+We recommend creating a new CK repository with a placeholder for experiment entries e.g.:
+```bash
+$ ck add repo:mlperf.closed.image-classification.velociti.tensorrt --quiet
+$ ck add mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --common_func
+$ ck rm  mlperf.closed.image-classification.velociti.tensorrt:experiment:dummy --force
+$ export CK_EXPERIMENTS_DIR=`ck find repo:mlperf.closed.image-classification.velociti.tensorrt:experiment`
+```
+
+Alternatively, create a directory where you want to store experiment entries e.g.:
 ```bash
 $ export CK_EXPERIMENTS_DIR=/data/$USER/tensorrt-experiments
 $ mkdir -p ${CK_EXPERIMENTS_DIR}
 ```
 (**NB:** `USER` must have write access to this directory.)
 
-When running `ck benchmark` via Docker, map the internal directory `/home/dvdt/CK_REPOS/local/experiment` to `$CK_EXPERIMENTS_DIR` on the host.
+When running `ck benchmark` via Docker, we will map the internal directory `/home/dvdt/CK_REPOS/local/experiment` to `$CK_EXPERIMENTS_DIR` on the host.
 
 ### Accuracy mode
 
@@ -564,6 +575,12 @@ But we can do much better than that!
 
 ### Prepare a CK repository with the experimental results
 
+If you are on the same machine and you have previously [created](#experiments_dir)
+`repo:mlperf.closed.image-classification.velociti.tensorrt` and set
+`CK_EXPERIMENTS_DIR` to its location, you should have nothing to do.
+
+Otherwise:
+
 - On the machine with the Docker image, archive experiment entries in `CK_EXPERIMENTS_DIR` e.g.:
 ```bash
 $ cd $CK_EXPERIMENTS_DIR
@@ -607,7 +624,11 @@ $ ck run ck-mlperf:program:dump-submissions-to-dashboard \
 
 ### Prepare a CK repository with the experimental results
 
-If you have previously created `repo:mlperf.closed.image-classification.velociti.tensorrt` and set `CK_EXPERIMENTS_DIR` to its location, you should have nothing to do. Otherwise:
+If you have previously [created](#experiments_dir)
+`repo:mlperf.closed.image-classification.velociti.tensorrt` and set
+`CK_EXPERIMENTS_DIR` to its location, you should have nothing to do.
+
+Otherwise:
 
 - Archive experiment entries in `CK_EXPERIMENTS_DIR` e.g.:
 ```bash
