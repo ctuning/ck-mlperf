@@ -507,7 +507,7 @@ $ cd `ck find ck-mlperf:docker:${CK_IMAGE}`
 #### ResNet, fp32
 
 ```bash
-$ CK_LOADGEN_MODEL_NAME=resnet50 CK_MODEL_TAGS=resnet,converted-from-onnx,maxbatch.32 CK_PRECISION=fp32 \
+$ CK_LOADGEN_MODEL_NAME=resnet CK_MODEL_TAGS=resnet,converted-from-onnx,maxbatch.32 CK_PRECISION=fp32 \
 CK_BATCH_SIZES=32 CK_LOADGEN_MODE=AccuracyOnly ./explore.sh
 ```
 
@@ -523,7 +523,7 @@ CK_BATCH_SIZES=250 CK_LOADGEN_MODE=AccuracyOnly ./explore.sh
 #### ResNet, fp32
 
 ```bash
-$ CK_LOADGEN_MODEL_NAME=resnet50 CK_MODEL_TAGS=resnet,converted-from-onnx,maxbatch.32 CK_PRECISION=fp32 \
+$ CK_LOADGEN_MODEL_NAME=resnet CK_MODEL_TAGS=resnet,converted-from-onnx,maxbatch.32 CK_PRECISION=fp32 \
 CK_BATCH_SIZES="30 31 32" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
 ```
 
@@ -531,7 +531,7 @@ CK_BATCH_SIZES="30 31 32" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
 
 ```bash
 $ CK_LOADGEN_MODEL_NAME=mobilenet CK_MODEL_TAGS=mobilenet,converted-by.nvidia,for.gtx1080 CK_PRECISION=int8 \
-CK_BATCH_SIZES="120 130 140 150 160 170 180 190 200" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
+CK_BATCH_SIZES="200 210 220 230 240 250" CK_LOADGEN_MODE=PerformanceOnly ./explore.sh
 ```
 
 <a name="analyze"></a>
