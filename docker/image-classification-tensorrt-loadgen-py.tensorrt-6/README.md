@@ -192,6 +192,8 @@ No errors encountered during test.
 
 ### Performance mode
 
+#### ResNet, fp32
+
 ```bash
 $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
   "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
@@ -244,8 +246,99 @@ which unfortunately makes the performance run **INVALID** according to the
 [MLPerf Inference rules](https://github.com/mlperf/inference_policies/blob/master/inference_rules.adoc#41-benchmarks)
 for the ResNet workload in the MultiStream scenario. As per the LoadGen recommendation, the number of samples per query (32 in the above example), should be reduced.
 However, we do not know whether it should be reduced by only one sample per query or more.
-To find out, we should benchmark this workload with several values of this parameter, and analyze the results.
+To find out, we should [benchmark](#benchmark) this workload with several values of this parameter, and analyze the results.
 
+#### ResNet, int8, 15 samples per batch
+
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
+  "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
+  --env.CK_LOADGEN_MODE=PerformanceOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
+  --env.CK_LOADGEN_MULTISTREAMNESS=15 --env.CK_BATCH_SIZE=15 \
+  --env.CK_LOADGEN_COUNT_OVERRIDE=1440 \
+  --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
+  --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
+  --dep_add_tags.weights=model,tensorrt,resnet,converted-by.nvidia,for.gtx1080,int8 \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_summary.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_summary.txt \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_detail.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_detail.txt \
+  && echo ''"
+...
+--------------------------------------------------------------------
+|                LATENCIES (in milliseconds and fps)               |
+--------------------------------------------------------------------
+Number of samples run:           21600
+Min latency:                     12.80 ms   (78.119 fps)
+Median latency:                  13.06 ms   (76.592 fps)
+Average latency:                 13.00 ms   (76.923 fps)
+90 percentile latency:           13.12 ms   (76.218 fps)
+99 percentile latency:           13.17 ms   (75.906 fps)
+Max latency:                     13.45 ms   (74.349 fps)
+--------------------------------------------------------------------
+...
+================================================
+MLPerf Results Summary
+================================================
+SUT name : PySUT
+Scenario : Multi Stream
+Mode     : Performance
+Samples per query : 15
+Result is : VALID
+  Performance constraints satisfied : Yes
+  Min duration satisfied : Yes
+  Min queries satisfied : Yes
+```
+
+#### MobileNet, int8, 250 samples per batch
+
+```bash
+$ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
+  "ck run program:image-classification-tensorrt-loadgen-py --skip_print_timers --env.CK_SILENT_MODE \
+  --env.CK_LOADGEN_MODE=PerformanceOnly --env.CK_LOADGEN_SCENARIO=MultiStream \
+  --env.CK_LOADGEN_MULTISTREAMNESS=250 --env.CK_BATCH_SIZE=250 \
+  --env.CK_LOADGEN_COUNT_OVERRIDE=1440 \
+  --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
+  --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
+  --dep_add_tags.weights=model,tensorrt,mobilenet,converted-by.nvidia,for.gtx1080,int8 \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_summary.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_summary.txt \
+  && echo '--------------------------------------------------------------------------------' \
+  && echo 'mlperf_log_detail.txt' \
+  && echo '--------------------------------------------------------------------------------' \
+  && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_detail.txt \
+  && echo ''"
+...
+--------------------------------------------------------------------                                                                                                                             [234/48404]
+|                LATENCIES (in milliseconds and fps)               |
+--------------------------------------------------------------------
+Number of samples run:          360000
+Min latency:                     75.52 ms   (13.241 fps)
+Median latency:                  77.53 ms   (12.899 fps)
+Average latency:                 78.00 ms   (12.821 fps)
+90 percentile latency:           80.66 ms   (12.398 fps)
+99 percentile latency:           91.22 ms   (10.962 fps)
+Max latency:                     92.93 ms   (10.761 fps)
+--------------------------------------------------------------------
+...
+================================================
+MLPerf Results Summary
+================================================
+SUT name : PySUT
+Scenario : Multi Stream
+Mode     : Performance
+Samples per query : 250
+Result is : INVALID
+  Performance constraints satisfied : NO
+  Min duration satisfied : Yes
+  Min queries satisfied : Yes
+```
 
 <a name="benchmark"></a>
 ## Benchmark with parameters
