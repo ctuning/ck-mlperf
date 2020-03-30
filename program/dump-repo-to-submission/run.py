@@ -551,13 +551,21 @@ for implementation in [ 'image-classification-tensorrt-loadgen-py']:
     # Add ResNet.
     implementation_resnet = implementation+'-'+'resnet'
     implementation_benchmarks[implementation_resnet] = {
-        "input_data_types": "int8",
-        "weight_data_types": "int8",
+        "input_data_types": "fp32",
+        "weight_data_types": "fp32",
         "retraining": "no",
         "starting_weights_filename": "https://zenodo.org/record/2535873/files/resnet50_v1.pb",
         "weight_transformations": "ONNX -> TensorRT"
     }
-
+    # Add MobileNet.
+    implementation_mobilenet = implementation+'-'+'mobilenet'
+    implementation_benchmarks[implementation_mobilenet] = {
+        "input_data_types": "int8",
+        "weight_data_types": "int8",
+        "retraining": "no",
+        "starting_weights_filename": "https://zenodo.org/record/2269307/files/mobilenet_v1_1.0_224.tgz",
+        "weight_transformations": "TF -> TensorRT"
+    }
 
 # ### Object detection
 
@@ -1399,7 +1407,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             else:
                 library = 'tensorrt-v6.0'
                 backend = ''
-                notes = 'Demo'
+                notes = '======= DEMO ======='
         elif 'accuracy' in tags:
             # FIXME: With the benefit of hindsight, [ ..., "armnn-v19.08", "neon", ... ] should have come 
             # as one tag "armnn-v19.08-neon", since we join them in this notebook anyway.
@@ -1675,9 +1683,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 if 'velociti' in tags and 'tensorrt' in tags:
                     num_streams = point_data_raw['choices']['env'].get('CK_LOADGEN_MULTISTREAMNESS', '')
                     if num_streams == '': num_streams = '?'
-                    pprint(point_data_raw['characteristics_list'][0]['run']['mlperf_log'])
-                    result_is = point_data_raw['characteristics_list'][0]['run']['parsed_summary']['Result is']
-                    performance_notes = 'uid={}, #streams={}, {}'.format(point, num_streams, result_is)
+                    performance_notes = 'uid={}: {} streams'.format(point, num_streams)
                     performance_notes_name = run_dir + '.txt'
                     performance_notes_path = os.path.join(mode_dir, performance_notes_name)
                     with open(performance_notes_path, 'w') as performance_notes_file:
