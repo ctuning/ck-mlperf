@@ -20,7 +20,7 @@
 1. [Visualize](#visualize)
 
 <a name="setup"></a>
-# Setup
+# Set up
 
 <a name="setup_nvidia"></a>
 ## Set up NVIDIA Docker
@@ -75,8 +75,9 @@ $ ck build docker:${CK_IMAGE}
 **NB:** This CK command is equivalent to:
 ```bash
 $ cd `ck find docker:${CK_IMAGE}`
-$ docker build --no-cache -f Dockerfile -t ctuning/${CK_IMAGE} .
+$ docker build -f Dockerfile -t ctuning/${CK_IMAGE} .
 ```
+**NB:** Add the `--no-cache` flag to rebuild the image from scratch.
 
 <a name="use"></a>
 # Use
@@ -246,7 +247,7 @@ which unfortunately makes the performance run **INVALID** according to the
 [MLPerf Inference rules](https://github.com/mlperf/inference_policies/blob/master/inference_rules.adoc#41-benchmarks)
 for the ResNet workload in the MultiStream scenario. As per the LoadGen recommendation, the number of samples per query (32 in the above example), should be reduced.
 However, we do not know whether it should be reduced by only one sample per query or more.
-To find out, we should [benchmark](#benchmark) this workload with several values of this parameter, and analyze the results.
+To find out, we should [benchmark](#benchmark) this workload with several values of this parameter, and [analyze](#analyze) the results.
 
 #### ResNet, int8, 15 samples per batch
 
@@ -542,8 +543,8 @@ But we can do much better than that!
 # Prepare for analysis
 
 
-<a name="analyze_another"></a>
-## On another machine
+<a name="analyze_any"></a>
+## On any machine
 
 ### Prepare a CK repository with the experimental results
 
