@@ -99,6 +99,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-from-onnx,fp32,maxbatch.32 \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   && echo '--------------------------------------------------------------------------------' \
   && echo 'mlperf_log_summary.txt' \
   && echo '--------------------------------------------------------------------------------' \
@@ -139,6 +141,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-by.nvidia,for.gtx1080,int8 \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   && echo '--------------------------------------------------------------------------------' \
   && echo 'mlperf_log_summary.txt' \
   && echo '--------------------------------------------------------------------------------' \
@@ -170,6 +174,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,mobilenet,converted-by.nvidia,for.gtx1080,int8 \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   && echo '--------------------------------------------------------------------------------' \
   && echo 'mlperf_log_summary.txt' \
   && echo '--------------------------------------------------------------------------------' \
@@ -204,6 +210,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-from-onnx,fp32,maxbatch.32 \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   && echo '--------------------------------------------------------------------------------' \
   && echo 'mlperf_log_summary.txt' \
   && echo '--------------------------------------------------------------------------------' \
@@ -260,6 +268,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-by.nvidia,for.gtx1080,int8 \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   && echo '--------------------------------------------------------------------------------' \
   && echo 'mlperf_log_summary.txt' \
   && echo '--------------------------------------------------------------------------------' \
@@ -306,6 +316,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,mobilenet,converted-by.nvidia,for.gtx1080,int8 \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   && echo '--------------------------------------------------------------------------------' \
   && echo 'mlperf_log_summary.txt' \
   && echo '--------------------------------------------------------------------------------' \
@@ -316,7 +328,7 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   && cat  /home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/tmp/mlperf_log_detail.txt \
   && echo ''"
 ...
---------------------------------------------------------------------                                                                                                                             [234/48404]
+--------------------------------------------------------------------
 |                LATENCIES (in milliseconds and fps)               |
 --------------------------------------------------------------------
 Number of samples run:          360000
@@ -369,6 +381,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=500 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-from-onnx,fp32,maxbatch.${NUM_STREAMS} \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   --record --record_repo=local \
   --record_uoa=mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.accuracy \
   --tags=mlperf,closed,image-classification,velociti,tensorrt,resnet,multistream,accuracy \
@@ -391,6 +405,8 @@ $ docker run --runtime=nvidia --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE
   --env.CK_LOADGEN_DATASET_SIZE=500 --env.CK_LOADGEN_BUFFER_SIZE=1024 \
   --env.CK_LOADGEN_CONF_FILE=/home/dvdt/CK_REPOS/ck-mlperf/program/image-classification-tensorrt-loadgen-py/user.conf \
   --dep_add_tags.weights=model,tensorrt,resnet,converted-from-onnx,fp32,maxbatch.${NUM_STREAMS} \
+  --dep_add_tags.images=dataset,imagenet,preprocessed,using-opencv,rgb8 \
+  --dep_add_tags.python=v3.6 --dep_add_tags.lib-python-tensorrt=v6.0 \
   --record --record_repo=local \
   --record_uoa=mlperf.closed.image-classification.velociti.tensorrt.resnet.multistream.performance \
   --tags=mlperf,closed,image-classification,velociti,tensorrt,resnet,multistream,performance \
@@ -651,7 +667,7 @@ drwxrwxr-x 2 anton dvdt  4096 Dec 19 11:55 .cm
 
 ### Copy your results to the dashboard plugin
 
-Add your unofficial results there. 
+Add your unofficial results there.
 
 #### From a remote machine
 
