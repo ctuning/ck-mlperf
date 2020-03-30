@@ -153,6 +153,7 @@ def get_raw_data(i):
         for prop in props:
             row[prop] = to_value(record.get(prop, ''))
         row['Software'] = { 'title': 'Software', 'cmd':  record.get('Software', '') }
+        row['Invalid?'] = len([ note for note in record.get('Notes', '') if str(note) == 'Result = INVALID' ])
 
         for score in prefilter_config['score_columns']:
             score_no_scenario = score[0:5] # e.g. A_NMT

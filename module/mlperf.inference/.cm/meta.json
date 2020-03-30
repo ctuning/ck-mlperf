@@ -106,6 +106,12 @@
         "key":      "A_NMT",
         "name":     "Machine Translation accuracy (BLEU)",
         "view_key": "A_NMT"
+      },
+      {
+        "format":   "%d",
+        "key":      "Invalid?",
+        "name":     "Invalid?",
+        "view_key": "Invalid?"
       }
     ],
     "selector": [
