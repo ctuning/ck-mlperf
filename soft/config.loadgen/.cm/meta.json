@@ -41,6 +41,10 @@
       "extra_env": {
         "LOADGEN_CONFIG_SOURCE": "MLPERF_INFERENCE_GIT_CHECKOUT",
         "CK_MLPERF_INFERENCE_BRANCH": "upstream.master"
+      },
+      "extra_customize": {
+        "soft_name": "LoadGen Config default",
+        "soft_file_universal": "mlperf.conf"
       }
     },
     "test01": {
