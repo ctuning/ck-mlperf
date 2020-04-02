@@ -73,7 +73,7 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 #-----------------------------------------------------------------------------#
 # Step 1. Detect Intel-optimized TensorFlow v1.14.
 #-----------------------------------------------------------------------------#
-RUN echo "1.14.0-mkl" | ck detect soft:lib.tensorflow --extra_tags=vcpu
+RUN ck detect soft:lib.tensorflow --extra_tags=vcpu --cus.version=1.14.0-mkl
 #-----------------------------------------------------------------------------#
 
 
@@ -139,32 +139,38 @@ RUN ck install package --tags=rcnn,nas,lowproposals,vcoco\
 #-----------------------------------------------------------------------------#
 # Step 6. Make final preparations to run the official vision app with CK mods.
 #-----------------------------------------------------------------------------#
-# Install LoadGen from the official MLPerf Inference repo.
-RUN ck install package --tags=mlperf,inference,source,upstream.master
-RUN ck install package --tags=lib,python-package,absl
-RUN ck install package --tags=lib,python-package,mlperf,loadgen
 # Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
 RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
-# TODO: Remove the Pillow dependency.
+# NB: Apparently, we still need Pillow to run the official vision app.
 RUN ck install package --tags=lib,python-package,pillow
-# Install the official vision app with CK modifications.
+# NB: While Abseil has already been installed above, we install and register it
+# with CK here as well, as it is needed for LoadGen.
+RUN ck install package --tags=lib,python-package,absl
+# Install LoadGen from the official MLPerf Inference repo.
+RUN ck install package --tags=mlperf,inference,source,upstream.master
+RUN ck install package --tags=lib,python-package,mlperf,loadgen
+# Install the official vision app with CK modifications and make it use
+# the default LoadGen config file.
 RUN ck install package --tags=mlperf,inference,source,dividiti.vision_with_ck
+RUN ck detect  soft    --tags=loadgen,config,from.inference.master 
 # Allow the program to create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find program:mlperf-inference-vision`
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Run the official MLPerf Inference vision app on the CPU
-# with the non-quantized SSD-MobileNet model
-# on the first 50 images of the COCO 2017 validation dataset.
+# Run the official MLPerf Inference vision app 
+# in the Accuracy mode and the SingleStream scenario
+# on the first 50 images of the COCO 2017 validation dataset
+# with the TensorFlow CPU backend and the SSD-MobileNet-FPN model.
 #-----------------------------------------------------------------------------#
 CMD ["ck run program:mlperf-inference-vision --cmd_key=direct \
---env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
---env.CK_METRIC_TYPE=COCO \
---env.CK_LOADGEN_SCENARIO=SingleStream \
 --env.CK_LOADGEN_MODE='--accuracy' \
+--env.CK_LOADGEN_SCENARIO=SingleStream \
+--env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+--env.CK_LOADGEN_BACKEND=tensorflow \
+--dep_add_tags.lib-tensorflow=vcpu \
 --dep_add_tags.weights=ssd,mobilenet-v1,fpn \
---dep_add_tags.lib-tensorflow=vcpu --env.CK_LOADGEN_BACKEND=tensorflow \
 --env.CK_LOADGEN_REF_PROFILE=default_tf_object_det_zoo \
+--env.CK_METRIC_TYPE=COCO \
 --skip_print_timers"]

@@ -45,7 +45,7 @@ $ ck pull all
 
 Set up the variable to contain the image name:
 ```bash
-$ export IMAGE=mlperf-inference-vision-with-ck.intel.ubuntu-18.04
+$ export CK_IMAGE=mlperf-inference-vision-with-ck.intel.ubuntu-18.04
 ```
 
 Set up the variable that points to the directory that contains your CK repositories (usually `~/CK` or `~/CK_REPOS`):
@@ -58,7 +58,7 @@ $ export CK_REPOS=${HOME}/CK
 
 To download a prebuilt image from Docker Hub, run:
 ```
-$ docker pull ctuning/${IMAGE}
+$ docker pull ctuning/${CK_IMAGE}
 ```
 
 **NB:** As the prebuilt TensorFlow variant does not support AVX2 instructions, we advise to use the TensorFlow variant built from sources on compatible hardware.
@@ -71,13 +71,13 @@ to [rebuild](#build) the image on your system.
 
 To build an image on your system, run:
 ```bash
-$ ck build docker:${IMAGE}
+$ ck build docker:${CK_IMAGE}
 ```
 
 **NB:** This CK command is equivalent to:
 ```bash
-$ cd `ck find docker:${IMAGE}`
-$ docker build --no-cache -f Dockerfile -t ctuning/${IMAGE} .
+$ cd `ck find docker:${CK_IMAGE}`
+$ docker build --no-cache -f Dockerfile -t ctuning/${CK_IMAGE} .
 ```
 
 <a name="usage"></a>
@@ -88,7 +88,7 @@ $ docker build --no-cache -f Dockerfile -t ctuning/${IMAGE} .
 
 Once you have downloaded or built an image, you can run inference on the CPU as follows:
 ```bash
-$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list --rm ctuning/${IMAGE} \
+$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list --rm ctuning/${CK_IMAGE} \
         "ck run program:mlperf-inference-vision --cmd_key=direct \
         --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
         --env.CK_METRIC_TYPE=COCO \
@@ -103,7 +103,7 @@ Here, we run inference on 50 images on the CPU using the quantized SSD-MobileNet
 
 **NB:** This is equivalent to the default run command:
 ```bash
-$ docker run --rm ctuning/$IMAGE
+$ docker run --rm ctuning/$CK_IMAGE
 ```
 
 We describe all supported [models](#models) and [flags](#flags) below.
@@ -153,18 +153,18 @@ Let's set up a variable that points to the directory on the host computer where 
 making sure $USER has write access to it:
 
 ```bash
-$ export EXPERIMENTS_DIR=/data/$USER/mlperf-inference-vision-experiments
+$ export CK_EXPERIMENTS_DIR=/data/$USER/mlperf-inference-vision-experiments
 
-$ mkdir -p ${EXPERIMENTS_DIR}
+$ mkdir -p ${CK_EXPERIMENTS_DIR}
 ```
 
-When running `ck benchmark` via Docker, we map the internal output directory to `$EXPERIMENTS_DIR` on the host
+When running `ck benchmark` via Docker, we map the internal output directory to `$CK_EXPERIMENTS_DIR` on the host
 in order to access the results easier (using parameters for a custom Yolo v3 model for a change) :
 
 ```bash
-$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${IMAGE}/env.list \
-        --user=$(id -u):1500 --volume ${EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
-        --rm ctuning/${IMAGE} \
+$ docker run --env-file ${CK_REPOS}/ck-mlperf/docker/${CK_IMAGE}/env.list \
+        --user=$(id -u):1500 --volume ${CK_EXPERIMENTS_DIR}:/home/dvdt/CK_REPOS/local/experiment \
+        --rm ctuning/${CK_IMAGE} \
         "ck benchmark program:mlperf-inference-vision --cmd_key=direct --repetitions=1 \
         --env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
         --env.CK_METRIC_TYPE=COCO \
