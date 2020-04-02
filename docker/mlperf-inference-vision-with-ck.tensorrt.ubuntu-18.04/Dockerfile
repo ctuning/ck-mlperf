@@ -101,7 +101,7 @@ RUN ck detect soft:compiler.cuda --full_path=/usr/local/cuda-10.1/bin/nvcc \
 RUN ck install ck-env:package:jdk-8u131-universal
 RUN ck install ck-env:package:tool-bazel-0.25.2-linux
 # Build TF from sources with TensorRT support. Remove the Bazel cache (~16 GB) once done.
-RUN ck install package --tags=lib,tensorflow,vsrc,vcuda,v1.14 --env.CK_TF_NEED_TENSORRT="YES"\
+RUN ck install package --tags=lib,tensorflow,vsrc,vcuda,v1.14 --env.CK_TF_NEED_TENSORRT=YES\
  && rm -rf ~/.cache/bazel
 #-----------------------------------------------------------------------------#
 
@@ -172,43 +172,36 @@ RUN chmod -R g+rwx ${CK_REPOS}/ck-tensorflow/program/object-detection-tf-py/
 #-----------------------------------------------------------------------------#
 # Step 6. Make final preparations to run the official vision app with CK mods.
 #-----------------------------------------------------------------------------#
-# Install LoadGen from the official MLPerf Inference repo.
-# NB: While Abseil has already been installed above,
-# we install and register it with CK here as well.
-RUN ck install package --tags=mlperf,inference,source,upstream.master
-RUN ck install package --tags=lib,python-package,absl
-RUN ck install package --tags=lib,python-package,mlperf,loadgen
-
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#
-# FIXME: Do we really still need Pillow?
+# NB: Apparently, we still need Pillow to run the official vision app.
 RUN ck install package --tags=lib,python-package,pillow
-
-# Keep incrementing this number in order to rebuild the image starting from here
-RUN echo 30
-
-# Pull latest changes
-RUN ck pull repo:ck-object-detection
-RUN ck pull repo:ck-mlperf
-#vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv#
-
-# Install the official vision app with CK modifications.
+# NB: While Abseil has already been installed above, we install and register it
+# with CK here as well, as it is needed for LoadGen.
+RUN ck install package --tags=lib,python-package,absl
+# Install LoadGen from the official MLPerf Inference repo.
+RUN ck install package --tags=mlperf,inference,source,upstream.master
+RUN ck install package --tags=lib,python-package,mlperf,loadgen
+# Install the official vision app with CK modifications and make it use
+# the default LoadGen config file.
 RUN ck install package --tags=mlperf,inference,source,dividiti.vision_with_ck
+RUN ck detect  soft    --tags=loadgen,config,from.inference.master
 # Allow the program to create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find program:mlperf-inference-vision`
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Run the official MLPerf Inference vision app on the CPU
-# with the non-quantized SSD-MobileNet model
-# on the first 50 images of the COCO 2017 validation dataset.
+# Run the official MLPerf Inference vision app
+# in the Accuracy mode and the SingleStream scenario
+# on the first 50 images of the COCO 2017 validation dataset
+# with the TensorFlow CPU backend and the SSD-MobileNet-FPN model.
 #-----------------------------------------------------------------------------#
 CMD ["ck run program:mlperf-inference-vision --cmd_key=direct \
---env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
---env.CK_METRIC_TYPE=COCO \
---env.CK_LOADGEN_SCENARIO=SingleStream \
 --env.CK_LOADGEN_MODE='--accuracy' \
+--env.CK_LOADGEN_SCENARIO=SingleStream \
+--env.CK_LOADGEN_EXTRA_PARAMS='--count 50' \
+--env.CK_LOADGEN_BACKEND=tensorflow \
+--dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1 \
 --dep_add_tags.weights=ssd,mobilenet-v1,fpn \
---dep_add_tags.lib-tensorflow=vcuda --env.CUDA_VISIBLE_DEVICES=-1 --env.CK_LOADGEN_BACKEND=tensorflow \
 --env.CK_LOADGEN_REF_PROFILE=default_tf_object_det_zoo \
+--env.CK_METRIC_TYPE=COCO \
 --skip_print_timers"]
