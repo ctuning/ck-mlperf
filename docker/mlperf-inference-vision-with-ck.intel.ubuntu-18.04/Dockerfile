@@ -1,4 +1,4 @@
-FROM intelaipg/intel-optimized-tensorflow:1.14.0-mkl-py3
+FROM intelaipg/intel-optimized-tensorflow:1.15.2-mkl-py3
 
 LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
 
@@ -71,9 +71,9 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 
 
 #-----------------------------------------------------------------------------#
-# Step 1. Detect Intel-optimized TensorFlow v1.14.
+# Step 1. Detect Intel-optimized TensorFlow v1.15.
 #-----------------------------------------------------------------------------#
-RUN ck detect soft:lib.tensorflow --extra_tags=vcpu --cus.version=1.14.0-mkl
+RUN ck detect soft:lib.tensorflow --extra_tags=vcpu --cus.version=1.15.2-mkl
 #-----------------------------------------------------------------------------#
 
 

@@ -5,7 +5,7 @@
 (which is in turn based on Ubuntu 18.04).
 
 The image includes about a dozen of [TensorFlow models for object detection](#models), the [COCO 2017 validation dataset](http://cocodataset.org),
-and one MKL-optimized [TensorFlow 1.14.0](https://github.com/tensorflow/tensorflow/releases/tag/v1.14.0) variant.
+and MKL-optimized [TensorFlow 1.15.2](https://github.com/tensorflow/tensorflow/releases/tag/v1.15.2).
 
 1. [Setup](#setup)
     - [Set up Collective Knowledge](#setup_ck)
