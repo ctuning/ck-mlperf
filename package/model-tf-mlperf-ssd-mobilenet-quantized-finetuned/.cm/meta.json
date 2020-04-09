@@ -14,6 +14,7 @@
       "PACKAGE_URL": "https://zenodo.org/record/3252084/files",
       "PIPELINE_CONFIG": "pipeline.config", 
       "WEIGHTS_FILE": "model.ckpt",
+      "PACKAGE_UNTAR": "YES",
       "PACKAGE_UNZIP": "YES"
     }, 
     "model_id": "ssd_mobilenet_v1",
@@ -62,6 +63,15 @@
     "module_uoa": "script"
   },
   "variations": {
+    "for.openvino": {
+      "extra_env": {
+        "FROZEN_GRAPH": "ssd_mobilenet_v1_quant_ft_no_zero_point_frozen_inference_graph.pb",
+        "PACKAGE_NAME": "ssd_mobilenet_v1_quant_ft_no_zero_point_frozen_inference_graph.pb",
+        "PACKAGE_URL": "https://zenodo.org/record/3422182/files",
+        "PACKAGE_UNZIP": "NO",
+        "PACKAGE_UNTAR": "NO"
+      }
+    },
     "from-zenodo": {
       "extra_env": {
         "PACKAGE_NAME": "mobilenet_v1_ssd_8bit_finetuned.tar.gz",
