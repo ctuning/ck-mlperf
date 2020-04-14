@@ -142,5 +142,5 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 # on the CPU with the symmetrically quantized SSD-MobileNet model
 # on a single image of the COCO 2017 validation dataset.
 #-----------------------------------------------------------------------------#
-CMD [ "ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=singleinference_ssdm\
+CMD [ "ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=custom\
  && cat `ck find program:mlperf-inference-v0.5`/tmp/mlperf_log_summary.txt" ]
