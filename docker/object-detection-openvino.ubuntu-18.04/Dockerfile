@@ -1,0 +1,146 @@
+FROM ubuntu:18.04
+
+LABEL maintainer="Anton Lokhmotov <anton@dividiti.com>"
+
+# Use the Bash shell.
+SHELL ["/bin/bash", "-c"]
+
+# Allow stepping into the Bash shell interactively.
+ENTRYPOINT ["/bin/bash", "-c"]
+
+# Install known system dependencies and immediately clean up to make the image smaller.
+# CK needs: git, wget, zip.
+# OpenVINO needs: CMake.
+RUN apt update -y\
+ && apt install -y apt-utils\
+ && apt upgrade -y\
+ && apt install -y\
+ git wget zip libz-dev\
+ cmake\
+ python3 python3-pip\
+ vim\
+ && apt clean
+
+# Create a non-root user with a fixed group id 1500 and a fixed user id 2000
+# (hopefully distinct from any host user id for security reasons).
+# See the README for the gory details.
+RUN groupadd -g 1500 dvdtg
+RUN useradd -u 2000 -g dvdtg --create-home --shell /bin/bash dvdt
+USER dvdt:dvdtg
+WORKDIR /home/dvdt
+
+# Install Collective Knowledge (CK). Make it group-executable.
+ENV CK_ROOT=/home/dvdt/CK \
+    CK_REPOS=/home/dvdt/CK_REPOS \
+    CK_TOOLS=/home/dvdt/CK_TOOLS \
+    PATH=${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
+    CK_CC=gcc \
+    CK_PYTHON=python3 \
+    GIT_USER="dividiti" \
+    GIT_EMAIL="info@dividiti.com" \
+    LANG=C.UTF-8
+RUN mkdir -p ${CK_ROOT} ${CK_REPOS} ${CK_TOOLS}
+RUN git config --global user.name ${GIT_USER} && git config --global user.email ${GIT_EMAIL}
+RUN git clone https://github.com/ctuning/ck.git ${CK_ROOT}
+RUN cd ${CK_ROOT}\
+ && ${CK_PYTHON} setup.py install --user\
+ && ${CK_PYTHON} -c "import ck.kernel as ck; print ('Collective Knowledge v%s' % ck.__version__)"\
+ && chmod -R g+rx /home/dvdt/.local
+
+# Explicitly create a CK experiment entry, a folder that will be mounted
+# (with '--volume=<folder_for_results>:/home/dvdt/CK_REPOS/local/experiment').
+# as a shared volume between the host and the container, and make it group-writable.
+# For consistency, use the "canonical" uid from ck-analytics:module:experiment.
+RUN ck create_entry --data_uoa=experiment --data_uid=bc0409fb61f0aa82 --path=${CK_REPOS}/local\
+ && chmod -R g+w ${CK_REPOS}/local/experiment
+
+# Pull CK repositories (including ck-mlperf, ck-env, ck-autotuning, ck-tensorflow, ck-docker).
+RUN ck pull repo:ck-openvino
+
+# Use generic Linux settings with dummy frequency setting scripts.
+RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
+
+# Detect C/C++ compiler (gcc).
+RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
+
+# Detect CMake build tool.
+RUN ck detect soft --tags=cmake --full_path=`which cmake`
+
+# Detect Python.
+RUN ck detect soft --tags=compiler,python --full_path=`which ${CK_PYTHON}`
+# Install the latest Python package installer (pip) and some dependencies.
+RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
+
+
+#-----------------------------------------------------------------------------#
+# Step 1. Install the COCO 2017 validation dataset (5,000 images).
+#-----------------------------------------------------------------------------#
+# Download the dataset to the default path. Remove all training annotations (~765 MB).
+RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
+ && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
+'rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
+# Install Python COCO API.
+RUN ck install package --tags=lib,python-package,cython
+RUN ck install package --tags=lib,python-package,numpy
+RUN ck install package --tags=lib,python-package,matplotlib
+RUN ck install package --tags=tool,coco,api
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 2. Install Python dependencies (for Model Optimizer and LoadGen).
+#-----------------------------------------------------------------------------#
+#RUN ck install package --tags=lib,python-package,numpy # already installed
+# OpenVINO 2019_R3.1 strictly requires TensorFlow < 2.0 and NetworkX < 2.4.
+RUN ck install package --tags=lib,python-package,tensorflow --force_version=1.15.2
+RUN ck install package --tags=lib,python-package,networkx --force_version=2.3.0
+RUN ck install package --tags=lib,python-package,defusedxml
+# Implicit Model Optimizer dependency (not in requirements.txt).
+RUN ck install package --tags=lib,python-package,test-generator
+# LoadGen dependency.
+RUN ck install package --tags=lib,python-package,absl
+
+
+#-----------------------------------------------------------------------------#
+# Step 3. Install C++ dependencies (for Inference Engine and MLPerf program).
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=channel-stable,opencv,v3.4.3
+RUN ck install package --tags=channel-stable,boost,v1.67.0 --no_tags=min-for-caffe
+# Install LoadGen from the official MLPerf Inference repo.
+RUN ck install package --tags=mlperf,inference,source,upstream.master
+RUN ck install package --tags=lib,loadgen,static
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 4. Install the OpenVINO 2019_R3.1 release used for MLPerf Inference v0.5.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=lib,openvino,2019_R3.1
+RUN ck compile ck-openvino:program:mlperf-inference-v0.5
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 5. Install the official SSD-MobileNet model for MLPerf Inference v0.5
+# and convert it into the OpenVINO format.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=model,tf,ssd-mobilenet,quantized,for.openvino
+RUN ck install package --tags=model,openvino,ssd-mobilenet
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 6. Make final preparations to run the OpenVINO program.
+#-----------------------------------------------------------------------------#
+# Allow the program create tmp files when running under an external user.
+RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
+# on the CPU with the symmetrically quantized SSD-MobileNet model
+# on a single image of the COCO 2017 validation dataset.
+#-----------------------------------------------------------------------------#
+CMD [ "ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=custom\
+ && cat `ck find program:mlperf-inference-v0.5`/tmp/mlperf_log_summary.txt" ]
