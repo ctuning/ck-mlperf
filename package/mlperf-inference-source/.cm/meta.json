@@ -55,6 +55,16 @@
         "version": "vision_with_ck"
       }
     },
+    "dividiti.v0.5-intel": {
+      "extra_env": {
+        "PACKAGE_URL": "https://github.com/dividiti/inference",
+        "PACKAGE_GIT_CLONE_FLAGS": "-b v0.5-intel"
+      },
+      "extra_customize": {
+        "package_extra_name": " (for the CK-tweaked MLPerf Inference OpenVINO app)",
+        "version": "v0.5-intel"
+      }
+    },
     "upstream.pr518": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/georgelyuan/inference",
