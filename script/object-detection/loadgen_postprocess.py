@@ -63,7 +63,11 @@ def ck_postprocess(i):
     accuracy_script = os.path.join( deps['mlperf-inference-src']['dict']['env']['CK_ENV_MLPERF_INFERENCE_V05'],
                                     'classification_and_detection', 'tools', 'accuracy-coco.py' )
 
-    coco_dir = deps['dataset']['dict']['deps']['dataset-source']['dict']['env']['CK_ENV_DATASET_COCO']
+    dataset_source = deps['dataset']['dict']['deps'].get('dataset-source',{})
+    if dataset_source != {}: # preprocessed
+        coco_dir = dataset-source['dict']['env']['CK_ENV_DATASET_COCO']
+    else: # original
+        coco_dir = deps['dataset']['dict']['env']['CK_ENV_DATASET_COCO']
 
     for python_dep_name in ('lib-python-numpy', 'tool-coco', 'lib-python-matplotlib'):
         os.environ['PYTHONPATH'] = deps[python_dep_name]['dict']['env']['PYTHONPATH'].split(':')[0] +':'+os.environ.get('PYTHONPATH','')
