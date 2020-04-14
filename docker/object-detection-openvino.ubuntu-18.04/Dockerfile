@@ -140,10 +140,9 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 #-----------------------------------------------------------------------------#
 # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
 # with the symmetrically quantized SSD-MobileNet model
-# on the COCO 2017 validation dataset (5,000 images)
-# using a single CPU core.
+# on the COCO 2017 validation dataset using a single CPU core.
 #-----------------------------------------------------------------------------#
 CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=custom \
-    --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_SCENARIO=SingleStream \
- && cat `ck find program:mlperf-inference-v0.5`/tmp/mlperf_log_summary.txt \
- && cat `ck find program:mlperf-inference-v0.5`/tmp/accuracy.txt"]
+    --env.CK_LOADGEN_MODE=Performance --env.CK_LOADGEN_SCENARIO=SingleStream \
+    --env.CK_LOADGEN_MAX_QUERY_COUNT=100 --skip_print_timers \
+ && cat $CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/mlperf_log_summary.txt"]
