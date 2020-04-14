@@ -106,8 +106,8 @@ RUN ck install package --tags=lib,python-package,absl
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=channel-stable,opencv,v3.4.3
 RUN ck install package --tags=channel-stable,boost,v1.67.0 --no_tags=min-for-caffe
-# Install LoadGen from the official MLPerf Inference repo.
-RUN ck install package --tags=mlperf,inference,source,upstream.master
+# Install LoadGen from a branch reconstructed according to Intel's README.
+RUN ck install package --tags=mlperf,inference,source,dividiti.v0.5-intel
 RUN ck install package --tags=lib,loadgen,static
 #-----------------------------------------------------------------------------#
 
@@ -139,8 +139,11 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 
 #-----------------------------------------------------------------------------#
 # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
-# on the CPU with the symmetrically quantized SSD-MobileNet model
-# on a single image of the COCO 2017 validation dataset.
+# with the symmetrically quantized SSD-MobileNet model
+# on the COCO 2017 validation dataset (5,000 images)
+# using a single CPU core.
 #-----------------------------------------------------------------------------#
-CMD [ "ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=custom\
- && cat `ck find program:mlperf-inference-v0.5`/tmp/mlperf_log_summary.txt" ]
+CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=custom \
+    --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_SCENARIO=SingleStream \
+ && cat `ck find program:mlperf-inference-v0.5`/tmp/mlperf_log_summary.txt \
+ && cat `ck find program:mlperf-inference-v0.5`/tmp/accuracy.txt"]
