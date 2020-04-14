@@ -15,6 +15,7 @@ MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
+ACCURACY_TXT             = 'accuracy.txt'
 
 
 def ck_postprocess(i):
@@ -80,6 +81,9 @@ def ck_postprocess(i):
     output = check_output(command).decode('ascii')
 
     print(output)
+
+    with open(ACCURACY_TXT, 'w') as accuracy_file:
+        accuracy_file.write(output)
     
     searchObj = re.search('mAP=(.+)%', output)
 
