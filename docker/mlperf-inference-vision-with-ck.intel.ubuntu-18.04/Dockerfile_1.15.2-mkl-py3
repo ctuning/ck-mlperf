@@ -152,14 +152,14 @@ RUN ck install package --tags=lib,python-package,mlperf,loadgen
 # Install the official vision app with CK modifications and make it use
 # the default LoadGen config file.
 RUN ck install package --tags=mlperf,inference,source,dividiti.vision_with_ck
-RUN ck detect  soft    --tags=loadgen,config,from.inference.master 
+RUN ck detect  soft    --tags=loadgen,config,from.inference.master
 # Allow the program to create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find program:mlperf-inference-vision`
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Run the official MLPerf Inference vision app 
+# Run the official MLPerf Inference vision app
 # in the Accuracy mode and the SingleStream scenario
 # on the first 50 images of the COCO 2017 validation dataset
 # with the TensorFlow CPU backend and the SSD-MobileNet-FPN model.
