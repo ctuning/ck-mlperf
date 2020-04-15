@@ -1,17 +1,15 @@
 # MLPerf Inference - Object Detection - TensorFlow with NVIDIA TensorRT
 
-[This image](https://hub.docker.com/r/ctuning/mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04) is based on
-[the TensorRT 19.07 image](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-07.html) from NVIDIA
-(which is in turn based on Ubuntu 18.04) with [CUDA](https://developer.nvidia.com/cuda-zone) 10.1 and [TensorRT](https://developer.nvidia.com/tensorrt) 5.1.5.
+[This collection of images](https://hub.docker.com/r/ctuning/mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04) from [dividiti](http://dividiti.com)
+is based on the [TensorRT images](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/) from NVIDIA (which are in turn based on Ubuntu 18.04):
 
-**NB:** We've had unsuccessfully tried to update this image several times:
-- [The TensorRT 19.08 image](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-08.html), the last one to ship with TensorRT 5.1.5, has a [weird issue](https://forums.developer.nvidia.com/t/building-tensorflow-v1-14-in-tensorrt-docker-v19-08-fails/81226) with [Nsight Compute](https://docs.nvidia.com/nsight-compute/NsightCompute).
-- [The TensorRT 19.09 image](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-09.html) fails to build TensorFlow 1.14.0 with error:
-```
-cp: cannot stat '/usr/include/x86_64-linux-gnu/NvInferRTSafe.h': No such file or directory
-```
-A [fix](https://github.com/tensorflow/tensorflow/commit/6ce88bc983a98120c080a6a7a8b87d4e3416ea03) should be in TensorFlow 1.15.0, but we are not able to build that either due to other problems.
+| `Dockerfile` | Base image | [CUDA](https://developer.nvidia.com/cuda-zone) | [TensorRT](https://developer.nvidia.com/tensorrt) | [TensorFlow](https://www.tensorflow.org/) |
+|-|-|-|-|-|
+| `Dockerfile` (`Dockerfile_20.03-py3_tf-2.1.0`) | [20.03-py3](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_20-03.html) | 10.2.89 | 7.0.0 | [2.1.0](https://github.com/tensorflow/tensorflow/releases/tag/v2.1.0) |
+| `Dockerfile_20.03-py3_tf-2.0.1` | [20.03-py3](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_20-03.html) | 10.2.89 | 7.0.0 | [2.0.1](https://github.com/tensorflow/tensorflow/releases/tag/v2.0.1) |
+| `Dockerfile_19.07-py3_tf-1.14.0` | [19.07-py3](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-07.html) | 10.1.168 | 5.1.5 | [1.14.0](https://github.com/tensorflow/tensorflow/releases/tag/v1.14.0) |
 
+**NB:** [19.10-py3](https://docs.nvidia.com/deeplearning/sdk/tensorrt-container-release-notes/rel_19-10.html) was the last base image to support CUDA 10.1. TensorFlow 1.15, 2.0 and 2.1 all require patching (done by CK) to work with CUDA 10.2.
 
 The image includes about a dozen of [TensorFlow models for object detection](#models), the [COCO 2017 validation dataset](http://cocodataset.org),
 and two [TensorFlow 1.14.0](https://github.com/tensorflow/tensorflow/releases/tag/v1.14.0) variants:
