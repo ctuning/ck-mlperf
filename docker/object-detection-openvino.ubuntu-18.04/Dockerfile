@@ -91,7 +91,7 @@ RUN ck install package --tags=tool,coco,api
 # Step 2. Install Python dependencies (for Model Optimizer and LoadGen).
 #-----------------------------------------------------------------------------#
 #RUN ck install package --tags=lib,python-package,numpy # already installed
-# OpenVINO 2019_R3.1 strictly requires TensorFlow < 2.0 and NetworkX < 2.4.
+# OpenVINO pre-release strictly requires TensorFlow < 2.0 and NetworkX < 2.4.
 RUN ck install package --tags=lib,python-package,tensorflow --force_version=1.15.2
 RUN ck install package --tags=lib,python-package,networkx --force_version=2.3.0
 RUN ck install package --tags=lib,python-package,defusedxml
@@ -113,9 +113,9 @@ RUN ck install package --tags=lib,loadgen,static
 
 
 #-----------------------------------------------------------------------------#
-# Step 4. Install the OpenVINO 2019_R3.1 release used for MLPerf Inference v0.5.
+# Step 4. Install the OpenVINO "pre-release" used for MLPerf Inference v0.5.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=lib,openvino,2019_R3.1
+RUN ck install package --tags=lib,openvino,pre-release
 RUN ck compile ck-openvino:program:mlperf-inference-v0.5
 #-----------------------------------------------------------------------------#
 
@@ -142,7 +142,7 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 # with the symmetrically quantized SSD-MobileNet model
 # on the COCO 2017 validation dataset using a single CPU core.
 #-----------------------------------------------------------------------------#
-CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=custom \
+CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=object-detection \
     --env.CK_LOADGEN_MODE=Performance --env.CK_LOADGEN_SCENARIO=SingleStream \
     --env.CK_LOADGEN_MAX_QUERY_COUNT=100 --skip_print_timers \
  && cat $CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/mlperf_log_summary.txt"]
