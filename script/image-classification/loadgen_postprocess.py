@@ -67,10 +67,12 @@ def ck_postprocess(i):
 
     os.environ['PYTHONPATH'] = deps['lib-python-numpy']['dict']['env']['PYTHONPATH'].split(':')[0] +':'+os.environ.get('PYTHONPATH','')
 
+    dtype = env.get('CK_MLPERF_ACCURACY_IMAGENET_TYPE', 'float32')
+
     command = [ deps['python']['dict']['env']['CK_ENV_COMPILER_PYTHON_FILE'], accuracy_script,
               '--mlperf-accuracy-file', MLPERF_LOG_ACCURACY_JSON,
               '--imagenet-val-file', imagenet_labels_filepath,
-              '--dtype', 'float32',
+              '--dtype', dtype,
     ]
 
     output = check_output(command).decode('ascii')
