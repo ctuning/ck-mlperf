@@ -73,36 +73,23 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 
 
 #-----------------------------------------------------------------------------#
-# Step 1. Install the COCO 2017 validation dataset (5,000 images).
+# Step 1. Install Python dependencies (for Model Optimizer and LoadGen).
 #-----------------------------------------------------------------------------#
-# Download the dataset to the default path. Remove all training annotations (~765 MB).
-RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
- && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
-'rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
-# Install Python COCO API.
-RUN ck install package --tags=lib,python-package,cython
-RUN ck install package --tags=lib,python-package,numpy
-RUN ck install package --tags=lib,python-package,matplotlib
-RUN ck install package --tags=tool,coco,api
-#-----------------------------------------------------------------------------#
-
-
-#-----------------------------------------------------------------------------#
-# Step 2. Install Python dependencies (for Model Optimizer and LoadGen).
-#-----------------------------------------------------------------------------#
-#RUN ck install package --tags=lib,python-package,numpy # already installed
 # OpenVINO pre-release strictly requires TensorFlow < 2.0 and NetworkX < 2.4.
 RUN ck install package --tags=lib,python-package,tensorflow --force_version=1.15.2
 RUN ck install package --tags=lib,python-package,networkx --force_version=2.3.0
 RUN ck install package --tags=lib,python-package,defusedxml
-# Implicit Model Optimizer dependency (not in requirements.txt).
+# Cython is an implicit dependency of NumPy.
+RUN ck install package --tags=lib,python-package,cython
+RUN ck install package --tags=lib,python-package,numpy
+# test-generator is an implicit dependency of Model Optimizer (not in requirements.txt).
 RUN ck install package --tags=lib,python-package,test-generator
-# LoadGen dependency.
+# Abseil is a LoadGen dependency.
 RUN ck install package --tags=lib,python-package,absl
 
 
 #-----------------------------------------------------------------------------#
-# Step 3. Install C++ dependencies (for Inference Engine and MLPerf program).
+# Step 2. Install C++ dependencies (for Inference Engine and MLPerf program).
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=channel-stable,opencv,v3.4.3
 RUN ck install package --tags=channel-stable,boost,v1.67.0 --no_tags=min-for-caffe
@@ -113,19 +100,35 @@ RUN ck install package --tags=lib,loadgen,static
 
 
 #-----------------------------------------------------------------------------#
-# Step 4. Install the OpenVINO "pre-release" used for MLPerf Inference v0.5.
+# Step 3. Install the OpenVINO "pre-release" used for MLPerf Inference v0.5.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=lib,openvino,pre-release
-RUN ck compile ck-openvino:program:mlperf-inference-v0.5
+RUN ck compile ck-openvino:program:mlperf-inference-v0.5 \
+--dep_add_tags.openvino=inference-engine
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Step 5. Install the official SSD-MobileNet model for MLPerf Inference v0.5
+# Step 4. Install the official SSD-MobileNet model for MLPerf Inference v0.5
 # and convert it into the OpenVINO format.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=model,tf,ssd-mobilenet,quantized,for.openvino
 RUN ck install package --tags=model,openvino,ssd-mobilenet
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 5. Install the COCO 2017 validation dataset (5,000 images).
+#-----------------------------------------------------------------------------#
+# Download the dataset to the default path. Remove all training annotations (~765 MB).
+RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
+ && ck virtual env --tags=object-detection,dataset,coco.2017,val,original,full --shell_cmd=\
+'rm $CK_ENV_DATASET_COCO_LABELS_DIR/*train2017.json'
+# Install Python COCO API.
+#RUN ck install package --tags=lib,python-package,cython # already installed
+#RUN ck install package --tags=lib,python-package,numpy # already installed
+RUN ck install package --tags=lib,python-package,matplotlib
+RUN ck install package --tags=tool,coco,api
 #-----------------------------------------------------------------------------#
 
 
@@ -145,4 +148,4 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=object-detection \
     --env.CK_LOADGEN_MODE=Performance --env.CK_LOADGEN_SCENARIO=SingleStream \
     --env.CK_LOADGEN_MAX_QUERY_COUNT=100 --skip_print_timers \
- && cat $CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/mlperf_log_summary.txt"]
+ && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/mlperf_log_summary.txt"]
