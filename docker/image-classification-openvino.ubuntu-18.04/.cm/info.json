@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "c473b965a44b4eb9", 
+  "backup_module_uid": "88eef0cd8c43b68a", 
+  "backup_module_uoa": "docker", 
+  "control": {
+    "engine": "CK", 
+    "iso_datetime": "2020-04-24T00:11:34.007186", 
+    "version": [
+      "1", 
+      "12", 
+      "2"
+    ]
+  }, 
+  "data_name": "image-classification-openvino.ubuntu-18.04"
+}
