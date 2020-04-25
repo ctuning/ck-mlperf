@@ -11,7 +11,7 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
 # OpenVINO needs: CMake.
-RUN apt update -y\
+RUN DEBIAN_FRONTEND=noninteractive apt update -y\
  && apt install -y apt-utils\
  && apt upgrade -y\
  && apt install -y\
