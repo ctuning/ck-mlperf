@@ -103,8 +103,7 @@ RUN ck install package --tags=lib,loadgen,static
 # Step 3. Install the OpenVINO "pre-release" used for MLPerf Inference v0.5.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=lib,openvino,pre-release
-RUN ck compile ck-openvino:program:mlperf-inference-v0.5 \
---dep_add_tags.openvino=inference-engine
+RUN ck compile ck-openvino:program:mlperf-inference-v0.5
 #-----------------------------------------------------------------------------#
 
 
@@ -124,7 +123,7 @@ RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=val`/
 # and convert it into the OpenVINO format.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=image-classification,model,tf,resnet
-# Install misc Python dependency required for calibration.
+# Install misc Python dependencies required for calibration.
 RUN ${CK_PYTHON}  -m pip install --user \
     nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
 # Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
@@ -144,9 +143,12 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 
 #-----------------------------------------------------------------------------#
 # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
-# with the quantized ResNet model on a single CPU core.
+# with the quantized ResNet50 model
+# on the first 500 images of the ImageNet 2012 validation dataset
+# using all (virtual) CPU cores.
 #-----------------------------------------------------------------------------#
-CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=image-classification \
-    --env.CK_LOADGEN_MODE=Performance --env.CK_LOADGEN_SCENARIO=SingleStream \
-    --env.CK_LOADGEN_MAX_QUERY_COUNT=100 --skip_print_timers \
- && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/mlperf_log_summary.txt"]
+CMD ["export NPROCS=`grep -c processor /proc/cpuinfo` \
+ && ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=image-classification --skip_print_timers \
+    --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=500 \
+    --env.CK_OPENVINO_NTHREADS=$NPROCS --env.CK_OPENVINO_NSTREAMS=$NPROCS --env.CK_OPENVINO_NIREQ=$NPROCS \
+ && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/accuracy.txt"]
