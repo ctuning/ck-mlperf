@@ -114,6 +114,8 @@ RUN ck compile ck-openvino:program:mlperf-inference-v0.5 \
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=dataset,imagenet,val,min --no_tags=resized
 RUN ck install package --tags=dataset,imagenet,aux
+# The OpenVINO program expects to find val_map.txt in the dataset directory.
+RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=val`/val_map.txt
 #-----------------------------------------------------------------------------#
 
 
