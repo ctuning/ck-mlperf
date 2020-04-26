@@ -1,0 +1,8 @@
+{
+  "cmd": {
+    "default": {
+      "build": "-f $#CK_PATH#$/Dockerfile.ubuntu-18.04 -t $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$:ubuntu-18.04 $#CK_PATH#$",
+      "run": "--rm $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$:ubuntu-18.04"
+    }
+  }
+}
