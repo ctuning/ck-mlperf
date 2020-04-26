@@ -11,7 +11,7 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
 # OpenVINO needs: CMake.
-RUN apt update -y\
+RUN DEBIAN_FRONTEND=noninteractive apt update -y\
  && apt install -y apt-utils\
  && apt upgrade -y\
  && apt install -y\
@@ -103,8 +103,7 @@ RUN ck install package --tags=lib,loadgen,static
 # Step 3. Install the OpenVINO "pre-release" used for MLPerf Inference v0.5.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=lib,openvino,pre-release
-RUN ck compile ck-openvino:program:mlperf-inference-v0.5 \
---dep_add_tags.openvino=inference-engine
+RUN ck compile ck-openvino:program:mlperf-inference-v0.5
 #-----------------------------------------------------------------------------#
 
 
@@ -143,9 +142,11 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 #-----------------------------------------------------------------------------#
 # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
 # with the symmetrically quantized SSD-MobileNet model
-# on the COCO 2017 validation dataset using a single CPU core.
+# on the first 50 images of the COCO 2017 validation dataset
+# using all (virtual) CPU cores.
 #-----------------------------------------------------------------------------#
-CMD ["ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=object-detection \
-    --env.CK_LOADGEN_MODE=Performance --env.CK_LOADGEN_SCENARIO=SingleStream \
-    --env.CK_LOADGEN_MAX_QUERY_COUNT=100 --skip_print_timers \
- && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/mlperf_log_summary.txt"]
+CMD ["export NPROCS=`grep -c processor /proc/cpuinfo` \
+ && ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=object-detection --skip_print_timers \
+    --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=50 \
+    --env.CK_OPENVINO_NTHREADS=$NPROCS --env.CK_OPENVINO_NSTREAMS=$NPROCS --env.CK_OPENVINO_NIREQ=$NPROCS \
+ && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/accuracy.txt"]
