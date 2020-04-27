@@ -11,7 +11,8 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip.
 # OpenVINO needs: CMake.
-RUN DEBIAN_FRONTEND=noninteractive apt update -y\
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update -y\
  && apt install -y apt-utils\
  && apt upgrade -y\
  && apt install -y\
@@ -115,6 +116,11 @@ RUN ck install package --tags=dataset,imagenet,val,min --no_tags=resized
 RUN ck install package --tags=dataset,imagenet,aux
 # The OpenVINO program expects to find val_map.txt in the dataset directory.
 RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=val`/val_map.txt
+# Install misc Python dependencies required for calibration.
+RUN ${CK_PYTHON}  -m pip install --user \
+    nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
+# Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
+RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
 #-----------------------------------------------------------------------------#
 
 
@@ -122,19 +128,32 @@ RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=val`/
 # Step 5. Install the official ResNet model for MLPerf Inference v0.5
 # and convert it into the OpenVINO format.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=image-classification,model,tf,resnet
-# Install misc Python dependencies required for calibration.
-RUN ${CK_PYTHON}  -m pip install --user \
-    nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
-# Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
-RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
-# Convert and calibrate the model.
+RUN ck install package --tags=image-classification,model,tf,mlperf,resnet
 RUN ck install package --tags=model,openvino,resnet50
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Step 6. Make final preparations to run the OpenVINO program.
+# Step 6. Install the official MobileNet model for MLPerf Inference v0.5
+# and convert it into the OpenVINO format.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=image-classification,model,tf,mobilenet-v1-1.0-224,non-quantized
+RUN ck install package --tags=model,openvino,mobilenet
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 7. INTENTIONALLY LEFT BLANK.
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 8. INTENTIONALLY LEFT BLANK.
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 9. Make final preparations to run the OpenVINO program.
 #-----------------------------------------------------------------------------#
 # Allow the program create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
@@ -143,12 +162,13 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 
 #-----------------------------------------------------------------------------#
 # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
-# with the quantized ResNet50 model
+# with the quantized ResNet model
 # on the first 500 images of the ImageNet 2012 validation dataset
 # using all (virtual) CPU cores.
 #-----------------------------------------------------------------------------#
 CMD ["export NPROCS=`grep -c processor /proc/cpuinfo` \
- && ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=image-classification --skip_print_timers \
+ && ck run ck-openvino:program:mlperf-inference-v0.5 --skip_print_timers \
+    --cmd_key=image-classification --env.CK_OPENVINO_MODEL_NAME=resnet50 \
     --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=500 \
     --env.CK_OPENVINO_NTHREADS=$NPROCS --env.CK_OPENVINO_NSTREAMS=$NPROCS --env.CK_OPENVINO_NIREQ=$NPROCS \
  && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/accuracy.txt"]
