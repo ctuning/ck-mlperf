@@ -9,6 +9,7 @@
       "MODEL_MOBILENET_MULTIPLIER": "1.0", 
       "MODEL_MOBILENET_RESOLUTION": "224", 
       "MODEL_MOBILENET_VERSION": "1", 
+      "MODEL_NAME": "MLPerf MobileNet-1.0-224 v1",
       "MODEL_NORMALIZE_DATA": "YES", 
       "MODEL_SUBTRACT_MEAN": "0",
       "MODEL_OUTPUT_LAYER_NAME": "MobilenetV1/Predictions/Reshape_1", 
