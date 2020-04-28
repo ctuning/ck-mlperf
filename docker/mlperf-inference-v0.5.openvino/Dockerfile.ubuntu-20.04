@@ -12,17 +12,27 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # CK needs: git, wget, zip.
 # OpenVINO needs: CMake.
 # cv2 needs: libgthread-2.0.
+# Python 3.6 needs: libssl, etc.
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -y\
  && apt install -y apt-utils\
- && apt upgrade -y\
  && apt install -y\
  git wget zip libz-dev\
  cmake\
- python3 python3-pip\
  libgtk2.0-dev\
  vim\
+ libssl-dev libxml2-dev libxslt-dev libreadline-gplv2-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev\
  && apt clean
+
+# Install Python 3.6 (needed to install TensorFlow 1.15.2 via pip).
+RUN cd /tmp \
+ && wget https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz \
+ && tar xvf Python-3.6.10.tgz \
+ && cd Python-3.6.10 \
+ && ./configure --enable-optimizations --enable-shared --with-ensurepip=install \
+ && make -j20 \
+ && make altinstall \
+ && rm -rf /tmp/*
 
 # Create a non-root user with a fixed group id 1500 and a fixed user id 2000
 # (hopefully distinct from any host user id for security reasons).
@@ -37,8 +47,10 @@ ENV CK_ROOT=/home/dvdt/CK \
     CK_REPOS=/home/dvdt/CK_REPOS \
     CK_TOOLS=/home/dvdt/CK_TOOLS \
     PATH=${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
+    CPATH=/usr/local/include/python3.6m \
+    LD_LIBRARY_PATH=/usr/local/lib \
     CK_CC=gcc \
-    CK_PYTHON=python3.8 \
+    CK_PYTHON=python3.6 \
     GIT_USER="dividiti" \
     GIT_EMAIL="info@dividiti.com" \
     LANG=C.UTF-8
@@ -78,8 +90,8 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 #-----------------------------------------------------------------------------#
 # Step 1. Install Python dependencies (for Model Optimizer and LoadGen).
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=lib,python-package,tensorflow
-RUN ck install package --tags=lib,python-package,networkx
+RUN ck install package --tags=lib,python-package,tensorflow --force_version=1.15.2
+RUN ck install package --tags=lib,python-package,networkx --force_version=2.3.0
 RUN ck install package --tags=lib,python-package,defusedxml
 # Cython is an implicit dependency of NumPy.
 RUN ck install package --tags=lib,python-package,cython
