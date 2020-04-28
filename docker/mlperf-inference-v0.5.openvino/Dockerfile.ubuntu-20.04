@@ -12,10 +12,11 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # CK needs: git, wget, zip.
 # OpenVINO needs: CMake.
 # cv2 needs: libgthread-2.0.
-# Python 3.6 needs: libssl, etc.
+# Python 3.7 needs: libssl, etc.
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -y\
  && apt install -y apt-utils\
+ && apt upgrade -y\
  && apt install -y\
  git wget zip libz-dev\
  cmake\
@@ -24,11 +25,11 @@ RUN apt update -y\
  libssl-dev libxml2-dev libxslt-dev libreadline-gplv2-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev\
  && apt clean
 
-# Install Python 3.6 (needed to install TensorFlow 1.15.2 via pip).
+# Install Python 3.7 (needed to install TensorFlow 1.15.2 via pip).
 RUN cd /tmp \
- && wget https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz \
- && tar xvf Python-3.6.10.tgz \
- && cd Python-3.6.10 \
+ && wget https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz \
+ && tar xvf Python-3.7.7.tgz \
+ && cd Python-3.7.7 \
  && ./configure --enable-optimizations --enable-shared --with-ensurepip=install \
  && make -j20 \
  && make altinstall \
@@ -47,10 +48,10 @@ ENV CK_ROOT=/home/dvdt/CK \
     CK_REPOS=/home/dvdt/CK_REPOS \
     CK_TOOLS=/home/dvdt/CK_TOOLS \
     PATH=${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
-    CPATH=/usr/local/include/python3.6m \
+    CPATH=/usr/local/include/python3.7m \
     LD_LIBRARY_PATH=/usr/local/lib \
     CK_CC=gcc \
-    CK_PYTHON=python3.6 \
+    CK_PYTHON=python3.7 \
     GIT_USER="dividiti" \
     GIT_EMAIL="info@dividiti.com" \
     LANG=C.UTF-8
@@ -90,6 +91,7 @@ RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 #-----------------------------------------------------------------------------#
 # Step 1. Install Python dependencies (for Model Optimizer and LoadGen).
 #-----------------------------------------------------------------------------#
+# OpenVINO pre-release strictly requires TensorFlow < 2.0 and NetworkX < 2.4.
 RUN ck install package --tags=lib,python-package,tensorflow --force_version=1.15.2
 RUN ck install package --tags=lib,python-package,networkx --force_version=2.3.0
 RUN ck install package --tags=lib,python-package,defusedxml
@@ -114,10 +116,9 @@ RUN ck install package --tags=lib,loadgen,static
 
 
 #-----------------------------------------------------------------------------#
-# Step 3. Install the OpenVINO 2019_R3 (the official release that happened
-# the next day after the v0.5 submission deadline).
+# Step 3. Install the OpenVINO "pre-release" used for MLPerf Inference v0.5.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=lib,openvino,2019_R3
+RUN ck install package --tags=lib,openvino,pre-release
 RUN ck compile ck-openvino:program:mlperf-inference-v0.5
 #-----------------------------------------------------------------------------#
 
@@ -130,6 +131,11 @@ RUN ck install package --tags=dataset,imagenet,val,min --no_tags=resized
 RUN ck install package --tags=dataset,imagenet,aux
 # The OpenVINO program expects to find val_map.txt in the dataset directory.
 RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=val`/val_map.txt
+# Install misc Python dependencies required for calibration.
+RUN ${CK_PYTHON}  -m pip install --user \
+    nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
+# Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
+RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
 #-----------------------------------------------------------------------------#
 
 
@@ -137,19 +143,22 @@ RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=val`/
 # Step 5. Install the official ResNet model for MLPerf Inference v0.5
 # and convert it into the OpenVINO format.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=image-classification,model,tf,resnet
-# Install misc Python dependencies required for calibration.
-RUN ${CK_PYTHON}  -m pip install --user \
-    nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
-# Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
-RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
-# Convert and calibrate the model.
+RUN ck install package --tags=image-classification,model,tf,mlperf,resnet
 RUN ck install package --tags=model,openvino,resnet50
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Step 6. Install the official SSD-MobileNet model for MLPerf Inference v0.5
+# Step 6. Install the official MobileNet model for MLPerf Inference v0.5
+# and convert it into the OpenVINO format.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=image-classification,model,tf,mlperf,mobilenet-v1-1.0-224,non-quantized
+RUN ck install package --tags=model,openvino,mobilenet
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 7. Install the official SSD-MobileNet model for MLPerf Inference v0.5
 # and convert it into the OpenVINO format.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=model,tf,ssd-mobilenet,quantized,for.openvino
@@ -158,7 +167,7 @@ RUN ck install package --tags=model,openvino,ssd-mobilenet
 
 
 #-----------------------------------------------------------------------------#
-# Step 7. Install the COCO 2017 validation dataset (5,000 images).
+# Step 8. Install the COCO 2017 validation dataset (5,000 images).
 #-----------------------------------------------------------------------------#
 # Download the dataset to the default path. Remove all training annotations (~765 MB).
 RUN echo | ck install package --tags=object-detection,dataset,coco.2017,val,original,full\
@@ -173,7 +182,7 @@ RUN ck install package --tags=tool,coco,api
 
 
 #-----------------------------------------------------------------------------#
-# Step 8. Make final preparations to run the OpenVINO program.
+# Step 9. Make final preparations to run the OpenVINO program.
 #-----------------------------------------------------------------------------#
 # Allow the program create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
@@ -187,7 +196,8 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 # using all (virtual) CPU cores.
 #-----------------------------------------------------------------------------#
 CMD ["export NPROCS=`grep -c processor /proc/cpuinfo` \
- && ck run ck-openvino:program:mlperf-inference-v0.5 --cmd_key=image-classification --skip_print_timers \
-    --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=500    \
+ && ck run ck-openvino:program:mlperf-inference-v0.5 --skip_print_timers \
+    --cmd_key=image-classification --env.CK_OPENVINO_MODEL_NAME=resnet50 \
+    --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=500 \
     --env.CK_OPENVINO_NTHREADS=$NPROCS --env.CK_OPENVINO_NSTREAMS=$NPROCS --env.CK_OPENVINO_NIREQ=$NPROCS \
  && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/accuracy.txt"]

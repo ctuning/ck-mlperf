@@ -137,7 +137,7 @@ RUN ck install package --tags=model,openvino,resnet50
 # Step 6. Install the official MobileNet model for MLPerf Inference v0.5
 # and convert it into the OpenVINO format.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=image-classification,model,tf,mobilenet-v1-1.0-224,non-quantized
+RUN ck install package --tags=image-classification,model,tf,mlperf,mobilenet-v1-1.0-224,non-quantized
 RUN ck install package --tags=model,openvino,mobilenet
 #-----------------------------------------------------------------------------#
 
