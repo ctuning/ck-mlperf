@@ -1,0 +1,24 @@
+{
+  "auto_detect": "yes",
+  "customize": {
+    "check_that_exists": "yes",
+    "env_prefix": "CK_ENV_PYTHON_PACKAGE_IMAGENET_HELPER",
+    "limit_recursion_dir_search": {
+      "linux": 5,
+      "win": 5
+    },
+    "soft_file_universal": "imagenet_helper$#sep#$__init__.py",
+    "detect_in_soft_dir_only": "yes",
+    "detect_version_as": "0"
+  },
+  "soft_name": "ImageNet helper functions and metadata",
+  "tags": [
+    "lib",
+    "python-package",
+    "imagenet-helper"
+  ],
+  "use_customize_script_from_another_entry": {
+    "data_uoa": "4460bdb0ade2a3df",
+    "module_uoa": "soft"
+  }
+}
