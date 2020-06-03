@@ -7,85 +7,29 @@ import shutil
 import numpy as np
 import onnxruntime as rt
 
+from imagenet_helper import (load_preprocessed_batch, image_list, class_labels,
+    MODEL_IMAGE_WIDTH, MODEL_IMAGE_HEIGHT,
+    MODEL_DATA_LAYOUT, MODEL_COLOURS_BGR, MODEL_INPUT_DATA_TYPE, MODEL_DATA_TYPE, MODEL_USE_DLA,
+    IMAGE_DIR, IMAGE_LIST_FILE, MODEL_NORMALIZE_DATA, SUBTRACT_MEAN, GIVEN_CHANNEL_MEANS, BATCH_SIZE)
+
 ## Model properties:
 #
 MODEL_PATH              = os.environ['CK_ENV_ONNX_MODEL_ONNX_FILEPATH']
 INPUT_LAYER_NAME        = os.environ['CK_ENV_ONNX_MODEL_INPUT_LAYER_NAME']
 OUTPUT_LAYER_NAME       = os.environ['CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME']
-MODEL_DATA_LAYOUT       = os.environ['ML_MODEL_DATA_LAYOUT']
-MODEL_IMAGE_HEIGHT      = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_HEIGHT'])
-MODEL_IMAGE_WIDTH       = int(os.environ['CK_ENV_ONNX_MODEL_IMAGE_WIDTH'])
-LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
-
-## Image normalization:
-#
-MODEL_NORMALIZE_DATA    = os.getenv("CK_ENV_ONNX_MODEL_NORMALIZE_DATA") in ('YES', 'yes', 'ON', 'on', '1')
-SUBTRACT_MEAN           = os.getenv("CK_ENV_ONNX_MODEL_SUBTRACT_MEAN") in ('YES', 'yes', 'ON', 'on', '1')
-GIVEN_CHANNEL_MEANS     = os.getenv("ML_MODEL_GIVEN_CHANNEL_MEANS", '')
-if GIVEN_CHANNEL_MEANS:
-    GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=np.float32)
-
-## Input image properties:
-#
-IMAGE_DIR               = os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
-IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF'))
-IMAGE_DATA_TYPE         = np.dtype( os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DATA_TYPE', 'uint8') )
 
 ## Writing the results out:
 #
 RESULTS_DIR             = os.getenv('CK_RESULTS_DIR')
 FULL_REPORT             = os.getenv('CK_SILENT_MODE', '0') in ('NO', 'no', 'OFF', 'off', '0')
 
-## Processing in batches:
+## Processing by batches:
 #
-BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', 1))
 BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
+
+## Processing in threads:
+#
 CPU_THREADS             = int(os.getenv('CK_HOST_CPU_NUMBER_OF_PROCESSORS',0))
-
-
-def load_preprocessed_batch(image_list, image_index):
-    batch_data = []
-    for _ in range(BATCH_SIZE):
-        img_file = os.path.join(IMAGE_DIR, image_list[image_index])
-        img = np.fromfile(img_file, IMAGE_DATA_TYPE)
-        img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
-
-        if IMAGE_DATA_TYPE != 'float32':
-            img = img.astype(np.float32)
-
-            # Normalize
-            if MODEL_NORMALIZE_DATA:
-                img = img/127.5 - 1.0
-
-            # Subtract mean value
-            if SUBTRACT_MEAN:
-                if len(GIVEN_CHANNEL_MEANS):
-                    img -= GIVEN_CHANNEL_MEANS
-                else:
-                    #img -= np.mean(img, axis=(0,1), keepdims=True) # Another normalization option to try
-                    img -= np.mean(img)
-
-        # Add img to batch
-        batch_data.append( [img] )
-        image_index += 1
-
-    nhwc_data = np.concatenate(batch_data, axis=0)
-
-    if MODEL_DATA_LAYOUT == 'NHWC':
-        #print(nhwc_data.shape)
-        return nhwc_data, image_index
-    else:
-        nchw_data = nhwc_data.transpose(0,3,1,2)
-        #print(nchw_data.shape)
-        return nchw_data, image_index
-
-
-def load_labels(labels_filepath):
-    my_labels = []
-    input_file = open(labels_filepath, 'r')
-    for l in input_file:
-        my_labels.append(l.strip())
-    return my_labels
 
 
 def main():
@@ -106,10 +50,6 @@ def main():
     print('Per-channel means to subtract: {}'.format(GIVEN_CHANNEL_MEANS))
 
     setup_time_begin = time.time()
-
-    # Load preprocessed image filenames:
-    with open(IMAGE_LIST_FILE, 'r') as f:
-        image_list = [ s.strip() for s in f ]
 
     # Cleanup results directory
     if os.path.isdir(RESULTS_DIR):
@@ -133,8 +73,7 @@ def main():
     model_input_shape   = sess.get_inputs()[0].shape
 
     model_classes       = sess.get_outputs()[0].shape[1]
-    labels              = load_labels(LABELS_PATH)
-    bg_class_offset     = model_classes-len(labels)  # 1 means the labels represent classes 1..1000 and the background class 0 has to be skipped
+    bg_class_offset     = model_classes-len(class_labels)  # 1 means the labels represent classes 1..1000 and the background class 0 has to be skipped
 
     if MODEL_DATA_LAYOUT == 'NHWC':
         (samples, height, width, channels) = model_input_shape

@@ -57,6 +57,12 @@
       "sort": 30, 
       "tags": "model,image-classification,onnx"
     }, 
+    "imagenet-helper": {
+      "local": "yes",
+      "name": "Python ImageNet helper functions and metadata",
+      "sort": 35,
+      "tags": "lib,python-package,imagenet-helper"
+    },
     "lib-python-numpy": {
       "local": "yes",
       "name": "Python NumPy library",
