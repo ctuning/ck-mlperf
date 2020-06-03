@@ -1,0 +1,63 @@
+{
+  "backup_data_uid": "9c95a19834c44b1d",
+  "build_compiler_vars": {},
+  "data_name": "test-normalizer",
+  "main_language": "python",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "_fine_grain_timer_file": "tmp-ck-timer.json",
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../test_normalizer.py"
+      }
+    }
+  },
+  "run_deps": {
+    "imagenet-aux": {
+      "force_target_as_host": "yes",
+      "local": "yes",
+      "name": "ImageNet dataset (aux)",
+      "sort": 10,
+      "tags": "dataset,imagenet,aux"
+    },
+    "imagenet-helper": {
+      "local": "yes",
+      "name": "Python ImageNet helper functions and metadata",
+      "sort": 35,
+      "tags": "lib,python-package,imagenet-helper"
+    },
+    "images": {
+      "force_target_as_host": "yes",
+      "local": "yes",
+      "name": "ImageNet dataset (preprocessed subset)",
+      "sort": 20,
+      "tags": "dataset,imagenet,preprocessed"
+    },
+    "lib-python-numpy": {
+      "local": "yes",
+      "name": "Python NumPy library",
+      "sort": 40,
+      "tags": "lib,python-package,numpy"
+    },
+    "weights": {
+      "local": "yes",
+      "name": "TensorRT model",
+      "sort": 30,
+      "tags": "model,image-classification"
+    }
+  },
+  "run_vars": {
+    "CK_BATCH_COUNT": 1,
+    "CK_BATCH_SIZE": 1,
+    "CK_SILENT_MODE": 0
+  },
+  "tags": [
+    "normalizer",
+    "test",
+    "lang-python"
+  ]
+}

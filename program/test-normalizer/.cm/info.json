@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "9c95a19834c44b1d",
+  "backup_module_uid": "b0ac08fe1d3c2615",
+  "backup_module_uoa": "program",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-06-03T14:50:26.907650",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "test-normalizer"
+}
