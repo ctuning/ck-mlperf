@@ -6,12 +6,21 @@ import numpy as np
 
 from imagenet_helper import (load_preprocessed_batch, image_list, class_labels,
     MODEL_DATA_LAYOUT, MODEL_COLOURS_BGR, MODEL_INPUT_DATA_TYPE, MODEL_DATA_TYPE, MODEL_USE_DLA,
-    IMAGE_DIR, IMAGE_LIST_FILE, MODEL_NORMALIZE_DATA, SUBTRACT_MEAN, GIVEN_CHANNEL_MEANS, BATCH_SIZE)
+    IMAGE_DIR, IMAGE_LIST_FILE, MODEL_NORMALIZE_DATA, SUBTRACT_MEAN, GIVEN_CHANNEL_MEANS, MODEL_MAX_BATCH_SIZE, BATCH_SIZE)
 
 BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
 
 
 def main():
+
+    print('MODEL_DATA_LAYOUT = {}'.format(MODEL_DATA_LAYOUT))
+    print('MODEL_USE_DLA = {}'.format(MODEL_USE_DLA))
+    print('MODEL_MAX_BATCH_SIZE = {}'.format(MODEL_MAX_BATCH_SIZE))
+    print('')
+
+    if BATCH_SIZE>MODEL_MAX_BATCH_SIZE:
+        print('Runtime error: BATCH_SIZE({}) > MODEL_MAX_BATCH_SIZE({}), exiting'.format(BATCH_SIZE, MODEL_MAX_BATCH_SIZE))
+        exit(1)
 
     batch_data, image_index = [], 0
     for batch_index in range(BATCH_COUNT):
