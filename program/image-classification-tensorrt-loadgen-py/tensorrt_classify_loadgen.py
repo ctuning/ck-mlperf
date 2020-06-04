@@ -6,6 +6,10 @@ import os
 import sys
 import time
 
+from imagenet_helper import (load_image_by_index_and_normalize, image_list, class_labels,
+    MODEL_DATA_LAYOUT, MODEL_USE_DLA, BATCH_SIZE)
+
+
 import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit
@@ -23,40 +27,12 @@ LOADGEN_DATASET_SIZE    = int(os.getenv('CK_LOADGEN_DATASET_SIZE'))         # se
 LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
 LOADGEN_COUNT_OVERRIDE  = os.getenv('CK_LOADGEN_COUNT_OVERRIDE', '')        # if not set, use value from LoadGen's config file
 LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')       # if not set, use value from LoadGen's config file
-BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
 ## Model properties:
 #
 MODEL_PATH              = os.environ['CK_ENV_TENSORRT_MODEL_FILENAME']
-MODEL_DATA_LAYOUT       = os.getenv('ML_MODEL_DATA_LAYOUT', 'NCHW')
-LABELS_PATH             = os.environ['CK_CAFFE_IMAGENET_SYNSET_WORDS_TXT']
-MODEL_COLOURS_BGR       = os.getenv('ML_MODEL_COLOUR_CHANNELS_BGR', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
-MODEL_INPUT_DATA_TYPE   = os.getenv('ML_MODEL_INPUT_DATA_TYPE', 'float32')
-MODEL_DATA_TYPE         = os.getenv('ML_MODEL_DATA_TYPE', '(unknown)')
 MODEL_SOFTMAX_LAYER     = os.getenv('CK_ENV_ONNX_MODEL_OUTPUT_LAYER_NAME', os.getenv('CK_ENV_TENSORFLOW_MODEL_OUTPUT_LAYER_NAME', ''))
 
-
-## Internal processing:
-#
-INTERMEDIATE_DATA_TYPE  = np.float32    # default for internal conversion
-#INTERMEDIATE_DATA_TYPE  = np.int8       # affects the accuracy a bit
-
-
-## Image normalization:
-#
-MODEL_NORMALIZE_DATA    = os.getenv('ML_MODEL_NORMALIZE_DATA') in ('YES', 'yes', 'ON', 'on', '1')
-SUBTRACT_MEAN           = os.getenv('ML_MODEL_SUBTRACT_MEAN', 'YES') in ('YES', 'yes', 'ON', 'on', '1')
-GIVEN_CHANNEL_MEANS     = os.getenv('ML_MODEL_GIVEN_CHANNEL_MEANS', '')
-if GIVEN_CHANNEL_MEANS:
-    GIVEN_CHANNEL_MEANS = np.fromstring(GIVEN_CHANNEL_MEANS, dtype=np.float32, sep=' ').astype(INTERMEDIATE_DATA_TYPE)
-    if MODEL_COLOURS_BGR:
-        GIVEN_CHANNEL_MEANS = GIVEN_CHANNEL_MEANS[::-1]     # swapping Red and Blue colour channels
-
-## Input image properties:
-#
-IMAGE_DIR               = os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DIR')
-IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_SUBSET_FOF'))
-IMAGE_DATA_TYPE         = np.dtype( os.getenv('CK_ENV_DATASET_IMAGENET_PREPROCESSED_DATA_TYPE', 'uint8') )
 
 ## Misc
 #
@@ -64,17 +40,7 @@ VERBOSITY_LEVEL         = int(os.getenv('CK_VERBOSE', '0'))
 
 
 # Load preprocessed image filepaths:
-with open(IMAGE_LIST_FILE, 'r') as f:
-    image_path_list = [ os.path.join(IMAGE_DIR, s.strip()) for s in f ]
-LOADGEN_DATASET_SIZE = LOADGEN_DATASET_SIZE or len(image_path_list)
-
-
-def load_labels(labels_filepath):
-    my_labels = []
-    input_file = open(labels_filepath, 'r')
-    for l in input_file:
-        my_labels.append(l.strip())
-    return my_labels
+LOADGEN_DATASET_SIZE = LOADGEN_DATASET_SIZE or len(image_list)
 
 
 def tick(letter, quantity=1):
@@ -86,39 +52,14 @@ preprocessed_image_buffer = {}
 
 
 def load_query_samples(sample_indices):     # 0-based indices in our whole dataset
-    global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
-
     print("load_query_samples({})".format(sample_indices))
 
     tick('B', len(sample_indices))
 
     for sample_index in sample_indices:
-        img_filename = image_path_list[sample_index]
-        img = np.fromfile(img_filename, IMAGE_DATA_TYPE)
-        img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
-        if MODEL_COLOURS_BGR:
-            img = img[...,::-1]     # swapping Red and Blue colour channels
+        img = load_image_by_index_and_normalize(sample_index)
 
-        if IMAGE_DATA_TYPE != 'float32':
-            img = img.astype(np.float32)
-
-            # Normalize
-            if MODEL_NORMALIZE_DATA:
-                img = img/127.5 - 1.0
-
-            # Subtract mean value
-            if SUBTRACT_MEAN:
-                if len(GIVEN_CHANNEL_MEANS):
-                    img -= GIVEN_CHANNEL_MEANS
-                else:
-                    img -= np.mean(img, axis=(0,1), keepdims=True)
-
-        if MODEL_INPUT_DATA_TYPE == 'int8' or INTERMEDIATE_DATA_TYPE==np.int8:
-            img = np.clip(img, -128, 127).astype(INTERMEDIATE_DATA_TYPE)
-
-        nhwc_img = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
-
-        preprocessed_image_buffer[sample_index] = np.array(nhwc_img).ravel().astype(MODEL_INPUT_DATA_TYPE)
+        preprocessed_image_buffer[sample_index] = np.array(img)
         tick('l')
     print('')
 
@@ -149,7 +90,8 @@ def initialize_predictor():
         with open(MODEL_PATH, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
             serialized_engine = f.read()
             trt_engine = runtime.deserialize_cuda_engine(serialized_engine)
-            print('[TRT] successfully loaded')
+            trt_version = [ int(v) for v in trt.__version__.split('.') ]
+            print('[TensorRT v{}.{}] successfully loaded'.format(trt_version[0], trt_version[1]))
     except:
         pycuda_context.pop()
         raise RuntimeError('TensorRT model file {} is not found or corrupted'.format(MODEL_PATH))
@@ -164,6 +106,10 @@ def initialize_predictor():
     for interface_layer in trt_engine:
         dtype   = trt_engine.get_binding_dtype(interface_layer)
         shape   = trt_engine.get_binding_shape(interface_layer)
+        fmt     = trt_engine.get_binding_format(trt_engine.get_binding_index(interface_layer)) if trt_version[0] >= 6 else None
+
+        if fmt and fmt == trt.TensorFormat.CHW4 and trt_engine.binding_is_input(interface_layer):
+            shape[-3] = ((shape[-3] - 1) // 4 + 1) * 4
         size    = trt.volume(shape) * max_batch_size
 
         dev_mem = cuda.mem_alloc(size * dtype.itemsize)
@@ -184,7 +130,7 @@ def initialize_predictor():
         print("{} layer {}: dtype={}, shape={}, elements_per_max_batch={}".format(interface_type, interface_layer, dtype, shape, size))
 
     cuda_stream     = cuda.Stream()
-    num_labels      = len(load_labels(LABELS_PATH))
+    num_labels      = len(class_labels)
     model_classes   = trt.volume(model_output_shape)
 
     if MODEL_DATA_LAYOUT == 'NHWC':
@@ -201,27 +147,33 @@ def predict_labels_for_batch(batch_data):
     global trt_context
     global max_batch_size
 
-    batch_size          = len(batch_data)
-    flat_float_batch    = np.ravel(batch_data)
+    actual_batch_size  = len(batch_data)
+    if MODEL_USE_DLA and max_batch_size>actual_batch_size:
+        batch_data = np.pad(batch_data, ((0,max_batch_size-actual_batch_size), (0,0), (0,0), (0,0)), 'constant')
+        pseudo_batch_size   = max_batch_size
+    else:
+        pseudo_batch_size   = actual_batch_size
+
+    flat_batch    = np.ravel(batch_data)
 
     begin_time = time.time()
 
-    cuda.memcpy_htod_async(d_inputs[0], flat_float_batch, cuda_stream)  # assuming one input layer for image classification
-    trt_context.execute_async(bindings=model_bindings, batch_size=batch_size, stream_handle=cuda_stream.handle)
+    cuda.memcpy_htod_async(d_inputs[0], flat_batch, cuda_stream)  # assuming one input layer for image classification
+    trt_context.execute_async(bindings=model_bindings, batch_size=pseudo_batch_size, stream_handle=cuda_stream.handle)
     for output in h_d_outputs:
         cuda.memcpy_dtoh_async(output['host_mem'], output['dev_mem'], cuda_stream)
     cuda_stream.synchronize()
 
     classification_time = time.time() - begin_time
 
-    print("[batch of {}] inference={:.2f} ms".format(batch_size, classification_time*1000))
+    print("[batch of {}] inference={:.2f} ms".format(actual_batch_size, classification_time*1000))
 
     batch_results           = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
 
     if model_classes==1:
-        batch_predicted_labels  = batch_results[:batch_size]
+        batch_predicted_labels  = batch_results[:actual_batch_size]
     else:
-        batch_predicted_labels  = [ np.argmax(batch_results[k][-num_labels:]) for k in range(batch_size) ]
+        batch_predicted_labels  = [ np.argmax(batch_results[k][-num_labels:]) for k in range(actual_batch_size) ]
 
     return batch_predicted_labels
 
