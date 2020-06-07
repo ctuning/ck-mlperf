@@ -9,6 +9,8 @@ import time
 from imagenet_helper import (load_image_by_index_and_normalize, image_list, class_labels,
     MODEL_DATA_LAYOUT, MODEL_USE_DLA, BATCH_SIZE)
 
+from tensorrt_helper import (initialize_predictor, inference_for_given_batch)
+
 
 import tensorrt as trt
 import pycuda.driver as cuda
@@ -73,114 +75,11 @@ def unload_query_samples(sample_indices):
     print('')
 
 
-def initialize_predictor():
-    global pycuda_context
-    global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
-    global num_labels, model_classes
-    global trt_context
-    global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
-    global BATCH_SIZE
-    global max_batch_size
-
-    # Load the TensorRT model from file
-    pycuda_context = pycuda.tools.make_default_context()
-
-    TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
-    try:
-        with open(MODEL_PATH, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
-            serialized_engine = f.read()
-            trt_engine = runtime.deserialize_cuda_engine(serialized_engine)
-            trt_version = [ int(v) for v in trt.__version__.split('.') ]
-            print('[TensorRT v{}.{}] successfully loaded'.format(trt_version[0], trt_version[1]))
-    except:
-        pycuda_context.pop()
-        raise RuntimeError('TensorRT model file {} is not found or corrupted'.format(MODEL_PATH))
-
-    max_batch_size      = trt_engine.max_batch_size
-
-    if BATCH_SIZE>max_batch_size:
-        pycuda_context.pop()
-        raise RuntimeError("Desired batch_size ({}) exceeds max_batch_size of the model ({})".format(BATCH_SIZE,max_batch_size))
-
-    d_inputs, h_d_outputs, model_bindings = [], [], []
-    for interface_layer in trt_engine:
-        dtype   = trt_engine.get_binding_dtype(interface_layer)
-        shape   = trt_engine.get_binding_shape(interface_layer)
-        fmt     = trt_engine.get_binding_format(trt_engine.get_binding_index(interface_layer)) if trt_version[0] >= 6 else None
-
-        if fmt and fmt == trt.TensorFormat.CHW4 and trt_engine.binding_is_input(interface_layer):
-            shape[-3] = ((shape[-3] - 1) // 4 + 1) * 4
-        size    = trt.volume(shape) * max_batch_size
-
-        dev_mem = cuda.mem_alloc(size * dtype.itemsize)
-        model_bindings.append( int(dev_mem) )
-
-        if trt_engine.binding_is_input(interface_layer):
-            interface_type = 'Input'
-            d_inputs.append(dev_mem)
-            model_input_shape   = shape
-        else:
-            interface_type = 'Output'
-            host_mem    = cuda.pagelocked_empty(size, trt.nptype(dtype))
-            h_d_outputs.append({ 'host_mem': host_mem, 'dev_mem': dev_mem })
-            if MODEL_SOFTMAX_LAYER=='' or interface_layer == MODEL_SOFTMAX_LAYER:
-                model_output_shape  = shape
-                h_output            = host_mem
-
-        print("{} layer {}: dtype={}, shape={}, elements_per_max_batch={}".format(interface_type, interface_layer, dtype, shape, size))
-
-    cuda_stream     = cuda.Stream()
-    num_labels      = len(class_labels)
-    model_classes   = trt.volume(model_output_shape)
-
-    if MODEL_DATA_LAYOUT == 'NHWC':
-        (MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS) = model_input_shape
-    else:
-        (MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH) = model_input_shape
-
-    trt_context   = trt_engine.create_execution_context()
-
-
-def predict_labels_for_batch(batch_data):
-    global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
-    global num_labels, model_classes
-    global trt_context
-    global max_batch_size
-
-    actual_batch_size  = len(batch_data)
-    if MODEL_USE_DLA and max_batch_size>actual_batch_size:
-        batch_data = np.pad(batch_data, ((0,max_batch_size-actual_batch_size), (0,0), (0,0), (0,0)), 'constant')
-        pseudo_batch_size   = max_batch_size
-    else:
-        pseudo_batch_size   = actual_batch_size
-
-    flat_batch    = np.ravel(batch_data)
-
-    begin_time = time.time()
-
-    cuda.memcpy_htod_async(d_inputs[0], flat_batch, cuda_stream)  # assuming one input layer for image classification
-    trt_context.execute_async(bindings=model_bindings, batch_size=pseudo_batch_size, stream_handle=cuda_stream.handle)
-    for output in h_d_outputs:
-        cuda.memcpy_dtoh_async(output['host_mem'], output['dev_mem'], cuda_stream)
-    cuda_stream.synchronize()
-
-    classification_time = time.time() - begin_time
-
-    print("[batch of {}] inference={:.2f} ms".format(actual_batch_size, classification_time*1000))
-
-    batch_results           = np.split(h_output, max_batch_size)  # where each row is a softmax_vector for one sample
-
-    if model_classes==1:
-        batch_predicted_labels  = batch_results[:actual_batch_size]
-    else:
-        batch_predicted_labels  = [ np.argmax(batch_results[k][-num_labels:]) for k in range(actual_batch_size) ]
-
-    return batch_predicted_labels
-
-
 def issue_queries(query_samples):
 
     global BATCH_SIZE
+    global model_output_volume
+    global num_classes
 
     if VERBOSITY_LEVEL:
         printable_query = [(qs.index, qs.id) for qs in query_samples]
@@ -191,7 +90,16 @@ def issue_queries(query_samples):
         batch       = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
         batch_data  = [ preprocessed_image_buffer[qs.index] for qs in batch ]
 
-        batch_predicted_labels = predict_labels_for_batch(batch_data)
+        trimmed_batch_results, inference_time_s = inference_for_given_batch(batch_data)
+        actual_batch_size = len(trimmed_batch_results)
+
+        print("[batch of {}] inference={:.2f} ms".format(actual_batch_size, inference_time_s*1000))
+
+        if model_output_volume==1:
+            batch_predicted_labels  = trimmed_batch_results
+        else:
+            batch_predicted_labels  = [ np.argmax(trimmed_batch_results[k][-num_classes:]) for k in range(actual_batch_size) ]
+
         tick('p', len(batch))
         if VERBOSITY_LEVEL:
             print("predicted_batch_results = {}".format(batch_predicted_labels))
@@ -240,8 +148,11 @@ def process_latencies(latencies_ns):
 def benchmark_using_loadgen():
     "Perform the benchmark using python API for the LoadGen library"
 
-    global pycuda_context
-    initialize_predictor()
+    global num_classes
+    global model_output_volume
+
+    pycuda_context, max_batch_size, input_volume, model_output_volume, num_layers = initialize_predictor()
+    num_classes = len(class_labels)
 
     scenario = {
         'SingleStream':     lg.TestScenario.SingleStream,
@@ -281,4 +192,8 @@ def benchmark_using_loadgen():
     pycuda_context.pop()
 
 
-benchmark_using_loadgen()
+
+try:
+    benchmark_using_loadgen()
+except Exception as e:
+    print('{}'.format(e))
