@@ -66,7 +66,7 @@ def ck_postprocess(i):
 
     dataset_source = deps['dataset']['dict']['deps'].get('dataset-source',{})
     if dataset_source != {}: # preprocessed
-        coco_dir = dataset-source['dict']['env']['CK_ENV_DATASET_COCO']
+        coco_dir = dataset_source['dict']['env']['CK_ENV_DATASET_COCO']
     else: # original
         coco_dir = deps['dataset']['dict']['env']['CK_ENV_DATASET_COCO']
 
