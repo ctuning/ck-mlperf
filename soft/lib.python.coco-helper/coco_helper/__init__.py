@@ -28,6 +28,12 @@ MODEL_INPUT_DATA_TYPE   = os.getenv('ML_MODEL_INPUT_DATA_TYPE', 'float32')
 MODEL_DATA_TYPE         = os.getenv('ML_MODEL_DATA_TYPE', '(unknown)')
 MODEL_USE_DLA           = os.getenv('ML_MODEL_USE_DLA', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
 MODEL_MAX_BATCH_SIZE    = int(os.getenv('ML_MODEL_MAX_BATCH_SIZE', BATCH_SIZE))
+MODEL_SKIPPED_CLASSES   = os.getenv("ML_MODEL_SKIPS_ORIGINAL_DATASET_CLASSES", None)
+
+if (MODEL_SKIPPED_CLASSES):
+    SKIPPED_CLASSES = [int(x) for x in MODEL_SKIPPED_CLASSES.split(",")]
+else:
+    SKIPPED_CLASSES = None
 
 
 ## Internal processing:
@@ -75,7 +81,15 @@ def load_labels(labels_filepath):
         my_labels.append(l.strip())
     return my_labels
 
-class_labels = load_labels(LABELS_PATH)
+class_labels    = load_labels(LABELS_PATH)
+num_classes     = len(class_labels)
+bg_class_offset = 1
+class_map       = None
+if (SKIPPED_CLASSES):
+    class_map = []
+    for i in range(num_classes + bg_class_offset):
+        if i not in SKIPPED_CLASSES:
+            class_map.append(i)
 
 
 # Load preprocessed image filenames:
