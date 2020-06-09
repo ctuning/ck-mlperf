@@ -74,6 +74,7 @@ def main():
         if output.name == OUTPUT_LAYER_LABELS:
             model_classes = output.shape[1]
 
+
     print("Data layout: {}".format(MODEL_DATA_LAYOUT) )
     print("Input layers: {}".format(input_layer_names))
     print("Output layers: {}".format(output_layer_names))
@@ -85,6 +86,13 @@ def main():
     print("Background/unlabelled classes to skip: {}".format(bg_class_offset))
     print("")
 
+    try:
+        expected_batch_size = int(model_input_shape[0])
+        if BATCH_SIZE!=expected_batch_size:
+            raise Exception("expected_batch_size={}, desired CK_BATCH_SIZE={}, they do not match - exiting.".format(expected_batch_size, BATCH_SIZE))
+    except ValueError:
+        max_batch_size = None
+
     setup_time = time.time() - setup_time_begin
 
     # Run batched mode
@@ -95,16 +103,12 @@ def main():
     first_inference_time = 0
     images_loaded = 0
 
-    if BATCH_SIZE>1:
-        raise Exception("batch sizes > 1 are not yet supported")
-
     for batch_index in range(BATCH_COUNT):
         batch_number = batch_index+1
 
         begin_time = time.time()
         current_batch_offset = next_batch_offset
         batch_data, next_batch_offset = load_preprocessed_batch(image_filenames, current_batch_offset)
-        print("batch_data dimensions: {}".format(np.shape(batch_data)))
 
         load_time = time.time() - begin_time
         total_load_time += load_time
@@ -138,7 +142,7 @@ def main():
                 for i in range(len(batch_results[2][index_in_batch])):
                     confidence = batch_results[2][index_in_batch][i]
                     if confidence > SCORE_THRESHOLD:
-                        class_number = batch_results[1][index_in_batch][i]
+                        class_number = int(batch_results[1][index_in_batch][i])
                         if class_map:
                             class_number = class_map[class_number]
                         else:
