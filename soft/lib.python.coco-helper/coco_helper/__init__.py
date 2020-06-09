@@ -7,8 +7,10 @@ import numpy as np
 ## Processing in batches:
 #
 BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', 1))
-BATCH_COUNT             = int(os.getenv('CK_BATCH_COUNT', 1))
-SKIP_IMAGES             = int(os.getenv('CK_SKIP_IMAGES', 0))
+BATCH_COUNT_SET         = os.getenv('CK_BATCH_COUNT', '') != ''
+if BATCH_COUNT_SET:
+    BATCH_COUNT         = int(os.getenv('CK_BATCH_COUNT', 1))
+    SKIP_IMAGES         = int(os.getenv('CK_SKIP_IMAGES', 0))
 
 
 ## Model properties:
@@ -97,7 +99,8 @@ with open(IMAGE_LIST_FILE, 'r') as f:
     image_list = [s.strip() for s in f]
 
 # Trim the input list of preprocessed files:
-image_list = image_list[SKIP_IMAGES: BATCH_COUNT * BATCH_SIZE + SKIP_IMAGES]
+if BATCH_COUNT_SET:
+    image_list = image_list[SKIP_IMAGES: BATCH_COUNT * BATCH_SIZE + SKIP_IMAGES]
 
 # Creating a local list of processed files and parsing it:
 image_filenames = []
@@ -110,52 +113,55 @@ with open(IMAGE_LIST_FILE_NAME, 'w') as f:
         original_w_h.append( (int(width), int(height)) )
 
 
+def load_image_by_index_and_normalize(image_index):
+    img_file = os.path.join(IMAGE_DIR, image_filenames[image_index])
+    img = np.fromfile(img_file, np.dtype(IMAGE_DATA_TYPE))
+    img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS))
+    if MODEL_COLOURS_BGR:
+        img = img[...,::-1]     # swapping Red and Blue colour channels
+
+    if IMAGE_DATA_TYPE != 'float32':
+        img = img.astype(np.float32)
+
+        # Normalize
+        if MODEL_NORMALIZE_DATA:
+            img = img*(MODEL_NORMALIZE_UPPER-MODEL_NORMALIZE_LOWER)/255.0+MODEL_NORMALIZE_LOWER
+
+        # Subtract mean value
+        if SUBTRACT_MEAN:
+            if len(GIVEN_CHANNEL_MEANS):
+                img -= GIVEN_CHANNEL_MEANS
+            else:
+                img -= np.mean(img, axis=(0,1), keepdims=True)
+
+        if len(GIVEN_CHANNEL_STDS):
+            img /= GIVEN_CHANNEL_STDS
+
+    if MODEL_INPUT_DATA_TYPE == 'int8' or INTERMEDIATE_DATA_TYPE==np.int8:
+        img = np.clip(img, -128, 127).astype(INTERMEDIATE_DATA_TYPE)
+
+    if MODEL_DATA_LAYOUT == 'NCHW':
+        img = img.transpose(2,0,1)
+    elif MODEL_DATA_LAYOUT == 'CHW4':
+        img = np.pad(img, ((0,0), (0,0), (0,1)), 'constant')
+
+    # Add img to batch
+    return img.astype(MODEL_INPUT_DATA_TYPE)
+
+
 def load_preprocessed_batch(image_list, image_index):
     batch_data = []
-
     for _ in range(BATCH_SIZE):
-        img_file = os.path.join(IMAGE_DIR, image_list[image_index])
-        img = np.fromfile(img_file, np.dtype(IMAGE_DATA_TYPE))
-        img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS))
-        if MODEL_COLOURS_BGR:
-            img = img[...,::-1]     # swapping Red and Blue colour channels
+        img = load_image_by_index_and_normalize(image_index)
 
-        if IMAGE_DATA_TYPE != 'float32':
-            img = img.astype(np.float32)
-
-            # Normalize
-            if MODEL_NORMALIZE_DATA:
-                img = img*(MODEL_NORMALIZE_UPPER-MODEL_NORMALIZE_LOWER)/255.0+MODEL_NORMALIZE_LOWER
-
-            # Subtract mean value
-            if SUBTRACT_MEAN:
-                if len(GIVEN_CHANNEL_MEANS):
-                    img -= GIVEN_CHANNEL_MEANS
-                else:
-                    img -= np.mean(img, axis=(0,1), keepdims=True)
-
-            if len(GIVEN_CHANNEL_STDS):
-                img /= GIVEN_CHANNEL_STDS
-
-        if MODEL_INPUT_DATA_TYPE == 'int8' or INTERMEDIATE_DATA_TYPE==np.int8:
-            img = np.clip(img, -128, 127).astype(INTERMEDIATE_DATA_TYPE)
-
-        # Add img to batch
-        batch_data.append( [img.astype(MODEL_INPUT_DATA_TYPE)] )
+        batch_data.append( [img] )
         image_index += 1
 
-    nhwc_data = np.concatenate(batch_data, axis=0)
-    #print('NHWC shape: {}'.format(nhwc_data.shape))
+    batch_data = np.concatenate(batch_data, axis=0)
+    #print('Data shape: {}'.format(batch_data.shape))
 
-    if MODEL_DATA_LAYOUT == 'NHWC':
-        return nhwc_data, image_index
-    elif MODEL_DATA_LAYOUT == 'CHW4':
-        dla_batch_padding = MODEL_MAX_BATCH_SIZE-len(batch_data) if MODEL_USE_DLA else 0
-        chw4_data = np.pad(nhwc_data, ((0,dla_batch_padding), (0,0), (0,0), (0,1)), 'constant')
-        #print('CHW4 shape: {}'.format(chw4_data.shape))
-        return chw4_data, image_index
-    elif MODEL_DATA_LAYOUT == 'NCHW':
-        nchw_data = nhwc_data.transpose(0,3,1,2)
-        #print('NCHW shape: {}'.format(nchw_data.shape))
-        return nchw_data, image_index
+    if MODEL_USE_DLA and MODEL_MAX_BATCH_SIZE>len(batch_data):
+        return np.pad(batch_data, ((0,MODEL_MAX_BATCH_SIZE-len(batch_data)), (0,0), (0,0), (0,0)), 'constant'), image_index
+    else:
+        return batch_data, image_index
 
