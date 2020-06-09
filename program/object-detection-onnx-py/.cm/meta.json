@@ -34,6 +34,12 @@
       "sort": 20,
       "tags": "dataset,object-detection,preprocessed"
     },
+    "coco-helper": {
+      "local": "yes",
+      "name": "Python COCO helper functions and metadata",
+      "sort": 35,
+      "tags": "lib,python-package,coco-helper"
+    },
     "lib-python-matplotlib": {
       "local": "yes",
       "name": "Python Matplotlib library",
@@ -89,7 +95,7 @@
     "CK_DETECTIONS_OUT_DIR": "detections",
     "CK_RESULTS_OUT_DIR": "results",
     "CK_ANNOTATIONS_OUT_DIR": "annotations",
-    "CK_DETECTION_THRESHOLD": 0.3,
+    "CK_DETECTION_THRESHOLD": 0.0,
     "CK_BATCH_COUNT": 1,
     "CK_BATCH_SIZE": 1,
     "CK_SKIP_IMAGES": 0,
