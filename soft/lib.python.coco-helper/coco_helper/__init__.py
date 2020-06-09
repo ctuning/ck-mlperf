@@ -65,7 +65,9 @@ if GIVEN_CHANNEL_STDS:
 
 ## ImageNet dataset properties:
 #
-LABELS_PATH             = os.getenv('CK_ENV_TENSORRT_MODEL_FLATLABELS_FILE') or os.environ['ML_MODEL_CLASS_LABELS']
+LABELS_PATH             = os.getenv('CK_ENV_TENSORRT_MODEL_FLATLABELS_FILE',
+                            os.getenv('CK_ENV_ONNX_MODEL_FLATLABELS')
+                            ) or os.environ['ML_MODEL_CLASS_LABELS']
 
 
 ## Preprocessed input images' properties:
