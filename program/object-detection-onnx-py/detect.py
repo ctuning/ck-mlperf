@@ -146,7 +146,7 @@ def main():
                         if class_map:
                             class_number = class_map[class_number]
                         else:
-                            class_number = class_number + bg_class_offset
+                            class_number = class_number
 
                         box = batch_results[0][index_in_batch][i]
                         x1 = box[0] * width_orig
