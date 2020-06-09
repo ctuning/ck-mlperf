@@ -6,10 +6,11 @@ import os
 import sys
 import time
 
-import tensorrt as trt
-import pycuda.driver as cuda
-import pycuda.autoinit
-import pycuda.tools
+from coco_helper import (load_image_by_index_and_normalize, image_filenames, original_w_h,
+    class_labels, num_classes, bg_class_offset, class_map,
+    MODEL_DATA_LAYOUT, MODEL_USE_DLA, BATCH_SIZE)
+
+from tensorrt_helper import (initialize_predictor, inference_for_given_batch)
 
 import mlperf_loadgen as lg
 
@@ -24,95 +25,18 @@ LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
 LOADGEN_MODEL_NAME      = os.getenv('CK_LOADGEN_MODEL_NAME', 'random_model_name')
 LOADGEN_COUNT_OVERRIDE  = os.getenv('CK_LOADGEN_COUNT_OVERRIDE', '')        # if not set, use value from LoadGen's config file
 LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')       # if not set, use value from LoadGen's config file
-BATCH_SIZE              = int(os.getenv('CK_BATCH_SIZE', '1'))
 
 ## Model properties:
 #
-MODEL_PATH              = os.environ['CK_ENV_TENSORRT_MODEL_FILENAME']
-MODEL_PLUGIN_PATH       = os.getenv('CK_ENV_TENSORRT_PLUGIN_PATH', os.getenv('ML_MODEL_TENSORRT_PLUGIN',''))
-MODEL_DATA_LAYOUT       = os.getenv('ML_MODEL_DATA_LAYOUT', 'NCHW')
-LABELS_PATH             = os.getenv('CK_ENV_TENSORRT_MODEL_FLATLABELS_FILE') or os.environ['ML_MODEL_CLASS_LABELS']
-MODEL_COLOURS_BGR       = os.getenv('ML_MODEL_COLOUR_CHANNELS_BGR', 'NO') in ('YES', 'yes', 'ON', 'on', '1')
-MODEL_INPUT_DATA_TYPE   = os.getenv('ML_MODEL_INPUT_DATA_TYPE', 'float32')
-MODEL_DATA_TYPE         = os.getenv('ML_MODEL_DATA_TYPE', '(unknown)')
 MODEL_MAX_PREDICTIONS   = int(os.getenv('ML_MODEL_MAX_PREDICTIONS', 100))
-MODEL_SKIPPED_CLASSES   = os.getenv("ML_MODEL_SKIPS_ORIGINAL_DATASET_CLASSES", None)
-
-if (MODEL_SKIPPED_CLASSES):
-    SKIPPED_CLASSES = [int(x) for x in MODEL_SKIPPED_CLASSES.split(",")]
-else:
-    SKIPPED_CLASSES = None
-
-
-if MODEL_PLUGIN_PATH:
-    import ctypes
-    if not os.path.isfile(MODEL_PLUGIN_PATH):
-        raise IOError("{}\n{}\n".format(
-            "Failed to load library ({}).".format(MODEL_PLUGIN_PATH),
-            "Please build the plugin."
-        ))
-    ctypes.CDLL(MODEL_PLUGIN_PATH)
-
-## Internal processing:
-#
-INTERMEDIATE_DATA_TYPE  = np.float32
-
-
-## Image normalization:
-#
-MODEL_NORMALIZE_DATA    = os.getenv('ML_MODEL_NORMALIZE_DATA') in ('YES', 'yes', 'ON', 'on', '1')
-MODEL_NORMALIZE_LOWER   = float(os.getenv('ML_MODEL_NORMALIZE_LOWER', -1.0))
-MODEL_NORMALIZE_UPPER   = float(os.getenv('ML_MODEL_NORMALIZE_UPPER',  1.0))
-SUBTRACT_MEAN           = os.getenv('ML_MODEL_SUBTRACT_MEAN', 'YES') in ('YES', 'yes', 'ON', 'on', '1')
-GIVEN_CHANNEL_MEANS     = os.getenv('ML_MODEL_GIVEN_CHANNEL_MEANS', '')
-if GIVEN_CHANNEL_MEANS:
-    GIVEN_CHANNEL_MEANS = np.array(GIVEN_CHANNEL_MEANS.split(' '), dtype=INTERMEDIATE_DATA_TYPE)
-    if MODEL_COLOURS_BGR:
-        GIVEN_CHANNEL_MEANS = GIVEN_CHANNEL_MEANS[::-1]     # swapping Red and Blue colour channels
-
-GIVEN_CHANNEL_STDS      = os.getenv('ML_MODEL_GIVEN_CHANNEL_STDS', '')
-if GIVEN_CHANNEL_STDS:
-    GIVEN_CHANNEL_STDS = np.array(GIVEN_CHANNEL_STDS.split(' '), dtype=INTERMEDIATE_DATA_TYPE)
-    if MODEL_COLOURS_BGR:
-        GIVEN_CHANNEL_STDS  = GIVEN_CHANNEL_STDS[::-1]      # swapping Red and Blue colour channels
-
-
-
-## Input image properties:
-#
-IMAGE_DIR               = os.getenv('CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_DIR')
-IMAGE_LIST_FILE_NAME    = os.getenv('CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_SUBSET_FOF')
-IMAGE_LIST_FILE         = os.path.join(IMAGE_DIR, IMAGE_LIST_FILE_NAME)
-IMAGE_DATA_TYPE         = os.getenv('CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_DATA_TYPE', 'uint8')
 
 ## Misc
 #
 VERBOSITY_LEVEL         = int(os.getenv('CK_VERBOSE', '0'))
 
 
-# Load preprocessed image filenames:
-with open(IMAGE_LIST_FILE, 'r') as f:
-    image_list = [s.strip() for s in f]
-
-# Creating a local list of processed files and parsing it:
-image_path_list = []
-original_w_h    = []
-with open(IMAGE_LIST_FILE_NAME, 'w') as f:
-    for line in image_list:
-        f.write('{}\n'.format(line))
-        file_name, width, height = line.split(";")
-        image_path_list.append( os.path.join(IMAGE_DIR, file_name) )
-        original_w_h.append( (int(width), int(height)) )
-
+# Load preprocessed image filepaths:
 LOADGEN_DATASET_SIZE = LOADGEN_DATASET_SIZE or len(image_path_list)
-
-
-def load_labels(labels_filepath):
-    my_labels = []
-    input_file = open(labels_filepath, 'r')
-    for l in input_file:
-        my_labels.append(l.strip())
-    return my_labels
 
 
 def tick(letter, quantity=1):
@@ -122,49 +46,16 @@ def tick(letter, quantity=1):
 # Currently loaded preprocessed images are stored in a dictionary:
 preprocessed_image_buffer = {}
 
-class_map = None
-
-bg_class_offset = 1
-
 
 def load_query_samples(sample_indices):     # 0-based indices in our whole dataset
-    global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
-
     print("load_query_samples({})".format(sample_indices))
 
     tick('B', len(sample_indices))
 
     for sample_index in sample_indices:
-        img_filename = image_path_list[sample_index]
-        img = np.fromfile(img_filename, IMAGE_DATA_TYPE)
-        img = img.reshape((MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, 3))
-        if MODEL_COLOURS_BGR:
-            img = img[...,::-1]     # swapping Red and Blue colour channels
+        img = load_image_by_index_and_normalize(sample_index)
 
-        if IMAGE_DATA_TYPE != 'float32':
-            img = img.astype(INTERMEDIATE_DATA_TYPE)
-
-            # Normalize
-            if MODEL_NORMALIZE_DATA:
-                #img = img/127.5 - 1.0
-                img = img*(MODEL_NORMALIZE_UPPER-MODEL_NORMALIZE_LOWER)/255.0+MODEL_NORMALIZE_LOWER
-
-            # Subtract mean value
-            if SUBTRACT_MEAN:
-                if len(GIVEN_CHANNEL_MEANS):
-                    img -= GIVEN_CHANNEL_MEANS
-                else:
-                    img -= np.mean(img, axis=(0,1), keepdims=True)
-
-            if len(GIVEN_CHANNEL_STDS):
-                img /= GIVEN_CHANNEL_STDS
-
-        if MODEL_INPUT_DATA_TYPE == 'int8':
-            img = np.clip(img, -128, 127)
-
-        nhwc_img = img if MODEL_DATA_LAYOUT == 'NHWC' else img.transpose(2,0,1)
-
-        preprocessed_image_buffer[sample_index] = np.array(nhwc_img).ravel().astype(MODEL_INPUT_DATA_TYPE)
+        preprocessed_image_buffer[sample_index] = np.array(img)
         tick('l')
     print('')
 
@@ -176,103 +67,6 @@ def unload_query_samples(sample_indices):
     preprocessed_image_buffer = {}
     tick('U')
     print('')
-
-
-def initialize_predictor():
-    global pycuda_context
-    global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
-    global num_labels, model_classes
-    global trt_context
-    global MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS
-    global BATCH_SIZE
-    global max_batch_size
-    global class_map
-
-    # Load the TensorRT model from file
-    pycuda_context = pycuda.tools.make_default_context()
-
-    TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
-    try:
-        trt.init_libnvinfer_plugins(TRT_LOGGER, "")
-        with open(MODEL_PATH, "rb") as f, trt.Runtime(TRT_LOGGER) as runtime:
-            serialized_engine = f.read()
-            trt_engine = runtime.deserialize_cuda_engine(serialized_engine)
-            print('[TRT] successfully loaded')
-    except:
-        pycuda_context.pop()
-        raise RuntimeError('TensorRT model file {} is not found or corrupted'.format(MODEL_PATH))
-
-    max_batch_size      = trt_engine.max_batch_size
-
-    if BATCH_SIZE>max_batch_size:
-        pycuda_context.pop()
-        raise RuntimeError("Desired batch_size ({}) exceeds max_batch_size of the model ({})".format(BATCH_SIZE,max_batch_size))
-
-    d_inputs, h_d_outputs, model_bindings = [], [], []
-    for interface_layer in trt_engine:
-        dtype   = trt_engine.get_binding_dtype(interface_layer)
-        shape   = trt_engine.get_binding_shape(interface_layer)
-        size    = trt.volume(shape) * max_batch_size
-
-        dev_mem = cuda.mem_alloc(size * dtype.itemsize)
-        model_bindings.append( int(dev_mem) )
-
-        if trt_engine.binding_is_input(interface_layer):
-            interface_type = 'Input'
-            d_inputs.append(dev_mem)
-            model_input_shape   = shape
-        else:
-            interface_type = 'Output'
-            host_mem    = cuda.pagelocked_empty(size, trt.nptype(dtype))
-            h_d_outputs.append({ 'host_mem': host_mem, 'dev_mem': dev_mem })
-            model_output_shape  = shape
-            h_output            = host_mem
-
-        print("{} layer {}: dtype={}, shape={}, elements_per_max_batch={}".format(interface_type, interface_layer, dtype, shape, size))
-
-    cuda_stream     = cuda.Stream()
-    num_labels      = len(load_labels(LABELS_PATH))
-    model_classes   = trt.volume(model_output_shape)
-
-    ## Workaround for SSD-Resnet34 model incorrectly trained on filtered labels
-    if (SKIPPED_CLASSES):
-        class_map = []
-        for i in range(num_labels + bg_class_offset):
-            if i not in SKIPPED_CLASSES:
-                class_map.append(i)
-
-    if MODEL_DATA_LAYOUT == 'NHWC':
-        (MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_IMAGE_CHANNELS) = model_input_shape
-    else:
-        (MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH) = model_input_shape
-
-    trt_context   = trt_engine.create_execution_context()
-
-
-def predict_labels_for_batch(batch_data):
-    global d_inputs, h_d_outputs, h_output, model_bindings, cuda_stream
-    global num_labels, model_classes
-    global trt_context
-    global max_batch_size
-
-    this_batch_size     = len(batch_data)
-    flat_float_batch    = np.ravel(batch_data)
-
-    begin_time = time.time()
-
-    cuda.memcpy_htod_async(d_inputs[0], flat_float_batch, cuda_stream)  # assuming one input layer for this task
-    trt_context.execute_async(bindings=model_bindings, batch_size=this_batch_size, stream_handle=cuda_stream.handle)
-    for output in h_d_outputs:
-        cuda.memcpy_dtoh_async(output['host_mem'], output['dev_mem'], cuda_stream)
-    cuda_stream.synchronize()
-
-    inference_time = time.time() - begin_time
-
-    print("[batch of {}] inference={:.2f} ms".format(this_batch_size, inference_time*1000))
-
-    trimmed_batch_results  = h_output.reshape(max_batch_size, MODEL_MAX_PREDICTIONS*7+1)[:this_batch_size]
-
-    return trimmed_batch_results
 
 
 def issue_queries(query_samples):
@@ -288,14 +82,18 @@ def issue_queries(query_samples):
         batch       = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
         batch_data  = [ preprocessed_image_buffer[qs.index] for qs in batch ]
 
-        predictions_for_a_batch = predict_labels_for_batch(batch_data)
+        trimmed_batch_results, inference_time_s = inference_for_given_batch(batch_data)
+        actual_batch_size = len(trimmed_batch_results)
+
+        print("[batch of {}] inference={:.2f} ms".format(actual_batch_size, inference_time_s*1000))
+
         tick('p', len(batch))
         if VERBOSITY_LEVEL:
-            print("predicted_batch_results = {}".format(predictions_for_a_batch))
+            print("predicted_batch_results = {}".format(trimmed_batch_results))
 
         response = []
         response_array_refs = []    # This is needed to guarantee that the individual buffers to which we keep extra-Pythonian references, do not get garbage-collected.
-        for qs, all_boxes_for_this_sample in zip(batch, predictions_for_a_batch):
+        for qs, all_boxes_for_this_sample in zip(batch, trimmed_batch_results):
 
             num_active_boxes_for_this_sample = all_boxes_for_this_sample[MODEL_MAX_PREDICTIONS*7].view('int32')
             global_image_index = qs.index
@@ -347,8 +145,7 @@ def process_latencies(latencies_ns):
 def benchmark_using_loadgen():
     "Perform the benchmark using python API for the LoadGen library"
 
-    global pycuda_context
-    initialize_predictor()
+    pycuda_context, max_batch_size, input_volume, output_volume, num_layers = initialize_predictor()
 
     scenario = {
         'SingleStream':     lg.TestScenario.SingleStream,
@@ -388,4 +185,7 @@ def benchmark_using_loadgen():
     pycuda_context.pop()
 
 
-benchmark_using_loadgen()
+try:
+    benchmark_using_loadgen()
+except Exception as e:
+    print('{}'.format(e))
