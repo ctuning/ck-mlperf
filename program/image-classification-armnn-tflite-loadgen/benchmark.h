@@ -144,6 +144,11 @@ public:
       exit(-1);
       break;
     };
+    _number_of_threads = std::thread::hardware_concurrency();
+    _number_of_threads = _number_of_threads < 1 ? 1 : _number_of_threads;
+    _number_of_threads = !getenv("CK_HOST_CPU_NUMBER_OF_PROCESSORS")
+                         ? _number_of_threads
+                         : getenv_i("CK_HOST_CPU_NUMBER_OF_PROCESSORS");
 
     // Print settings
     std::cout << "Graph file: " << _graph_file << std::endl;
@@ -181,10 +186,13 @@ public:
 
   std::vector<std::string> _available_image_list;
 
+  int number_of_threads() { return _number_of_threads; }
+
   std::string graph_file() { return _graph_file; }
 
   float given_channel_means[3];
 private:
+  int _number_of_threads;
   std::string _graph_file;
 };
 
