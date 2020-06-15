@@ -21,7 +21,6 @@
 #include <vector>
 #include <map>
 
-
 #define DEBUG(msg) std::cout << "DEBUG: " << msg << std::endl;
 
 namespace CK {
@@ -30,6 +29,7 @@ enum MODEL_TYPE {
   LITE,
   TF_FROZEN
 };
+
 
 /// Load mandatory string value from the environment.
 inline std::string getenv_s(const std::string& name) {
@@ -62,6 +62,13 @@ inline float getenv_f(const std::string& name) {
   if (!value)
     throw "Required environment variable " + name + " is not set";
   return atof(value);
+}
+
+/// Load an optional boolean value from the environment.
+inline bool getenv_b(const char *name) {
+    std::string value = getenv(name);
+
+    return (value == "YES" || value == "yes" || value == "ON" || value == "on" || value == "1");
 }
 
 /// Dummy `sprintf` like formatting function using std::string.
@@ -109,12 +116,7 @@ public:
   const bool subtract_mean = getenv_opt_s("CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN", "0") == "YES";
   const char *given_channel_means_str = getenv("ML_MODEL_GIVEN_CHANNEL_MEANS");
 
-  const std::string trigger_cold_run_str = getenv_s("CK_LOADGEN_TRIGGER_COLD_RUN");
-  const bool trigger_cold_run =  (trigger_cold_run_str == "YES")
-                              || (trigger_cold_run_str == "yes")
-                              || (trigger_cold_run_str == "ON")
-                              || (trigger_cold_run_str == "on")
-                              || (trigger_cold_run_str == "1");
+  const bool trigger_cold_run = getenv_b("CK_LOADGEN_TRIGGER_COLD_RUN");
 
   const int verbosity_level = getenv_i("CK_VERBOSE");
 
