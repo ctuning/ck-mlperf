@@ -65,6 +65,16 @@
         "version": "v0.5-intel"
       }
     },
+    "dividiti.rnnt": {
+      "extra_env": {
+        "PACKAGE_URL": "https://github.com/dividiti/inference",
+        "PACKAGE_GIT_CLONE_FLAGS": "-b galv-rnnt2"
+      },
+      "extra_customize": {
+        "package_extra_name": " (with the latest RNN-T changes from Daniel Galvez)",
+        "version": "vgalv-rnnt2"
+      }
+    },
     "upstream.pr518": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/georgelyuan/inference",
