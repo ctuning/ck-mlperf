@@ -68,7 +68,7 @@
     "dividiti.rnnt": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/dividiti/inference",
-        "PACKAGE_GIT_CLONE_FLAGS": "-b dvdt.rnnt"
+        "PACKAGE_GIT_CLONE_FLAGS": "-b dvdt-rnnt"
       },
       "extra_customize": {
         "package_extra_name": " (with dividiti's tweaks for RNN-T)",
