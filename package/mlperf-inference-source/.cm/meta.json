@@ -68,11 +68,11 @@
     "dividiti.rnnt": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/dividiti/inference",
-        "PACKAGE_GIT_CLONE_FLAGS": "-b galv-rnnt2"
+        "PACKAGE_GIT_CLONE_FLAGS": "-b dvdt.rnnt"
       },
       "extra_customize": {
-        "package_extra_name": " (with the latest RNN-T changes from Daniel Galvez)",
-        "version": "vgalv-rnnt2"
+        "package_extra_name": " (with dividiti's tweaks for RNN-T)",
+        "version": "vdvdt.rnnt"
       }
     },
     "upstream.pr518": {
