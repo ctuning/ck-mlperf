@@ -1,0 +1,62 @@
+{
+  "backup_data_uid": "7c66e43968497e17",
+  "data_name": "mlperf-inference-v0.7-rnnt-experiment",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "pre_process_via_ck": {
+          "script_name": "preprocess"
+        },
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$"
+      }
+    }
+  },
+  "run_deps": {
+    "dataset": {
+      "local": "yes",
+      "name": "Librispeech Dev Clean dataset",
+      "sort": 20,
+      "tags": "dataset,librispeech,preprocessed,wav,dev-clean"
+    },
+    "mlperf-inference-dividiti-rnnt": {
+      "local": "yes",
+      "name": "Python MLPerf Inference RNN-T",
+      "sort": 50,
+      "tags": "mlperf,inference,source,dividiti.rnnt"
+    },
+    "model-pytorch-rnnt": {
+      "local": "yes",
+      "name": "PyTorch RNNT model",
+      "sort": 80,
+      "tags": "model,pytorch,rnnt"
+    },
+    "python": {
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 5,
+      "tags": "compiler,python"
+    }
+  },
+  "run_vars": {
+    "CK_RNNT_BATCH_SIZE": "2",
+    "CK_RNNT_CHECKPOINT": "$<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt",
+    "CK_RNNT_DATASET": "$<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../",
+    "CK_RNNT_MANIFEST": "$<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json",
+    "CK_RNNT_SEED": "87",
+    "CK_RNNT_TOML": "$<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/configs/rnnt.toml"
+  },
+  "tags": [
+    "speech-recognition",
+    "pytorch",
+    "rnnt",
+    "rnn-t",
+    "mlperf",
+    "experimental",
+    "exp"
+  ]
+}
