@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "796d7500b925946c",
+  "backup_module_uid": "b0ac08fe1d3c2615",
+  "backup_module_uoa": "program",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-06-24T10:32:53.631465",
+    "version": [
+      "1",
+      "15",
+      "0"
+    ]
+  },
+  "data_name": "speech-recogntion-pytorch-loadgen"
+}

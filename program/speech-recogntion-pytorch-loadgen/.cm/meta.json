@@ -1,0 +1,71 @@
+{
+  "backup_data_uid": "796d7500b925946c",
+  "data_name": "mlperf-inference-v0.7-rnnt",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "accuracy": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "pre_process_via_ck": {
+          "script_name": "preprocess"
+        },
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/run.py --dataset_dir  $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../ --manifest $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json --pytorch_config_toml $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/configs/rnnt.toml --pytorch_checkpoint $<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt  --log_dir $<<PWD>>$ --scenario $<<CK_RNNT_SCENARIO>>$ --backend $<<CK_RNNT_BACKEND>>$ --accuracy"
+      }
+    },
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "pre_process_via_ck": {
+          "script_name": "preprocess"
+        },
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/run.py --dataset_dir  $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../ --manifest $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json --pytorch_config_toml $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/configs/rnnt.toml --pytorch_checkpoint $<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt  --log_dir $<<PWD>>$ --scenario $<<CK_RNNT_SCENARIO>>$ --backend $<<CK_RNNT_BACKEND>>$"
+      }
+    }
+  },
+  "run_deps": {
+    "dataset": {
+      "local": "yes",
+      "name": "Librispeech Dev Clean dataset",
+      "sort": 20,
+      "tags": "dataset,librispeech,preprocessed,wav,dev-clean"
+    },
+    "lib-python-loadgen": {
+      "local": "yes",
+      "name": "Python LoadGen library",
+      "sort": 60,
+      "tags": "lib,python-package,loadgen"
+    },
+    "mlperf-inference-dividiti-rnnt": {
+      "local": "yes",
+      "name": "Python MLPerf Inference RNN-T",
+      "sort": 50,
+      "tags": "mlperf,inference,source,dividiti.rnnt"
+    },
+    "model-pytorch-rnnt": {
+      "local": "yes",
+      "name": "PyTorch RNNT model",
+      "sort": 80,
+      "tags": "model,pytorch,rnnt"
+    },
+    "python": {
+      "local": "yes",
+      "name": "Python interpreter",
+      "sort": 5,
+      "tags": "compiler,python"
+    }
+  },
+  "run_vars": {
+    "CK_RNNT_BACKEND": "pytorch",
+    "CK_RNNT_SCENARIO": "Offline"
+  },
+  "tags": [
+    "speech-recognition",
+    "pytorch",
+    "rnnt",
+    "rnn-t",
+    "mlperf"
+  ]
+}
