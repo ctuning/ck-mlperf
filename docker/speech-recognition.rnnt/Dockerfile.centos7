@@ -11,15 +11,17 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip, unzip.
 # Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel.
-# NB: no GCC 4.8, no CMake 2.8.
+# Speech Recognition program needs: sndfile-devel.
 RUN yum upgrade -y\
  && yum install -y\
  make which patch vim\
  git wget zip unzip\
  openssl-devel bzip2-devel libffi-devel\
+ libsndfile-devel\
  && yum clean all
 
 # Install GCC 8. (LoadGen needs C++14, while CentOS 7 comes with ancient GCC 4.)
+# NB: Must be two separate calls to yum install.
 RUN yum install -y centos-release-scl \
  && yum install -y devtoolset-8-gcc devtoolset-8-gcc-c++
 
@@ -82,31 +84,35 @@ RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 # Install preprocessing dependencies (SoX, pandas).
 RUN ck install package --tags=python-package,sox
 RUN ck install package --tags=python-package,pandas
+RUN ${CK_PYTHON} -m pip install --user tqdm # FIXME: Just a progress bar, can go?
 # Install LoadGen dependencies (Abseil, wheel).
 RUN ck install package --tags=python-package,absl
-RUN ${CK_PYTHON} -m pip install wheel --user
+RUN ${CK_PYTHON} -m pip install --user wheel
 # Install the latest PyTorch.
-RUN ${CK_PYTHON} -m pip install torch --user
+RUN ${CK_PYTHON} -m pip install --user torch
 RUN echo "latest" | ck detect soft:lib.pytorch
-# Install Python tqdm package (preprocessing dep). FIXME: Just a progress bar, can go?
-RUN ${CK_PYTHON} -m pip install tqdm --user
+# Install other program dependencies.
+# NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
+RUN ${CK_PYTHON} -m pip install --user toml unidecode inflect sndfile librosa numba==0.48
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
 # Step 3. Download the official MLPerf Inference RNNT dataset (LibriSpeech
-# dev-clean) and preprocess it to wav. TODO: Clean the original dataset?
+# dev-clean) and preprocess it to wav.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=dataset,speech-recognition,dev-clean,original
 # NB: Can ignore the warning related to lzma compression.
 RUN ck install package --tags=dataset,speech-recognition,dev-clean,preprocessed
+# TODO: Clean the original dataset?
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
 # Step 4. Download the official MLPerf Inference RNNT model.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=model,pytorch,rnnt --install_path=${CK_TOOLS}
+RUN ck install package --tags=model,pytorch,rnnt \
+--install_path=${CK_TOOLS}/model-pytorch-mlperf-rnnt
 #-----------------------------------------------------------------------------#
 
 
@@ -120,6 +126,6 @@ RUN ck install package --tags=python-package,loadgen
 
 
 #-----------------------------------------------------------------------------#
-# Run the Speech Recognition RNNT program.
+# Run the Speech Recognition RNNT program in the accuracy mode.
 #-----------------------------------------------------------------------------#
-CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=default"]
+CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=accuracy"]
