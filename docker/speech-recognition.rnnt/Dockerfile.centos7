@@ -18,17 +18,17 @@ RUN yum upgrade -y\
  openssl-devel bzip2-devel libffi-devel\
  && yum clean all
 
-# Install Python 3.7. (If upgrading, also change CK_PYTHON below.)
-ENV PYTHON_VER=3.7.7
+# Install Python 3.7. (If upgrading to 3.8 or higher, also change CK_PYTHON below.)
+ENV PYTHON_VERSION=3.7.7
 RUN cd /usr/src \
- && wget https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tgz \
- && tar xzf Python-${PYTHON_VER}.tgz \
- && rm Python-${PYTHON_VER}.tgz \
- && cd Python-${PYTHON_VER} \
+ && wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz \
+ && tar xzf Python-${PYTHON_VERSION}.tgz \
+ && rm Python-${PYTHON_VERSION}.tgz \
+ && cd Python-${PYTHON_VERSION} \
  && ./configure --enable-optimizations \
  && make altinstall \
  && cd /usr/src \
- && rm -rf Python-${PYTHON_VER}*
+ && rm -rf Python-${PYTHON_VERSION}*
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -52,15 +52,12 @@ RUN cd ${CK_ROOT} \
  && ${CK_PYTHON} setup.py install --user \
  && ${CK_PYTHON} -c "import ck.kernel as ck; print ('Collective Knowledge v%s' % ck.__version__)"
 
-RUN echo 1
-
 # Pull CK repositories (including ck-env, ck-autotuning and ck-tensorflow).
 RUN ck pull repo:ck-mlperf
 RUN ck pull repo:ck-pytorch
 
 # Use generic Linux settings with dummy frequency setting scripts.
 RUN ck detect platform.os --platform_init_uoa=generic-linux-dummy
-
 
 #-----------------------------------------------------------------------------#
 # Step 1. Install C++ dependencies (FLAC, SoX).
@@ -89,6 +86,8 @@ RUN ck install package --tags=python-package,pandas
 RUN ${CK_PYTHON} -m pip install torch --user
 RUN echo "latest" | ck detect soft:lib.pytorch
 # Install other dependencies.
+# FIXME: Just a progress bar, can go?
+RUN ${CK_PYTHON} -m pip install tqdm --user
 #-----------------------------------------------------------------------------#
 
 
@@ -97,7 +96,7 @@ RUN echo "latest" | ck detect soft:lib.pytorch
 # dev-clean) and preprocess it to wav. TODO: Clean the original dataset?
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=dataset,speech-recognition,dev-clean,original
-RUN ${CK_PYTHON} -m pip install tqdm pylzma --user
+# NB: Can ignore the warning related to lzma compression.
 RUN ck install package --tags=dataset,speech-recognition,dev-clean,preprocessed
 #-----------------------------------------------------------------------------#
 
@@ -110,6 +109,12 @@ RUN ck install package --tags=model,pytorch,rnnt --install_path=${CK_TOOLS}
 
 
 #-----------------------------------------------------------------------------#
+# Step 5. Download the MLPerf Inference repo with dividiti's RNNT tweaks.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
+#-----------------------------------------------------------------------------#
+
+#-----------------------------------------------------------------------------#
 # Run the Speech Recognition RNNT program.
 #-----------------------------------------------------------------------------#
-CMD ["ck run program:speech-recognition-pytorch"]
+CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=performance"]
