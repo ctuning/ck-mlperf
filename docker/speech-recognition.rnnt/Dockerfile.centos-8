@@ -40,7 +40,7 @@ WORKDIR /home/dvdt
 ENV CK_ROOT=/home/dvdt/CK \
     CK_REPOS=/home/dvdt/CK_REPOS \
     CK_TOOLS=/home/dvdt/CK_TOOLS \
-    PATH=/opt/rh/devtoolset-8/root/usr/bin:${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
+    PATH=${CK_ROOT}/bin:/home/dvdt/.local/bin:${PATH} \
     CK_PYTHON=python3.7 \
     CK_CC=gcc \
     GIT_USER="dividiti" \
