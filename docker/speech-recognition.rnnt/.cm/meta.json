@@ -1,8 +1,8 @@
 {
   "cmd": {
     "default": {
-      "build": "-f $#CK_PATH#$/Dockerfile.centos7 -t $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$:centos7 $#CK_PATH#$",
-      "run": "--rm $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$:centos7"
+      "build": "-f $#CK_PATH#$/Dockerfile.centos-7 -t $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$:centos-7 $#CK_PATH#$",
+      "run": "--rm $#CK_DOCKER_ORGANIZATION#$/$#CK_DOCKER_NAME#$:centos-7"
     }
   }
 }
