@@ -1,23 +1,22 @@
 # MLPerf Inference - Speech Recognition - RNNT
 
 [This collection of images](https://hub.docker.com/r/ctuning/speech-recognition.rnnt) from [dividiti](http://dividiti.com)
-tests automated, customizable and reproducible [Collective Knowledge](http://cknowledge.org) workflow for the [Speech Recognition RNNT](https://github.com/mlperf/inference/tree/master/v0.7/speech_recognition/rnnt/) workload. All images include the CK workflow, the latest PyTorch, the PyTorch model, and the (suitable preprocessed) [LibriSpeech](http://www.openslr.org/12/) Dev-Clean dataset.
+tests automated, customizable and reproducible [Collective Knowledge](http://cknowledge.org) workflow for the [Speech Recognition RNNT](https://github.com/mlperf/inference/tree/master/v0.7/speech_recognition/rnnt/) workload. All images include the CK workflow, the latest PyTorch, the PyTorch model, and the (suitably preprocessed) [LibriSpeech](http://www.openslr.org/12/) Dev-Clean dataset.
 
-| `Dockerfile`          | `CK_TAG`   | Python | GCC   | Comments |
-|-|-|-|-|-|
-| `Dockerfile.centos-7` | `centos-7` | 3.7.7  | 8.3.1 | Updated Python (from 2.7) and GCC (from 4.8) |
-| `Dockerfile.centos-8` | `centos-8` | 3.7.7  | 8.3.1 | Updated Python (from 3.6) |
-| `Dockerfile.centos-8.python3.6` | `centos-8.python3.6` | 3.6.8  | 8.3.1 | Fails to build due to weird lib/lib64 behaviour of `pip` |
-| `Dockerfile.debian-9` | `debian-9` | 3.5.3  | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0`  |
-| `Dockerfile.debian-10` | `debian-10` | 3.7.3  | 8.3.0 |  |
+| `CK_TAG` (`Dockerfile`'s extension)  | Python | GCC   | Comments |
+|-|-|-|-|
+| `centos-7` | 3.7.7  | 8.3.1 | Updated Python (from 2.7) and GCC (from 4.8) |
+| `centos-8` | 3.7.7  | 8.3.1 | Updated Python (from 3.6) |
+| `centos-8.python3.6` | 3.6.8  | 8.3.1 | Fails to build due to weird lib/lib64 behaviour of `pip` |
+| `debian-9` | 3.5.3  | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0`  |
+| `debian-10` | 3.7.3  | 8.3.0 |  |
 
 ## Build
 
 To build an image e.g. from `Dockerfile.centos-7`:
 ```bash
 $ export CK_IMAGE=speech-recognition.rnnt CK_TAG=centos-7
-$ cd `ck find docker:$CK_IMAGE`
-$ docker build -t ctuning/$CK_IMAGE:$CK_TAG -f Dockerfile.$CK_TAG .
+$ cd `ck find docker:$CK_IMAGE` && docker build -t ctuning/$CK_IMAGE:$CK_TAG -f Dockerfile.$CK_TAG .
 ```
 
 ### Show Python and GCC versions
@@ -52,7 +51,6 @@ $ docker run -it --rm ctuning/$CK_IMAGE:$CK_TAG \
 
 To run the default command of an image e.g. built from `Dockerfile.centos-7`:
 ```bash
-$ export CK_IMAGE=speech-recognition.rnnt
-$ export CK_TAG=centos-7
+$ export CK_IMAGE=speech-recognition.rnntt CK_TAG=centos-7
 $ docker run --rm ctuning/$CK_IMAGE:$CK_TAG
 ```
