@@ -8,8 +8,10 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 | `centos-7` | 3.7.7  | 8.3.1 | Updated Python (from 2.7) and GCC (from 4.8) |
 | `centos-8` | 3.7.7  | 8.3.1 | Updated Python (from 3.6) |
 | `centos-8.python3.6` | 3.6.8  | 8.3.1 | Fails to build due to weird lib/lib64 behaviour of `pip` |
-| `debian-9` | 3.5.3  | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0`  |
-| `debian-10` | 3.7.3  | 8.3.0 |  |
+| `debian-9`  | 3.5.3  | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0`  |
+| `debian-10` | 3.7.3  | 8.3.0 |                                   |
+| `amazonlinux`     | 3.7.6  | 7.3.1 |                             |
+| `amazonlinux.min` | 3.7.7  | 7.3.1 | Updated Python (from 3.7.6) |
 
 ## Build
 
