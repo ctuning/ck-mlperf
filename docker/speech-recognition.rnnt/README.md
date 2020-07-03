@@ -42,8 +42,18 @@ Env UID:         Target OS: Bits: Name:          Version: Tags:
 $ export CK_IMAGE=speech-recognition.rnnt CK_TAG=centos-7
 $ docker run -it --rm ctuning/$CK_IMAGE:$CK_TAG \
 'ck virtual env --tags=compiler,python \
-  --shell_cmd='"'"'$CK_ENV_COMPILER_PYTHON_FILE -m pip show numpy'"'"'\
+  --shell_cmd='"'"'$CK_ENV_COMPILER_PYTHON_FILE -m pip show numba'"'"'\
 '
+Name: numba
+Version: 0.48.0
+Summary: compiling Python code using LLVM
+Home-page: http://numba.github.com
+Author: Anaconda, Inc.
+Author-email: numba-users@continuum.io
+License: BSD
+Location: /home/dvdt/.local/lib/python3.7/site-packages
+Requires: llvmlite, setuptools, numpy
+Required-by: resampy, librosa
 ```
 **NB**: See the quotes magic explained [here](https://stackoverflow.com/questions/1250079/how-to-escape-single-quotes-within-single-quoted-strings).
 
@@ -51,6 +61,6 @@ $ docker run -it --rm ctuning/$CK_IMAGE:$CK_TAG \
 
 To run the default command of an image e.g. built from `Dockerfile.centos-7`:
 ```bash
-$ export CK_IMAGE=speech-recognition.rnntt CK_TAG=centos-7
+$ export CK_IMAGE=speech-recognition.rnnt CK_TAG=centos-7
 $ docker run --rm ctuning/$CK_IMAGE:$CK_TAG
 ```
