@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "e605dca0447b3836",
+  "backup_module_uid": "84e27ad9dd12e734",
+  "backup_module_uoa": "script",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-07-06T11:15:18.299445",
+    "version": [
+      "1",
+      "15",
+      "0"
+    ]
+  },
+  "data_name": "speech-recognition"
+}
