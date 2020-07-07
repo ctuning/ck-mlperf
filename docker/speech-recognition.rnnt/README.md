@@ -11,7 +11,13 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 | `debian-9`  | 3.5.3  | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0`  |
 | `debian-10` | 3.7.3  | 8.3.0 |                                   |
 | `amazonlinux`     | 3.7.6  | 7.3.1 |                             |
-| `amazonlinux.min` | 3.7.7  | 7.3.1 | Updated Python (from 3.7.6) |
+| `amazonlinux.min` | 3.7.6  | 7.3.1 | Make some steps implicit (comment out with `#-`). |
+
+It is most sensible to diff the following image pairs:
+- `centos-8` and `centos-8.python3.7` (as both are CentOS 8 based).
+- `centos-7` and `centos-8.python3.7` (as both update Python to the same version).
+- `amazonlinux` and `centos-8` (as Amazon Linux is similar to CentOS).
+- `amazonlinux` and `amazonlinux.min` (as the latter is derived from the former).
 
 ## Build
 

@@ -10,27 +10,17 @@ ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip, unzip.
-# Python 3 needs: open-ssl-devel, bzip2-devel, libffi-devel.
 # FLAC needs: tar, xz.
 # Speech Recognition program needs: sndfile-devel.
 RUN yum upgrade -y\
  && yum install -y\
+ python3 python3-pip python3-devel\
  gcc gcc-c++\
  make which patch vim\
  git wget zip unzip\
- openssl-devel bzip2-devel libffi-devel\
  tar xz\
  libsndfile-devel\
  && yum clean all
-
-# Install Python 3.7. (If upgrading to 3.8 or higher, also change CK_PYTHON below.)
-ENV PYTHON_VERSION=3.7.7
-RUN cd /usr/src \
- && wget https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz \
- && tar xzf Python-${PYTHON_VERSION}.tgz \
- && rm Python-${PYTHON_VERSION}.tgz \
- && cd /usr/src/Python-${PYTHON_VERSION} && ./configure --enable-optimizations && make altinstall \
- && rm -rf /usr/src/Python-${PYTHON_VERSION}*
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -73,33 +63,24 @@ RUN ck detect soft:compiler.gcc --full_path=`which ${CK_CC}`
 
 
 #-----------------------------------------------------------------------------#
-# Step 2. Install Python dependencies (pip, SoX, pandas, Abseil, wheel, PyTorch).
+# Step 2. Install Python dependencies (pip, Torch, SoX, pandas, Abseil, wheel).
 #-----------------------------------------------------------------------------#
 # Install the latest Python package installer (pip).
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 # Detect Python interpreter ("compiler").
 RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
+# Install PyTorch.
+RUN ck install package --tags=python-package,torch
 # Install preprocessing dependencies (SoX, pandas).
 RUN ck install package --tags=python-package,sox
 RUN ck install package --tags=python-package,pandas
-#- RUN ${CK_PYTHON} -m pip install --user tqdm # FIXME: Just a progress bar, can go?
 # Install LoadGen dependencies (Abseil, wheel).
 RUN ck install package --tags=python-package,absl
-#- RUN ${CK_PYTHON} -m pip install --user wheel
-#- # Install the latest PyTorch.
-#- RUN ${CK_PYTHON} -m pip install --user torch
-#- RUN echo "latest" | ck detect soft:lib.pytorch
-#- # Install other program dependencies.
-#- # NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
-#- RUN ${CK_PYTHON} -m pip install --user toml unidecode inflect sndfile librosa numba==0.48
-
-#+ # Install the commented out Python dependencies above in one go.
-RUN ${CK_PYTHON} -m pip install --user \
-  tqdm \
-  wheel \
-  torch \
-  toml unidecode inflect sndfile librosa numba==0.48
-RUN echo "latest" | ck detect soft:lib.pytorch
+RUN ${CK_PYTHON} -m pip install --user wheel
+# Install other program dependencies.
+# NB: tqdm is just a progress bar, can go?
+# NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
+RUN ${CK_PYTHON} -m pip install --user tqdm toml unidecode inflect sndfile librosa numba==0.48
 #-----------------------------------------------------------------------------#
 
 
@@ -108,25 +89,23 @@ RUN echo "latest" | ck detect soft:lib.pytorch
 #- # dev-clean) and preprocess it to wav.
 #- #-----------------------------------------------------------------------------#
 #- RUN ck install package --tags=dataset,speech-recognition,dev-clean,original
-#- # NB: Can ignore the warning related to lzma compression.
+#- # NB: Can ignore the lzma related warning.
 #- RUN ck install package --tags=dataset,speech-recognition,dev-clean,preprocessed
-#- # TODO: Clean the original dataset?
 #- #-----------------------------------------------------------------------------#
 
 
 #- #-----------------------------------------------------------------------------#
 #- # Step 4. Download the official MLPerf Inference RNNT model.
 #- #----------------------------------------------------------------------------#
-#- RUN ck install package --tags=model,pytorch,rnnt \
-#- --install_path=${CK_TOOLS}/model-pytorch-mlperf-rnnt
+#- RUN ck install package --tags=model,pytorch,rnnt
 #- #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
-# Step 5. Download the MLPerf Inference repo with dividiti's RNNT tweaks.
+# Step 5. Download the MLPerf Inference repo with dividiti's RNNT tweaks,
+#- # and build the Python LoadGen API.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
-#- # Install Python LoadGen package.
 #- RUN ck install package --tags=python-package,loadgen
 #-----------------------------------------------------------------------------#
 
@@ -134,12 +113,11 @@ RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
 #+ #-----------------------------------------------------------------------------#
 #+ # Step 6. Pull all the implicit dependencies commented out in Steps 1-5.
 #+ #-----------------------------------------------------------------------------#
-RUN ck run program:speech-recognition-pytorch-loadgen --cmd_key=default
+RUN ck run program:speech-recognition-pytorch-loadgen --cmd_key=default --skip_print_timers
 #+ #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
 # Run the Speech Recognition RNNT program in the accuracy mode.
 #-----------------------------------------------------------------------------#
-CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=accuracy"]
-
+CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=accuracy --skip_print_timers"]
