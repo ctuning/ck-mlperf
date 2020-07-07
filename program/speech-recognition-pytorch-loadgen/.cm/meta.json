@@ -55,7 +55,7 @@
   "run_deps": {
     "dataset": {
       "local": "yes",
-      "name": "Librispeech Dev Clean dataset",
+      "name": "LibriSpeech Dev-Clean dataset (preprocessed)",
       "sort": 20,
       "tags": "dataset,librispeech,preprocessed,wav,dev-clean"
     },
@@ -65,15 +65,15 @@
       "sort": 60,
       "tags": "lib,python-package,loadgen"
     },
-    "mlperf-inference-dividiti-rnnt": {
+    "mlperf-inference": {
       "local": "yes",
-      "name": "Python MLPerf Inference RNN-T",
+      "name": "MLPerf Inference source (with RNN-T tweaks)",
       "sort": 50,
       "tags": "mlperf,inference,source,dividiti.rnnt"
     },
-    "model-pytorch-rnnt": {
+    "model": {
       "local": "yes",
-      "name": "PyTorch RNNT model",
+      "name": "PyTorch RNN-T model",
       "sort": 80,
       "tags": "model,pytorch,rnnt"
     },
@@ -82,6 +82,12 @@
       "name": "Python interpreter",
       "sort": 5,
       "tags": "compiler,python"
+    },
+    "pytorch": {
+      "local": "yes",
+      "name": "PyTorch framework",
+      "sort": 15,
+      "tags": "lib,pytorch"
     }
   },
   "run_vars": {

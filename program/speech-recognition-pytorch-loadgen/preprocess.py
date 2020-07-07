@@ -13,7 +13,7 @@ def ck_preprocess(i):
 
   def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
 
-  inferencepath = dep_env('mlperf-inference-dividiti-rnnt', 'CK_ENV_MLPERF_INFERENCE')
+  inferencepath = dep_env('mlperf-inference', 'CK_ENV_MLPERF_INFERENCE')
 
   try:
     pythonpath = os.environ['PYTHONPATH'] + ":"
