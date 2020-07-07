@@ -81,7 +81,6 @@ RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
 # Install preprocessing dependencies (SoX, pandas).
 RUN ck install package --tags=python-package,sox
 RUN ck install package --tags=python-package,pandas
-RUN ${CK_PYTHON} -m pip install --user tqdm # FIXME: Just a progress bar, can go?
 # Install LoadGen dependencies (Abseil, wheel).
 RUN ck install package --tags=python-package,absl
 RUN ${CK_PYTHON} -m pip install --user wheel
@@ -89,8 +88,9 @@ RUN ${CK_PYTHON} -m pip install --user wheel
 RUN ${CK_PYTHON} -m pip install --user torch
 RUN echo "latest" | ck detect soft:lib.pytorch
 # Install other program dependencies.
+# NB: tqdm is just a progress bar, can go?
 # NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
-RUN ${CK_PYTHON} -m pip install --user toml unidecode inflect sndfile librosa numba==0.48
+RUN ${CK_PYTHON} -m pip install --user tqdm toml unidecode inflect sndfile librosa numba==0.48
 #-----------------------------------------------------------------------------#
 
 
@@ -99,17 +99,15 @@ RUN ${CK_PYTHON} -m pip install --user toml unidecode inflect sndfile librosa nu
 # dev-clean) and preprocess it to wav.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=dataset,speech-recognition,dev-clean,original
-# NB: Can ignore the warning related to lzma compression.
+# NB: Can ignore the lzma related warning.
 RUN ck install package --tags=dataset,speech-recognition,dev-clean,preprocessed
-# TODO: Clean the original dataset?
 #-----------------------------------------------------------------------------#
 
 
 #-----------------------------------------------------------------------------#
 # Step 4. Download the official MLPerf Inference RNNT model.
 #-----------------------------------------------------------------------------#
-RUN ck install package --tags=model,pytorch,rnnt \
---install_path=${CK_TOOLS}/model-pytorch-mlperf-rnnt
+RUN ck install package --tags=model,pytorch,rnnt
 #-----------------------------------------------------------------------------#
 
 
