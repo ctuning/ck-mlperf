@@ -72,21 +72,20 @@ RUN ck install package --tags=tool,sox
 
 
 #-----------------------------------------------------------------------------#
-# Step 2. Install Python dependencies (pip, SoX, pandas, Abseil, wheel, PyTorch).
+# Step 2. Install Python dependencies (pip, Torch, SoX, pandas, Abseil, wheel).
 #-----------------------------------------------------------------------------#
 # Install the latest Python package installer (pip).
 RUN ${CK_PYTHON} -m pip install --ignore-installed pip setuptools --user
 # Detect Python interpreter ("compiler").
 RUN ck detect soft:compiler.python --full_path=`which ${CK_PYTHON}`
+# Install PyTorch.
+RUN ck install package --tags=python-package,torch
 # Install preprocessing dependencies (SoX, pandas).
 RUN ck install package --tags=python-package,sox
 RUN ck install package --tags=python-package,pandas
 # Install LoadGen dependencies (Abseil, wheel).
 RUN ck install package --tags=python-package,absl
 RUN ${CK_PYTHON} -m pip install --user wheel
-# Install the latest PyTorch.
-RUN ${CK_PYTHON} -m pip install --user torch
-RUN echo "latest" | ck detect soft:lib.pytorch
 # Install other program dependencies.
 # NB: tqdm is just a progress bar, can go?
 # NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
@@ -112,10 +111,10 @@ RUN ck install package --tags=model,pytorch,rnnt
 
 
 #-----------------------------------------------------------------------------#
-# Step 5. Download the MLPerf Inference repo with dividiti's RNNT tweaks.
+# Step 5. Download the MLPerf Inference repo with dividiti's RNNT tweaks,
+# and build the Python LoadGen API.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
-# Install Python LoadGen package.
 RUN ck install package --tags=python-package,loadgen
 #-----------------------------------------------------------------------------#
 
@@ -123,4 +122,4 @@ RUN ck install package --tags=python-package,loadgen
 #-----------------------------------------------------------------------------#
 # Run the Speech Recognition RNNT program in the accuracy mode.
 #-----------------------------------------------------------------------------#
-CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=accuracy"]
+CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=accuracy --skip_print_timers"]
