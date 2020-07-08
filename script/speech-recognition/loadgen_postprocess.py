@@ -102,6 +102,9 @@ def ck_postprocess(i):
       for t in timings['samples']:
           if s['result']['qsl_idx'] == t['qsl_idx']:
               sample['exe_time'] = t['exe_time']
+              sample['pre_time'] = t['pre_time']
+              sample['post_time'] = t['post_time']
+              sample['dec_time'] = t['dec_time']
 
       for m in manifest:
           if sample['reference'] == m['transcript']:
