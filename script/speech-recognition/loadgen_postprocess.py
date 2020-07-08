@@ -15,8 +15,8 @@ MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
 
-RNNT_TIMING_INSTRUMENTATION_JSON = 'timing_instr.json'
-RNNT_ACC_INSTRUMENTATION_JSON    = 'accuracy_instr.json'
+RNNT_TIMING_INSTRUMENTATION_JSON = 'instr_timing.json'
+RNNT_ACC_INSTRUMENTATION_JSON    = 'instr_accuracy.json'
 
 LABELS = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"]
 
@@ -32,7 +32,6 @@ def keyval(d, key):
           return result
     else:
         if(k == key):
-          print (k,":",v)
           return v
 
 def ck_postprocess(i):
@@ -101,7 +100,7 @@ def ck_postprocess(i):
 
       for t in timings['samples']:
           if s['result']['qsl_idx'] == t['qsl_idx']:
-              sample['exe_time'] = t['exe_time']
+              sample['total_time'] = t['total_time']
               sample['pre_time'] = t['pre_time']
               sample['post_time'] = t['post_time']
               sample['dec_time'] = t['dec_time']
@@ -121,7 +120,7 @@ def ck_postprocess(i):
     save_dict['instrumentation'] = { 'wer': accuracy['wer'], \
                                      'samples': instrumentation}
 
-    save_dict['execution_time'] = timings['total_time']
+    save_dict['execution_time'] = timings['execution_time']
 
   with open('tmp-ck-timer.json', 'w') as save_file:
     json.dump(save_dict, save_file, indent=2, sort_keys=True)

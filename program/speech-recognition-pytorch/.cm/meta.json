@@ -15,6 +15,7 @@
     "instr": {
       "ignore_return_code": "no",
       "run_time": {
+        "fine_grain_timer_file": "tmp-ck-timer.json",
         "post_process_via_ck": {
           "data_uoa": "speech-recognition",
           "module_uoa": "script",
@@ -57,7 +58,7 @@
     }
   },
   "run_vars": {
-    "CK_RNNT_BATCH_SIZE": "2",
+    "CK_RNNT_BATCH_SIZE": "1",
     "CK_RNNT_CHECKPOINT": "$<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt",
     "CK_RNNT_DATASET": "$<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../",
     "CK_RNNT_MANIFEST": "$<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json",

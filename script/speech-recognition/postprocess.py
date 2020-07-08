@@ -12,7 +12,7 @@ import re
 #from metrics import word_error_rate
 
 
-RNNT_INSTRUMENTATION_JSON = 'rnnt_instr.json'
+RNNT_INSTRUMENTATION_JSON = 'instr_rnnt.json'
 
 def __gather_predictions(predictions_list: list, labels: list) -> list:
     results = []
@@ -58,7 +58,7 @@ def ck_postprocess(i):
 
   instrumentation['samples'] = samples
 
-  with open('processed_rnnt_instr.json', 'w') as save_file:
+  with open('tmp-ck-timer.json', 'w') as save_file:
     json.dump(instrumentation, save_file, indent=2, sort_keys=True)
 
   print('--------------------------------\n')
