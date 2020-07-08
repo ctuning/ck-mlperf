@@ -99,7 +99,7 @@ def ck_postprocess(i):
       #    [sample['hypothesis']], references=[sample['reference']])
       wer, scores, num_words = 0,0,0
 
-      for t in timings:
+      for t in timings['samples']:
           if s['result']['qsl_idx'] == t['qsl_idx']:
               sample['exe_time'] = t['exe_time']
 
@@ -115,7 +115,10 @@ def ck_postprocess(i):
 
       instrumentation.append(sample)
 
-    save_dict['instrumentation'] = { 'wer': accuracy['wer'], 'samples': instrumentation}
+    save_dict['instrumentation'] = { 'wer': accuracy['wer'], \
+                                     'samples': instrumentation}
+
+    save_dict['execution_time'] = timings['total_time']
 
   with open('tmp-ck-timer.json', 'w') as save_file:
     json.dump(save_dict, save_file, indent=2, sort_keys=True)
