@@ -9,10 +9,8 @@
       "PACKAGE_PATCH": "YES",
       "PACKAGE_SKIP_CLEAN_SRC_DIR": "YES",
       "PACKAGE_SKIP_LINUX_MAKE": "YES",
-      "PACKAGE_SUB_DIR": "inference",
-      "PACKAGE_URL": "https://github.com/mlperf/inference"
+      "PACKAGE_SUB_DIR": "inference"
     },
-    "package_extra_name": " (upstream repository - default)",
     "no_os_in_suggested_path": "yes",
     "no_ver_in_suggested_path": "yes",
     "use_git_revision": "yes",
@@ -30,11 +28,12 @@
   ],
   "variations": {
     "upstream.master": {
+      "on_by_default": "yes",
       "extra_env": {
         "PACKAGE_URL": "https://github.com/mlperf/inference"
       },
       "extra_customize": {
-        "package_extra_name": " (upstream repository)"
+        "package_extra_name": " (upstream repository - default)"
       }
     },
     "dividiti.master": {
