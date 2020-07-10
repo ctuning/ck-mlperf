@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "f0f48144742b4f0a",
+  "backup_module_uid": "194e44c4cacd5101",
+  "backup_module_uoa": "sut",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-07-10T22:41:39.847029",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "hikey960"
+}
