@@ -44,7 +44,7 @@
       "local": "yes",
       "name": "MLPerf Inference source",
       "sort": 50,
-      "tags": "mlperf,inference,source,upstream.master"
+      "tags": "mlperf,inference,source"
     }
   },
   "data_name": "dump-repo-to-submission",
