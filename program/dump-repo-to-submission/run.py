@@ -59,12 +59,10 @@ from copy import deepcopy
 # In[ ]:
 
 
-import IPython as ip
 import pandas as pd
 import numpy as np
+import subprocess
 
-
-print ('IPython version: %s' % ip.__version__)
 print ('Pandas version: %s' % pd.__version__)
 print ('NumPy version: %s' % np.__version__)
 
@@ -1725,22 +1723,22 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     # Verify that the accuracy (partially) dumped for the audit test matches that for the submision.
                     verify_accuracy_py = os.path.join(test_path, 'verify_accuracy.py')
                     submission_accuracy_json_path = os.path.join(accuracy_dir, accuracy_json_name)
-                    verify_accuracy_txt = get_ipython().getoutput('python3 $verify_accuracy_py -a $submission_accuracy_json_path -p $accuracy_json_path')
+                    verify_accuracy_txt = subprocess.getoutput('python3 {} -a {} -p {}'.format(verify_accuracy_py, submission_accuracy_json_path, accuracy_json_path))
                     verify_accuracy_txt_name = 'verify_accuracy.txt'
                     verify_accuracy_txt_path = os.path.join(test_dir, verify_accuracy_txt_name)
                     with open(verify_accuracy_txt_path, 'w') as verify_accuracy_txt_file:
-                        verify_accuracy_txt_file.writelines('\n'.join(verify_accuracy_txt))
+                        verify_accuracy_txt_file.write(verify_accuracy_txt)
                         print('%s' % test_dir)
                         print('  |_ %s' % verify_accuracy_txt_name)
                 if test in [ 'TEST01', 'TEST03', 'TEST05' ]:
                     # Verify that the performance for the audit test matches that for the submission.
                     verify_performance_py = os.path.join(test_path, 'verify_performance.py')
                     submission_summary_txt_path = os.path.join(performance_dir, summary_txt_name)
-                    verify_performance_txt = get_ipython().getoutput('python3 $verify_performance_py -r $submission_summary_txt_path -t $summary_txt_path')
+                    verify_performance_txt = subprocess.getoutput('python3 {} -r {} -t {}'.format(verify_performance_py, submission_summary_txt_path, summary_txt_path))
                     verify_performance_txt_name = 'verify_performance.txt'
                     verify_performance_txt_path = os.path.join(test_dir, verify_performance_txt_name)
                     with open(verify_performance_txt_path, 'w') as verify_performance_txt_file:
-                        verify_performance_txt_file.writelines('\n'.join(verify_performance_txt))
+                        verify_performance_txt_file.write(verify_performance_txt)
                         print('%s' % test_dir)
                         print('  |_ %s' % verify_performance_txt_name)
                 if test in [ 'TEST04-A', 'TEST04-B' ]:
@@ -1750,12 +1748,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                         # If both tests have been processed, verify that their performance matches.
                         verify_performance_py = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', 'TEST04-A', 'verify_test4_performance.py')
                         #print("python3 {} -u {} -s {}".format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
-                        verify_performance_txt = get_ipython().getoutput('python3 $verify_performance_py -u $test04a_summary_txt_path -s $test04b_summary_txt_path')
+                        verify_performance_txt = subprocess.getoutput('python3 {} -u {} -s {}'.format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
                         #print(verify_performance_txt)
                         verify_performance_txt_name = 'verify_performance.txt'
                         verify_performance_txt_path = os.path.join(scenario_dir, 'TEST04-A', verify_performance_txt_name)
                         with open(verify_performance_txt_path, 'w') as verify_performance_txt_file:
-                            verify_performance_txt_file.writelines('\n'.join(verify_performance_txt))
+                            verify_performance_txt_file.write(verify_performance_txt)
                             print('%s' % os.path.join(scenario_dir, 'TEST04-A'))
                             print('  |_ %s' % verify_performance_txt_name)
                     else:
@@ -1767,23 +1765,24 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
                 if task == 'image-classification':
                     accuracy_imagenet_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
-                    accuracy_txt = get_ipython().getoutput('python3 $accuracy_imagenet_py --imagenet-val-file $imagenet_val_file --mlperf-accuracy-file $accuracy_json_path')
+                    accuracy_txt = subprocess.getoutput('python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path))
+
                     # The last (and only line) is e.g. "accuracy=76.442%, good=38221, total=50000".
-                    accuracy_line = accuracy_txt[-1]
+                    accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', accuracy_line)
                     accuracy_pc = float(match.group(1))
                 elif task == 'object-detection':
                     accuracy_coco_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-coco.py')
 #                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
-                    accuracy_txt = get_ipython().getoutput('python3 $accuracy_coco_py --coco-dir $coco_dir --mlperf-accuracy-file $accuracy_json_path')
+                    accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path))
                     # The last line is e.g. "mAP=13.323%".
-                    accuracy_line = accuracy_txt[-1]
+                    accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
                     accuracy_pc = float(match.group(1))
                 else:
                     raise "Invalid task '%s'!" % task
                 with open(accuracy_txt_path, 'w') as accuracy_txt_file:
-                    accuracy_txt_file.writelines('\n'.join(accuracy_txt))
+                    accuracy_txt_file.write(accuracy_txt)
                     print('  |_ %s [%.3f%% parsed from "%s"]' % (accuracy_txt_name, accuracy_pc, accuracy_line))
             # Generate submission_checklist.txt for each system, benchmark and scenario under "measurements/".
             if mode == 'accuracy' and not audit:
@@ -1861,18 +1860,17 @@ submission_checker_py = os.path.join(upstream_path, 'v0.5', 'tools', 'submission
 # Therefore, create both directories if they do not exist before invoking the checker.
 open_org_results_dir = os.path.join(root_dir, 'open', submitter, 'results')
 closed_org_results_dir = os.path.join(root_dir, 'closed', submitter, 'results')
-get_ipython().system('mkdir -p $open_org_results_dir')
-get_ipython().system('mkdir -p $closed_org_results_dir')
+subprocess.run(['mkdir', '-p', open_org_results_dir])
+subprocess.run(['mkdir', '-p', closed_org_results_dir])
 # Run the checker.
-checker_log = get_ipython().getoutput('python3 $submission_checker_py --input $root_dir --submitter $submitter')
-checker_log = "\n".join(checker_log)
+checker_log = subprocess.getoutput('python3 {} --input {} --submitter {}'.format(submission_checker_py, root_dir, submitter))
 print(checker_log)
 checker_log_name = 'compliance_checker_log.txt'
 # Write the checker results once closed/<organization> and once under open/<organization>.
 for results_dir in [ open_org_results_dir, closed_org_results_dir ]:
     checker_log_path = os.path.join(results_dir, checker_log_name)
     with open(checker_log_path, 'w') as checker_log_file:
-        checker_log_file.writelines(checker_log)
+        checker_log_file.write(checker_log)
         print(results_dir)
         print('  |_%s' % checker_log_name)
 
