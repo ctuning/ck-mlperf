@@ -1,0 +1,306 @@
+{
+  "check_exit_status": "yes", 
+  "customize": {
+    "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$-quantized)", 
+    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$", 
+    "install_env": {
+      "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$", 
+      "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$", 
+      "*PACKAGE_NAME_V2_QUANT":  "v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER_QUANT>>$",
+      "*PACKAGE_NAME": "quantized_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER_QUANT>>$.tgz", 
+      "*WEIGHTS_FILE": "model.ckpt", 
+      "ML_MODEL_DATA_LAYOUT": "NHWC", 
+      "MODEL_INPUT_LAYER_NAME": "input", 
+      "MODEL_MOBILENET_VERSION": "2", 
+      "MODEL_NORMALIZE_DATA": "YES", 
+      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV2/Predictions/Reshape_1", 
+      "MODEL_SUBTRACT_MEAN": "0", 
+      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES", 
+      "MODULE_FILE": "mobilenet-model.py", 
+      "PACKAGE_URL": "https://storage.googleapis.com/mobilenet_v2/checkpoints"
+    }, 
+    "no_os_in_suggested_path": "yes", 
+    "no_ver_in_suggested_path": "yes", 
+    "skip_file_check": "yes"
+  }, 
+  "end_full_path_universal": "mobilenet-model.py", 
+  "only_for_host_os_tags": [], 
+  "only_for_target_os_tags": [], 
+  "process_script": "install", 
+  "soft_uoa": "439b9f1757f27091", 
+  "suggested_path": "model-tf-and-tflite-mlperf-mobilenet-v2-downloaded",
+  "tags": [
+    "model", 
+    "image-classification", 
+    "tensorflowmodel", 
+    "tf", 
+    "tflite", 
+    "nhwc", 
+    "mobilenet", 
+    "mobilenet-v2", 
+    "revision.2018_12_14", 
+    "mlperf", 
+    "quantized", 
+    "weights", 
+    "python", 
+    "frozen", 
+    "downloaded"
+  ], 
+  "use_scripts_from_another_entry": {
+    "data_uoa": "6b1b2b254718b69a", 
+    "module_uoa": "script"
+  }, 
+  "variations": {
+    "quantized": {
+      "on_by_default": "yes"
+    },
+    "from.googleapis": {
+      "extra_env": {
+        "PACKAGE_URL": "https://storage.googleapis.com/mobilenet_v2/checkpoints"
+      },
+      "on_by_default": "yes"
+    }, 
+    "v2-0.35-128": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.35", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "35", 
+        "MODEL_MOBILENET_RESOLUTION": "128"
+      }, 
+      "extra_tags": [
+        "multiplier.0.35", 
+        "side.128"
+      ]
+    }, 
+    "v2-0.35-160": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.35", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "35", 
+        "MODEL_MOBILENET_RESOLUTION": "160"
+      }, 
+      "extra_tags": [
+        "multiplier.0.35", 
+        "side.160"
+      ]
+    }, 
+    "v2-0.35-192": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.35", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "35", 
+        "MODEL_MOBILENET_RESOLUTION": "192"
+      }, 
+      "extra_tags": [
+        "multiplier.0.35", 
+        "side.192"
+      ]
+    }, 
+    "v2-0.35-224": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.35", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "35", 
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      }, 
+      "extra_tags": [
+        "multiplier.0.35", 
+        "side.224"
+      ]
+    }, 
+    "v2-0.35-96": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.35", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "35", 
+        "MODEL_MOBILENET_RESOLUTION": "96"
+      }, 
+      "extra_tags": [
+        "multiplier.0.35", 
+        "side.96"
+      ]
+    }, 
+    "v2-0.5-128": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "50", 
+        "MODEL_MOBILENET_RESOLUTION": "128"
+      }, 
+      "extra_tags": [
+        "multiplier.0.5", 
+        "side.128"
+      ]
+    }, 
+    "v2-0.5-160": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "50", 
+        "MODEL_MOBILENET_RESOLUTION": "160"
+      }, 
+      "extra_tags": [
+        "multiplier.0.5", 
+        "side.160"
+      ]
+    }, 
+    "v2-0.5-192": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "50", 
+        "MODEL_MOBILENET_RESOLUTION": "192"
+      }, 
+      "extra_tags": [
+        "multiplier.0.5", 
+        "side.192"
+      ]
+    }, 
+    "v2-0.5-224": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "50", 
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      }, 
+      "extra_tags": [
+        "multiplier.0.5", 
+        "side.224"
+      ]
+    }, 
+    "v2-0.5-96": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.5", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "50", 
+        "MODEL_MOBILENET_RESOLUTION": "96"
+      }, 
+      "extra_tags": [
+        "multiplier.0.5", 
+        "side.96"
+      ]
+    }, 
+    "v2-0.75-128": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "75", 
+        "MODEL_MOBILENET_RESOLUTION": "128"
+      }, 
+      "extra_tags": [
+        "multiplier.0.75", 
+        "side.128"
+      ]
+    }, 
+    "v2-0.75-160": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "75", 
+        "MODEL_MOBILENET_RESOLUTION": "160"
+      }, 
+      "extra_tags": [
+        "multiplier.0.75", 
+        "side.160"
+      ]
+    }, 
+    "v2-0.75-192": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "75", 
+        "MODEL_MOBILENET_RESOLUTION": "192"
+      }, 
+      "extra_tags": [
+        "multiplier.0.75", 
+        "side.192"
+      ]
+    }, 
+    "v2-0.75-224": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "75", 
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      }, 
+      "extra_tags": [
+        "multiplier.0.75", 
+        "side.224"
+      ]
+    }, 
+    "v2-0.75-96": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "75", 
+        "MODEL_MOBILENET_RESOLUTION": "96"
+      }, 
+      "extra_tags": [
+        "multiplier.0.75", 
+        "side.96"
+      ]
+    }, 
+    "v2-1.0-128": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "100", 
+        "MODEL_MOBILENET_RESOLUTION": "128"
+      }, 
+      "extra_tags": [
+        "multiplier.1.0", 
+        "side.128"
+      ]
+    }, 
+    "v2-1.0-160": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "100", 
+        "MODEL_MOBILENET_RESOLUTION": "160"
+      }, 
+      "extra_tags": [
+        "multiplier.1.0", 
+        "side.160"
+      ]
+    }, 
+    "v2-1.0-192": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "100", 
+        "MODEL_MOBILENET_RESOLUTION": "192"
+      }, 
+      "extra_tags": [
+        "multiplier.1.0", 
+        "side.192"
+      ]
+    }, 
+    "v2-1.0-224": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "100", 
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      }, 
+      "extra_tags": [
+        "multiplier.1.0", 
+        "side.224"
+      ]
+    }, 
+    "v2-1.0-96": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "100", 
+        "MODEL_MOBILENET_RESOLUTION": "96"
+      }, 
+      "extra_tags": [
+        "multiplier.1.0", 
+        "side.96"
+      ]
+    }, 
+    "v2-1.3-224": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.3", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "130", 
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      }, 
+      "extra_tags": [
+        "multiplier.1.3", 
+        "side.224"
+      ]
+    }, 
+    "v2-1.4-224": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.4", 
+        "MODEL_MOBILENET_MULTIPLIER_QUANT": "140", 
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      }, 
+      "extra_tags": [
+        "multiplier.1.4", 
+        "side.224"
+      ]
+    }
+  }
+}
