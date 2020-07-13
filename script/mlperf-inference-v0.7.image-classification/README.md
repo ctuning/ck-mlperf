@@ -129,8 +129,9 @@ $ cd `ck find ck-mlperf:script:mlperf-inference-v0.7.image-classification`
 |-|-|-|-|
 | `CK_DIVISION`| `closed`, `open` | `closed` | Workload selection. |
 | `CK_MODE`| `performance`, `accuracy` | `performance` | Execution mode selection. |
-| `CK_DRY_RUN` | `YES`, `NO` | `NO` | Print commands but do not execute. |
+| `CK_DATASET_SIZE`| positive integer | `50000` | Number of samples in the accuracy mode. |
 | `CK_USE_LOADGEN` | `YES`, `NO` | `YES` | Use MLPerf LoadGen API. |
+| `CK_DRY_RUN` | `YES`, `NO` | `NO` | Print commands but do not execute. |
 
 <a name="performance"></a>
 ## Performance
@@ -144,10 +145,10 @@ $ CK_DIVISION=open CK_MODE=performance ./run.sh
 
 ### 50,000 images
 ```bash
-$ CK_DIVISION=open CK_MODE=accuracy ./run.sh
+$ CK_DIVISION=open CK_MODE=accuracy CK_DATASET_SIZE=50000 ./run.sh
 ```
 
 ### 500 images
 ```bash
-$ CK_DIVISION=open CK_MODE=accuracy CK_DATESET_SIZE=500 ./run.sh
+$ CK_DIVISION=open CK_MODE=accuracy CK_DATASET_SIZE=500 ./run.sh
 ```
