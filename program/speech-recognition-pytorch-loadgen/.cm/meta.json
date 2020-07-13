@@ -5,6 +5,7 @@
   "no_target_file": "yes",
   "process_in_tmp": "yes",
   "program": "yes",
+  "pass_env_to_resolve": "yes",
   "run_cmds": {
     "default": {
       "ignore_return_code": "no",
@@ -76,11 +77,95 @@
       "name": "PyTorch framework",
       "sort": 15,
       "tags": "lib,pytorch"
+    },
+    "plugins-pre-pytorch": {
+      "local": "yes",
+      "name": "Pytorch LSTM RNNT Pre plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-pre,pytorch",
+      "enable_if_env": [
+        { "CK_RNNT_PRE_BACKEND": ["pytorch"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_PRE": "orig" } ],
+        "naive": [ { "CK_RNNT_PRE": "naive" } ]
+      }
+    },
+    "plugins-post-pytorch": {
+      "local": "yes",
+      "name": "Pytorch LSTM RNNT Post plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-post,pytorch",
+      "enable_if_env": [
+        { "CK_RNNT_POST_BACKEND": ["pytorch"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_POST": "orig" } ],
+        "naive": [ { "CK_RNNT_POST": "naive" } ]
+      }
+    },
+    "plugins-dec-pytorch": {
+      "local": "yes",
+      "name": "Pytorch LSTM RNNT Dec plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-dec,pytorch",
+      "enable_if_env": [
+        { "CK_RNNT_DEC_BACKEND": ["pytorch"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_DEC": "orig" } ],
+        "naive": [ { "CK_RNNT_DEC": "naive" } ]
+      }
+    },
+    "plugins-pre-onnx": {
+      "local": "yes",
+      "name": "ONNX LSTM RNNT Pre plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-pre,onnx",
+      "enable_if_env": [
+        { "CK_RNNT_PRE_BACKEND": ["onnx"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_PRE": "orig" } ],
+        "naive": [ { "CK_RNNT_PRE": "naive" } ]
+      }
+    },
+    "plugins-post-onnx": {
+      "local": "yes",
+      "name": "ONNX LSTM RNNT Post plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-post,onnx",
+      "enable_if_env": [
+        { "CK_RNNT_POST_BACKEND": ["onnx"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_POST": "orig" } ],
+        "naive": [ { "CK_RNNT_POST": "naive" } ]
+      }
+    },
+    "plugins-dec-onnx": {
+      "local": "yes",
+      "name": "ONNX LSTM RNNT Dec plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-dec,onnx",
+      "enable_if_env": [
+        { "CK_RNNT_DEC_BACKEND": ["onnx"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_DEC": "orig" } ],
+        "naive": [ { "CK_RNNT_DEC": "naive" } ]
+      }
     }
   },
   "run_vars": {
     "CK_RNNT_BACKEND": "pytorch",
-    "CK_RNNT_SCENARIO": "Offline"
+    "CK_RNNT_SCENARIO": "Offline",
+    "CK_RNNT_PRE_BACKEND": "pytorch",
+    "CK_RNNT_PRE": "orig",
+    "CK_RNNT_POST_BACKEND": "pytorch",
+    "CK_RNNT_POST": "orig",
+    "CK_RNNT_DEC_BACKEND": "pytorch",
+    "CK_RNNT_DEC": "orig"
   },
   "tags": [
     "speech-recognition",
