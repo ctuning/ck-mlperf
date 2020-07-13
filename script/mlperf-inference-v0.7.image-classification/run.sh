@@ -37,6 +37,11 @@ imagenet_size=50000
 dataset_size=${CK_DATASET_SIZE:-${imagenet_size}}
 echo "Dataset size: ${dataset_size}"
 
+# Dataset variation: "full" or e.g. "first.20".
+# Default: full.
+dataset_variation=${CK_DATASET_VARIATION:-"full"}
+echo "Dataset variation: ${dataset_variation}"
+
 # Run workloads under the official MLPerf LoadGen API.
 # Default: YES.
 use_loadgen=${CK_USE_LOADGEN:-"YES"}
@@ -120,7 +125,7 @@ select_models() {
   if [ "${division}" == "closed" ]; then
     models=( "resnet"  )
     models_tags=( "model,tflite,resnet,no-argmax" )
-    models_preprocessing_tags=( "full,side.224,preprocessed,using-opencv" )
+    models_preprocessing_tags=( "${dataset_variation},side.224,preprocessed,using-opencv" )
   elif [ "${division}" == "open" ]; then
     # MobileNet-v1.
     version=1
@@ -136,11 +141,11 @@ select_models() {
         # non-quantized
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
         # quantized
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
-        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
       done # multiplier
     done # resolution
     # MobileNet-v2.
@@ -157,11 +162,11 @@ select_models() {
         # non-quantized
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
         # quantized
-        models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+        models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
-        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
       done # multiplier
     done # resolution
     if [ "${quick_run}" != "YES" ]; then
@@ -176,18 +181,18 @@ select_models() {
         # non-quantized
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
-        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
         # quantized
-        models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+        models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
-        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
+        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
       done # multiplier
     done # resolution
   else
     echo "ERROR: Unsupported division '${division}'!"
     exit 1
   fi # select models for open or closed
-  echo "Models: ( ${models[*]} )"
+  echo "Models: ( ${models[@]} )"
 }
 select_models
 
@@ -242,9 +247,9 @@ for inference_engine in ${inference_engines[@]}; do
       elif [ "${inference_engine_backend}" == "${armnn_backend_ref}" ]; then
         armnn_backend=""
       else
-	echo "ERROR: Unsupported ArmNN backend '${implementation_armnn_backend}'!"
+        echo "ERROR: Unsupported ArmNN backend '${inference_engine_backend}'!"
         exit 1
-      fi # armnn backends
+      fi # check all armnn backends
     fi
 
     # Iterate for each model.
@@ -316,10 +321,20 @@ for inference_engine in ${inference_engines[@]}; do
           record_tags+=",dataset_size.${dataset_size}"
         fi
 
+        # Print experiment description.
+        echo "[`date`] Experiment #${experiment_id}"
+        experiment_id=$((${experiment_id}+1))
+        echo "Inference engine: ${inference_engine}"
+        echo "Inference engine version: ${inference_engine_version}"
+        echo "Inference engine backend: ${inference_engine_backend}"
+        echo "Inference engine program: ${inference_engine_program}"
+        echo "Model: ${model}"
+        echo "Mode: ${mode}"
+
         # Skip automatically if experiment record already exists.
         record_dir=$(ck list local:experiment:${record_uoa})
         if [ "${record_dir}" != "" ]; then
-          echo "[`date`] - skipping ..."
+          echo "- skipping ..."
           echo
           continue
         fi
@@ -328,13 +343,6 @@ for inference_engine in ${inference_engines[@]}; do
         #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
 
         # Run (but before that print the exact command we are about to run).
-        echo "[`date`] Experiment #${experiment_id}"
-        echo "Inference engine: ${inference_engine}"
-        echo "Inference engine version: ${inference_engine_version}"
-        echo "Inference engine backend: ${inference_engine_backend}"
-        echo "Inference engine program: ${inference_engine_program}"
-        echo "Model: ${model}"
-        echo "Mode: ${mode}"
         read -d '' CMD <<END_OF_CMD
         ck benchmark program:${inference_engine_program} \
         --speed --repetitions=1 ${armnn_backend} ${batch_count} \
@@ -364,7 +372,6 @@ END_OF_CMD
           echo "ERROR: Failed running '${model}' in '${mode}' mode!"
           exit 1
         fi
-        experiment_id=$((${experiment_id}+1))
       done # for each mode
     done # for each model
   done # for each inference engine backend
