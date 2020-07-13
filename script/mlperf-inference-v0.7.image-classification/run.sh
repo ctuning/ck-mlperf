@@ -1,19 +1,26 @@
 #!/bin/bash
 
 #-----------------------------------------------------------------------------#
-# This script is specifically for experimenting with Image Classification
-# (ImageNet) models in the SingleStream scenario on Arm platforms.
+# MLPerf Inference submission round and submitter.
 #-----------------------------------------------------------------------------#
-task="image-classification"
-imagenet_size=50000
-
-scenario="singlestream"
-scenario_tag="SingleStream"
+submission="MLPerf Inference v0.7"
+echo "Submission round: ${submission}"
 
 submitter="dividiti"
+echo "Submitter: ${submitter}"
 
 #-----------------------------------------------------------------------------#
-# Configuration variables.
+# Image Classification models under the SingleStream scenario on Arm platforms.
+#-----------------------------------------------------------------------------#
+task="image-classification"
+echo "Task: ${task}"
+
+scenario="SingleStream"
+scenario_tag="singlestream"
+echo "Scenario: ${scenario_tag}"
+
+#-----------------------------------------------------------------------------#
+# Configurable parameters.
 #-----------------------------------------------------------------------------#
 # For the closed division, only run a handful of official MLPerf workloads
 # (e.g. ResNet50). For the open division, run the whole gamut.
@@ -24,25 +31,11 @@ if [ ${division} != "closed" ]; then
 fi
 echo "Division: ${division}"
 
-# Mode: performance or accuracy.
-# Default: performance.
-mode=${CK_MODE:-"performance"}
-if [ ${mode} != "performance" ]; then
-  mode="accuracy"
-fi
-echo "Mode: ${mode}"
-
-# FIXME: Allow both modes.
-if [ "${mode}" == "performance" ]; then
-  modes=( "performance" )
-  modes_tags=( "PerformanceOnly" )
-elif [ "${mode}" == "accuracy" ]; then
-  modes=( "accuracy" )
-  modes_tags=( "AccuracyOnly" )
-else # e.g. "both"
-  modes=( "performance" "accuracy" )
-  modes_tags=( "PerformanceOnly" "AccuracyOnly" )
-fi
+# Dataset size.
+# Default: ImageNet validation set size (50,000 images).
+imagenet_size=50000
+dataset_size=${CK_DATASET_SIZE:-${imagenet_size}}
+echo "Dataset size: ${dataset_size}"
 
 # Run workloads under the official MLPerf LoadGen API.
 # Default: YES.
@@ -51,6 +44,7 @@ if [ ${use_loadgen} != "YES" ]; then
   use_loadgen="NO"
 fi
 echo "Use LoadGen: ${use_loadgen}"
+loadgen_scenario="--env.CK_LOADGEN_SCENARIO=${scenario}"
 
 # Only print commands but do not execute them.
 # Default: NO.
@@ -83,9 +77,24 @@ else
 fi
 echo "Platform: ${platform}"
 
+# Platform compiler.
+if [ "${platform}" = "mate10pro" ]; then
+  # NB: Currently, we only support Clang 6 (NDK 17c) for Android.
+  compiler_tags="llvm,v6"
+elif [ "${platform}" == "firefly" ] || [ "${platform}" == "xavier" ] || [ "${platform}" == "tx1" ]; then
+  compiler_tags="gcc,v7"
+elif [ "${platform}" == "rpi4" ]; then
+  compiler_tags="gcc,v8"
+elif [ "${platform}" == "rpi4coral" ]; then
+  compiler_tags="gcc,v9"
+else
+  compiler_tags="gcc"
+fi
+echo "Platform compiler tags: ${compiler_tags}"
+
 # Inference engines.
-inference_engines=( "tflite" ) # "armnn" )
-echo "Inference engines: (${inference_engines[*]})"
+inference_engines=( "tflite" "armnn" )
+echo "Inference engines: ( ${inference_engines[@]} )"
 
 # ArmNN backends.
 armnn_backend_ref="ref"
@@ -101,18 +110,7 @@ select_armnn_backends() {
   fi
 }
 select_armnn_backends
-echo "ArmNN backends: ${armnn_backends}"
-
-# Compiler.
-if [ "${platform}" = "mate10pro" ]; then
-  # NB: Currently, we only support Clang 6 (NDK 17c) for Android.
-  compiler_tags="llvm,v6"
-elif [ "${platform}" = "firefly" ] || [ "${platform}" = "xavier" ] || [ "${platform}" = "tx1" ]; then
-  compiler_tags="gcc,v7"
-else
-  compiler_tags="gcc,v8"
-fi
-echo "Compiler tags: ${compiler_tags}"
+echo "ArmNN backends: ( ${armnn_backends[@]} )"
 
 # Models.
 models=()
@@ -123,8 +121,7 @@ select_models() {
     models=( "resnet"  )
     models_tags=( "model,tflite,resnet,no-argmax" )
     models_preprocessing_tags=( "full,side.224,preprocessed,using-opencv" )
-  else
-    division="open"
+  elif [ "${division}" == "open" ]; then
     # MobileNet-v1.
     version=1
     if [ "${quick_run}" != "YES" ]; then
@@ -161,7 +158,10 @@ select_models() {
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
         models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
-        # TODO: quantized
+        # quantized
+        models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+        models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
+        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
       done # multiplier
     done # resolution
     if [ "${quick_run}" != "YES" ]; then
@@ -177,21 +177,44 @@ select_models() {
         models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
         models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
-        # TODO: quantized
+        # quantized
+        models+=( "mobilenet-v${version}-${multiplier}-${resolution}" )
+        models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
+        models_preprocessing_tags+=( "full,crop.875,side.${resolution},preprocessed,using-opencv" ) # "first.20,crop.875,side.${resolution},preprocessed,using-opencv"
       done # multiplier
     done # resolution
+  else
+    echo "ERROR: Unsupported division '${division}'!"
+    exit 1
   fi # select models for open or closed
-
-  echo "Models: ${models}"
+  echo "Models: ( ${models[*]} )"
 }
 select_models
 
+# Mode: performance, accuracy, submission.
+# Default: performance.
+# TODO: Allow both modes.
+mode=${CK_MODE:-"performance"}
+if [ ${mode} != "performance" ]; then
+  mode="accuracy"
+fi
+if [ "${mode}" == "performance" ]; then
+  modes=( "performance" )
+  loadgen_modes=( "--env.CK_LOADGEN_MODE=PerformanceOnly" )
+elif [ "${mode}" == "accuracy" ]; then
+  modes=( "accuracy" )
+  loadgen_modes=( "--env.CK_LOADGEN_MODE=AccuracyOnly" )
+else # e.g. "submission"
+  modes=( "performance" "accuracy" )
+  loadgen_modes=( "--env.CK_LOADGEN_MODE=PerformanceOnly" "--env.CK_LOADGEN_MODE=AccuracyOnly" )
+fi
+echo "Modes: ( ${modes} )"
+
+echo
 
 experiment_id=1
 # Iterate over inference engines.
 for inference_engine in ${inference_engines[@]}; do
-  echo "[`date`] Experiment #"${experiment_id}""
-  echo "Inference engine: ${inference_engine}"
   if [ "${inference_engine}" == "tflite" ]; then
     inference_engine_version="v2.1.1" # "v2.2.0
     inference_engine_program="${task}-tflite"
@@ -201,18 +224,16 @@ for inference_engine in ${inference_engines[@]}; do
     inference_engine_program="${task}-armnn-tflite"
     inference_engine_backends=${armnn_backends}
   else
-   echo "ERROR: Unsupported inference engine '${inference_engine}'!"
-   exit 1
+    echo "ERROR: Unsupported inference engine '${inference_engine}'!"
+    exit 1
   fi
   if [ "${use_loadgen}" == "YES" ]; then
     loadgen_config_file="--dep_add_tags.loadgen-config-file=${inference_engine_program}"
     inference_engine_program+="-loadgen"
   fi
-  echo "Inference engine program: ${inference_engine_program}"
 
   # Iterate over inference engine backends.
   for inference_engine_backend in ${inference_engine_backends[@]}; do
-    echo "Inference engine backend: ${inference_engine_backend}"
     if [ "${inference_engine}" == "armnn" ]; then
       if [ "${inference_engine_backend}" == "${armnn_backend_neon}" ]; then
         armnn_backend="--env.USE_NEON=1"
@@ -231,39 +252,35 @@ for inference_engine in ${inference_engines[@]}; do
       # Configure the model.
       model=${models[${i}-1]}
       model_tags=${models_tags[${i}-1]}
-      echo "Model: ${model}"
-
-      # Configure the preprocessing method.
-      # By default, use the same preprocessing method for all models.
-      model_preprocessing_tags=${models_preprocessing_tags[0]}
+      model_preprocessing_tags=${models_preprocessing_tags[${i}-1]}
 
       # Iterate for each mode.
       for j in $(seq 1 ${#modes[@]}); do
         # Configure the mode.
         mode=${modes[${j}-1]}
         mode_tag=${modes_tags[${j}-1]}
-        echo "Mode: ${mode}"
-        if [ "${mode}" == "accuracy" ]; then
-          dataset_size=${imagenet_size}
-          buffer_size=500
-          verbose=2
-        else
-          dataset_size=1024
-          buffer_size=1024
-          verbose=1
-        fi
-        if [ "${use_loadgen}" == "NO" ]; then
-          batch_count="--env.CK_BATCH_COUNT=${dataset_size}"
-        else
+        loadgen_mode=${loadgen_modes[${j}-1]}
+
+        if [ "${use_loadgen}" == "YES" ]; then
           batch_count=""
+          if [ "${mode}" == "accuracy" ]; then
+            dataset_size=${dataset_size}
+            buffer_size=500
+            verbose=2
+          else
+            dataset_size=1024
+            buffer_size=1024
+            verbose=1
+          fi
+          loadgen_dataset_size="--env.CK_LOADGEN_DATASET_SIZE=${dataset_size}"
+          loadgen_buffer_size="--env.CK_LOADGEN_BUFFER_SIZE=${buffer_size}"
+        else
+          batch_count="--env.CK_BATCH_COUNT=${dataset_size}"
         fi
 
-	# Opportunity to skip by mode or model.
-        #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
-
-	# Configure record settings.
+        # Configure record settings.
         record_uoa="mlperf"
-	record_tags="mlperf"
+        record_tags="mlperf"
         # Division.
         record_uoa+=".${division}"
         record_tags+=",division.${division}"
@@ -283,8 +300,8 @@ for inference_engine in ${inference_engines[@]}; do
         record_uoa+=".${model}"
         record_tags+=",workload.${model}"
         # Scenario.
-        record_uoa+=".${scenario}"
-        record_tags+=",scenario.${scenario}"
+        record_uoa+=".${scenario_tag}"
+        record_tags+=",scenario.${scenario_tag}"
         # Mode.
         record_uoa+=".${mode}"
         record_tags+=",mode.${mode}"
@@ -299,26 +316,44 @@ for inference_engine in ${inference_engines[@]}; do
           record_tags+=",dataset_size.${dataset_size}"
         fi
 
+        # Skip automatically if experiment record already exists.
+        record_dir=$(ck list local:experiment:${record_uoa})
+        if [ "${record_dir}" != "" ]; then
+          echo "[`date`] - skipping ..."
+          echo
+          continue
+        fi
+
+        # Skip manuallly e.g. by mode or model.
+        #if [ "${mode}" != "performance" ] || [ "${model}" != "mobilenet" ]; then continue; fi
+
         # Run (but before that print the exact command we are about to run).
-        echo "Running '${model}' in '${mode}' mode ..."
+        echo "[`date`] Experiment #${experiment_id}"
+        echo "Inference engine: ${inference_engine}"
+        echo "Inference engine version: ${inference_engine_version}"
+        echo "Inference engine backend: ${inference_engine_backend}"
+        echo "Inference engine program: ${inference_engine_program}"
+        echo "Model: ${model}"
+        echo "Mode: ${mode}"
         read -d '' CMD <<END_OF_CMD
         ck benchmark program:${inference_engine_program} \
         --speed --repetitions=1 ${armnn_backend} ${batch_count} \
         --env.CK_VERBOSE=${verbose} \
-        --env.CK_LOADGEN_SCENARIO=${scenario_tag} \
-        --env.CK_LOADGEN_MODE=${mode_tag} \
-        --env.CK_LOADGEN_DATASET_SIZE=${dataset_size} \
-        --env.CK_LOADGEN_BUFFER_SIZE=${buffer_size} \
         --dep_add_tags.weights=${model_tags} \
         --dep_add_tags.library=lib,${inference_engine},${inference_engine_version} \
         --dep_add_tags.compiler=${compiler_tags} \
         --dep_add_tags.images=${model_preprocessing_tags} \
         --dep_add_tags.python=v3 \
         --dep_add_tags.mlperf-inference-src=upstream.master \
-        ${loadgen_config_file}
+        ${loadgen_mode} \
+        ${loadgen_scenario} \
+        ${loadgen_config_file} \
+        ${loadgen_dataset_size} \
+        ${loadgen_buffer_size} \
         --record --record_repo=local --record_uoa=${record_uoa} --tags=${record_tags} \
         --skip_print_timers --skip_stat_analysis --process_multi_keys
 END_OF_CMD
+        echo "Command:"
         echo ${CMD}
         if [ ${dry_run} == "NO" ]; then
           eval ${CMD}
