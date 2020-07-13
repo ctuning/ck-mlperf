@@ -3,10 +3,11 @@
 ## Table of Contents
 
 1. [Prerequisites](#prereqs)
-  1. [CK](#ck)
-  1. [Inference engines](#inference_engines)
-  1. [Preprocessed datasets](#preprocessed_datasets)
-  1. [LoadGen config files](#loadgen_configs)
+    1. [CK](#ck)
+    1. [Inference engines](#inference_engines)
+    1. [Preprocessed datasets](#preprocessed_datasets)
+    1. [LoadGen config files](#loadgen_configs)
+1. [Usage](#usage)
 
 <a name="prereqs"></a>
 # Prerequisites
@@ -56,8 +57,8 @@ $ ck install package --tags=lib,armnn,rel.20.05,tflite,neon,opencl
 ```
 
 #### Neon backend
-Otherwise, you board should support Arm Neon vector extensions,
-so build ArmNN the Neon backend only:
+Otherwise, your board should support Arm Neon vector extensions,
+so build ArmNN with the Neon backend only:
 ```bash
 $ ck install package --tags=lib,armnn,rel.20.05,tflite,neon
 ```
@@ -115,4 +116,38 @@ $ ck detect soft --tags=config,loadgen,image-classification-tflite
 
 ```bash
 $ ck detect soft --tags=config,loadgen,image-classification-armnn-tflite
+```
+
+<a name="usage"></a>
+# Usage
+
+```bash
+$ cd `ck find ck-mlperf:script:mlperf-inference-v0.7.image-classification`
+```
+
+| Parameter | Values | Default | Comment |
+|-|-|-|-|
+| `CK_DIVISION`| `closed`, `open` | `closed` | Workload selection. |
+| `CK_MODE`| `performance`, `accuracy` | `performance` | Execution mode selection. |
+| `CK_DRY_RUN` | `YES`, `NO` | `NO` | Print commands but do not execute. |
+| `CK_USE_LOADGEN` | `YES`, `NO` | `YES` | Use MLPerf LoadGen API. |
+
+<a name="performance"></a>
+## Performance
+
+```bash
+$ CK_DIVISION=open CK_MODE=performance ./run.sh
+```
+
+<a name="accuracy"></a>
+## Accuracy
+
+### 50,000 images
+```bash
+$ CK_DIVISION=open CK_MODE=accuracy ./run.sh
+```
+
+### 500 images
+```bash
+$ CK_DIVISION=open CK_MODE=accuracy CK_DATESET_SIZE=500 ./run.sh
 ```
