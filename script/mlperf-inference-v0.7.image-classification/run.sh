@@ -183,9 +183,12 @@ select_models() {
         models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},non-quantized" )
         models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
         # quantized
-        models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
-        models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
-        models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
+        # NB: mobilenet-v2-1.3-224-quantized is not available: https://github.com/tensorflow/models/issues/8861
+        if [ "${multiplier}" != "1.3" ]; then
+            models+=( "mobilenet-v${version}-${multiplier}-${resolution}-quantized" )
+            models_tags+=( "model,tflite,mobilenet,v${version}-${multiplier}-${resolution},quantized" )
+            models_preprocessing_tags+=( "${dataset_variation},crop.875,side.${resolution},preprocessed,using-opencv" )
+        fi
       done # multiplier
     done # resolution
   else
@@ -196,22 +199,26 @@ select_models() {
 }
 select_models
 
-# Mode: performance, accuracy, submission.
-# Default: performance.
-# TODO: Allow both modes.
-mode=${CK_MODE:-"performance"}
-if [ ${mode} != "performance" ]; then
-  mode="accuracy"
-fi
-if [ "${mode}" == "performance" ]; then
-  modes=( "performance" )
-  loadgen_modes=( "--env.CK_LOADGEN_MODE=PerformanceOnly" )
-elif [ "${mode}" == "accuracy" ]; then
+# Mode: performance, accuracy, submission (?).
+if [ ${use_loadgen} == "YES" ]; then
+  # Default: performance. TODO: Allow both modes.
+  mode=${CK_MODE:-"performance"}
+  if [ ${mode} != "performance" ]; then
+    mode="accuracy"
+  fi
+  if [ "${mode}" == "performance" ]; then
+    modes=( "performance" )
+    loadgen_modes=( "--env.CK_LOADGEN_MODE=PerformanceOnly" )
+  elif [ "${mode}" == "accuracy" ]; then
+    modes=( "accuracy" )
+    loadgen_modes=( "--env.CK_LOADGEN_MODE=AccuracyOnly" )
+  else # e.g. "submission"
+    modes=( "performance" "accuracy" )
+    loadgen_modes=( "--env.CK_LOADGEN_MODE=PerformanceOnly" "--env.CK_LOADGEN_MODE=AccuracyOnly" )
+  fi
+else
   modes=( "accuracy" )
-  loadgen_modes=( "--env.CK_LOADGEN_MODE=AccuracyOnly" )
-else # e.g. "submission"
-  modes=( "performance" "accuracy" )
-  loadgen_modes=( "--env.CK_LOADGEN_MODE=PerformanceOnly" "--env.CK_LOADGEN_MODE=AccuracyOnly" )
+  loadgen_modes=( "" )
 fi
 echo "Modes: ( ${modes} )"
 
@@ -284,17 +291,23 @@ for inference_engine in ${inference_engines[@]}; do
         fi
 
         # Configure record settings.
-        record_uoa="mlperf"
-        record_tags="mlperf"
-        # Division.
-        record_uoa+=".${division}"
-        record_tags+=",division.${division}"
-        # Submitter.
-        record_uoa+=".${submitter}"
-        record_tags+=",submitter.${submitter}"
-        # Task.
-        record_uoa+=".${task}"
-        record_tags+=",task.${task}"
+        if [ "${use_loadgen}" == "YES" ]; then
+          record_uoa="mlperf"
+          record_tags="mlperf"
+          # Division.
+          record_uoa+=".${division}"
+          record_tags+=",division.${division}"
+          # Submitter.
+          record_uoa+=".${submitter}"
+          record_tags+=",submitter.${submitter}"
+          # Task.
+          record_uoa+=".${task}"
+          record_tags+=",task.${task}"
+        else
+          # Task.
+          record_uoa="${task}"
+          record_tags="task.${task}"
+        fi
         # Platform.
         record_uoa+=".${platform}"
         record_tags+=",platform.${platform}"
