@@ -13,7 +13,7 @@
       "MODEL_INPUT_LAYER_NAME": "input", 
       "MODEL_MOBILENET_VERSION": "2", 
       "MODEL_NORMALIZE_DATA": "YES", 
-      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV2/Predictions/Reshape_1", 
+      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV2/Predictions/Softmax",
       "MODEL_SUBTRACT_MEAN": "0", 
       "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES", 
       "MODULE_FILE": "mobilenet-model.py", 
