@@ -228,13 +228,13 @@ experiment_id=1
 # Iterate over inference engines.
 for inference_engine in ${inference_engines[@]}; do
   if [ "${inference_engine}" == "tflite" ]; then
-    inference_engine_version="v2.1.1" # "v2.2.0
+    inference_engine_version="v2.2.0" # "v2.1.1"
     inference_engine_program="${task}-tflite"
     inference_engine_backends=( "dummy" )
   elif [ "${inference_engine}" == "armnn" ]; then
     inference_engine_version="rel.20.05"
     inference_engine_program="${task}-armnn-tflite"
-    inference_engine_backends=${armnn_backends}
+    inference_engine_backends=${armnn_backends[@]}
   else
     echo "ERROR: Unsupported inference engine '${inference_engine}'!"
     exit 1
