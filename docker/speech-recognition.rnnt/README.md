@@ -10,17 +10,21 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 | `centos-8.python3.7` | 3.7.7 | 8.3.1 | Updated Python (from 3.6) |
 | `debian-9`  | 3.5.3 | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0` |
 | `debian-10` | 3.7.3 | 8.3.0 ||
+| `ubuntu-16.04` | 3.5.x | 6.x.x | `numba==0.47`, `llvmlite=0.31.0` |
+| `ubuntu-18.04` | 3.6.9 | 7.5.0 ||
 | `ubuntu-20.04` | 3.8.2 | 9.3.0 ||
 | `amazonlinux`     | 3.7.6 | 7.3.1 ||
 | `amazonlinux.min` | 3.7.6 | 7.3.1 | Make some steps implicit (comment out with `#-`). |
 
-It is most sensible to diff the following image pairs:
+It is instructive to diff the following image pairs:
 - `centos-7` and `centos-8.python3.7` (as both update Python to the same version).
 - `centos-8` and `centos-8.python3.7` (as both are CentOS 8 based).
 - `centos-8` and `debian-10` (as they differ mostly in the distro package manager).
 - `debian-9` and `debian-10` (as the former differs in some Python 3.5 workarounds).
-- `ubuntu-20.04` and `debian-10` (as they are nearly identical).
-- `centos-8` and `amazonlinux` (as Amazon Linux is similar to CentOS).
+- `ubuntu-16.04` and `debian-9` (as they are nearly identical).
+- `ubuntu-18.04` and `debian-10` (as they are nearly identical).
+- `ubuntu-18.04` and `ubuntu-20.04` (as they are nearly identical).
+- `amazonlinux` and `centos-8` (as Amazon Linux is similar to CentOS).
 - `amazonlinux` and `amazonlinux.min` (as the latter is derived from the former).
 
 ## Build
