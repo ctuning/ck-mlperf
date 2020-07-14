@@ -228,9 +228,9 @@ experiment_id=1
 # Iterate over inference engines.
 for inference_engine in ${inference_engines[@]}; do
   if [ "${inference_engine}" == "tflite" ]; then
-    inference_engine_version="v2.2.0" # "v2.1.1"
+    inference_engine_version="v2.2.0" # TODO: Iterate over versions which may have different backends.
     inference_engine_program="${task}-tflite"
-    inference_engine_backends=( "dummy" )
+    inference_engine_backends=( "ruy" )
   elif [ "${inference_engine}" == "armnn" ]; then
     inference_engine_version="rel.20.05"
     inference_engine_program="${task}-armnn-tflite"
