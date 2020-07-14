@@ -328,6 +328,44 @@ velociti = {
 }
 
 
+xavier = {
+    "division": "closed",
+    "submitter": "NVIDIA",
+    "status": "available",
+    "system_name": "NVIDIA Jetson AGX Xavier",
+
+    "number_of_nodes": "1",
+    "host_processor_model_name": "NVIDIA Carmel (ARMv8.2)",
+    "host_processors_per_node": "1",
+    "host_processor_core_count": "8",
+    "host_processor_frequency": "2265.5 MHz",
+    "host_processor_caches": "8MB L2 (2MB per dual cluster)/4 MB L3 (shared)",
+    "host_memory_configuration": "",
+    "host_memory_capacity": "16 GB",
+    "host_storage_capacity": "32 GB",
+    "host_storage_type": "eMMC 5.1",
+    "host_processor_interconnect": "",
+    "host_networking": "",
+    "host_networking_topology": "",
+
+    "accelerators_per_node": "1",
+    "accelerator_model_name": "NVIDIA Xavier",
+    "accelerator_frequency": "",
+    "accelerator_host_interconnect": "",
+    "accelerator_interconnect": "",
+    "accelerator_interconnect_topology": "",
+    "accelerator_memory_capacity": "Shared with host",
+    "accelerator_memory_configuration": "SRAM",
+    "accelerator_on-chip_memories": "1MB (128KB/SM) L1 + 512KB L2 + 4MB (DLA)",
+    "cooling": "",
+    "hw_notes": "GPU and both DLAs are used in Offline and MultiStream scenarios",
+
+    "framework": "JetPack 4.3 DP, TensorRT 6.0, cuDNN 7.6.3, CUDA 10.0, cub 1.8.0",
+    "operating_system": "Ubuntu 18.04.3",
+    "other_software_stack": "pycuda 2019.1, pytorch 1.1, torchvision 0.2.2.post3",
+    "sw_notes": ""
+}
+
 # <a id="templates_default"></a>
 # ### Default
 
@@ -388,11 +426,12 @@ platform_templates = {
     'hikey960'  : hikey960,
     'mate10pro' : mate10pro,
     'rpi4'      : rpi4,
-    'velociti'  : velociti
+    'velociti'  : velociti,
+    'xavier'    : xavier,
 }
 
 divisions = [ 'open', 'closed' ]
-platforms = [ 'firefly', 'hikey960', 'mate10pro', 'rpi4', 'velociti' ]
+platforms = platform_templates.keys()
 for division in divisions:
     for platform in platforms:
         if platform == 'velociti':
@@ -401,10 +440,15 @@ for division in divisions:
             libraries = [ 'tflite-v1.13', 'armnn-v19.08' ]
         elif platform == 'rpi4':
             libraries = [ 'tflite-v1.15.0', 'tflite-v1.15', 'armnn-v19.08' ]
+        elif platform == 'xavier':
+            libraries = [ 'tflite-v2.1.1', 'armnn-rel.20.05' ]
         else:
             libraries = [ 'tflite-v1.15', 'armnn-v19.08' ]
         for library in libraries:
-            if library == 'armnn-v19.08':
+            if library == 'armnn-rel.20.05':
+                backends = [ 'neon' ]
+                library_backends = [ library+'-'+backend for backend in backends ]
+            elif library == 'armnn-v19.08':
                 if platform == 'rpi4':
                     backends = [ 'neon' ]
                 else:
@@ -420,9 +464,11 @@ for division in divisions:
                 frameworks = {
                     'armnn-v19.08-opencl' : 'ArmNN v19.08 (OpenCL)',
                     'armnn-v19.08-neon' : 'ArmNN v19.08 (Neon)',
+                    'armnn-rel.20.05-neon' : 'ArmNN rel.20.05 (Neon)',
                     'tflite-v1.13': 'TFLite v1.13.1',
                     'tflite-v1.15': 'TFLite v1.15.0-rc2',
                     'tflite-v1.15.0': 'TFLite v1.15.0',
+                    'tflite-v2.1.1': 'TFLite v2.1.1',
                     'tensorrt-v6.0' : 'TensorRT v6.0',
                     'tensorflow-v1.14-cpu': 'TensorFlow v1.14 (CPU)',
                     'tensorflow-v1.14-cuda': 'TensorFlow v1.14 (CUDA)',
@@ -521,7 +567,7 @@ for implementation in [ 'image-classification-tflite', 'image-classification-arm
         elif implementation == 'image-classification-armnn-tflite':
             weights_transformations = 'TFLite -> ArmNN'
         else:
-            raise "Unknown implementation '%s'!" % implementation
+            raise Exception("Unknown implementation '%s'!" % implementation)
         implementation_benchmark = implementation+'-'+benchmark
         implementation_benchmarks[implementation_benchmark] = {
             "input_data_types": "uint8" if quantized else "fp32",
@@ -1391,13 +1437,40 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             exit(1)
         print("*" * 100)
 
+        division=task=platform=library=inference_engine=backend=benchmark=scenario=mode=preprocessing=test=notes = ''
+
         tags = r['dict']['tags']
         #print(tags)
-        backend = ''
-        preprocessing = ''
-        notes = ''
 #        pprint(tags)
-        if 'velociti' in tags:
+        for atag in tags:
+            if '.' in atag:     # Expected format: attribute1.value1 , attribute2.value2 , etc - in any order
+                # Example:   "division.open", "submitter.dividiti", "task.image-classification", "platform.xavier",
+                # "inference_engine.tflite", "inference_engine_version.v2.1.1", "inference_engine_backend.dummy",
+                # "workload.mobilenet-v2-1.4-224", "scenario.singlestream", "mode.performance"
+                (attribute, value) = atag.split('.', 1)     # protection from dotted version notation!
+                if attribute == 'division':
+                    division = value
+                elif attribute == 'task':
+                    task = value
+                elif attribute == 'platform':
+                    platform = value
+                elif attribute == 'inference_engine':
+                    inference_engine = value
+                elif attribute == 'inference_engine_version':
+                    inference_engine_version = value
+                elif attribute == 'inference_engine_backend':
+                    backend = value if value!='dummy' else ''
+                elif attribute == 'workload':   # actually, the model!
+                    benchmark = value
+                elif attribute == 'scenario':
+                    scenario = value
+                elif attribute == 'mode':
+                    mode = value
+
+        if division and task and platform and inference_engine and benchmark and scenario and mode:
+            library = inference_engine + (('-' + inference_engine_version) if inference_engine_version else '')
+
+        elif 'velociti' in tags:
             # Expected format: [ "mlperf", "open", "object-detection", "velociti", "cpu", "rcnn-inception-resnet-v2-lowproposals", "singlestream", "accuracy" ]
             (_, division, task, platform, backend, benchmark, scenario, mode) = tags
             if task == 'object-detection':
@@ -1430,7 +1503,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "tflite-v1.15", "mobilenet-v1-0.5-128", "singlestream", "audit", "TEST03" ]
                 (_, division, task, platform, library, benchmark, scenario, mode, test) = tags
         else:
-            raise "Expected 'accuracy' or 'performance' or 'audit' in tags!"
+            raise Exception("Expected 'accuracy' or 'performance' or 'audit' in tags!")
 
 #         if mode == 'accuracy': continue
             
@@ -1545,7 +1618,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 json.dump(implementation_benchmark_json, system_implementation_json_file, indent=2)
             else:
                 print('  |_ %s [DEFAULT]' % system_implementation_json_name)
-                raise "Default implementation!"
+                raise Exception("Default implementation for {} !".format(implementation_benchmark))
 
         # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
         measurements_readme_name = 'README.md'
@@ -1556,7 +1629,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 measurements_readme_file.writelines(measurements_readme)
             print('  |_ %s [for %s %s]' % (measurements_readme_name, division, task))
         else:
-            raise "Invalid measurements README!"
+            raise Exception("Invalid measurements README!")
 
         # Create 'NOTES.txt'.
         measurements_notes_name = 'NOTES.txt'
@@ -1593,7 +1666,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             user_conf_name = 'user.conf'
             implementation_path = implementation_paths.get(implementation, '')
             if implementation_path == '':
-                raise "Invalid implementation path!"
+                raise Exception("Invalid implementation path!")
             user_conf_path = os.path.join(implementation_path, user_conf_name)
         copy2(user_conf_path, scenario_dir)
         print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
@@ -1780,7 +1853,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
                     accuracy_pc = float(match.group(1))
                 else:
-                    raise "Invalid task '%s'!" % task
+                    raise Exception("Invalid task '%s'!" % task)
                 with open(accuracy_txt_path, 'w') as accuracy_txt_file:
                     accuracy_txt_file.write(accuracy_txt)
                     print('  |_ %s [%.3f%% parsed from "%s"]' % (accuracy_txt_name, accuracy_pc, accuracy_line))
