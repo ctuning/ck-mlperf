@@ -1439,10 +1439,9 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
         division=task=platform=library=inference_engine=backend=benchmark=scenario=mode=preprocessing=test=notes = ''
 
-        tags = r['dict']['tags']
-        #print(tags)
-#        pprint(tags)
-        for atag in tags:
+        experiment_tags = r['dict']['tags']
+        #print(experiment_tags)
+        for atag in experiment_tags:
             if '.' in atag:     # Expected format: attribute1.value1 , attribute2.value2 , etc - in any order
                 # Example:   "division.open", "submitter.dividiti", "task.image-classification", "platform.xavier",
                 # "inference_engine.tflite", "inference_engine_version.v2.1.1", "inference_engine_backend.dummy",
@@ -1470,40 +1469,40 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if division and task and platform and inference_engine and benchmark and scenario and mode:
             library = inference_engine + (('-' + inference_engine_version) if inference_engine_version else '')
 
-        elif 'velociti' in tags:
+        elif 'velociti' in experiment_tags:
             # Expected format: [ "mlperf", "open", "object-detection", "velociti", "cpu", "rcnn-inception-resnet-v2-lowproposals", "singlestream", "accuracy" ]
-            (_, division, task, platform, backend, benchmark, scenario, mode) = tags
+            (_, division, task, platform, backend, benchmark, scenario, mode) = experiment_tags
             if task == 'object-detection':
                 library = 'tensorflow-v1.14'
             else:
                 library = 'tensorrt-v6.0'
                 backend = ''
                 notes = '======= DEMO ======='
-        elif 'accuracy' in tags:
+        elif 'accuracy' in experiment_tags:
             # FIXME: With the benefit of hindsight, [ ..., "armnn-v19.08", "neon", ... ] should have come 
             # as one tag "armnn-v19.08-neon", since we join them in this notebook anyway.
-            if 'neon' in tags or 'opencl' in tags:
+            if 'neon' in experiment_tags or 'opencl' in experiment_tags:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "armnn-v19.08", "neon", "mobilenet-v1-0.5-128", "singlestream", "accuracy", "using-opencv" ]
-                (_, division, task, platform, library, backend, benchmark, scenario, mode, preprocessing) = tags
+                (_, division, task, platform, library, backend, benchmark, scenario, mode, preprocessing) = experiment_tags
             else:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "tflite-v1.15", "mobilenet-v1-0.5-128", "singlestream", "accuracy", "using-opencv" ]
-                (_, division, task, platform, library, benchmark, scenario, mode, preprocessing) = tags
-        elif 'performance' in tags:            
-            if 'neon' in tags or 'opencl' in tags:
+                (_, division, task, platform, library, benchmark, scenario, mode, preprocessing) = experiment_tags
+        elif 'performance' in experiment_tags:
+            if 'neon' in experiment_tags or 'opencl' in experiment_tags:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "armnn-v19.08", "neon", "mobilenet-v1-0.5-128", "singlestream", "performance" ]
-                (_, division, task, platform, library, backend, benchmark, scenario, mode) = tags
+                (_, division, task, platform, library, backend, benchmark, scenario, mode) = experiment_tags
             else:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "tflite-v1.15", "mobilenet-v1-0.5-128", "singlestream", "performance" ]
-                (_, division, task, platform, library, benchmark, scenario, mode) = tags
-        elif 'audit' in tags: # As accuracy but with the test name instead of the preprocessing method.
-            if 'neon' in tags or 'opencl' in tags:
+                (_, division, task, platform, library, benchmark, scenario, mode) = experiment_tags
+        elif 'audit' in experiment_tags: # As accuracy but with the test name instead of the preprocessing method.
+            if 'neon' in experiment_tags or 'opencl' in experiment_tags:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "armnn-v19.08", "neon", "mobilenet-v1-0.5-128", "singlestream", "audit", "TEST03" ]
-                (_, division, task, platform, library, backend, benchmark, scenario, mode, test) = tags
+                (_, division, task, platform, library, backend, benchmark, scenario, mode, test) = experiment_tags
             else:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "tflite-v1.15", "mobilenet-v1-0.5-128", "singlestream", "audit", "TEST03" ]
-                (_, division, task, platform, library, benchmark, scenario, mode, test) = tags
+                (_, division, task, platform, library, benchmark, scenario, mode, test) = experiment_tags
         else:
-            raise Exception("Expected 'accuracy' or 'performance' or 'audit' in tags!")
+            raise Exception("Expected 'accuracy' or 'performance' or 'audit' in experiment_tags!")
 
 #         if mode == 'accuracy': continue
             
@@ -1516,14 +1515,14 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         division_system = division+'-'+system
 
         if library.startswith('tflite'):
-            implementation = task+'-tflite'
+            program_name = task+'-tflite'
         elif library.startswith('armnn'):
-            implementation = task+'-armnn-tflite'
+            program_name = task+'-armnn-tflite'
         elif library.startswith('tensorrt'):
-            implementation = task+'-tensorrt-loadgen-py'
+            program_name = task+'-tensorrt-loadgen-py'
         else: # Official app with CK adaptations.
-            implementation = 'mlperf-inference-vision'
-        implementation_benchmark = implementation+'-'+benchmark
+            program_name = 'mlperf-inference-vision'
+        implementation_benchmark = program_name+'-'+benchmark
         #
         # Directory structure according to the Inference section of the General MLPerf Submission Rules:
         # https://github.com/mlperf/policies/blob/master/submission_rules.adoc#552-inference
@@ -1567,16 +1566,16 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         # FIXME: For now, not always "per reference".
         benchmark_dir = os.path.join(code_dir, benchmark)
         if not os.path.exists(benchmark_dir): os.mkdir(benchmark_dir)
-        implementation_dir = os.path.join(benchmark_dir, implementation)
+        implementation_dir = os.path.join(benchmark_dir, program_name)
         if not os.path.exists(implementation_dir): os.mkdir(implementation_dir)
         print('%s' % code_dir)
 
         # Create 'README.md'.
         implementation_readme_name = 'README.md'
         implementation_readme_path = os.path.join(implementation_dir, implementation_readme_name)
-#         pprint(implementation)
+#         pprint(program_name)
 #         pprint(implementation_readmes)
-        implementation_readme = implementation_readmes.get(implementation, '')
+        implementation_readme = implementation_readmes.get(program_name, '')
         with open(implementation_readme_path, 'w') as implementation_readme_file:
             implementation_readme_file.writelines(implementation_readme)
         if implementation_readme == '':
@@ -1608,7 +1607,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         print(scenario_dir)
 
         # Create '<system_desc_id>_<implementation_id>.json'.
-        system_implementation_json_name = system+'_'+implementation+'.json'
+        system_implementation_json_name = system+'_'+program_name+'.json'
         system_implementation_json_path = os.path.join(scenario_dir, system_implementation_json_name)
         with open(system_implementation_json_path, 'w') as system_implementation_json_file:
             implementation_benchmark_json = implementation_benchmarks.get(implementation_benchmark, default_implementation_benchmark_json)
@@ -1641,7 +1640,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             print('  |_ %s [for %s %s]' % (measurements_notes_name, division, task))
 
         # Try to find environment for 'user.conf'.
-        loadgen_config_tags='loadgen,config,'+implementation
+        loadgen_config_tags='loadgen,config,'+program_name
         lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
         if lgc['return']>0:
             print('Error: %s' % lgc['error'])
@@ -1664,7 +1663,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         elif len(envs) == 0:
             # Not found any environments: copy 'user.conf' from implementation source.
             user_conf_name = 'user.conf'
-            implementation_path = implementation_paths.get(implementation, '')
+            implementation_path = implementation_paths.get(program_name, '')
             if implementation_path == '':
                 raise Exception("Invalid implementation path!")
             user_conf_path = os.path.join(implementation_path, user_conf_name)
@@ -1674,7 +1673,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         # Copy 'mlperf.conf' from MLPerf Inference source.
         mlperf_conf_name = 'mlperf.conf'
         mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
-        if implementation in [ 'image-classification-tflite', 'image-classification-armnn-tflite' ]:
+        if program_name in [ 'image-classification-tflite', 'image-classification-armnn-tflite' ]:
             # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
             with open(mlperf_conf_path, 'w') as mlperf_conf_file:
                 mlperf_conf_file.writelines(mlperf_conf_6122045)
@@ -1751,7 +1750,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 if not os.path.exists(run_dir): os.mkdir(run_dir)
                 last_dir = run_dir
                 # Performance notes. Should ideally go inside the run_x dir, but the checker complains.
-                if 'velociti' in tags and 'tensorrt' in tags:
+                if 'velociti' in experiment_tags and 'tensorrt' in experiment_tags:
                     num_streams = point_data_raw['choices']['env'].get('CK_LOADGEN_MULTISTREAMNESS', '')
                     if num_streams == '': num_streams = '?'
                     performance_notes = 'uid={}: {} streams'.format(point, num_streams)
@@ -1792,7 +1791,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             # Do what's required by NVIDIA's audit tests.
             if audit:
                 test_path = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', test)
-                if 'TEST01' in tags:
+                if 'TEST01' in experiment_tags:
                     # Verify that the accuracy (partially) dumped for the audit test matches that for the submision.
                     verify_accuracy_py = os.path.join(test_path, 'verify_accuracy.py')
                     submission_accuracy_json_path = os.path.join(accuracy_dir, accuracy_json_name)
