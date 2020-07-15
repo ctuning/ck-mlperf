@@ -415,11 +415,6 @@ default_system_json = {
 # <a id="systems"></a>
 # ## Systems
 
-# In[ ]:
-
-
-# Generate division_systems dictionary.
-division_systems = {}
 
 platform_templates = {
     'firefly'   : firefly,
@@ -430,80 +425,51 @@ platform_templates = {
     'xavier'    : xavier,
 }
 
-divisions = [ 'open', 'closed' ]
-platforms = platform_templates.keys()
-for division in divisions:
-    for platform in platforms:
-        if platform == 'velociti':
-            libraries = [ 'tensorflow-v1.14', 'tensorrt-v6.0' ]
-        elif platform == 'mate10pro':
-            libraries = [ 'tflite-v1.13', 'armnn-v19.08' ]
-        elif platform == 'rpi4':
-            libraries = [ 'tflite-v1.15.0', 'tflite-v1.15', 'armnn-v19.08' ]
-        elif platform == 'xavier':
-            libraries = [ 'tflite-v2.1.1', 'armnn-rel.20.05' ]
-        else:
-            libraries = [ 'tflite-v1.15', 'armnn-v19.08' ]
-        for library in libraries:
-            if library == 'armnn-rel.20.05':
-                backends = [ 'neon' ]
-                library_backends = [ library+'-'+backend for backend in backends ]
-            elif library == 'armnn-v19.08':
-                if platform == 'rpi4':
-                    backends = [ 'neon' ]
-                else:
-                    backends = [ 'neon', 'opencl' ]
-                library_backends = [ library+'-'+backend for backend in backends ]
-            elif library == 'tensorflow-v1.14':
-                backends = [ 'cpu', 'cuda', 'tensorrt', 'tensorrt-dynamic' ]
-                library_backends = [ library+'-'+backend for backend in backends ]
-            else:
-                library_backends = [ library ]
-            for library_backend in library_backends:
-                division_system = division+'-'+platform+'-'+library_backend
-                frameworks = {
-                    'armnn-v19.08-opencl' : 'ArmNN v19.08 (OpenCL)',
-                    'armnn-v19.08-neon' : 'ArmNN v19.08 (Neon)',
-                    'armnn-rel.20.05-neon' : 'ArmNN rel.20.05 (Neon)',
-                    'tflite-v1.13': 'TFLite v1.13.1',
-                    'tflite-v1.15': 'TFLite v1.15.0-rc2',
-                    'tflite-v1.15.0': 'TFLite v1.15.0',
-                    'tflite-v2.1.1': 'TFLite v2.1.1',
-                    'tensorrt-v6.0' : 'TensorRT v6.0',
-                    'tensorflow-v1.14-cpu': 'TensorFlow v1.14 (CPU)',
-                    'tensorflow-v1.14-cuda': 'TensorFlow v1.14 (CUDA)',
-                    'tensorflow-v1.14-tensorrt': 'TensorFlow v1.14 (TensorRT-static)',
-                    'tensorflow-v1.14-tensorrt-dynamic': 'TensorFlow v1.14 (TensorRT-dynamic)',
-                }
-                if library_backend == 'tensorflow-v1.14-cpu':
-                    status = 'RDI'
-                elif library_backend == 'tflite-v1.15.0' or library_backend == 'tensorrt-v6.0':
-                    status = 'unofficial'
-                else:
-                    status = 'available'
-                template = deepcopy(platform_templates[platform])
-                template.update({
-                    'division'  : division,
-                    'submitter' : 'dividiti', # 'dividiti' if platform != 'velociti' else 'dividiti, Politecnico di Milano'
-                    'status'    : status,
-                    'framework' : frameworks[library_backend]
-                })
-                if (not library_backend.startswith('tensorrt') and not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl')) or library_backend.endswith('cpu'):
-                    template.update({
-                        'accelerator_frequency' : '-',
-                        'accelerator_memory_capacity' : '-',
-                        'accelerator_memory_configuration': '-',
-                        'accelerator_model_name' : '-',
-                        'accelerator_on-chip_memories': '-',
-                        'accelerators_per_node' : '0',
-                    })
-                division_systems[division_system] = template
-                print("=" * 100)
-                print(division_system)
-                print("=" * 100)
-                pprint(template)
-                print("-" * 100)
-                print("")
+
+library_backend_to_printable = {
+    'armnn-v19.08-opencl' : 'ArmNN v19.08 (OpenCL)',
+    'armnn-v19.08-neon' : 'ArmNN v19.08 (Neon)',
+    'armnn-rel.20.05-neon' : 'ArmNN rel.20.05 (Neon)',
+    'tflite-v1.13': 'TFLite v1.13.1',
+    'tflite-v1.15': 'TFLite v1.15.0-rc2',
+    'tflite-v1.15.0': 'TFLite v1.15.0',
+    'tflite-v2.1.1': 'TFLite v2.1.1',
+    'tensorrt-v6.0' : 'TensorRT v6.0',
+    'tensorflow-v1.14-cpu': 'TensorFlow v1.14 (CPU)',
+    'tensorflow-v1.14-cuda': 'TensorFlow v1.14 (CUDA)',
+    'tensorflow-v1.14-tensorrt': 'TensorFlow v1.14 (TensorRT-static)',
+    'tensorflow-v1.14-tensorrt-dynamic': 'TensorFlow v1.14 (TensorRT-dynamic)',
+}
+
+
+def system_description_dictionary(division, platform, library, backend):
+    library_backend = (library + '-' + backend) if backend else library
+    division_system = division + '-' + platform + '-' + library_backend
+
+    if library_backend == 'tensorflow-v1.14-cpu':
+        status = 'RDI'
+    elif library_backend == 'tflite-v1.15.0' or library_backend == 'tensorrt-v6.0':
+        status = 'unofficial'
+    else:
+        status = 'available'
+
+    template = deepcopy(platform_templates[platform])
+    template.update({
+        'division'  : division,
+        'submitter' : 'dividiti', # 'dividiti' if platform != 'velociti' else 'dividiti, Politecnico di Milano'
+        'status'    : status,
+        'framework' : library_backend_to_printable[library_backend]
+    })
+    if (not library_backend.startswith('tensorrt') and not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl')) or library_backend.endswith('cpu'):
+        template.update({
+            'accelerator_frequency' : '-',
+            'accelerator_memory_capacity' : '-',
+            'accelerator_memory_configuration': '-',
+            'accelerator_model_name' : '-',
+            'accelerator_on-chip_memories': '-',
+            'accelerators_per_node' : '0',
+        })
+    return template
 
 
 # <a id="implementations"></a>
@@ -1552,16 +1518,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         system_json_name = '%s.json' % system
         system_json_path = os.path.join(systems_dir, system_json_name)
         with open(system_json_path, 'w') as system_json_file:
-#            pprint(division_system)
-#            pprint(division_systems)
-            system_json = division_systems.get(division_system, default_system_json)
+
+            system_json = system_description_dictionary(division, platform, library, backend)
+
             json.dump(system_json, system_json_file, indent=2)
             print('%s' % systems_dir)
-            if system_json == default_system_json:
-                print('  |_ %s [DEFAULT]' % system_json_name)
-                raise
-            else:
-                print('  |_ %s [%s]' % (system_json_name, division_system))
+            print('  |_ %s [%s]' % (system_json_name, division_system))
 
         #
         #     "code"/
@@ -1871,7 +1833,6 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             if mode == 'accuracy' and not audit:
                 checklist_name = 'submission_checklist.txt'
                 checklist_path = os.path.join(measurements_dir, system, benchmark, scenario, checklist_name)
-                system_json = division_systems.get(division_system, default_system_json)
 
                 # Extract LoadGen revision from the second line of e.g.
                 # "pid": 28660, "tid": 28660, "ts": 8750ns : version : .5a1 @ 61220457de
