@@ -527,7 +527,7 @@ default_implementation_benchmark_json = {
 }
 
 # For each image classification implementation.
-for implementation in [ 'image-classification-tflite', 'image-classification-armnn-tflite' ]:
+for implementation in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
     # Add MobileNet.
     implementation_mobilenet = implementation+'-'+'mobilenet'
     implementation_benchmarks[implementation_mobilenet] = {
@@ -560,16 +560,16 @@ for implementation in [ 'image-classification-tflite', 'image-classification-arm
         base_url = 'https://zenodo.org/record/2269307/files' if version == 1 else 'https://zenodo.org/record/2266646/files'
         url = '{}/mobilenet_v{}_{}_{}{}.tgz'.format(base_url, version, multiplier, resolution, '_quant' if quantized else '')
         benchmark = 'mobilenet-v{}-{}-{}{}'.format(version, multiplier, resolution, '-quantized' if quantized else '')
-        if quantized and (version != 1 or implementation != 'image-classification-tflite'):
+        if quantized and (version != 1 or implementation != 'image-classification-tflite-loadgen'):
             return
-        if implementation == 'image-classification-tflite':
+        if implementation == 'image-classification-tflite-loadgen':
             weights_transformations = 'TFLite'
-        elif implementation == 'image-classification-armnn-tflite':
+        elif implementation == 'image-classification-armnn-tflite-loadgen':
             weights_transformations = 'TFLite -> ArmNN'
         else:
             raise Exception("Unknown implementation '%s'!" % implementation)
-        implementation_benchmark = implementation+'-'+benchmark
-        implementation_benchmarks[implementation_benchmark] = {
+        program_and_model_combination = implementation+'-'+benchmark
+        implementation_benchmarks[program_and_model_combination] = {
             "input_data_types": "uint8" if quantized else "fp32",
             "weight_data_types": "uint8" if quantized else "fp32",
             "retraining": "no",
@@ -697,8 +697,8 @@ object_detection_benchmarks = {
 # For each object detection implementation.
 for implementation in [ 'mlperf-inference-vision' ]:
     for benchmark in object_detection_benchmarks.keys():
-        implementation_benchmark = implementation+'-'+benchmark
-        implementation_benchmarks[implementation_benchmark] = {
+        program_and_model_combination = implementation+'-'+benchmark
+        implementation_benchmarks[program_and_model_combination] = {
             "input_data_types": "fp32",
             "weight_data_types": "fp32",
             "retraining": "no",
@@ -715,7 +715,7 @@ from pprint import pprint
 
 
 implementation_readmes = {}
-implementation_readmes['image-classification-tflite'] = """# MLPerf Inference - Image Classification - TFLite
+implementation_readmes['image-classification-tflite-loadgen'] = """# MLPerf Inference - Image Classification - TFLite
 
 This C++ implementation uses TFLite to run TFLite models for Image Classification on CPUs.
 
@@ -725,7 +725,7 @@ This C++ implementation uses TFLite to run TFLite models for Image Classificatio
 - [Instructions](https://github.com/mlperf/inference/blob/master/v0.5/classification_and_detection/optional_harness_ck/classification/tflite/README.md).
 """
 
-implementation_readmes['image-classification-armnn-tflite'] = """# MLPerf Inference - Image Classification - ArmNN-TFLite
+implementation_readmes['image-classification-armnn-tflite-loadgen'] = """# MLPerf Inference - Image Classification - ArmNN-TFLite
 
 This C++ implementation uses ArmNN with the TFLite frontend to run TFLite models for Image Classification on Arm Cortex CPUs and Arm Mali GPUs.
 
@@ -758,7 +758,7 @@ object detection models and run with TensorRT.
 
 
 implementation_paths = {}
-for implementation in [ 'image-classification-tflite', 'image-classification-armnn-tflite', 'image-classification-tensorrt-loadgen-py', 'mlperf-inference-vision' ]:
+for implementation in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen', 'image-classification-tensorrt-loadgen-py', 'mlperf-inference-vision' ]:
     implementation_uoa = implementation
     if implementation.startswith('image-classification'):
         if implementation.endswith('tflite'):
@@ -1435,12 +1435,28 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if r['return']>0:
             print('Error: %s' % r['error'])
             exit(1)
+
+        experiment_tags     = r['dict']['tags']
+        experiment_points   = r['points']
+        experiment_path     = r['path']
+
+        # Load pipeline to determine the original program_name
+        load_pipeline_adict = { 'action':           'load_pipeline',
+                                'repo_uoa':         repo_uoa,
+                                'module_uoa':       module_uoa,
+                                'data_uoa':         data_uoa,
+        }
+        r=ck.access( load_pipeline_adict )
+        if r['return']>0:
+            print('Error: %s' % r['error'])
+            exit(1)
+
+        program_name = r['pipeline']['choices']['data_uoa']
+
         print("*" * 100)
 
         division=task=platform=library=inference_engine=backend=benchmark=scenario=mode=preprocessing=test=notes = ''
 
-        experiment_tags = r['dict']['tags']
-        #print(experiment_tags)
         for atag in experiment_tags:
             if '.' in atag:     # Expected format: attribute1.value1 , attribute2.value2 , etc - in any order
                 # Example:   "division.open", "submitter.dividiti", "task.image-classification", "platform.xavier",
@@ -1514,15 +1530,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             system = platform+'-'+library
         division_system = division+'-'+system
 
-        if library.startswith('tflite'):
-            program_name = task+'-tflite'
-        elif library.startswith('armnn'):
-            program_name = task+'-armnn-tflite'
-        elif library.startswith('tensorrt'):
-            program_name = task+'-tensorrt-loadgen-py'
-        else: # Official app with CK adaptations.
-            program_name = 'mlperf-inference-vision'
-        implementation_benchmark = program_name+'-'+benchmark
+        program_and_model_combination = program_name+'-'+benchmark
         #
         # Directory structure according to the Inference section of the General MLPerf Submission Rules:
         # https://github.com/mlperf/policies/blob/master/submission_rules.adoc#552-inference
@@ -1610,14 +1618,14 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         system_implementation_json_name = system+'_'+program_name+'.json'
         system_implementation_json_path = os.path.join(scenario_dir, system_implementation_json_name)
         with open(system_implementation_json_path, 'w') as system_implementation_json_file:
-            implementation_benchmark_json = implementation_benchmarks.get(implementation_benchmark, default_implementation_benchmark_json)
-#            pprint(implementation_benchmark)
+            implementation_benchmark_json = implementation_benchmarks.get(program_and_model_combination, default_implementation_benchmark_json)
+#            pprint(program_and_model_combination)
             if implementation_benchmark_json != default_implementation_benchmark_json:
-                print('  |_ %s [for %s]' % (system_implementation_json_name, implementation_benchmark))
+                print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
                 json.dump(implementation_benchmark_json, system_implementation_json_file, indent=2)
             else:
                 print('  |_ %s [DEFAULT]' % system_implementation_json_name)
-                raise Exception("Default implementation for {} !".format(implementation_benchmark))
+                raise Exception("Default implementation for {} !".format(program_and_model_combination))
 
         # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
         measurements_readme_name = 'README.md'
@@ -1640,7 +1648,11 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             print('  |_ %s [for %s %s]' % (measurements_notes_name, division, task))
 
         # Try to find environment for 'user.conf'.
-        loadgen_config_tags='loadgen,config,'+program_name
+        if program_name.endswith('-loadgen'):
+            program_config_tag = program_name[:-len('-loadgen')]
+        else:
+            program_config_tag = program_name
+        loadgen_config_tags='loadgen,config,'+program_config_tag    # FIXME: needs to be fixed on the soft: entry side
         lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
         if lgc['return']>0:
             print('Error: %s' % lgc['error'])
@@ -1673,7 +1685,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         # Copy 'mlperf.conf' from MLPerf Inference source.
         mlperf_conf_name = 'mlperf.conf'
         mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
-        if program_name in [ 'image-classification-tflite', 'image-classification-armnn-tflite' ]:
+        if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
             # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
             with open(mlperf_conf_path, 'w') as mlperf_conf_file:
                 mlperf_conf_file.writelines(mlperf_conf_6122045)
@@ -1736,9 +1748,8 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             if not os.path.exists(mode_dir): os.mkdir(mode_dir)
 
         # For each point (should be one point for each performance run).
-        points = r['points']
-        for (point, point_idx) in zip(points, range(1,len(points)+1)):
-            point_file_path = os.path.join(r['path'], 'ckp-%s.0001.json' % point)
+        for (point, point_idx) in zip(experiment_points, range(1,len(experiment_points)+1)):
+            point_file_path = os.path.join(experiment_path, 'ckp-%s.0001.json' % point)
             with open(point_file_path) as point_file:
                 point_data_raw = json.load(point_file)
             characteristics_list = point_data_raw['characteristics_list']
