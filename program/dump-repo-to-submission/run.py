@@ -131,9 +131,14 @@ library_backend_to_printable = {
 }
 
 
-def system_description_dictionary(division, platform, library, backend):
+system_description_cache = {}
+
+def dump_system_description_dictionary(target_path, division, platform, library, backend):
     library_backend = (library + '-' + backend) if backend else library
     division_system = division + '-' + platform + '-' + library_backend
+
+    if target_path in system_description_cache:
+        return system_description_cache[target_path]
 
     if library_backend == 'tensorflow-v1.14-cpu':
         status = 'RDI'
@@ -158,6 +163,12 @@ def system_description_dictionary(division, platform, library, backend):
             'accelerator_on-chip_memories': '-',
             'accelerators_per_node' : '0',
         })
+
+    with open(target_path, 'w') as system_description_file:
+        json.dump(template, system_description_file, indent=2)
+
+    system_description_cache[target_path] = template
+
     return template
 
 
@@ -1206,13 +1217,10 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if not os.path.exists(systems_dir): os.mkdir(systems_dir)
         system_json_name = '%s.json' % system
         system_json_path = os.path.join(systems_dir, system_json_name)
-        with open(system_json_path, 'w') as system_json_file:
 
-            system_json = system_description_dictionary(division, platform, library, backend)
-
-            json.dump(system_json, system_json_file, indent=2)
-            print('%s' % systems_dir)
-            print('  |_ %s [%s]' % (system_json_name, division_system))
+        system_json = dump_system_description_dictionary(system_json_path, division, platform, library, backend)
+        print('%s' % systems_dir)
+        print('  |_ %s [%s]' % (system_json_name, division_system))
 
         #
         #     "code"/
