@@ -114,18 +114,20 @@ platform_templates = { sut['data_uoa']: sut['meta']['data'] for sut in r['lst'] 
 
 
 library_backend_to_printable = {
-    'armnn-v19.08-opencl' : 'ArmNN v19.08 (OpenCL)',
-    'armnn-v19.08-neon' : 'ArmNN v19.08 (Neon)',
-    'armnn-rel.20.05-neon' : 'ArmNN rel.20.05 (Neon)',
-    'tflite-v1.13': 'TFLite v1.13.1',
-    'tflite-v1.15': 'TFLite v1.15.0-rc2',
-    'tflite-v1.15.0': 'TFLite v1.15.0',
-    'tflite-v2.1.1': 'TFLite v2.1.1',
-    'tensorrt-v6.0' : 'TensorRT v6.0',
-    'tensorflow-v1.14-cpu': 'TensorFlow v1.14 (CPU)',
-    'tensorflow-v1.14-cuda': 'TensorFlow v1.14 (CUDA)',
-    'tensorflow-v1.14-tensorrt': 'TensorFlow v1.14 (TensorRT-static)',
-    'tensorflow-v1.14-tensorrt-dynamic': 'TensorFlow v1.14 (TensorRT-dynamic)',
+    'armnn-v19.08-opencl':              'ArmNN v19.08 (OpenCL)',
+    'armnn-v19.08-neon':                'ArmNN v19.08 (Neon)',
+    'armnn-rel.20.05-neon':             'ArmNN rel.20.05 (Neon)',
+    'armnn-rel.20.05-opencl':           'ArmNN rel.20.05 (OpenCL)',
+    'tflite-v1.13':                     'TFLite v1.13.1',
+    'tflite-v1.15':                     'TFLite v1.15.0-rc2',
+    'tflite-v1.15.0':                   'TFLite v1.15.0',
+    'tflite-v2.1.1':                    'TFLite v2.1.1',
+    'tflite-v2.2.0-ruy':                'TFLite v.2.2.0 (Ruy)',
+    'tensorrt-v6.0' :                   'TensorRT v6.0',
+    'tensorflow-v1.14-cpu':             'TensorFlow v1.14 (CPU)',
+    'tensorflow-v1.14-cuda':            'TensorFlow v1.14 (CUDA)',
+    'tensorflow-v1.14-tensorrt':        'TensorFlow v1.14 (TensorRT-static)',
+    'tensorflow-v1.14-tensorrt-dynamic':'TensorFlow v1.14 (TensorRT-dynamic)',
 }
 
 
