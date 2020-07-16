@@ -223,11 +223,20 @@ for implementation in [ 'image-classification-tflite-loadgen', 'image-classifica
     }
     # Add any MobileNets-v1,v2 model.
     def add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=False):
-        base_url = 'https://zenodo.org/record/2269307/files' if version == 1 else 'https://zenodo.org/record/2266646/files'
-        url = '{}/mobilenet_v{}_{}_{}{}.tgz'.format(base_url, version, multiplier, resolution, '_quant' if quantized else '')
+        if version==1:
+            base_url = 'https://zenodo.org/record/2269307/files'
+            url = '{}/mobilenet_v{}_{}_{}{}.tgz'.format(base_url, version, multiplier, resolution, '_quant' if quantized else '')
+        elif version==2:
+            if quantized:
+                base_url = 'https://storage.googleapis.com/mobilenet_v2/checkpoints'
+                multiplier_percent = int(100*multiplier)
+                url = '{}/quantized_v{}_{}_{}.tgz'.format(base_url, version, resolution, multiplier_percent)
+            else:
+                base_url = 'https://zenodo.org/record/2266646/files'
+                url = '{}/mobilenet_v{}_{}_{}.tgz'.format(base_url, version, multiplier, resolution)
+
         benchmark = 'mobilenet-v{}-{}-{}{}'.format(version, multiplier, resolution, '-quantized' if quantized else '')
-        if quantized and (version != 1 or implementation != 'image-classification-tflite-loadgen'):
-            return
+
         if implementation == 'image-classification-tflite-loadgen':
             weights_transformations = 'TFLite'
         elif implementation == 'image-classification-armnn-tflite-loadgen':
@@ -253,9 +262,13 @@ for implementation in [ 'image-classification-tflite-loadgen', 'image-classifica
     version = 2
     for multiplier in [ 1.0, 0.75, 0.5, 0.35 ]:
         for resolution in [ 224, 192, 160, 128, 96 ]:
-            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution)
-    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.3, resolution=224)
-    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.4, resolution=224)
+            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=False)
+            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=True)
+
+    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.3, resolution=224, quantized=False)
+    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.3, resolution=224, quantized=True)
+    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.4, resolution=224, quantized=False)
+    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.4, resolution=224, quantized=True)
 
 for implementation in [ 'image-classification-tensorrt-loadgen-py']:
     # Add ResNet.
