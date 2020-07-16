@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "dd04628a2cc32cdf",
+  "backup_module_uid": "88eef0cd8c43b68a",
+  "backup_module_uoa": "docker",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-07-16T07:46:01.522518",
+    "version": [
+      "1",
+      "15",
+      "0"
+    ]
+  },
+  "data_name": "mlperf-inference-v0.7.openvino"
+}
