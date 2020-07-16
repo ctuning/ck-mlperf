@@ -109,7 +109,7 @@ RUN ck install package --tags=lib,python-package,absl
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=lib,opencv,v4.3.0
 RUN ck install package --tags=lib,boost,v1.67.0 --no_tags=min-for-caffe
-RUN ck install package --tags=mlperf,inference,source,upstream.master
+RUN ck install package --tags=mlperf,inference,source,dividiti.v0.5-intel
 RUN ck install package --tags=lib,loadgen,static
 #-----------------------------------------------------------------------------#
 
@@ -118,7 +118,8 @@ RUN ck install package --tags=lib,loadgen,static
 # Step 3. Install the OpenVINO release to be used for MLPerf Inference v0.7.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=lib,openvino,2020.2
-RUN ck compile ck-openvino:program:mlperf-inference-v0.5
+RUN ck compile ck-openvino:program:mlperf-inference-v0.5 \
+--dep_add_tags.opencv=with-variations
 #-----------------------------------------------------------------------------#
 
 
@@ -134,24 +135,24 @@ RUN ${CK_PYTHON}  -m pip install --user \
 RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
 #-----------------------------------------------------------------------------#
 
-
-#-----------------------------------------------------------------------------#
-# Step 5. Install the official ResNet model for MLPerf Inference v0.7
-# and convert it into the OpenVINO format.
-#-----------------------------------------------------------------------------#
-RUN ck install package --tags=model,tf,mlperf,resnet --no_tags=ssd
-RUN ck install package --tags=model,openvino,resnet50
-#-----------------------------------------------------------------------------#
-
-
-#-----------------------------------------------------------------------------#
-# Step 6. Install the official MobileNet model for MLPerf Inference v0.5
-# and convert it into the OpenVINO format. NB: For the open division only.
-#-----------------------------------------------------------------------------#
-RUN ck install package --tags=model,tf,mlperf,mobilenet-v1-1.0-224,non-quantized
-RUN ck install package --tags=model,openvino,mobilenet
-#-----------------------------------------------------------------------------#
-
+#- 
+#- #-----------------------------------------------------------------------------#
+#- # Step 5. Install the official ResNet model for MLPerf Inference v0.7
+#- # and convert it into the OpenVINO format.
+#- #-----------------------------------------------------------------------------#
+#- RUN ck install package --tags=model,tf,mlperf,resnet --no_tags=ssd
+#- RUN ck install package --tags=model,openvino,resnet50
+#- #-----------------------------------------------------------------------------#
+#- 
+#- 
+#- #-----------------------------------------------------------------------------#
+#- # Step 6. Install the official MobileNet model for MLPerf Inference v0.5
+#- # and convert it into the OpenVINO format. NB: For the open division only.
+#- #-----------------------------------------------------------------------------#
+#- RUN ck install package --tags=model,tf,mlperf,mobilenet-v1-1.0-224,non-quantized
+#- RUN ck install package --tags=model,openvino,mobilenet
+#- #-----------------------------------------------------------------------------#
+#- 
 
 #-----------------------------------------------------------------------------#
 # Step 7. Install the official SSD-MobileNet model for MLPerf Inference v0.7
@@ -186,16 +187,30 @@ RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
 RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=raw,val`/val_map.txt
 #-----------------------------------------------------------------------------#
 
+#- 
+#- #-----------------------------------------------------------------------------#
+#- # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
+#- # with the quantized ResNet model
+#- # on the first 500 images of the ImageNet 2012 validation dataset
+#- # using all (virtual) CPU cores.
+#- #-----------------------------------------------------------------------------#
+#- CMD ["export NPROCS=`grep -c processor /proc/cpuinfo` \
+#-  && ck run ck-openvino:program:mlperf-inference-v0.5 --skip_print_timers \
+#-     --cmd_key=image-classification --env.CK_OPENVINO_MODEL_NAME=resnet50 \
+#-     --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=500 \
+#-     --env.CK_OPENVINO_NTHREADS=$NPROCS --env.CK_OPENVINO_NSTREAMS=$NPROCS --env.CK_OPENVINO_NIREQ=$NPROCS \
+#-  && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/accuracy.txt"]
+#-
 
 #-----------------------------------------------------------------------------#
 # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
-# with the quantized ResNet model
-# on the first 500 images of the ImageNet 2012 validation dataset
+# with the quantized SSD-MobileNet model
+# on the first 50 images of the COCO 2017 validation dataset
 # using all (virtual) CPU cores.
 #-----------------------------------------------------------------------------#
 CMD ["export NPROCS=`grep -c processor /proc/cpuinfo` \
  && ck run ck-openvino:program:mlperf-inference-v0.5 --skip_print_timers \
-    --cmd_key=image-classification --env.CK_OPENVINO_MODEL_NAME=resnet50 \
-    --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=500 \
+    --cmd_key=object-detection --env.CK_OPENVINO_MODEL_NAME=ssd-mobilenet \
+    --env.CK_LOADGEN_SCENARIO=Offline --env.CK_LOADGEN_MODE=Accuracy --env.CK_LOADGEN_DATASET_SIZE=50 \
     --env.CK_OPENVINO_NTHREADS=$NPROCS --env.CK_OPENVINO_NSTREAMS=$NPROCS --env.CK_OPENVINO_NIREQ=$NPROCS \
  && cat /home/dvdt/CK_REPOS/ck-openvino/program/mlperf-inference-v0.5/tmp/accuracy.txt"]
