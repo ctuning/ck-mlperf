@@ -134,6 +134,45 @@
         "orig": [ { "CK_RNNT_DEC": "orig" } ],
         "naive": [ { "CK_RNNT_DEC": "naive" } ]
       }
+    },
+    "plugins-pre-glow": {
+      "local": "yes",
+      "name": "GLOW LSTM RNNT Pre plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-pre,glow",
+      "enable_if_env": [
+        { "CK_RNNT_PRE_BACKEND": ["glow"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_PRE": "orig" } ],
+        "naive": [ { "CK_RNNT_PRE": "naive" } ]
+      }
+    },
+    "plugins-post-glow": {
+      "local": "yes",
+      "name": "GLOW LSTM RNNT Post plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-post,glow",
+      "enable_if_env": [
+        { "CK_RNNT_POST_BACKEND": ["glow"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_POST": "orig" } ],
+        "naive": [ { "CK_RNNT_POST": "naive" } ]
+      }
+    },
+    "plugins-dec-glow": {
+      "local": "yes",
+      "name": "GLOW LSTM RNNT Dec plugin",
+      "sort": 120,
+      "tags": "nntest,plugin,rnnt-dec,glow",
+      "enable_if_env": [
+        { "CK_RNNT_DEC_BACKEND": ["glow"] }
+      ],
+      "update_tags_if_env" : {
+        "orig": [ { "CK_RNNT_DEC": "orig" } ],
+        "naive": [ { "CK_RNNT_DEC": "naive" } ]
+      }
     }
   },
   "run_vars": {
