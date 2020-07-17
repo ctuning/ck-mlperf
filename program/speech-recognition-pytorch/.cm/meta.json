@@ -188,7 +188,7 @@
     "CK_RNNT_MANIFEST": "$<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json",
     "CK_RNNT_SEED": "87",
     "CK_RNNT_TOML": "$<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/configs/rnnt.toml",
-    "CK_RNNT_MAX_DURATION": 3600.0,
+    "CK_RNNT_MAX_DURATION": 15,
     "CK_RNNT_PRE_BACKEND": "pytorch",
     "CK_RNNT_PRE": "orig",
     "CK_RNNT_POST_BACKEND": "pytorch",
