@@ -118,6 +118,8 @@ RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
 RUN ck install package --tags=python-package,loadgen
 #-----------------------------------------------------------------------------#
 
+# FIXME: Temporary workaround until NNTest plugins' deps are made conditional.
+RUN ck pull repo:ck-nntest
 
 #-----------------------------------------------------------------------------#
 # Run the Speech Recognition RNNT program in the accuracy mode.

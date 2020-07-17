@@ -109,6 +109,8 @@ RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
 #- RUN ck install package --tags=python-package,loadgen
 #-----------------------------------------------------------------------------#
 
+# FIXME: Temporary workaround until NNTest plugins' deps are made conditional.
+RUN ck pull repo:ck-nntest
 
 #+ #-----------------------------------------------------------------------------#
 #+ # Step 6. Pull all the implicit dependencies commented out in Steps 1-5.
