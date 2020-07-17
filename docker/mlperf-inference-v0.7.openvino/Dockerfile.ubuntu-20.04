@@ -122,19 +122,19 @@ RUN ck compile ck-openvino:program:mlperf-inference-v0.5 \
 --dep_add_tags.opencv=with-variations
 #-----------------------------------------------------------------------------#
 
-
-#-----------------------------------------------------------------------------#
-# Step 4. Install the first 500 images of the ImageNet 2012 validation dataset
-# to use as the calibration dataset for image classification models.
-#-----------------------------------------------------------------------------#
-RUN ck install package --tags=dataset,imagenet,cal,all.500
-# Install misc Python dependencies required for calibration.
-RUN ${CK_PYTHON}  -m pip install --user \
-    nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
-# Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
-RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
-#-----------------------------------------------------------------------------#
-
+#-
+#- #-----------------------------------------------------------------------------#
+#- # Step 4. Install the first 500 images of the ImageNet 2012 validation dataset
+#- # to use as the calibration dataset for image classification models.
+#- #-----------------------------------------------------------------------------#
+#- RUN ck install package --tags=dataset,imagenet,cal,all.500
+#- # Install misc Python dependencies required for calibration.
+#- RUN ${CK_PYTHON} -m pip install --user \
+#-     nibabel pillow progress py-cpuinfo pyyaml shapely sklearn tqdm xmltodict yamlloader
+#- # Install "headless" OpenCV (which doesn't need libsm6, libxext6, libxrender-dev).
+#- RUN ck install package --tags=lib,python-package,cv2,opencv-python-headless
+#- #-----------------------------------------------------------------------------#
+#-
 #- 
 #- #-----------------------------------------------------------------------------#
 #- # Step 5. Install the official ResNet model for MLPerf Inference v0.7
