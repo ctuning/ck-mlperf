@@ -5,9 +5,9 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 
 | `CK_TAG` (`Dockerfile`'s extension)  | Python | GCC   | Comments |
 |-|-|-|-|
-| `centos-7` | 3.7.7 | 8.3.1 | Updated Python (from 2.7) and GCC (from 4.8) |
+| `centos-7` | 3.7.8 | 8.3.1 | Updated Python (from 2.7) and GCC (from 4.8) |
 | `centos-8` | 3.6.8 | 8.3.1 ||
-| `centos-8.python3.7` | 3.7.7 | 8.3.1 | Updated Python (from 3.6) |
+| `centos-8.python3.7` | 3.7.8 | 8.3.1 | Updated Python (from 3.6) |
 | `debian-9`  | 3.5.3 | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0` |
 | `debian-10` | 3.7.3 | 8.3.0 ||
 | `ubuntu-16.04` | 3.5.x | 6.x.x | `numba==0.47`, `llvmlite=0.31.0` |
@@ -44,7 +44,7 @@ $ export CK_IMAGE=speech-recognition.rnnt CK_TAG=centos-7
 $ docker run -it --rm ctuning/$CK_IMAGE:$CK_TAG "ck show env --tags=compiler,python"
 Env UID:         Target OS: Bits: Name:  Version: Tags:
 
-ef09a59ce5645ffc   linux-64    64 python 3.7.7    64bits,compiler,host-os-linux-64,lang-python,python,target-os-linux-64,v3,v3.7,v3.7.7
+ef09a59ce5645ffc   linux-64    64 python 3.7.8    64bits,compiler,host-os-linux-64,lang-python,python,target-os-linux-64,v3,v3.7,v3.7.8
 
 $ docker run -it --rm ctuning/$CK_IMAGE:$CK_TAG "ck show env --tags=compiler,gcc"
 Env UID:         Target OS: Bits: Name:          Version: Tags:
