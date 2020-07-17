@@ -113,7 +113,7 @@ RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
 #+ #-----------------------------------------------------------------------------#
 #+ # Step 6. Pull all the implicit dependencies commented out in Steps 1-5.
 #+ #-----------------------------------------------------------------------------#
-RUN ck run program:speech-recognition-pytorch-loadgen --cmd_key=default --skip_print_timers
+RUN ck run program:speech-recognition-pytorch-loadgen --cmd_key=performance --skip_print_timers
 #+ #-----------------------------------------------------------------------------#
 
 
