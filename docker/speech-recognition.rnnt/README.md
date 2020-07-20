@@ -13,6 +13,7 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 | `ubuntu-16.04` | 3.5.x | 6.x.x | `numba==0.47`, `llvmlite=0.31.0` |
 | `ubuntu-18.04` | 3.6.9 | 7.5.0 ||
 | `ubuntu-20.04` | 3.8.2 | 9.3.0 ||
+| `ubuntu-20.04.min` | 3.8.2 | 9.3.0 | Make some steps implicit (comment out with `#-`). |
 | `amazonlinux`     | 3.7.6 | 7.3.1 ||
 | `amazonlinux.min` | 3.7.6 | 7.3.1 | Make some steps implicit (comment out with `#-`). |
 
@@ -24,6 +25,7 @@ It is instructive to diff the following image pairs:
 - `ubuntu-16.04` and `debian-9` (as they are nearly identical).
 - `ubuntu-18.04` and `debian-10` (as they are nearly identical).
 - `ubuntu-18.04` and `ubuntu-20.04` (as they are nearly identical).
+- `ubuntu-20.04` and `ubuntu-20.04.min` (as the latter is derived from the former).
 - `amazonlinux` and `centos-8` (as Amazon Linux is similar to CentOS).
 - `amazonlinux` and `amazonlinux.min` (as the latter is derived from the former).
 
