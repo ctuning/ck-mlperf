@@ -10,13 +10,13 @@
     "accuracy": {
       "ignore_return_code": "no",
       "run_time": {
-        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$ --max_duration $<<CK_RNNT_MAX_DURATION>>$"
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$ --max_duration $<<CK_RNNT_MAX_DURATION>>$ --min_duration $<<CK_RNNT_MIN_DURATION>>$"
       }
     },
     "performance": {
       "ignore_return_code": "no",
       "run_time": {
-        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$ --max_duration $<<CK_RNNT_MAX_DURATION>>$"
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$ --max_duration $<<CK_RNNT_MAX_DURATION>>$ --min_duration $<<CK_RNNT_MIN_DURATION>>$"
       }
     },
     "instr": {
@@ -28,7 +28,7 @@
           "module_uoa": "script",
           "script_name": "postprocess"
         },
-        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$ --max_duration $<<CK_RNNT_MAX_DURATION>>$ --instr"
+        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/inference.py --dataset_dir  $<<CK_RNNT_DATASET>>$ --val_manifest $<<CK_RNNT_MANIFEST>>$ --model_toml $<<CK_RNNT_TOML>>$ --ckpt $<<CK_RNNT_CHECKPOINT>>$  --batch_size $<<CK_RNNT_BATCH_SIZE>>$ --seed $<<CK_RNNT_SEED>>$ --max_duration $<<CK_RNNT_MAX_DURATION>>$ --min_duration $<<CK_RNNT_MIN_DURATION>>$ --instr"
       }
     }
   },
@@ -189,6 +189,7 @@
     "CK_RNNT_SEED": "87",
     "CK_RNNT_TOML": "$<<CK_ENV_MLPERF_INFERENCE>>$/v0.7/speech_recognition/rnnt/pytorch/configs/rnnt.toml",
     "CK_RNNT_MAX_DURATION": 15,
+    "CK_RNNT_MIN_DURATION": 0.1,
     "CK_RNNT_PRE_BACKEND": "pytorch",
     "CK_RNNT_PRE": "orig",
     "CK_RNNT_POST_BACKEND": "pytorch",
