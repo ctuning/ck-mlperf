@@ -12,7 +12,7 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # CK needs: git, wget, zip.
 # OpenVINO needs: CMake.
 # cv2 needs: libgthread-2.0.
-# Python 3.7 needs: libssl, etc.
+# Python 3.7 needs: libssl, libbz2, libffi.
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update -y\
  && apt install -y apt-utils\
@@ -21,8 +21,8 @@ RUN apt update -y\
  git wget zip libz-dev\
  cmake\
  libgtk2.0-dev\
- vim\
- libssl-dev libxml2-dev libxslt-dev libreadline-gplv2-dev libncursesw5-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev\
+ libssl-dev libbz2-dev libffi-dev\
+ vim tree\
  && apt clean
 
 # Install Python 3.7 (needed to install TensorFlow 1.15.2 via pip).
@@ -183,10 +183,10 @@ RUN ck install package --tags=tool,coco,api
 #-----------------------------------------------------------------------------#
 # Allow the program create tmp files when running under an external user.
 RUN chmod -R g+rwx `ck find ck-openvino:program:mlperf-inference-v0.5`
-# The program expects to find val_map.txt in the dataset directory (segfaults otherwise).
-RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=raw,val`/val_map.txt
-#-----------------------------------------------------------------------------#
-
+#- # The program expects to find val_map.txt in the dataset directory (segfaults otherwise).
+#- RUN head -n 500 `ck locate env --tags=aux`/val.txt > `ck locate env --tags=raw,val`/val_map.txt
+#- #-----------------------------------------------------------------------------#
+#- 
 #- 
 #- #-----------------------------------------------------------------------------#
 #- # Run the OpenVINO program that Intel prepared for MLPerf Inference v0.5
