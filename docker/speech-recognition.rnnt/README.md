@@ -10,7 +10,7 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 | `centos-8.python3.7` | 3.7.8 | 8.3.1 | Updated Python (from 3.6) |
 | `debian-9`  | 3.5.3 | 6.3.0 | `numba==0.47`, `llvmlite=0.31.0` |
 | `debian-10` | 3.7.3 | 8.3.0 ||
-| `ubuntu-16.04` | 3.5.2 | 5.4.0 | **FIXME:** Should update Python as 3.5.2 does not support [f-strings](https://www.python.org/dev/peps/pep-0498/). `numba==0.47`, `llvmlite=0.31.0`. |
+| `ubuntu-16.04` | 3.7.8 | 5.4.0 | Updated Python, as 3.5.2 does not support [f-strings](https://www.python.org/dev/peps/pep-0498/). |
 | `ubuntu-18.04` | 3.6.9 | 7.5.0 ||
 | `ubuntu-20.04` | 3.8.2 | 9.3.0 ||
 | `ubuntu-20.04.min` | 3.8.2 | 9.3.0 | Make some steps implicit (comment out with `#-`). |
