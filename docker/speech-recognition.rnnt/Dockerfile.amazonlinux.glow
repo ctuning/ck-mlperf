@@ -124,26 +124,26 @@ RUN ck install package --tags=tool,cmake,v3.14.3               --dep_add_tags.co
 RUN ck install package --tags=lib,gflags,v2.2.0                --dep_add_tags.compiler=gcc
 RUN ck install package --tags=lib,glog,v0.3.5                  --dep_add_tags.compiler=gcc
 RUN ck install package --tags=lib,boost,v1.65.1,without-python --dep_add_tags.compiler=gcc
-RUN ck install package --tags=lib,protobuf-host,v3.0.0         --dep_add_tags.host-compiler=gcc
+RUN ck install package --tags=lib,protobuf-host,v3.5.1         --dep_add_tags.host-compiler=gcc
 RUN ck install package --tags=lib,fmt                          --dep_add_tags.compiler=gcc
-RUN ck install package --tags=compiler,llvm,source,v8
+RUN ck install package --tags=compiler,llvm,source,v8          --dep_add_tags.compiler=gcc
 RUN ck install package --tags=compiler,glow                    --dep_add_tags.compiler=gcc
 #-----------------------------------------------------------------------------#
 
-RUN echo "2"
 
 #-----------------------------------------------------------------------------#
 # Step 7.Install Glow plugins for the Pre-, Post- and Dec-RNNs.
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=nntest,plugin,rnnt-pre,orig,glow  --dep_add_tags.compiler=gcc
-#RUN ck install package --tags=nntest,plugin,rnnt-post,orig,glow --dep_add_tags.compiler=gcc
-#RUN ck install package --tags=nntest,plugin,rnnt-dec,orig,glow  --dep_add_tags.compiler=gcc
-#RUN ck run program:speech-recognition-pytorch --cmd_key=performance \
-#--env.CK_RNNT_MAX_DURATION=2 \
-#--env.CK_RNNT_PRE=orig  --env.CK_RNNT_PRE_BACKEND=glow  \
-#--env.CK_RNNT_POST=orig --env.CK_RNNT_POST_BACKEND=glow \
-#--env.CK_RNNT_DEC=orig  --env.CK_RNNT_DEC_BACKEND=glow  \
-#--skip_print_timers
+RUN ck install package --tags=nntest,plugin,rnnt-post,orig,glow --dep_add_tags.compiler=gcc
+RUN ck install package --tags=nntest,plugin,rnnt-dec,orig,glow  --dep_add_tags.compiler=gcc
+RUN ${CK_PYTHON} -m pip install torchvision --user
+RUN ck run program:speech-recognition-pytorch --cmd_key=performance \
+--env.CK_RNNT_MAX_DURATION=2 \
+--env.CK_RNNT_PRE=orig  --env.CK_RNNT_PRE_BACKEND=glow  \
+--env.CK_RNNT_POST=orig --env.CK_RNNT_POST_BACKEND=glow \
+--env.CK_RNNT_DEC=orig  --env.CK_RNNT_DEC_BACKEND=glow  \
+--skip_print_timers
 #-----------------------------------------------------------------------------#
 
 
