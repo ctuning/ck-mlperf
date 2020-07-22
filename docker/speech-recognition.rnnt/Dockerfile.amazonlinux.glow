@@ -12,7 +12,7 @@ ENTRYPOINT ["/bin/bash", "-c"]
 # CK needs: git, wget, zip, unzip.
 # FLAC needs: tar, xz.
 # Speech Recognition program needs: sndfile-devel.
-# Glow needs: everything else.
+# Glow needs: everything else (libssl-devel should be removed).
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm\
  && yum upgrade -y\
  && yum install -y\
@@ -22,8 +22,12 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
  git wget zip unzip\
  tar xz\
  libsndfile-devel\
- graphviz libpng-devel ninja-build double-conversion-devel libevent-devel jemalloc-devel libxcb-devel libssl-devel openssl-devel bzip2-devel libffi-devel libatomic\
+ graphviz libpng-devel ninja-build double-conversion-devel libevent-devel jemalloc-devel libxcb-devel openssl-devel bzip2-devel libffi-devel libatomic\
  && yum clean all
+
+# Glow expects 'ninja' but distro provides 'ninja-build'. Hence, the workaround equivalent to:
+# $ ln -s /usr/bin/ninja-build /usr/bin/ninja
+RUN update-alternatives --install /usr/bin/ninja ninja /usr/bin/ninja-build 10
 
 # Create non-root user.
 RUN useradd --create-home --user-group --shell /bin/bash dvdt
@@ -110,6 +114,20 @@ RUN ck install package --tags=model,pytorch,rnnt
 #-----------------------------------------------------------------------------#
 RUN ck install package --tags=mlperf,inference,source,dividiti.rnnt
 RUN ck install package --tags=python-package,loadgen
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
+# Step 6. Install explicit Glow dependencies. Take care to compile with GCC.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=tool,cmake,v3.14.3               --dep_add_tags.compiler=gcc
+RUN ck install package --tags=lib,gflags,v2.2.0                --dep_add_tags.compiler=gcc
+RUN ck install package --tags=lib,glog,v0.3.5                  --dep_add_tags.compiler=gcc
+RUN ck install package --tags=lib,boost,v1.65.1,without-python --dep_add_tags.compiler=gcc
+RUN ck install package --tags=lib,protobuf-host,v3.0.0         --dep_add_tags.host-compiler=gcc
+RUN ck install package --tags=lib,fmt                          --dep_add_tags.compiler=gcc
+RUN ck install package --tags=compiler,llvm,source,v8
+RUN ck install package --tags=compiler,glow                    --dep_add_tags.compiler=gcc
 #-----------------------------------------------------------------------------#
 
 
