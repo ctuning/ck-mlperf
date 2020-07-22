@@ -130,6 +130,7 @@ RUN ck install package --tags=compiler,llvm,source,v8
 RUN ck install package --tags=compiler,glow                    --dep_add_tags.compiler=gcc
 #-----------------------------------------------------------------------------#
 
+RUN echo "2"
 
 #-----------------------------------------------------------------------------#
 # Step 7.Install Glow plugins for the Pre-, Post- and Dec-RNNs.
