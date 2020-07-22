@@ -132,6 +132,21 @@ RUN ck install package --tags=compiler,glow                    --dep_add_tags.co
 
 
 #-----------------------------------------------------------------------------#
+# Step 7.Install Glow plugins for the Pre-, Post- and Dec-RNNs.
+#-----------------------------------------------------------------------------#
+RUN ck install package --tags=nntest,plugin,rnnt-pre,orig,glow  --dep_add_tags.compiler=gcc
+#RUN ck install package --tags=nntest,plugin,rnnt-post,orig,glow --dep_add_tags.compiler=gcc
+#RUN ck install package --tags=nntest,plugin,rnnt-dec,orig,glow  --dep_add_tags.compiler=gcc
+#RUN ck run program:speech-recognition-pytorch --cmd_key=performance \
+#--env.CK_RNNT_MAX_DURATION=2 \
+#--env.CK_RNNT_PRE=orig  --env.CK_RNNT_PRE_BACKEND=glow  \
+#--env.CK_RNNT_POST=orig --env.CK_RNNT_POST_BACKEND=glow \
+#--env.CK_RNNT_DEC=orig  --env.CK_RNNT_DEC_BACKEND=glow  \
+#--skip_print_timers
+#-----------------------------------------------------------------------------#
+
+
+#-----------------------------------------------------------------------------#
 # Run the Speech Recognition RNNT program in the accuracy mode.
 #-----------------------------------------------------------------------------#
-CMD ["ck run program:speech-recognition-pytorch-loadgen --cmd_key=accuracy --skip_print_timers"]
+CMD ["ck run program:speech-recognition-pytorch --cmd_key=accuracy --skip_print_timers"]
