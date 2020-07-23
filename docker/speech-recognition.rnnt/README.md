@@ -16,6 +16,8 @@ tests automated, customizable and reproducible [Collective Knowledge](http://ckn
 | `ubuntu-20.04.min` | 3.8.2 | 9.3.0 | Make some steps implicit (comment out with `#-`). |
 | `amazonlinux`     | 3.7.6 | 7.3.1 ||
 | `amazonlinux.min` | 3.7.6 | 7.3.1 | Make some steps implicit (comment out with `#-`). |
+| `amazonlinux.glow` | 3.7.6 | 7.3.1 | Install the Glow compiler and its dependencies. |
+| `amazonlinux.glow.min` | 3.7.6 | 7.3.1 | Make some steps implicit (comment out with `#-`). |
 
 It is instructive to diff the following image pairs:
 - `centos-7` and `centos-8.python3.7` (as both update Python to the same version).
@@ -28,6 +30,8 @@ It is instructive to diff the following image pairs:
 - `ubuntu-20.04` and `ubuntu-20.04.min` (as the latter is derived from the former).
 - `amazonlinux` and `centos-8` (as Amazon Linux is similar to CentOS).
 - `amazonlinux` and `amazonlinux.min` (as the latter is derived from the former).
+- `amazonlinux` and `amazonlinux.glow` (as the latter is derived from the former).
+- `amazonlinux.glow` and `amazonlinux.glow.min` (as the latter is derived from the former).
 
 ## Build
 
