@@ -10,8 +10,9 @@ ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip, unzip.
-# Python needs: libssl-dev, libbz2-dev.
+# Python needs: ssl, bz2, lzma.
 # Speech Recognition program needs: sndfile (which in turn needs ffi).
+# librosa needs: scipy (which in turn needs gfortran, lapack, blas).
 ENV DEBIAN_FRONTEND="noninteractive" 
 RUN apt update -y\
  && apt install -y apt-utils\
@@ -20,8 +21,9 @@ RUN apt update -y\
  gcc g++\
  make patch vim\
  git wget zip libz-dev\
- libssl-dev libbz2-dev\
+ libssl-dev libbz2-dev liblzma-dev\
  libsndfile1-dev libffi-dev\
+ gfortran libblas-dev liblapack-dev\
  && apt clean
 
 # Install Python 3.7. (If upgrading to 3.8 or higher, also change CK_PYTHON below.)
@@ -91,7 +93,8 @@ RUN ${CK_PYTHON} -m pip install --user wheel
 # Install other program dependencies.
 # NB: tqdm is just a progress bar, can go?
 # NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
-RUN ${CK_PYTHON} -m pip install --user tqdm toml unidecode inflect sndfile librosa numba==0.48
+# NB: pylzma doesn't cause for any other images?
+RUN ${CK_PYTHON} -m pip install --user tqdm toml unidecode inflect sndfile librosa numba==0.48 pylzma
 #-----------------------------------------------------------------------------#
 
 
