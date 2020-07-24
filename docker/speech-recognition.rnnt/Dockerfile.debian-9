@@ -80,7 +80,6 @@ RUN ${CK_PYTHON} -m pip install --user wheel
 # Install other program dependencies.
 # NB: llvmlite is unvailable for Python 3.5 from 0.32.0: https://github.com/numba/llvmlite/issues/471
 RUN ${CK_PYTHON} -m pip install --user llvmlite --prefer-binary
-# NB: tqdm is just a progress bar, can go?
 # NB: numba 0.48 is unavailable for Python 3.5, hence 0.47.
 RUN ${CK_PYTHON} -m pip install --user tqdm toml unidecode inflect sndfile librosa numba==0.47
 #-----------------------------------------------------------------------------#

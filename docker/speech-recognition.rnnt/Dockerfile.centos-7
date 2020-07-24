@@ -90,7 +90,6 @@ RUN ck install package --tags=python-package,pandas
 RUN ck install package --tags=python-package,absl
 RUN ${CK_PYTHON} -m pip install --user wheel
 # Install other program dependencies.
-# NB: tqdm is just a progress bar, can go?
 # NB: Fix numba version: https://github.com/librosa/librosa/issues/1160
 RUN ${CK_PYTHON} -m pip install --user tqdm toml unidecode inflect sndfile librosa numba==0.48
 #-----------------------------------------------------------------------------#
