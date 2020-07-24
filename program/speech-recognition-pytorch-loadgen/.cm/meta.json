@@ -42,11 +42,23 @@
     }
   },
   "run_deps": {
-    "dataset": {
+    "dataset-dev-clean": {
       "local": "yes",
       "name": "LibriSpeech Dev-Clean dataset (preprocessed)",
       "sort": 20,
-      "tags": "dataset,librispeech,preprocessed,wav,dev-clean"
+      "tags": "dataset,librispeech,preprocessed,wav,dev-clean",
+      "enable_if_env": [
+        { "CK_RNNT_DATASET": ["dev-clean"] }
+      ]
+    },
+    "dataset-calibration": {
+      "local": "yes",
+      "name": "LibriSpeech calibration dataset (preprocessed)",
+      "sort": 20,
+      "tags": "dataset,librispeech,preprocessed,wav,calibration",
+      "enable_if_env": [
+        { "CK_RNNT_DATASET": ["calibration"] }
+      ]
     },
     "lib-python-loadgen": {
       "local": "yes",
@@ -197,6 +209,7 @@
     }
   },
   "run_vars": {
+    "CK_RNNT_DATASET": "dev-clean",
     "CK_RNNT_BACKEND": "pytorch",
     "CK_RNNT_SCENARIO": "Offline",
     "CK_RNNT_PRE_BACKEND": "pytorch",
