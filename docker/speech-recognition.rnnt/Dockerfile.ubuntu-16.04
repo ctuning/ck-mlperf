@@ -10,8 +10,8 @@ ENTRYPOINT ["/bin/bash", "-c"]
 
 # Install known system dependencies and immediately clean up to make the image smaller.
 # CK needs: git, wget, zip, unzip.
-# Python needs: libssl-dev, libffi-dev, libbz2-dev.
-# Speech Recognition program needs: sndfile-devel.
+# Python needs: libssl-dev, libbz2-dev.
+# Speech Recognition program needs: sndfile (which in turn needs ffi).
 ENV DEBIAN_FRONTEND="noninteractive" 
 RUN apt update -y\
  && apt install -y apt-utils\
@@ -20,8 +20,8 @@ RUN apt update -y\
  gcc g++\
  make patch vim\
  git wget zip libz-dev\
- libssl-dev libffi-dev libbz2-dev \
- libsndfile1-dev\
+ libssl-dev libbz2-dev\
+ libsndfile1-dev libffi-dev\
  && apt clean
 
 # Install Python 3.7. (If upgrading to 3.8 or higher, also change CK_PYTHON below.)
