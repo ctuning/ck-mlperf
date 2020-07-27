@@ -50,94 +50,104 @@
       },
       "on_by_default": "yes"
     },
-    "v3-large-minimalistic_224_1.0_float": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic",
-        "MODEL_MOBILENET_MULTIPLIER": "1.0",
-        "MODEL_MOBILENET_PRECISION": "float",
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      },
-      "extra_tags": [
-        "multiplier.1.0",
-        "side.224",
-        "kind.large-minimalistic",
-        "non-quantized"
-      ]
-    },
     "lite0-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float",`
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
       },
       "extra_tags": [
         "kind.lite0",
         "non-quantized"
-      ]
-    },
+        ]
+      },
     "lite0-uint8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
       },
       "extra_tags": [
         "kind.lite0",
         "quantized"
       ]
-    }
-    "lite1":{
+    },
+    "lite1-float":{
       "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic",
-        "MODEL_MOBILENET_MULTIPLIER": "1.0",
-        "MODEL_MOBILENET_PRECISION": "float",
-        "MODEL_MOBILENET_RESOLUTION": "224"
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite1",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
       },
       "extra_tags": [
-        "multiplier.1.0",
-        "side.224",
-        "kind.large-minimalistic",
+        "kind.lite1",
         "non-quantized"
       ]
     },
-    "lite2":{
+    "lite1-uint8":{
       "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic",
-        "MODEL_MOBILENET_MULTIPLIER": "1.0",
-        "MODEL_MOBILENET_PRECISION": "float",
-        "MODEL_MOBILENET_RESOLUTION": "224"
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite1",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
       },
       "extra_tags": [
-        "multiplier.1.0",
-        "side.224",
-        "kind.large-minimalistic",
+        "kind.lite1",
+        "quantized"
+      ]
+    },
+    "lite2-float":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+      },
+      "extra_tags": [
+        "kind.lite2",
+        "non-quantized"
+        ]
+      },
+    "lite2-uint8":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
+      },
+      "extra_tags": [
+        "kind.lite2",
+        "quantized"
+      ]
+    },
+    "lite3-float":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite3",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+      },
+      "extra_tags": [
+        "kind.lite3",
         "non-quantized"
       ]
     },
-    "lite3":{
-       "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic",
-        "MODEL_MOBILENET_MULTIPLIER": "1.0",
-        "MODEL_MOBILENET_PRECISION": "float",
-        "MODEL_MOBILENET_RESOLUTION": "224"
+    "lite3-uint8":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite3",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
       },
       "extra_tags": [
-        "multiplier.1.0",
-        "side.224",
-        "kind.large-minimalistic",
+        "kind.lite3",
+        "quantized"
+      ]
+    },
+    "lite4-float":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite4",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+      },
+      "extra_tags": [
+        "kind.lite4",
         "non-quantized"
       ]
     },
-    "lite4":{
-       "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic",
-        "MODEL_MOBILENET_MULTIPLIER": "1.0",
-        "MODEL_MOBILENET_PRECISION": "float",
-        "MODEL_MOBILENET_RESOLUTION": "224"
+    "lite4-uint8":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite4",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
       },
       "extra_tags": [
-        "multiplier.1.0",
-        "side.224",
-        "kind.large-minimalistic",
-        "non-quantized"
+        "kind.lite4",
+        "quantized"
       ]
     }
   }
