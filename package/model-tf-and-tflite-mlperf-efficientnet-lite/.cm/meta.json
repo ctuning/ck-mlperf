@@ -1,0 +1,136 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$)",
+    "install_env": {
+      "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-<<MODEL_EFFICIENTNET_LITE_KIND>>$",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-<<MODEL_EFFICIENTNET_LITE_KIND>>$_$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$",
+      "*WEIGHTS_FILE": "model.ckpt",
+      "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "MODEL_INPUT_LAYER_NAME": "images",
+      "MODEL_SUBTRACT_MEAN": "0",
+      "MODEL_NORMALIZE_DATA": "YES",
+      "MODEL_OUTPUT_LAYER_NAME": "Softmax",
+      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
+      "PACKAGE_URL": "https://storage.googleapis.com/"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "skip_file_check": "yes"
+  },
+  "end_full_path_universal": "",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [],
+  "process_script": "install",
+  "soft_uoa": "439b9f1757f27091",
+  "suggested_path": "model-tf-and-tflite-mlperf-efficientnet-lite-downloaded",
+  "tags": [
+    "model",
+    "image-classification",
+    "tensorflowmodel",
+    "tf",
+    "tflite",
+    "nhwc",
+    "efficientnet-lite",
+    "mlperf",
+    "weights",
+    "python",
+    "frozen",
+    "downloaded"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "6b1b2b254718b69a",
+    "module_uoa": "script"
+  },
+  "variations": {
+    "from.googleapis": {
+      "extra_env": {
+        "PACKAGE_URL": "https://storage.googleapis.com/clout-tpu-checkpoints/checkpoints"
+      },
+      "on_by_default": "yes"
+    },
+    "v3-large-minimalistic_224_1.0_float": {
+      "extra_env": {
+        "MODEL_MOBILENET_KIND": "large-minimalistic",
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_PRECISION": "float",
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "kind.large-minimalistic",
+        "non-quantized"
+      ]
+    },
+    "lite0":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "",
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "kind.large-minimalistic",
+        "non-quantized"
+      ]
+    },
+    "lite1":{
+      "extra_env": {
+        "MODEL_MOBILENET_KIND": "large-minimalistic",
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_PRECISION": "float",
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "kind.large-minimalistic",
+        "non-quantized"
+      ]
+    },
+    "lite2":{
+      "extra_env": {
+        "MODEL_MOBILENET_KIND": "large-minimalistic",
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_PRECISION": "float",
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "kind.large-minimalistic",
+        "non-quantized"
+      ]
+    },
+    "lite3":{
+       "extra_env": {
+        "MODEL_MOBILENET_KIND": "large-minimalistic",
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_PRECISION": "float",
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "kind.large-minimalistic",
+        "non-quantized"
+      ]
+    },
+    "lite4":{
+       "extra_env": {
+        "MODEL_MOBILENET_KIND": "large-minimalistic",
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_PRECISION": "float",
+        "MODEL_MOBILENET_RESOLUTION": "224"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "kind.large-minimalistic",
+        "non-quantized"
+      ]
+    }
+  }
+}
