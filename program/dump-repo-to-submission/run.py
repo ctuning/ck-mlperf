@@ -113,28 +113,28 @@ if r['return']>0:
 platform_templates = { sut['data_uoa']: sut['meta']['data'] for sut in r['lst'] }
 
 
-library_backend_to_printable = {
-    'armnn-v19.08-opencl':              'ArmNN v19.08 (OpenCL)',
-    'armnn-v19.08-neon':                'ArmNN v19.08 (Neon)',
-    'armnn-rel.20.05-neon':             'ArmNN rel.20.05 (Neon)',
-    'armnn-rel.20.05-opencl':           'ArmNN rel.20.05 (OpenCL)',
-    'tflite-v1.13':                     'TFLite v1.13.1',
-    'tflite-v1.15':                     'TFLite v1.15.0-rc2',
-    'tflite-v1.15.0':                   'TFLite v1.15.0',
-    'tflite-v2.1.1':                    'TFLite v2.1.1',
-    'tflite-v2.2.0-ruy':                'TFLite v.2.2.0 (Ruy)',
-    'tensorrt-v6.0' :                   'TensorRT v6.0',
-    'tensorflow-v1.14-cpu':             'TensorFlow v1.14 (CPU)',
-    'tensorflow-v1.14-cuda':            'TensorFlow v1.14 (CUDA)',
-    'tensorflow-v1.14-tensorrt':        'TensorFlow v1.14 (TensorRT-static)',
-    'tensorflow-v1.14-tensorrt-dynamic':'TensorFlow v1.14 (TensorRT-dynamic)',
+inference_engine_to_printable = {
+    'armnn':            'ArmNN',
+    'tflite':           'TFLite',
+    'tensorrt':         'TensorRT',
+    'tensorflow':       'TensorFlow',
 }
 
+backend_to_printable = {
+    'neon':             'Neon',
+    'opencl':           'OpenCL',
+    'ruy':              'Ruy',
+    'cpu':              'CPU',
+    'cuda':             'CUDA',
+    'tensorrt':         'TensorRT-static',
+    'tensorrt-dynamic': 'TensorRT-dynamic',
+}
 
 system_description_cache = {}
 
-def dump_system_description_dictionary(target_path, division, platform, library, backend):
-    library_backend = (library + '-' + backend) if backend else library
+def dump_system_description_dictionary(target_path, division, platform, inference_engine, inference_engine_version, backend):
+
+    library_backend = inference_engine + '_' + inference_engine_version + (('-' + backend) if backend else '')
     division_system = division + '-' + platform + '-' + library_backend
 
     if target_path in system_description_cache:
@@ -147,12 +147,15 @@ def dump_system_description_dictionary(target_path, division, platform, library,
     else:
         status = 'available'
 
+    framework = inference_engine_to_printable[inference_engine] + ' ' + inference_engine_version + \
+                (' ({})'.format(backend_to_printable[backend]) if backend else '')
+
     template = deepcopy(platform_templates[platform])
     template.update({
         'division'  : division,
         'submitter' : 'dividiti', # 'dividiti' if platform != 'velociti' else 'dividiti, Politecnico di Milano'
         'status'    : status,
-        'framework' : library_backend_to_printable[library_backend]
+        'framework' : framework,
     })
     if (not library_backend.startswith('tensorrt') and not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl')) or library_backend.endswith('cpu'):
         template.update({
@@ -1203,6 +1206,9 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             
         organization = submitter
 
+        if not inference_engine:
+            (inference_engine, inference_engine_version) = library.split('-')
+
         if backend != '':
             system = platform+'-'+library+'-'+backend
         else:
@@ -1231,7 +1237,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         system_json_name = '%s.json' % system
         system_json_path = os.path.join(systems_dir, system_json_name)
 
-        system_json = dump_system_description_dictionary(system_json_path, division, platform, library, backend)
+        system_json = dump_system_description_dictionary(system_json_path, division, platform, inference_engine, inference_engine_version, backend)
         print('%s' % systems_dir)
         print('  |_ %s [%s]' % (system_json_name, division_system))
 
