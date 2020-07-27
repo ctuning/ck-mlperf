@@ -64,18 +64,26 @@
         "non-quantized"
       ]
     },
-    "lite0":{
+    "lite0-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float",`
       },
       "extra_tags": [
-        "multiplier.1.0",
-        "side.224",
-        "kind.large-minimalistic",
+        "kind.lite0",
         "non-quantized"
       ]
     },
+    "lite0-uint8":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8",
+      },
+      "extra_tags": [
+        "kind.lite0",
+        "quantized"
+      ]
+    }
     "lite1":{
       "extra_env": {
         "MODEL_MOBILENET_KIND": "large-minimalistic",
