@@ -4,8 +4,8 @@
     "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$)",
     "install_env": {
       "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
-      "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-<<MODEL_EFFICIENTNET_LITE_KIND>>$",
-      "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-<<MODEL_EFFICIENTNET_LITE_KIND>>$_$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$",
       "*WEIGHTS_FILE": "model.ckpt",
       "ML_MODEL_DATA_LAYOUT": "NHWC",
       "MODEL_INPUT_LAYER_NAME": "images",
@@ -32,7 +32,7 @@
     "tf",
     "tflite",
     "nhwc",
-    "efficientnet-lite",
+    "efficientnet",
     "mlperf",
     "weights",
     "python",
@@ -53,17 +53,17 @@
     "lite0-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
       },
       "extra_tags": [
         "kind.lite0",
         "non-quantized"
         ]
       },
-    "lite0-uint8":{
+    "lite0-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
       },
       "extra_tags": [
         "kind.lite0",
@@ -73,17 +73,17 @@
     "lite1-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite1",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
       },
       "extra_tags": [
         "kind.lite1",
         "non-quantized"
       ]
     },
-    "lite1-uint8":{
+    "lite1-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite1",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
       },
       "extra_tags": [
         "kind.lite1",
@@ -93,17 +93,17 @@
     "lite2-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
       },
       "extra_tags": [
         "kind.lite2",
         "non-quantized"
         ]
       },
-    "lite2-uint8":{
+    "lite2-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
       },
       "extra_tags": [
         "kind.lite2",
@@ -113,17 +113,17 @@
     "lite3-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite3",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
       },
       "extra_tags": [
         "kind.lite3",
         "non-quantized"
       ]
     },
-    "lite3-uint8":{
+    "lite3-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite3",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
       },
       "extra_tags": [
         "kind.lite3",
@@ -133,17 +133,17 @@
     "lite4-float":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite4",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
       },
       "extra_tags": [
         "kind.lite4",
         "non-quantized"
       ]
     },
-    "lite4-uint8":{
+    "lite4-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite4",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "uint8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
       },
       "extra_tags": [
         "kind.lite4",
