@@ -1,184 +1,69 @@
 {
-  "check_exit_status": "yes", 
+  "check_exit_status": "yes",
   "customize": {
-    "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_KIND>>$-$<<MODEL_MOBILENET_PRECISION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$)", 
-    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$", 
+    "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_PRECISION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$)",
+    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$",
     "install_env": {
-      "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$", 
-      "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$", 
-      "*PACKAGE_NAME": "v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_KIND>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_PRECISION>>$.tgz", 
-      "*PACKAGE_NAME_MOBILENET_V3": "v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_KIND>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_PRECISION>>$", 
-      "*WEIGHTS_FILE": "ema/model.ckpt", 
-      "ML_MODEL_DATA_LAYOUT": "NHWC", 
-      "MODEL_INPUT_LAYER_NAME": "input", 
-      "MODEL_MOBILENET_VERSION": "3", 
-      "MODEL_NORMALIZE_DATA": "YES", 
-      "MODEL_OUTPUT_LAYER_NAME": "MobilenetV3/Predictions/Softmax", 
-      "MODEL_SUBTRACT_MEAN": "0", 
-      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES", 
-      "MODULE_FILE": "mobilenet-model.py", 
-      "PACKAGE_URL": "https://storage.googleapis.com/mobilenet_v3/checkpoints"
-    }, 
-    "no_os_in_suggested_path": "yes", 
-    "no_ver_in_suggested_path": "yes", 
+      "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$",
+      "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$",
+      "*PACKAGE_NAME": "mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$.tgz",
+      "*PACKAGE_NAME_EDGETPU_TGZ": "checkpoints_mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$.tgz",
+      "*PACKAGE_EDGETPU_FOLDER": "mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$",
+      "*WEIGHTS_FILE": "ema/model.ckpt",
+      "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "MODEL_INPUT_LAYER_NAME": "images",
+      "MODEL_MOBILENET_VERSION": "edgetpu",
+      "MODEL_NORMALIZE_DATA": "YES",
+      "MODEL_OUTPUT_LAYER_NAME": "Softmax",
+      "MODEL_SUBTRACT_MEAN": "0",
+      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
+      "MODULE_FILE": "mobilenet-model.py",
+      "PACKAGE_URL": "https://storage.cloud.google.com/mobilenet_edgetpu/checkpoints/"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
     "skip_file_check": "yes"
-  }, 
-  "end_full_path_universal": "mobilenet-model.py", 
-  "only_for_host_os_tags": [], 
-  "only_for_target_os_tags": [], 
-  "process_script": "install", 
-  "soft_uoa": "439b9f1757f27091", 
-  "suggested_path": "model-tf-and-tflite-mlperf-mobilenet-v3-downloaded", 
+  },
+  "end_full_path_universal": "model.meta",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [],
+  "process_script": "install",
+  "soft_uoa": "439b9f1757f27091",
+  "suggested_path": "model-tf-and-tflite-mlperf-mobilenet-v3-downloaded",
   "tags": [
-    "model", 
-    "image-classification", 
-    "tensorflowmodel", 
-    "tf", 
-    "tflite", 
-    "nhwc", 
-    "mobilenet", 
-    "mobilenet-v3", 
-    "mlperf", 
-    "weights", 
-    "python", 
-    "frozen", 
+    "model",
+    "image-classification",
+    "tensorflowmodel",
+    "tf",
+    "tflite",
+    "nhwc",
+    "mobilenet",
+    "mobilenet-v3",
+    "mlperf",
+    "weights",
+    "python",
+    "frozen",
     "downloaded"
-  ], 
+  ],
   "use_scripts_from_another_entry": {
-    "data_uoa": "6b1b2b254718b69a", 
+    "data_uoa": "6b1b2b254718b69a",
     "module_uoa": "script"
-  }, 
+  },
   "variations": {
     "from.googleapis": {
       "extra_env": {
-        "PACKAGE_URL": "https://storage.googleapis.com/mobilenet_v3/checkpoints"
-      }, 
+        "PACKAGE_URL": "https://storage.googleapis.com/mobilenet_edgetpu/checkpoints"
+      },
       "on_by_default": "yes"
-    }, 
+    },
     "v3-large-minimalistic_224_1.0_float": {
       "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "float", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
+        "MODEL_MOBILENET_KIND": "large-minimalistic",
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+      },
       "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.large-minimalistic", 
-        "non-quantized"
-      ]
-    }, 
-    "v3-large-minimalistic_224_1.0_uint8": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "uint8", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.large-minimalistic", 
-        "quantized"
-      ]
-    }, 
-    "v3-large_224_0.75_float": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "large", 
-        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
-        "MODEL_MOBILENET_PRECISION": "float", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.0.75", 
-        "side.224", 
-        "kind.large", 
-        "non-quantized"
-      ]
-    }, 
-    "v3-large_224_1.0_float": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "large", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "float", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.large", 
-        "non-quantized"
-      ]
-    }, 
-    "v3-large_224_1.0_uint8": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "large", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "uint8", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.large", 
-        "quantized"
-      ]
-    }, 
-    "v3-small-minimalistic_224_1.0_float": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "small-minimalistic", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "float", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.small-minimalistic", 
-        "non-quantized"
-      ]
-    }, 
-    "v3-small_224_0.75_float": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "small", 
-        "MODEL_MOBILENET_MULTIPLIER": "0.75", 
-        "MODEL_MOBILENET_PRECISION": "float", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.0.75", 
-        "side.224", 
-        "kind.small", 
-        "non-quantized"
-      ]
-    }, 
-    "v3-small_224_1.0_float": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "small", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "float", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.small", 
-        "non-quantized"
-      ]
-    }, 
-    "v3-small_224_1.0_uint8": {
-      "extra_env": {
-        "MODEL_MOBILENET_KIND": "small", 
-        "MODEL_MOBILENET_MULTIPLIER": "1.0", 
-        "MODEL_MOBILENET_PRECISION": "uint8", 
-        "MODEL_MOBILENET_RESOLUTION": "224"
-      }, 
-      "extra_tags": [
-        "multiplier.1.0", 
-        "side.224", 
-        "kind.small", 
-        "quantized"
+        "multiplier.1.0",
+        "side.224",
       ]
     }
   }
