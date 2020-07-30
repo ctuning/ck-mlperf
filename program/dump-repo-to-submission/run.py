@@ -134,11 +134,11 @@ system_description_cache = {}
 
 def dump_system_description_dictionary(target_path, division, platform, inference_engine, inference_engine_version, backend):
 
-    library_backend = inference_engine + '_' + inference_engine_version + (('-' + backend) if backend else '')
-    division_system = division + '-' + platform + '-' + library_backend
-
     if target_path in system_description_cache:
         return system_description_cache[target_path]
+
+    library_backend = inference_engine + '_' + inference_engine_version + (('-' + backend) if backend else '')
+    division_system = division + '-' + platform + '-' + library_backend
 
     if library_backend == 'tensorflow-v1.14-cpu':
         status = 'RDI'
@@ -178,219 +178,83 @@ def dump_system_description_dictionary(target_path, division, platform, inferenc
 # <a id="implementations"></a>
 # ## Implementations
 
-# ### Image classification
+implementation_cache = {}
 
-# In[ ]:
+def dump_implementation_dictionary(target_path, model_dict, inference_engine, program_name, benchmark):
+
+    if target_path in implementation_cache:
+        return implementation_cache[target_path]
+
+    model_env = model_dict['cus']['install_env']
+    model_tags = model_dict['dict']['tags']
+
+    recorded_model_retraining = model_env.get('ML_MODEL_RETRAINING', 'no')
+
+    ## fetch recorded model data types, if available, guess if unavailable:
+    recorded_model_data_type = model_env.get('ML_MODEL_DATA_TYPE')
+    recorded_model_input_data_type = model_env.get('ML_MODEL_INPUT_DATA_TYPE')
 
 
-# Generate implementation_benchmarks dictionary.
-implementation_benchmarks = {}
-
-# Default `system_desc_id_imp.json` (to catch uninitialized descriptions)
-default_implementation_benchmark_json = {
-    "input_data_types": "required",
-    "retraining": "required",
-    "starting_weights_filename": "required",
-    "weight_data_types": "required",
-    "weight_transformations": "required"
-}
-
-# For each image classification implementation.
-for implementation in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
-    # Add MobileNet.
-    implementation_mobilenet = implementation+'-'+'mobilenet'
-    implementation_benchmarks[implementation_mobilenet] = {
-        "input_data_types": "fp32",
-        "weight_data_types": "fp32",
-        "retraining": "no",
-        "starting_weights_filename": "https://zenodo.org/record/2269307/files/mobilenet_v1_1.0_224.tgz",
-        "weight_transformations": "TFLite"
-    }
-    # Add MobileNet quantized.
-    implementation_mobilenet_quantized = implementation+'-'+'mobilenet-quantized'
-    implementation_benchmarks[implementation_mobilenet_quantized] = {
-        "input_data_types": "uint8",
-        "weight_data_types": "uint8",
-        "retraining": "no",
-        "starting_weights_filename": "https://zenodo.org/record/2269307/files/mobilenet_v1_1.0_224_quant.tgz",
-        "weight_transformations": "TFLite"
-    }
-    # Add ResNet.
-    implementation_resnet = implementation+'-'+'resnet'
-    implementation_benchmarks[implementation_resnet] = {
-        "input_data_types": "fp32",
-        "weight_data_types": "fp32",
-        "retraining": "no",
-        "starting_weights_filename": "https://zenodo.org/record/2535873/files/resnet50_v1.pb",
-        "weight_transformations": "TF -> TFLite"
-    }
-    # Add any MobileNets-v1,v2 model.
-    def add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=False):
-        if version==1:
-            base_url = 'https://zenodo.org/record/2269307/files'
-            url = '{}/mobilenet_v{}_{}_{}{}.tgz'.format(base_url, version, multiplier, resolution, '_quant' if quantized else '')
-        elif version==2:
-            if quantized:
-                base_url = 'https://storage.googleapis.com/mobilenet_v2/checkpoints'
-                multiplier_percent = int(100*multiplier)
-                url = '{}/quantized_v{}_{}_{}.tgz'.format(base_url, version, resolution, multiplier_percent)
-            else:
-                base_url = 'https://zenodo.org/record/2266646/files'
-                url = '{}/mobilenet_v{}_{}_{}.tgz'.format(base_url, version, multiplier, resolution)
-
-        benchmark = 'mobilenet-v{}-{}-{}{}'.format(version, multiplier, resolution, '-quantized' if quantized else '')
-
-        if implementation == 'image-classification-tflite-loadgen':
-            weights_transformations = 'TFLite'
-        elif implementation == 'image-classification-armnn-tflite-loadgen':
-            weights_transformations = 'TFLite -> ArmNN'
+    if not recorded_model_data_type:
+        if {'non-quantized', 'fp32', 'float', 'float32'} & set(model_tags):
+            recorded_model_data_type = 'fp32'
+        elif {'quantized', 'quant', 'uint8'} & set(model_tags):
+            recorded_model_data_type = 'uint8'
         else:
-            raise Exception("Unknown implementation '%s'!" % implementation)
-        program_and_model_combination = implementation+'-'+benchmark
-        implementation_benchmarks[program_and_model_combination] = {
-            "input_data_types": "uint8" if quantized else "fp32",
-            "weight_data_types": "uint8" if quantized else "fp32",
-            "retraining": "no",
-            "starting_weights_filename": url,
-            "weight_transformations": weights_transformations
-        }
-        return
-    # MobileNet-v1.
-    version = 1
-    for multiplier in [ 1.0, 0.75, 0.5, 0.25 ]:
-        for resolution in [ 224, 192, 160, 128 ]:
-            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=False)
-            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=True)
-    # MobileNet-v2.
-    version = 2
-    for multiplier in [ 1.0, 0.75, 0.5, 0.35 ]:
-        for resolution in [ 224, 192, 160, 128, 96 ]:
-            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=False)
-            add_implementation_mobilenet(implementation_benchmarks, version, multiplier, resolution, quantized=True)
+            print("Warning: could not guess whether the model is quantized or not - please add tags or attributes")
+            recorded_model_data_type = 'fp32'
 
-    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.3, resolution=224, quantized=False)
-    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.3, resolution=224, quantized=True)
-    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.4, resolution=224, quantized=False)
-    add_implementation_mobilenet(implementation_benchmarks, version=2, multiplier=1.4, resolution=224, quantized=True)
+    if not recorded_model_input_data_type:  # assume the same
+        recorded_model_input_data_type = recorded_model_data_type
 
-for implementation in [ 'image-classification-tensorrt-loadgen-py']:
-    # Add ResNet.
-    implementation_resnet = implementation+'-'+'resnet'
-    implementation_benchmarks[implementation_resnet] = {
-        "input_data_types": "fp32",
-        "weight_data_types": "fp32",
-        "retraining": "no",
-        "starting_weights_filename": "https://zenodo.org/record/2535873/files/resnet50_v1.pb",
-        "weight_transformations": "ONNX -> TensorRT"
+    ## recorded_model_input_data_type may need translating from NumPy name into MLPerf's vocabulary:
+    model_input_type_mapping = {'float32': 'fp32', 'float16': 'fp16' }
+    if recorded_model_input_data_type in model_input_type_mapping:
+        recorded_model_input_data_type = model_input_type_mapping[recorded_model_input_data_type]
+
+
+    ## fetching/constructing the URL of the (original) model:
+    if 'PACKAGE_URL' not in model_env:  # this model is a result of conversion
+        model_env = model_dict['dict']['deps']['model-source']['dict']['customize']['install_env']
+
+    recorded_model_url = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
+
+
+    ## figure out the transformation path:
+    if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+        if benchmark in ['resnet', 'resnet50']:
+            recorded_transformation_path = 'TF -> TFLite'
+        else:
+            recorded_transformation_path = 'TFLite'
+    elif program_name == 'image-classification-tensorrt-loadgen-py':
+        if benchmark in ['resnet', 'resnet50']:
+            recorded_transformation_path = 'ONNX'
+        else:
+            recorded_transformation_path = 'TF'
+    elif program_name == 'mlperf-inference-vision':
+        recorded_transformation_path = 'None (TensorFlow)'
+    else:
+        raise Exception("Don't know how to derive the transformation path of the model")
+
+    # Initial model is never supplied in one of these, so there must have been a transformation:
+    if inference_engine in ['armnn', 'tensorrt']:
+        recorded_transformation_path += ' -> '+inference_engine_to_printable[inference_engine]
+
+    implementation_dictionary = {
+        'retraining': recorded_model_retraining,
+        'input_data_types': recorded_model_input_data_type,
+        'weight_data_types': recorded_model_data_type,
+        'starting_weights_filename': recorded_model_url,
+        'weight_transformations': recorded_transformation_path,
+
     }
-    # Add MobileNet.
-    implementation_mobilenet = implementation+'-'+'mobilenet'
-    implementation_benchmarks[implementation_mobilenet] = {
-        "input_data_types": "int8",
-        "weight_data_types": "int8",
-        "retraining": "no",
-        "starting_weights_filename": "https://zenodo.org/record/2269307/files/mobilenet_v1_1.0_224.tgz",
-        "weight_transformations": "TF -> TensorRT"
-    }
 
-# ### Object detection
+    with open(target_path, 'w') as implementation_file:
+        json.dump(implementation_dictionary, implementation_file, indent=2)
 
-# In[ ]:
+    implementation_cache[target_path] = implementation_dictionary
 
-
-object_detection_benchmarks = {
-    'rcnn-nas-lowproposals' : {
-        "name" : "Faster-RCNN-NAS lowproposals",
-        "url" : "http://download.tensorflow.org/models/object_detection/faster_rcnn_nas_lowproposals_coco_2018_01_28.tar.gz",
-        "width" : 1200,
-        "height" : 1200,
-    },
-    'rcnn-resnet50-lowproposals' : {
-        "name" : "Faster-RCNN-ResNet50 lowproposals",
-        "url" : "http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet50_lowproposals_coco_2018_01_28.tar.gz",
-        "width" : 1024,
-        "height" : 600,
-    },
-    'rcnn-resnet101-lowproposals' : {
-        "name" : "Faster-RCNN-ResNet101 lowproposals",
-        "url" : "http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_lowproposals_coco_2018_01_28.tar.gz",
-        "width" : 1024,
-        "height" : 600,
-    },
-    'rcnn-inception-resnet-v2-lowproposals' : {
-        "name" : "Faster-RCNN-Inception-ResNet-v2 lowproposals",
-        "url" : "http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous_lowproposals_coco_2018_01_28.tar.gz",
-        "width" : 1024,
-        "height" : 600,
-    },
-    'rcnn-inception-v2' : {
-        "name" : "Faster-RCNN Inception-v2",
-        "url" : "http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz",
-        "width" : 1024,
-        "height" : 600,
-    },
-    'ssd-inception-v2' : {
-        "name" : "SSD-Inception-v2",
-        "url" : "http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2018_01_28.tar.gz",
-        "width" : 300,
-        "height" : 300,
-    },
-    'ssd-mobilenet-v1-quantized-mlperf' : {
-        "name" : "MLPerf SSD-MobileNet",
-        "url" : "https://zenodo.org/record/3361502/files/ssd_mobilenet_v1_coco_2018_01_28.tar.gz",
-        "width" : 300,
-        "height" : 300,
-        "provenance" : "Google",
-    },
-    'ssd-mobilenet-v1-non-quantized-mlperf' : {
-        "name" : "MLPerf SSD-MobileNet quantized",
-        "url" : "https://zenodo.org/record/3252084/files/mobilenet_v1_ssd_8bit_finetuned.tar.gz",
-        "width" : 300,
-        "height" : 300,
-        "provenance" : "Habana"
-    },
-    'ssd-mobilenet-v1-fpn' : {
-        "name" : "SSD-MobileNet-v1 FPN SBP",
-        "url" : "http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz",
-        "width" : 640,
-        "height" : 640,
-    },
-    'ssd-resnet50-fpn' : {
-        "name" : "SSD-ResNet50-v1 FPN SBP",
-        "url" : "http://download.tensorflow.org/models/object_detection/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz",
-        "width" : 640,
-        "height" : 640,
-    },
-    'ssdlite-mobilenet-v2' : {
-        "name" : "SSDLite-MobileNet-v2",
-        "url" : "http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz",
-        "width" : 300,
-        "height" : 300,
-    },
-    'yolo-v3' : {
-        "name" : "YOLO-v3",
-        "url" : "https://zenodo.org/record/3386327/files/yolo_v3_coco.tar.gz",
-        "width" : 416,
-        "height" : 416,
-        "provenance" : "https://github.com/YunYang1994/tensorflow-yolov3/"
-    }
-}
-
-# For each object detection implementation.
-for implementation in [ 'mlperf-inference-vision' ]:
-    for benchmark in object_detection_benchmarks.keys():
-        program_and_model_combination = implementation+'-'+benchmark
-        implementation_benchmarks[program_and_model_combination] = {
-            "input_data_types": "fp32",
-            "weight_data_types": "fp32",
-            "retraining": "no",
-            "starting_weights_filename": object_detection_benchmarks[benchmark]['url'],
-#            "name" : object_detection_benchmarks[benchmark]['name'], # submission checker complains about "unknwon field name"
-            "weight_transformations": "None (TensorFlow)"
-        }
-
-from pprint import pprint
-# pprint(implementation_benchmarks)
+    return implementation_dictionary
 
 
 # In[ ]:
@@ -1133,7 +997,8 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             print('Error: %s' % r['error'])
             exit(1)
 
-        program_name = r['pipeline']['choices']['data_uoa']
+        pipeline = r['pipeline']
+        program_name = pipeline['choices']['data_uoa']
 
         print("*" * 100)
 
@@ -1295,15 +1160,10 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         # Create '<system_desc_id>_<implementation_id>.json'.
         system_implementation_json_name = system+'_'+program_name+'.json'
         system_implementation_json_path = os.path.join(scenario_dir, system_implementation_json_name)
-        with open(system_implementation_json_path, 'w') as system_implementation_json_file:
-            implementation_benchmark_json = implementation_benchmarks.get(program_and_model_combination, default_implementation_benchmark_json)
-#            pprint(program_and_model_combination)
-            if implementation_benchmark_json != default_implementation_benchmark_json:
-                print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
-                json.dump(implementation_benchmark_json, system_implementation_json_file, indent=2)
-            else:
-                print('  |_ %s [DEFAULT]' % system_implementation_json_name)
-                raise Exception("Default implementation for {} !".format(program_and_model_combination))
+
+        implementation_benchmark_json = dump_implementation_dictionary(system_implementation_json_path, pipeline['dependencies']['weights'], inference_engine, program_name, benchmark)
+        print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
+
 
         # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
         measurements_readme_name = 'README.md'
@@ -1539,7 +1399,10 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     # The last line is e.g. "mAP=13.323%".
                     accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
-                    accuracy_pc = float(match.group(1))
+                    if match:
+                        accuracy_pc = float(match.group(1))
+                    else:
+                        raise Exception("Could not parse accuracy from: "+accuracy_txt)
                 else:
                     raise Exception("Invalid task '%s'!" % task)
                 with open(accuracy_txt_path, 'w') as accuracy_txt_file:
