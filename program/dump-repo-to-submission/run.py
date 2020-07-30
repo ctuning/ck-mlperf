@@ -302,21 +302,19 @@ object detection models and run with TensorRT.
 
 # In[ ]:
 
+def get_program_path(program_name):
 
-implementation_paths = {}
-for implementation in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen', 'image-classification-tensorrt-loadgen-py', 'mlperf-inference-vision' ]:
-    implementation_uoa = implementation
-    if implementation.startswith('image-classification'):
-        if implementation.endswith('tflite'):
-            implementation_uoa += '-loadgen'
+    if program_name.startswith('image-classification'):
         repo_uoa = 'ck-mlperf'
     else: # TODO: move to ck-mlperf, then no need for special case.
         repo_uoa = 'ck-object-detection'
-    r = ck.access({'action':'find', 'repo_uoa':repo_uoa, 'module_uoa':'program', 'data_uoa':implementation_uoa})
+
+    r = ck.access({'action':'find', 'repo_uoa':repo_uoa, 'module_uoa':'program', 'data_uoa':program_name})
     if r['return']>0:
         print('Error: %s' % r['error'])
         exit(1)
-    implementation_paths[implementation] = r['path']
+
+    return r['path']
 
 
 # In[ ]:
@@ -1213,8 +1211,8 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         elif len(envs) == 0:
             # Not found any environments: copy 'user.conf' from implementation source.
             user_conf_name = 'user.conf'
-            implementation_path = implementation_paths.get(program_name, '')
-            if implementation_path == '':
+            implementation_path = get_program_path(program_name)
+            if not implementation_path:
                 raise Exception("Invalid implementation path!")
             user_conf_path = os.path.join(implementation_path, user_conf_name)
         copy2(user_conf_path, scenario_dir)
