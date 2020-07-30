@@ -9,7 +9,7 @@
       "*PACKAGE_NAME": "mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$.tgz",
       "*PACKAGE_NAME_EDGETPU_TGZ": "checkpoints_mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$.tgz",
       "*PACKAGE_EDGETPU_FOLDER": "mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$",
-      "*WEIGHTS_FILE": "ema/model.ckpt",
+      "*WEIGHTS_FILE": "model",
       "ML_MODEL_DATA_LAYOUT": "NHWC",
       "MODEL_INPUT_LAYER_NAME": "images",
       "MODEL_MOBILENET_VERSION": "edgetpu",
@@ -29,7 +29,7 @@
   "only_for_target_os_tags": [],
   "process_script": "install",
   "soft_uoa": "439b9f1757f27091",
-  "suggested_path": "model-tf-and-tflite-mlperf-mobilenet-v3-downloaded",
+  "suggested_path": "model-tf-and-tflite-mlperf-mobilenet-edgetpu-downloaded",
   "tags": [
     "model",
     "image-classification",
@@ -38,7 +38,7 @@
     "tflite",
     "nhwc",
     "mobilenet",
-    "mobilenet-v3",
+    "edgetpu",
     "mlperf",
     "weights",
     "python",
@@ -56,14 +56,68 @@
       },
       "on_by_default": "yes"
     },
-    "v3-large-minimalistic_224_1.0_float": {
+    "edgetpu_224_1.0_float": {
       "extra_env": {
-        "MODEL_MOBILENET_KIND": "large-minimalistic",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_RESOLUTION": "224",
+        "MODEL_MOBILENET_PRECISION": "float",
       },
       "extra_tags": [
         "multiplier.1.0",
         "side.224",
+        "non-quantized"
+      ]
+    },
+    "edgetpu_224_1.0_int8": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_RESOLUTION": "224",
+        "MODEL_MOBILENET_PRECISION": "int8"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "non-quantized",
+        "symmetric"
+      ]
+    },
+    "edgetpu_224_1.0_uint8": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "1.0",
+        "MODEL_MOBILENET_RESOLUTION": "224",
+        "MODEL_MOBILENET_PRECISION": "uint8"
+      },
+      "extra_tags": [
+        "multiplier.1.0",
+        "side.224",
+        "non-quantized",
+        "asymmetric"
+      ]
+    },
+    "edgetpu_224_0.75_float": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75",
+        "MODEL_MOBILENET_RESOLUTION": "224",
+        "MODEL_MOBILENET_PRECISION": "float",
+        ""
+      },
+      "extra_tags": [
+        "multiplier.0.75",
+        "side.224",
+        "non-quantized"
+      ]
+    },
+    "edgetpu_224_0.75_int8": {
+      "extra_env": {
+        "MODEL_MOBILENET_MULTIPLIER": "0.75",
+        "MODEL_MOBILENET_RESOLUTION": "224",
+        "MODEL_MOBILENET_PRECISION": "int8"
+      },
+      "extra_tags": [
+        "multiplier.0.75",
+        "side.224",
+        "non-quantized",
+        "symmetric"
       ]
     }
   }
