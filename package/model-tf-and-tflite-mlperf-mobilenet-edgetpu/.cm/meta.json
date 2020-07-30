@@ -24,7 +24,7 @@
     "no_ver_in_suggested_path": "yes",
     "skip_file_check": "yes"
   },
-  "end_full_path_universal": "model.meta",
+  "end_full_path_universal": "mobilenet-model.py",
   "only_for_host_os_tags": [],
   "only_for_target_os_tags": [],
   "process_script": "install",
