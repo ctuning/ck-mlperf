@@ -304,12 +304,7 @@ object detection models and run with TensorRT.
 
 def get_program_path(program_name):
 
-    if program_name.startswith('image-classification'):
-        repo_uoa = 'ck-mlperf'
-    else: # TODO: move to ck-mlperf, then no need for special case.
-        repo_uoa = 'ck-object-detection'
-
-    r = ck.access({'action':'find', 'repo_uoa':repo_uoa, 'module_uoa':'program', 'data_uoa':program_name})
+    r = ck.access({'action':'find', 'repo_uoa':'*', 'module_uoa':'program', 'data_uoa':program_name})
     if r['return']>0:
         print('Error: %s' % r['error'])
         exit(1)
