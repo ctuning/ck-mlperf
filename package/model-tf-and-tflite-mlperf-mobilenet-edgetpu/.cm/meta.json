@@ -77,7 +77,7 @@
       "extra_tags": [
         "multiplier.1.0",
         "side.224",
-        "non-quantized",
+        "quantized",
         "symmetric"
       ]
     },
@@ -90,7 +90,7 @@
       "extra_tags": [
         "multiplier.1.0",
         "side.224",
-        "non-quantized",
+        "quantized",
         "asymmetric"
       ]
     },
@@ -116,7 +116,7 @@
       "extra_tags": [
         "multiplier.0.75",
         "side.224",
-        "non-quantized",
+        "quantized",
         "symmetric"
       ]
     }
