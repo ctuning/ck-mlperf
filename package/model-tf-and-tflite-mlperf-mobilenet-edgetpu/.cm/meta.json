@@ -1,7 +1,7 @@
 {
   "check_exit_status": "yes",
   "customize": {
-    "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_PRECISION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$)",
+    "*package_extra_name": " (mobilenet-$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_PRECISION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$)",
     "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$",
     "install_env": {
       "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$",
@@ -60,7 +60,7 @@
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "float",
+        "MODEL_MOBILENET_PRECISION": "float"
       },
       "extra_tags": [
         "multiplier.1.0",
@@ -98,8 +98,7 @@
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "0.75",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "float",
-        ""
+        "MODEL_MOBILENET_PRECISION": "float"
       },
       "extra_tags": [
         "multiplier.0.75",
