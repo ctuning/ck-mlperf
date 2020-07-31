@@ -98,7 +98,7 @@
     },
     "int8":{
       "extra_env":{
-        "MODEL_EFFICIENTNET_LITE_PRECISION":"int8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
       },
       "extra_tags":[
         "quantized"
@@ -106,7 +106,7 @@
     },
     "float":{
       "extra_env":{
-        "MODEL_EFFICIENTNET_LITE_PRECISION":"int8"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
       },
       "extra_tags":[
         "non-quantized"
