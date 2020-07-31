@@ -58,7 +58,8 @@
       "extra_tags": [
         "kind.lite0",
         "side.224"
-      ]
+      ],
+      "on_by_default": "yes"
     },
     "lite1":{
       "extra_env": {
@@ -102,7 +103,8 @@
       },
       "extra_tags":[
         "quantized"
-      ]
+      ],
+      "on_by_default": "yes"
     },
     "float":{
       "extra_env":{
