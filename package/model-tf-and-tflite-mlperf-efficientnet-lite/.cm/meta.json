@@ -51,104 +51,60 @@
       },
       "on_by_default": "yes"
     },
-    "lite0-float":{
+    "lite0":{
       "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite0"
       },
       "extra_tags": [
-        "kind.lite0",
-        "non-quantized"
+        "kind.lite0"
       ]
     },
-    "lite0-int8":{
+    "lite1":{
       "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite1"
       },
       "extra_tags": [
-        "kind.lite0",
+        "kind.lite1"
+      ]
+    },
+    "lite2":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite2"
+      },
+      "extra_tags": [
+        "kind.lite2"
+      ]
+    },
+    "lite3":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite3"
+      },
+      "extra_tags": [
+        "kind.lite3"
+      ]
+    },
+    "lite4":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite4"
+      },
+      "extra_tags": [
+        "kind.lite4"
+      ]
+    },
+    "int8":{
+      "extra_env":{
+        "MODEL_EFFICIENTNET_LITE_PRECISION":"int8"
+      },
+      "extra_tags":[
         "quantized"
       ]
     },
-    "lite1-float":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite1",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
+    "float":{
+      "extra_env":{
+        "MODEL_EFFICIENTNET_LITE_PRECISION":"int8"
       },
-      "extra_tags": [
-        "kind.lite1",
+      "extra_tags":[
         "non-quantized"
-      ]
-    },
-    "lite1-int8":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite1",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
-      },
-      "extra_tags": [
-        "kind.lite1",
-        "quantized"
-      ]
-    },
-    "lite2-float":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
-      },
-      "extra_tags": [
-        "kind.lite2",
-        "non-quantized"
-      ]
-    },
-    "lite2-int8":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
-      },
-      "extra_tags": [
-        "kind.lite2",
-        "quantized"
-      ]
-    },
-    "lite3-float":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite3",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
-      },
-      "extra_tags": [
-        "kind.lite3",
-        "non-quantized"
-      ]
-    },
-    "lite3-int8":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite3",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
-      },
-      "extra_tags": [
-        "kind.lite3",
-        "quantized"
-      ]
-    },
-    "lite4-float":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite4",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
-      },
-      "extra_tags": [
-        "kind.lite4",
-        "non-quantized"
-      ]
-    },
-    "lite4-int8":{
-      "extra_env": {
-        "MODEL_EFFICIENTNET_LITE_KIND": "lite4",
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
-      },
-      "extra_tags": [
-        "kind.lite4",
-        "quantized"
       ]
     }
   }
