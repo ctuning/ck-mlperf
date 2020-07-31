@@ -56,7 +56,8 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0"
       },
       "extra_tags": [
-        "kind.lite0"
+        "kind.lite0",
+        "side.224"
       ]
     },
     "lite1":{
@@ -64,7 +65,8 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite1"
       },
       "extra_tags": [
-        "kind.lite1"
+        "kind.lite1",
+        "side.240"
       ]
     },
     "lite2":{
@@ -72,7 +74,8 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2"
       },
       "extra_tags": [
-        "kind.lite2"
+        "kind.lite2",
+        "side.260"
       ]
     },
     "lite3":{
@@ -80,7 +83,8 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite3"
       },
       "extra_tags": [
-        "kind.lite3"
+        "kind.lite3",
+        "side.280"
       ]
     },
     "lite4":{
@@ -88,7 +92,8 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite4"
       },
       "extra_tags": [
-        "kind.lite4"
+        "kind.lite4",
+        "side.300"
       ]
     },
     "int8":{
