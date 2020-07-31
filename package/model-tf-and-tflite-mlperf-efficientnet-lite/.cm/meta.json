@@ -59,8 +59,8 @@
       "extra_tags": [
         "kind.lite0",
         "non-quantized"
-        ]
-      },
+      ]
+    },
     "lite0-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0",
@@ -99,8 +99,8 @@
       "extra_tags": [
         "kind.lite2",
         "non-quantized"
-        ]
-      },
+      ]
+    },
     "lite2-int8":{
       "extra_env": {
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2",
