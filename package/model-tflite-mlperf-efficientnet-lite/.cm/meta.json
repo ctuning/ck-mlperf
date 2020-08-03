@@ -55,7 +55,6 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0"
       },
       "extra_tags": [
-        "kind.lite0",
         "side.224"
       ],
       "on_by_default": "yes"
@@ -65,7 +64,6 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite1"
       },
       "extra_tags": [
-        "kind.lite1",
         "side.240"
       ]
     },
@@ -74,7 +72,6 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2"
       },
       "extra_tags": [
-        "kind.lite2",
         "side.260"
       ]
     },
@@ -83,7 +80,6 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite3"
       },
       "extra_tags": [
-        "kind.lite3",
         "side.280"
       ]
     },
@@ -92,7 +88,6 @@
         "MODEL_EFFICIENTNET_LITE_KIND": "lite4"
       },
       "extra_tags": [
-        "kind.lite4",
         "side.300"
       ]
     },
