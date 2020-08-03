@@ -1,0 +1,118 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$)",
+    "*version": "v1",
+    "install_env": {
+      "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$",
+      "*WEIGHTS_FILE": "model.ckpt",
+      "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "MODEL_INPUT_LAYER_NAME": "images",
+      "MODEL_SUBTRACT_MEAN": "0",
+      "MODEL_NORMALIZE_DATA": "YES",
+      "MODEL_OUTPUT_LAYER_NAME": "Softmax",
+      "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
+      "PACKAGE_URL": "https://storage.googleapis.com/cloud-tpu-checkpoints/efficientnet/lite"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "skip_file_check": "yes"
+  },
+  "end_full_path_universal": "model.ckpt.meta",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [],
+  "process_script": "install",
+  "soft_uoa": "439b9f1757f27091",
+  "suggested_path": "model-tf-and-tflite-mlperf-efficientnet-lite-downloaded",
+  "tags": [
+    "model",
+    "image-classification",
+    "tensorflowmodel",
+    "tf",
+    "tflite",
+    "nhwc",
+    "efficientnet",
+    "mlperf",
+    "weights",
+    "python",
+    "frozen",
+    "downloaded"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "4f99bd653a4cf94b",
+    "module_uoa": "script"
+  },
+  "variations": {
+    "from.googleapis": {
+      "extra_env": {
+        "PACKAGE_URL": "https://storage.googleapis.com/cloud-tpu-checkpoints/efficientnet/lite"
+      },
+      "on_by_default": "yes"
+    },
+    "lite0":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite0"
+      },
+      "extra_tags": [
+        "kind.lite0",
+        "side.224"
+      ],
+      "on_by_default": "yes"
+    },
+    "lite1":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite1"
+      },
+      "extra_tags": [
+        "kind.lite1",
+        "side.240"
+      ]
+    },
+    "lite2":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite2"
+      },
+      "extra_tags": [
+        "kind.lite2",
+        "side.260"
+      ]
+    },
+    "lite3":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite3"
+      },
+      "extra_tags": [
+        "kind.lite3",
+        "side.280"
+      ]
+    },
+    "lite4":{
+      "extra_env": {
+        "MODEL_EFFICIENTNET_LITE_KIND": "lite4"
+      },
+      "extra_tags": [
+        "kind.lite4",
+        "side.300"
+      ]
+    },
+    "int8":{
+      "extra_env":{
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
+      },
+      "extra_tags":[
+        "quantized"
+      ],
+      "on_by_default": "yes"
+    },
+    "float":{
+      "extra_env":{
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+      },
+      "extra_tags":[
+        "non-quantized"
+      ]
+    }
+  }
+}
