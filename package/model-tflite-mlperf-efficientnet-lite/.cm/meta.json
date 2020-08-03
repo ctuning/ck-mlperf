@@ -107,6 +107,17 @@
       "extra_tags":[
         "non-quantized"
       ]
+    },
+    "archive.removed":{
+      "on_by_default": "yes",
+      "extra_env":{
+        "PACKAGE_KEEP_ARCHIVE": "NO"
+      }
+    },
+    "archive.kept":{
+      "extra_env":{
+        "PACKAGE_KEEP_ARCHIVE": "YES"
+      }
     }
   }
 }
