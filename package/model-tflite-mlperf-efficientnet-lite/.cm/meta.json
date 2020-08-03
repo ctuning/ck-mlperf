@@ -2,12 +2,12 @@
   "check_exit_status": "yes",
   "customize": {
     "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$)",
-    "*version": "v1",
+    "version": "v1",
     "install_env": {
       "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
       "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$",
       "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$",
-      "*WEIGHTS_FILE": "model.ckpt",
+      "WEIGHTS_FILE": "model.ckpt",
       "ML_MODEL_DATA_LAYOUT": "NHWC",
       "MODEL_INPUT_LAYER_NAME": "images",
       "MODEL_SUBTRACT_MEAN": "0",
@@ -25,12 +25,10 @@
   "only_for_target_os_tags": [],
   "process_script": "install",
   "soft_uoa": "439b9f1757f27091",
-  "suggested_path": "model-tf-and-tflite-mlperf-efficientnet-lite-downloaded",
+  "suggested_path": "model-tflite-mlperf-efficientnet-lite-downloaded",
   "tags": [
     "model",
     "image-classification",
-    "tensorflowmodel",
-    "tf",
     "tflite",
     "nhwc",
     "efficientnet",
