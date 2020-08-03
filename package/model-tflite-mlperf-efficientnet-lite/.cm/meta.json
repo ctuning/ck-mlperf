@@ -1,7 +1,7 @@
 {
   "check_exit_status": "yes",
   "customize": {
-    "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<ML_MODEL_DATA_TYPE>>$)",
+    "*package_name": "TFLite EfficientNet Model ($<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<ML_MODEL_DATA_TYPE>>$)",
     "version": "v1",
     "install_env": {
       "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
