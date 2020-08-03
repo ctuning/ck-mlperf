@@ -100,24 +100,13 @@
       ],
       "on_by_default": "yes"
     },
-    "float":{
+    "fp32":{
       "extra_env":{
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "float"
+        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
       },
       "extra_tags":[
         "non-quantized"
       ]
-    },
-    "archive.removed":{
-      "on_by_default": "yes",
-      "extra_env":{
-        "PACKAGE_KEEP_ARCHIVE": "NO"
-      }
-    },
-    "archive.kept":{
-      "extra_env":{
-        "PACKAGE_KEEP_ARCHIVE": "YES"
-      }
     }
   }
 }
