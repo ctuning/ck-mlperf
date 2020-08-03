@@ -32,6 +32,7 @@
     "tflite",
     "nhwc",
     "efficientnet",
+    "effnet",
     "mlperf",
     "weights",
     "python",
