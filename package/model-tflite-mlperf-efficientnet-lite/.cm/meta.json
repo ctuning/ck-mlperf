@@ -1,13 +1,14 @@
 {
   "check_exit_status": "yes",
   "customize": {
-    "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$)",
+    "*package_extra_name": " (efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<ML_MODEL_DATA_TYPE>>$)",
     "version": "v1",
     "install_env": {
       "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
       "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$",
-      "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<MODEL_EFFICIENTNET_LITE_PRECISION>>$",
+      "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<ML_MODEL_DATA_TYPE>>$",
       "WEIGHTS_FILE": "model.ckpt",
+      "ML_MODEL_FILE_FORMAT": "tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC",
       "MODEL_INPUT_LAYER_NAME": "images",
       "MODEL_SUBTRACT_MEAN": "0",
@@ -93,7 +94,9 @@
     },
     "int8":{
       "extra_env":{
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "int8"
+        "ML_MODEL_INPUT_DATA_TYPE": "uint8",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "uint8",
+        "ML_MODEL_DATA_TYPE": "int8"
       },
       "extra_tags":[
         "quantized"
@@ -102,7 +105,9 @@
     },
     "fp32":{
       "extra_env":{
-        "MODEL_EFFICIENTNET_LITE_PRECISION": "fp32"
+        "ML_MODEL_INPUT_DATA_TYPE": "float32",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "float32",
+        "ML_MODEL_DATA_TYPE": "fp32"
       },
       "extra_tags":[
         "non-quantized"
