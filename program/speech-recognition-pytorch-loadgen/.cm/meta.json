@@ -100,7 +100,7 @@
       ],
       "update_tags_if_env" : {
         "orig": [ { "CK_RNNT_PRE": "orig" } ],
-        "orig-quantized": [ { "CK_RNNT_PRE": "orig-quantized" } ],
+        "orig-quant": [ { "CK_RNNT_PRE": "orig-quant" } ],
         "naive": [ { "CK_RNNT_PRE": "naive" } ]
       }
     },
@@ -114,7 +114,7 @@
       ],
       "update_tags_if_env" : {
         "orig": [ { "CK_RNNT_POST": "orig" } ],
-        "orig-quantized": [ { "CK_RNNT_POST": "orig-quantized" } ],
+        "orig-quant": [ { "CK_RNNT_POST": "orig-quant" } ],
         "naive": [ { "CK_RNNT_POST": "naive" } ]
       }
     },
@@ -128,7 +128,7 @@
       ],
       "update_tags_if_env" : {
         "orig": [ { "CK_RNNT_DEC": "orig" } ],
-        "orig-quantized": [ { "CK_RNNT_DEC": "orig-quantized" } ],
+        "orig-quant": [ { "CK_RNNT_DEC": "orig-quant" } ],
         "naive": [ { "CK_RNNT_DEC": "naive" } ]
       }
     },
