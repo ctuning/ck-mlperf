@@ -1,15 +1,15 @@
 {
   "check_exit_status": "yes",
   "customize": {
-    "*package_extra_name": " (mobilenet-$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_PRECISION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$)",
-    "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$",
+    "package_name": "TFLite MobileNet EdgeTPU Model",
+    "*version": "$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$.$<<ML_MODEL_DATA_TYPE>>$.$<<MODEL_MOBILENET_VERSION>>$",
     "install_env": {
       "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$",
       "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$",
       "*PACKAGE_NAME": "mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$.tgz",
-      "*PACKAGE_NAME_EDGETPU_TGZ": "checkpoints_mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$.tgz",
       "*PACKAGE_NAME_EDGETPU": "mobilenet_$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$",
-      "*WEIGHTS_FILE": "model",
+      "WEIGHTS_FILE": "model",
+      "ML_MODEL_FILE_FORMAT": "tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC",
       "MODEL_INPUT_LAYER_NAME": "images",
       "MODEL_MOBILENET_VERSION": "edgetpu",
@@ -17,8 +17,7 @@
       "MODEL_OUTPUT_LAYER_NAME": "Softmax",
       "MODEL_SUBTRACT_MEAN": "0",
       "MODEL_WEIGHTS_ARE_CHECKPOINTS": "YES",
-      "MODULE_FILE": "mobilenet-model.py",
-      "PACKAGE_URL": "https://storage.cloud.google.com/mobilenet_edgetpu/checkpoints/"
+      "MODULE_FILE": "mobilenet-model.py"
     },
     "no_os_in_suggested_path": "yes",
     "no_ver_in_suggested_path": "yes",
@@ -57,10 +56,13 @@
       "on_by_default": "yes"
     },
     "edgetpu_224_1.0_float": {
+      "on_by_default": "yes",
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "float"
+        "ML_MODEL_INPUT_DATA_TYPE": "float32",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "float32",
+        "ML_MODEL_DATA_TYPE": "float"
       },
       "extra_tags": [
         "multiplier.1.0",
@@ -72,7 +74,9 @@
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "int8"
+        "ML_MODEL_INPUT_DATA_TYPE": "int8",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "int8",
+        "ML_MODEL_DATA_TYPE": "int8"
       },
       "extra_tags": [
         "multiplier.1.0",
@@ -85,7 +89,9 @@
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "uint8"
+        "ML_MODEL_INPUT_DATA_TYPE": "uint8",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "uint8",
+        "ML_MODEL_DATA_TYPE": "uint8"
       },
       "extra_tags": [
         "multiplier.1.0",
@@ -98,7 +104,9 @@
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "0.75",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "float"
+        "ML_MODEL_INPUT_DATA_TYPE": "float32",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "float32",
+        "ML_MODEL_DATA_TYPE": "float"
       },
       "extra_tags": [
         "multiplier.0.75",
@@ -110,7 +118,9 @@
       "extra_env": {
         "MODEL_MOBILENET_MULTIPLIER": "0.75",
         "MODEL_MOBILENET_RESOLUTION": "224",
-        "MODEL_MOBILENET_PRECISION": "int8"
+        "ML_MODEL_INPUT_DATA_TYPE": "int8",
+        "ML_MODEL_OUTPUT_DATA_TYPE": "int8",
+        "ML_MODEL_DATA_TYPE": "int8"
       },
       "extra_tags": [
         "multiplier.0.75",
