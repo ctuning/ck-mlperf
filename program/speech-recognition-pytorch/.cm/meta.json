@@ -85,6 +85,7 @@
       ],
       "update_tags_if_env" : {
         "orig": [ { "CK_RNNT_PRE": "orig" } ],
+        "orig-quantized": [ { "CK_RNNT_PRE": "orig-quantized" } ],
         "naive": [ { "CK_RNNT_PRE": "naive" } ]
       }
     },
@@ -98,6 +99,7 @@
       ],
       "update_tags_if_env" : {
         "orig": [ { "CK_RNNT_POST": "orig" } ],
+        "orig-quantized": [ { "CK_RNNT_POST": "orig-quantized" } ],
         "naive": [ { "CK_RNNT_POST": "naive" } ]
       }
     },
@@ -111,6 +113,7 @@
       ],
       "update_tags_if_env" : {
         "orig": [ { "CK_RNNT_DEC": "orig" } ],
+        "orig-quantized": [ { "CK_RNNT_DEC": "orig-quantized" } ],
         "naive": [ { "CK_RNNT_DEC": "naive" } ]
       }
     },
