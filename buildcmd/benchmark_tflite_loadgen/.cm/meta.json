@@ -23,6 +23,11 @@
             "record_uoa": "tflite_v2.2.1_ruy"
         }
     },
+    "dataset_size###": {
+        "ck_env": "--env.env.CK_LOADGEN_DATASET_SIZE=###",
+        "record_tags": "ds_size.###",
+        "record_uoa": "ds_size.###"
+    },
     "mode": {
       "accuracy": {
         "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",

@@ -66,11 +66,21 @@ def run(i):
     #
     for param_name in params:
         param_value = params[param_name]
-        accu_map = build_map[param_name][param_value]
+
+        if param_name in build_map:         # all supported values are listed as keys in the dictionary
+            accu_map = build_map[param_name][param_value]
+
+        elif param_name+'###' in build_map: # all possible values are supported uniformly by substituting the '###' anchor
+            accu_map = build_map[param_name+'###']
+        else:
+            return {'return':1, 'error':"{} is not a part of this entry's build_map".format(param_name)}
+
         for accu_name in accu_map:
             if accu_name not in accu:
                 accu[accu_name] = []    # manual vivification
-            accu[accu_name].append( accu_map[accu_name] )
+            substituted_accu_value = accu_map[accu_name].replace('###', param_value)
+            accu[accu_name].append( substituted_accu_value )
+
     if interactive:
         print("Accu contents:")
         pprint(accu)
