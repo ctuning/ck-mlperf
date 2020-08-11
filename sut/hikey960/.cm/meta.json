@@ -3,6 +3,7 @@
     "division": "",
     "submitter": "dividiti",
     "status": "available",
+    "system_type": "edge",
     "system_name": "Linaro HiKey960 (hikey960)",
 
     "number_of_nodes": "1",
