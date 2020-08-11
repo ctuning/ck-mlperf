@@ -1470,7 +1470,7 @@ submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
 
 
 print("*" * 100)
-submission_checker_py = os.path.join(upstream_path, 'v0.5', 'tools', 'submission', 'submission-checker.py')
+submission_checker_py = os.path.join(upstream_path, 'tools', 'submission', 'submission-checker.py')
 # The checker has a weird bug. When submitting to open, 'closed/<organization>/results' must exist on disk.
 # Vice versa, When submitting to closed, 'open/<organization>/results' must exist on disk.
 # Therefore, create both directories if they do not exist before invoking the checker.
