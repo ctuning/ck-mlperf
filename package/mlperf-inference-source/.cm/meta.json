@@ -74,22 +74,13 @@
         "version": "vdvdt.rnnt"
       }
     },
-    "upstream.pr518": {
-      "extra_env": {
-        "PACKAGE_URL": "https://github.com/georgelyuan/inference",
-        "PACKAGE_GIT_CHECKOUT": "gyuan_audit_v052"
-      },
-      "extra_customize": {
-        "package_extra_name": " (PR#518: audit 0.5.2)"
-      }
-    },
-    "upstream.pr511": {
+    "upstream.pr679": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/guschmue/inference",
-        "PACKAGE_GIT_CHECKOUT": "gs/checker"
+        "PACKAGE_GIT_CHECKOUT": "gs/v0.7checker"
       },
       "extra_customize": {
-        "package_extra_name": " (PR#511: checker fixes)"
+        "package_extra_name": " (PR#679: v0.7 checker)"
       }
     }
   },
