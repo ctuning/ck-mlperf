@@ -1,0 +1,35 @@
+{
+    "cmd_template": "<<<before_before >>> <<<before_cmd>>> ls <<<options >>> <<<files >>> <<<after_cmd>>>",
+    "build_map": {
+        "dryrun": {
+            "yes": {
+                "before_before": "echo"
+            }
+        },
+        "velociti": {
+            "yes": {
+                "before_cmd": "ssh velociti '",
+                "after_cmd": "'"
+            }
+        },
+        "mode": {
+            "long": {
+                "options": "-l"
+            },
+            "short": {
+                "options": "-s"
+            },
+            "single": {
+                "options": "-1"
+            },
+            "one": {
+                "options": "-1"
+            }
+        },
+        "home": {
+            "yes": {
+                "files": "~"
+            }
+        }
+    }
+}
