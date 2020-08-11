@@ -1,0 +1,61 @@
+{
+  "cmd_template": "<<<before_before>>> ck benchmark program:image-classification-tflite-loadgen <<<shut_up>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa.>>> --tags=<<<record_tags,>>>",
+  "build_map": {
+    "dryrun": {
+      "yes": {
+        "before_before": "echo"
+      }
+    },
+    "quiet": {
+      "yes": {
+        "shut_up": "--env.CK_SILENT_MODE=YES --skip_print_timers --skip_stat_analysis --process_multi_keys"
+      }
+    },
+    "library": {
+        "tflite-v1.13.1": {
+            "deps": "--dep_add_tags.library=tflite,v1.13.1",
+            "record_tags": "inference_engine.tflite,inference_engine_version.1.13.1",
+            "record_uoa": "tflite_v1.13.1"
+        },
+        "tflite-v2.2.0-ruy": {
+            "deps": "--dep_add_tags.library=tflite,v2.2.0",
+            "record_tags": "inference_engine.tflite,inference_engine_version.2.2.0,inference_engine_backend.ruy",
+            "record_uoa": "tflite_v2.2.1_ruy"
+        }
+    },
+    "mode": {
+      "accuracy": {
+        "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
+        "record_tags": "mode.accuracy",
+        "record_uoa": "accuracy"
+      },
+      "performance": {
+        "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
+        "record_tags": "mode.performance",
+        "record_uoa": "performance"
+      }
+    },
+    "scenario": {
+      "singlestream": {
+        "ck_env": "--env.CK_LOADGEN_MODE=SingleStream",
+        "record_tags": "scenario.singlestream",
+        "record_uoa": "singlestream"
+      },
+      "multistream": {
+        "ck_env": "--env.CK_LOADGEN_MODE=MultiStream",
+        "record_tags": "scenario.multistream",
+        "record_uoa": "multistream"
+      },
+      "offline": {
+        "ck_env": "--env.CK_LOADGEN_MODE=Offline",
+        "record_tags": "scenario.offline",
+        "record_uoa": "offline"
+      },
+      "server": {
+        "ck_env": "--env.CK_LOADGEN_MODE=Server",
+        "record_tags": "scenario.server",
+        "record_uoa": "server"
+      }
+    }
+  }
+}
