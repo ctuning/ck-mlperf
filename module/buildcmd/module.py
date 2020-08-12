@@ -33,6 +33,7 @@ def run(i):
             }
     Test:
             ck run buildcmd:ls
+            ck run buildcmd:ls --dry_run
     """
 
     import re

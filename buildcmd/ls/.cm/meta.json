@@ -1,7 +1,7 @@
 {
     "cmd_template": "<<<drier>>> <<<before_cmd>>> ls <<<options >>> <<<files >>> <<<after_cmd>>>",
     "build_map": {
-        "dryrun": {
+        "dry_run": {
             "yes": {
                 "drier": "echo"
             }
