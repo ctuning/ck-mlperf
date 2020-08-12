@@ -1,5 +1,5 @@
 {
-  "cmd_template": "<<<before_before>>> ck benchmark program:image-classification-tflite-loadgen <<<shut_up>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa.>>> --tags=<<<record_tags,>>>",
+  "cmd_template": "<<<before_before>>> ck benchmark program:image-classification-tflite-loadgen <<<shut_up>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
   "build_map": {
     "dryrun": {
       "yes": {
@@ -24,7 +24,7 @@
         }
     },
     "dataset_size###": {
-        "ck_env": "--env.env.CK_LOADGEN_DATASET_SIZE=###",
+        "ck_env": "--env.CK_LOADGEN_DATASET_SIZE=###",
         "record_tags": "ds_size.###",
         "record_uoa": "ds_size.###"
     },
@@ -42,22 +42,22 @@
     },
     "scenario": {
       "singlestream": {
-        "ck_env": "--env.CK_LOADGEN_MODE=SingleStream",
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream",
         "record_tags": "scenario.singlestream",
         "record_uoa": "singlestream"
       },
       "multistream": {
-        "ck_env": "--env.CK_LOADGEN_MODE=MultiStream",
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=MultiStream",
         "record_tags": "scenario.multistream",
         "record_uoa": "multistream"
       },
       "offline": {
-        "ck_env": "--env.CK_LOADGEN_MODE=Offline",
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline",
         "record_tags": "scenario.offline",
         "record_uoa": "offline"
       },
       "server": {
-        "ck_env": "--env.CK_LOADGEN_MODE=Server",
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Server",
         "record_tags": "scenario.server",
         "record_uoa": "server"
       }
