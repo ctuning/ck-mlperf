@@ -90,13 +90,14 @@ def run(i):
     cmd_template    = entry_dict['cmd_template']
     cmd             = cmd_template
 
-    for match in re.finditer('(<<<(\w+)(.?)>>>)', cmd_template):
-        expression, accu_name, accu_sep = match.group(1), match.group(2), match.group(3)
+    for match in re.finditer('(<<<(\??)(\w+)(.?)>>>)', cmd_template):
+        expression, optional, accu_name, accu_sep = match.group(1), match.group(2), match.group(3), match.group(4)
         if accu_name in accu:
             cmd = cmd.replace(expression, accu_sep.join(accu[accu_name]) )
-        else:
-            print("WARNING: Could not map {} from the dictionary, skipping it".format(expression) )
+        elif optional=='?':
             cmd = cmd.replace(expression, '')
+        else:
+            return {'return':1, 'error':"Nothing to substitute into non-optional '{}' term".format(accu_name)}
 
     if interactive:
         print("Executing the command:\n\t{}".format(cmd))

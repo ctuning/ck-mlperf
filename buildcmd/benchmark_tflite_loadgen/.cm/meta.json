@@ -1,5 +1,5 @@
 {
-  "cmd_template": "<<<drier>>> ck benchmark program:<<<program_name>>> <<<shut_up>>> <<<deps >>> --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
+  "cmd_template": "<<<?drier>>> ck benchmark program:<<<program_name>>> <<<?shut_up>>> <<<?deps >>> --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<?ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
   "build_map": {
     "dry_run": {
       "yes": {
