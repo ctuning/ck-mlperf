@@ -1,5 +1,5 @@
 {
-  "cmd_template": "<<<drier>>> ck benchmark program:image-classification-tflite-loadgen <<<shut_up>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
+  "cmd_template": "<<<drier>>> ck benchmark program:<<<program_name>>> <<<shut_up>>> <<<deps >>> --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
   "build_map": {
     "dry_run": {
       "yes": {
@@ -11,16 +11,38 @@
         "shut_up": "--env.CK_SILENT_MODE=YES --skip_print_timers --skip_stat_analysis --process_multi_keys"
       }
     },
+    "implementation": {
+        "tflite": {
+            "program_name": "image-classification-tflite-loadgen",
+            "lg_config": "image-classification-tflite"
+        },
+        "armnn": {
+            "program_name": "image-classification-armnn-tflite-loadgen",
+            "lg_config": "image-classification-armnn-tflite"
+        }
+    },
     "library": {
         "tflite-v1.13.1": {
             "deps": "--dep_add_tags.library=tflite,v1.13.1",
             "record_tags": "inference_engine.tflite,inference_engine_version.1.13.1",
-            "record_uoa": "tflite_v1.13.1"
+            "record_uoa": "###"
         },
         "tflite-v2.2.0-ruy": {
             "deps": "--dep_add_tags.library=tflite,v2.2.0",
             "record_tags": "inference_engine.tflite,inference_engine_version.2.2.0,inference_engine_backend.ruy",
-            "record_uoa": "tflite_v2.2.1_ruy"
+            "record_uoa": "###"
+        },
+        "armnn-v19.08-neon": {
+            "deps": "--dep_add_tags.library=armnn,v19.08,neon",
+            "ck_env": "--env.USE_NEON=1",
+            "record_tags": "inference_engine.armnn,inference_engine_version.v19.08,inference_engine_backend.neon",
+            "record_uoa": "###"
+        },
+        "armnn-v19.08-opencl": {
+            "deps": "--dep_add_tags.library=armnn,v19.08,opencl",
+            "ck_env": "--env.USE_OPENCL=1",
+            "record_tags": "inference_engine.armnn,inference_engine_version.v19.08,inference_engine_backend.opencl",
+            "record_uoa": "###"
         }
     },
     "dataset_size###": {
