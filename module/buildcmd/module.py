@@ -68,13 +68,11 @@ def run(i):
     for param_name in params:
         param_value = params[param_name]
 
-        if param_name in build_map:         # all supported values are listed as keys in the dictionary
-            accu_map = build_map[param_name][param_value]
-
-        elif param_name+'###' in build_map: # all possible values are supported uniformly by substituting the '###' anchor
-            accu_map = build_map[param_name+'###']
-        else:
+        if param_name not in build_map:
             return {'return':1, 'error':"{} is not a part of this entry's build_map".format(param_name)}
+
+        # Start with the specific value, but fallback to default:
+        accu_map = build_map[param_name].get(param_value) or build_map[param_name]['###']
 
         for accu_name in accu_map:
             if accu_name not in accu:

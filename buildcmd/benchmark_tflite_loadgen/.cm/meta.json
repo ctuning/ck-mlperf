@@ -45,10 +45,12 @@
             "record_uoa": "###"
         }
     },
-    "dataset_size###": {
-        "ck_env": "--env.CK_LOADGEN_DATASET_SIZE=###",
-        "record_tags": "dataset_size.###",
-        "record_uoa": "dataset_size.###"
+    "dataset_size": {
+        "###": {
+            "ck_env": "--env.CK_LOADGEN_DATASET_SIZE=###",
+            "record_tags": "dataset_size.###",
+            "record_uoa": "dataset_size.###"
+        }
     },
     "mode": {
       "accuracy": {
