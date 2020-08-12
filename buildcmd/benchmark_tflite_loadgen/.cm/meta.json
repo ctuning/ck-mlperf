@@ -1,9 +1,9 @@
 {
-  "cmd_template": "<<<before_before>>> ck benchmark program:image-classification-tflite-loadgen <<<shut_up>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
+  "cmd_template": "<<<drier>>> ck benchmark program:image-classification-tflite-loadgen <<<shut_up>>> <<<ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa->>> --tags=<<<record_tags,>>>",
   "build_map": {
-    "dryrun": {
+    "dry_run": {
       "yes": {
-        "before_before": "echo"
+        "drier": "echo"
       }
     },
     "quiet": {
@@ -25,8 +25,8 @@
     },
     "dataset_size###": {
         "ck_env": "--env.CK_LOADGEN_DATASET_SIZE=###",
-        "record_tags": "ds_size.###",
-        "record_uoa": "ds_size.###"
+        "record_tags": "dataset_size.###",
+        "record_uoa": "dataset_size.###"
     },
     "mode": {
       "accuracy": {

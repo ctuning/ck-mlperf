@@ -1,9 +1,9 @@
 {
-    "cmd_template": "<<<before_before >>> <<<before_cmd>>> ls <<<options >>> <<<files >>> <<<after_cmd>>>",
+    "cmd_template": "<<<drier>>> <<<before_cmd>>> ls <<<options >>> <<<files >>> <<<after_cmd>>>",
     "build_map": {
         "dryrun": {
             "yes": {
-                "before_before": "echo"
+                "drier": "echo"
             }
         },
         "velociti": {
