@@ -42,9 +42,9 @@ def gen(i):
 
     interactive     = i.get('out')=='con'
 
-    params = i.copy()
+    input_params = i.copy()
     for unwanted_key in ('action', 'repo_uoa', 'module_uoa', 'data_uoa', 'cid', 'cids', 'xcids', 'out'):
-        params.pop(unwanted_key, None)
+        input_params.pop(unwanted_key, None)
 
     load_adict = {  'action':           'load',
                     'repo_uoa':         i.get('repo_uoa', ''),
@@ -65,25 +65,23 @@ def gen(i):
 
     # Accumulating values:
     #
-    for param_name in params:
-        param_value = params[param_name]
+    for param_name in input_params:
+        param_value = input_params[param_name]
 
-        if param_name not in build_map:
-            return {'return':1, 'error':"{} is not a part of this entry's build_map".format(param_name)}
+        if param_name in build_map:
+            # Start with the specific value, but fallback to default:
+            accu_map = build_map[param_name].get(param_value) or build_map[param_name]['###']
 
-        # Start with the specific value, but fallback to default:
-        accu_map = build_map[param_name].get(param_value) or build_map[param_name]['###']
+            for accu_name in accu_map:
+                if accu_name not in accu:
+                    accu[accu_name] = []    # manual vivification
 
-        for accu_name in accu_map:
-            if accu_name not in accu:
-                accu[accu_name] = []    # manual vivification
+                accu_value_list = accu_map[accu_name]
+                if type(accu_value_list)!=list:
+                    accu_value_list = [ accu_value_list ]
 
-            accu_value_list = accu_map[accu_name]
-            if type(accu_value_list)!=list:
-                accu_value_list = [ accu_value_list ]
-
-            for accu_value in accu_value_list:
-                accu[accu_name].append( accu_value.replace('###', param_value) )
+                for accu_value in accu_value_list:
+                    accu[accu_name].append( accu_value.replace('###', param_value) )
 
     if interactive:
         print("Accu contents:")
@@ -96,13 +94,18 @@ def gen(i):
     cmd             = cmd_template
 
     for match in re.finditer('(<<<(\??)(\w+)(.?)>>>)', cmd_template):
-        expression, optional, accu_name, accu_sep = match.group(1), match.group(2), match.group(3), match.group(4)
-        if accu_name in accu:
-            cmd = cmd.replace(expression, accu_sep.join(accu[accu_name]) )
+        expression, optional, anchor_name, accu_sep = match.group(1), match.group(2), match.group(3), match.group(4)
+        if anchor_name in accu:
+            if anchor_name in input_params:
+                return {'return':1, 'error':"Both input_params and accu contain '{}' anchor, ambiguous substitution".format(anchor_name)}
+            else:
+                cmd = cmd.replace(expression, accu_sep.join(accu[anchor_name]) )
+        elif anchor_name in input_params:
+            cmd = cmd.replace(expression, accu_sep.join(input_params[anchor_name]) )
         elif optional=='?':
             cmd = cmd.replace(expression, '')
         else:
-            return {'return':1, 'error':"Nothing to substitute into non-optional '{}' term".format(accu_name)}
+            return {'return':1, 'error':"Neither input_params nor accu contain substitution for non-optional '{}' anchor".format(anchor_name)}
 
     if interactive:
         print("The generated command:\n\t{}".format(cmd))
