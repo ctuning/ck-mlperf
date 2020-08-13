@@ -1,0 +1,35 @@
+{
+  "build_map": {
+    "dry_run": {
+      "yes": {
+        "drier": "echo"
+      }
+    },
+    "home": {
+      "yes": {
+        "files": "~"
+      }
+    },
+    "mode": {
+      "long": {
+        "options": "-l"
+      },
+      "one": {
+        "options": "-1"
+      },
+      "short": {
+        "options": "-s"
+      },
+      "single": {
+        "options": "-1"
+      }
+    },
+    "velociti": {
+      "yes": {
+        "after_cmd": "'",
+        "before_cmd": "ssh velociti '"
+      }
+    }
+  },
+  "cmd_template": "<<<?drier>>> <<<?before_cmd>>> ls <<<?options >>> <<<?files >>> <<<?after_cmd>>>"
+}

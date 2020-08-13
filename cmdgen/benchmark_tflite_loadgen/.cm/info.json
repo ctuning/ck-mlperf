@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "ac213664789beaab",
+  "backup_module_uid": "4282b15de48f4d05",
+  "backup_module_uoa": "cmdgen",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-08-13T10:20:16.781533",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "benchmark_tflite_loadgen"
+}
