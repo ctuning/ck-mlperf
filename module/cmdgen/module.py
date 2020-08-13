@@ -20,10 +20,11 @@ def init(i):
     return {'return':0}
 
 
-def run(i):
+def gen(i):
     """
     Input:  {
                 data_uoa            - specific entry that contains recipe for building the command
+                (any_map_params)    - any command line parameters (supported by build_map)
             }
 
     Output: {
@@ -32,12 +33,11 @@ def run(i):
                 (error)             - error text if return > 0
             }
     Test:
-            ck run cmdgen:ls
-            ck run cmdgen:ls --dry_run
+            ck gen cmdgen:ls
+            ck gen cmdgen:ls --mode=long --home
     """
 
     import re
-    import os
     from pprint import pprint
 
     interactive     = i.get('out')=='con'
@@ -100,11 +100,39 @@ def run(i):
             return {'return':1, 'error':"Nothing to substitute into non-optional '{}' term".format(accu_name)}
 
     if interactive:
-        print("Executing the command:\n\t{}".format(cmd))
-        print("")
-    os.system(cmd)
+        print("The generated command:\n\t{}".format(cmd))
 
     return { 'return': 0, 'cmd': cmd }
+
+
+def run(i):
+    """
+    Input:  {
+                data_uoa            - specific entry that contains recipe for building the command
+                (any_map_params)    - any command line parameters (supported by build_map)
+            }
+
+    Output: {
+                return              - return code =  0, if successful
+                                                  >  0, if error
+                (error)             - error text if return > 0
+            }
+    Test:
+            ck run cmdgen:ls
+            ck run cmdgen:ls --mode=long --home
+    """
+
+    import os
+
+    i['action'] = 'gen'
+    r=ck.access( i )
+    if r['return']>0: return r
+
+    cmd = r['cmd']
+
+    os.system(cmd)
+
+    return { 'return': 0 }
 
 
 def show(i):

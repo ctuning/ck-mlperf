@@ -1,10 +1,13 @@
 {
   "actions": {
+    "gen": {
+      "desc": "Generate a command using a template, input params and the mapping"
+    },
     "run": {
-      "desc": "Execute the given command"
+      "desc": "Execute the generated command"
     },
     "show": {
-      "desc": "Shows data content of a specific SUT entry"
+      "desc": "Shows data content of a specific cmdgen entry"
     }
   },
   "copyright": "See CK COPYRIGHT.txt for copyright details",
