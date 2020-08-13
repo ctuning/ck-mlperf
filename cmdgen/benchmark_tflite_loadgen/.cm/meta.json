@@ -21,23 +21,39 @@
       "armnn-v19.08-neon": {
         "ck_env": "--env.USE_NEON=1",
         "deps": "--dep_add_tags.library=armnn,v19.08,neon",
-        "record_tags": "inference_engine.armnn,inference_engine_version.v19.08,inference_engine_backend.neon",
+        "record_tags": [
+            "inference_engine.armnn",
+            "inference_engine_version.v19.08",
+            "inference_engine_backend.neon"
+        ],
         "record_uoa": "###"
       },
       "armnn-v19.08-opencl": {
         "ck_env": "--env.USE_OPENCL=1",
         "deps": "--dep_add_tags.library=armnn,v19.08,opencl",
-        "record_tags": "inference_engine.armnn,inference_engine_version.v19.08,inference_engine_backend.opencl",
+        "record_tags": [
+            "inference_engine.armnn",
+            "inference_engine_version.v19.08",
+            "inference_engine_backend.opencl"
+        ],
         "record_uoa": "###"
       },
       "tflite-v1.13.1": {
         "deps": "--dep_add_tags.library=tflite,v1.13.1",
         "record_tags": "inference_engine.tflite,inference_engine_version.1.13.1",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v1.13.1"
+        ],
         "record_uoa": "###"
       },
       "tflite-v2.2.0-ruy": {
         "deps": "--dep_add_tags.library=tflite,v2.2.0",
-        "record_tags": "inference_engine.tflite,inference_engine_version.2.2.0,inference_engine_backend.ruy",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v2.2.0",
+            "inference_engine_backend.ruy"
+        ],
         "record_uoa": "###"
       }
     },

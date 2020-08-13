@@ -77,8 +77,13 @@ def gen(i):
         for accu_name in accu_map:
             if accu_name not in accu:
                 accu[accu_name] = []    # manual vivification
-            substituted_accu_value = accu_map[accu_name].replace('###', param_value)
-            accu[accu_name].append( substituted_accu_value )
+
+            accu_value_list = accu_map[accu_name]
+            if type(accu_value_list)!=list:
+                accu_value_list = [ accu_value_list ]
+
+            for accu_value in accu_value_list:
+                accu[accu_name].append( accu_value.replace('###', param_value) )
 
     if interactive:
         print("Accu contents:")
