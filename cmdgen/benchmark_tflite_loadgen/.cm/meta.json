@@ -66,11 +66,13 @@
     "mode": {
       "accuracy": {
         "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
-        "record_tags": "mode.accuracy"
+        "record_tags": "mode.accuracy",
+        "mode_extension": "-<<<preprocessed_tag>>>"
       },
       "performance": {
         "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
-        "record_tags": "mode.performance"
+        "record_tags": "mode.performance",
+        "mode_extension": ""
       }
     },
     "quiet": {
@@ -97,5 +99,5 @@
       }
     }
   },
-  "cmd_template": "ck benchmark program:<<<program_name>>> <<<?shut_up>>> <<<?deps >>> --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<?ck_env >>> --record --record_repo=local --record_uoa=open-image_classification-<<<system>>>-<<<library>>>-<<<model>>>-<<<scenario>>>-<<<mode>>>-<<<preprocessed_tag>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
+  "cmd_template": "ck benchmark program:<<<program_name>>> <<<?shut_up>>> <<<?deps >>> --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<?ck_env >>> --record --record_repo=local --record_uoa=open-image_classification-<<<system>>>-<<<library>>>-<<<model>>>-<<<scenario>>>-<<<mode>>><<<mode_extension>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
 }

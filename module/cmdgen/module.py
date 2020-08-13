@@ -90,27 +90,41 @@ def gen(i):
 
     # Substitute the accumulated values into command template:
     #
-    cmd_template    = entry_dict['cmd_template']
-    cmd             = cmd_template
+    anchor_regexpr  = '(<<<(\??)(\w+)(.?)>>>)'
+    subst_output    = entry_dict['cmd_template']
+    can_substitute  = bool( re.search(anchor_regexpr, subst_output) )
+    iteration       = 0
 
-    for match in re.finditer('(<<<(\??)(\w+)(.?)>>>)', cmd_template):
-        expression, optional, anchor_name, accu_sep = match.group(1), match.group(2), match.group(3), match.group(4)
-        if anchor_name in accu:
-            if anchor_name in input_params:
-                return {'return':1, 'error':"Both input_params and accu contain '{}' anchor, ambiguous substitution".format(anchor_name)}
+    while can_substitute:
+        subst_input = subst_output
+        for match in re.finditer(anchor_regexpr, subst_input):
+            expression, optional, anchor_name, accu_sep = match.group(1), match.group(2), match.group(3), match.group(4)
+            if anchor_name in accu:
+                if anchor_name in input_params:
+                    return {'return':1, 'error':"Both input_params and accu contain '{}' anchor, ambiguous substitution".format(anchor_name)}
+                else:
+                    # print("Substituting {} -> {} from accu".format(expression, accu_sep.join(accu[anchor_name])))
+                    subst_output = subst_output.replace(expression, accu_sep.join(accu[anchor_name]) )
+            elif anchor_name in input_params:
+                # print("Substituting {} -> {} from input_params".format(expression, accu_sep.join(input_params[anchor_name])))
+                subst_output = subst_output.replace(expression, accu_sep.join(input_params[anchor_name]) )
+            elif optional=='?':
+                # print("Substituting optional {} -> ''".format(expression))
+                subst_output = subst_output.replace(expression, '')
             else:
-                cmd = cmd.replace(expression, accu_sep.join(accu[anchor_name]) )
-        elif anchor_name in input_params:
-            cmd = cmd.replace(expression, accu_sep.join(input_params[anchor_name]) )
-        elif optional=='?':
-            cmd = cmd.replace(expression, '')
-        else:
-            return {'return':1, 'error':"Neither input_params nor accu contain substitution for non-optional '{}' anchor".format(anchor_name)}
+                return {'return':1, 'error':"Neither input_params nor accu contain substitution for non-optional '{}' anchor".format(anchor_name)}
+
+            # print("input={}\noutput={}\n".format(subst_input, subst_output))
+
+        can_substitute  = bool( re.search(anchor_regexpr, subst_output) )
+        if interactive:
+            iteration += 1
+            print("Substitution iteration #{}".format(iteration))
 
     if interactive:
-        print("The generated command:\n\t{}".format(cmd))
+        print("The generated command:\n\t{}".format(subst_output))
 
-    return { 'return': 0, 'cmd': cmd }
+    return { 'return': 0, 'cmd': subst_output }
 
 
 def run(i):
