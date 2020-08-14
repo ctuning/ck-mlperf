@@ -19,6 +19,12 @@
     "model": {
         "resnet": {
             "deps": "--dep_add_tags.weights=resnet"
+        },
+        "effnet0": {
+            "deps": "--dep_add_tags.weights=efficientnet,lite0,fp32"
+        },
+        "effnet0-quant": {
+            "deps": "--dep_add_tags.weights=efficientnet,lite0,int8"
         }
     },
     "preprocessing": {
