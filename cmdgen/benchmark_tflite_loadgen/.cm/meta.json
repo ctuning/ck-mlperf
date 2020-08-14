@@ -3,8 +3,7 @@
     "dataset_size": {
       "###": {
         "ck_env": "--env.CK_LOADGEN_DATASET_SIZE=###",
-        "record_tags": "dataset_size.###",
-        "record_uoa": "dataset_size.###"
+        "record_tags": "dataset_size.###"
       }
     },
     "implementation": {
@@ -16,6 +15,11 @@
         "lg_config": "image-classification-tflite",
         "program_name": "image-classification-tflite-loadgen"
       }
+    },
+    "model": {
+        "resnet": {
+            "deps": "--dep_add_tags.weights=resnet"
+        }
     },
     "preprocessing": {
         "opencv": {
@@ -67,7 +71,7 @@
       "accuracy": {
         "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
         "record_tags": "mode.accuracy",
-        "mode_extension": "-<<<preprocessed_tag>>>"
+        "mode_extension": ".<<<preprocessed_tag>>>"
       },
       "performance": {
         "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
@@ -99,5 +103,5 @@
       }
     }
   },
-  "cmd_template": "ck benchmark program:<<<program_name>>> <<<?shut_up>>> <<<?deps >>> --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<?ck_env >>> --record --record_repo=local --record_uoa=open-image_classification-<<<system>>>-<<<library>>>-<<<model>>>-<<<scenario>>>-<<<mode>>><<<mode_extension>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
+  "cmd_template": "ck benchmark program:<<<program_name>>> <<<?shut_up>>> <<<?deps >>> --dep_add_tags.python=v3 --dep_add_tags.mlperf-inference-src=upstream.master --dep_add_tags.loadgen-config-file=<<<lg_config>>> <<<?ck_env >>> --record --record_repo=local --record_uoa=mlperf.open.image-classification.<<<system>>>.<<<library>>>.<<<model>>>.<<<scenario>>>.<<<mode>>><<<mode_extension>>>.<<<dataset_size>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
 }
