@@ -3,6 +3,12 @@
     "gen": {
       "desc": "Generate a command using a template, input params and the mapping"
     },
+    "map_keys": {
+      "desc": "Return the list of keys of build_map dictionary"
+    },
+    "map_values": {
+      "desc": "Return the list of values of a particular build_map mapping"
+    },
     "run": {
       "desc": "Execute the generated command"
     },

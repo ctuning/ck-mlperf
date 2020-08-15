@@ -54,13 +54,13 @@ def gen(i):
     r=ck.access( load_adict )
     if r['return']>0: return r
 
-    entry_dict = r['dict']
+    entry_dict  = r['dict']
     if interactive:
         print("Entry contents:")
         pprint(entry_dict)
         print("")
 
-    build_map   = entry_dict['build_map']
+    build_map   = entry_dict.get('build_map', {})
     accu        = entry_dict.get('accu_init', {})
 
     # Accumulating values:
@@ -193,4 +193,77 @@ def show(i):
             pprint(entry_dict)
 
     return { 'return': 0 }
+
+
+def map_keys(i):
+    """
+    Input:  {
+                data_uoa            - specific entry that contains recipe for building the command
+            }
+
+    Output: {
+                return              - return code =  0, if successful
+                                                  >  0, if error
+                (error)             - error text if return > 0
+            }
+    Test:
+            ck map_keys cmdgen:ls
+            ck map_keys cmdgen:benchmark_tflite_loadgen
+    """
+
+    interactive     = i.get('out')=='con'
+
+    load_adict = {  'action':           'load',
+                    'repo_uoa':         i.get('repo_uoa', ''),
+                    'module_uoa':       i['module_uoa'],
+                    'data_uoa':         i['data_uoa'],
+    }
+    r=ck.access( load_adict )
+    if r['return']>0: return r
+
+    entry_dict  = r['dict']
+    build_map   = entry_dict.get('build_map', {})
+    map_keys    = list(build_map.keys())
+
+    if interactive:
+        print("\n".join(map_keys))
+
+    return { 'return': 0, 'map_keys': map_keys }
+
+
+def map_values(i):
+    """
+    Input:  {
+                data_uoa            - specific entry that contains recipe for building the command
+                option              - the map name for which the values are sought
+            }
+
+    Output: {
+                return              - return code =  0, if successful
+                                                  >  0, if error
+                (error)             - error text if return > 0
+            }
+    Test:
+            ck map_values cmdgen:ls --option=mode
+    """
+
+    interactive     = i.get('out')=='con'
+
+    load_adict = {  'action':           'load',
+                    'repo_uoa':         i.get('repo_uoa', ''),
+                    'module_uoa':       i['module_uoa'],
+                    'data_uoa':         i['data_uoa'],
+    }
+    r=ck.access( load_adict )
+    if r['return']>0: return r
+
+    entry_dict  = r['dict']
+    build_map   = entry_dict.get('build_map', {})
+    option      = i['option']
+    map_values  = list(build_map[option].keys())
+
+    if interactive:
+        print("\n".join(map_values))
+
+    return { 'return': 0, 'map_values': map_values }
 
