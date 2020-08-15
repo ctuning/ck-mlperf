@@ -135,5 +135,5 @@
     "record_uoa":
         "mlperf.open.image-classification.<<<system>>>.<<<library>>>.<<<model>>>.<<<scenario>>>.<<<mode>>><<<mode_extension>>>.<<<dataset_size>>>"
   },
-  "cmd_template": "ck benchmark program:<<<program_name>>> --speed --repetitions=1 <<<?shut_up>>> <<<?deps >>> <<<?ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
+  "cmd_template": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else ck benchmark program:<<<program_name>>> --speed --repetitions=1 <<<?shut_up>>> <<<?deps >>> <<<?ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>> ; fi"
 }
