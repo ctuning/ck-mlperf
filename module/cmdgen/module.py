@@ -61,7 +61,7 @@ def gen(i):
         print("")
 
     build_map   = entry_dict['build_map']
-    accu        = {}
+    accu        = entry_dict.get('accu_init', {})
 
     # Accumulating values:
     #
@@ -104,7 +104,10 @@ def gen(i):
                     return {'return':1, 'error':"Both input_params and accu contain '{}' anchor, ambiguous substitution".format(anchor_name)}
                 else:
                     # print("Substituting {} -> {} from accu".format(expression, accu_sep.join(accu[anchor_name])))
-                    subst_output = subst_output.replace(expression, accu_sep.join(accu[anchor_name]) )
+                    accu_value_list = accu[anchor_name]
+                    if type(accu_value_list)!=list:
+                        accu_value_list = [ accu_value_list ]
+                    subst_output = subst_output.replace(expression, accu_sep.join(accu_value_list) )
             elif anchor_name in input_params:
                 # print("Substituting {} -> {} from input_params".format(expression, accu_sep.join(input_params[anchor_name])))
                 subst_output = subst_output.replace(expression, accu_sep.join(input_params[anchor_name]) )

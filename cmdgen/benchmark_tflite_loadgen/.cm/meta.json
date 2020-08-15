@@ -121,5 +121,19 @@
       }
     }
   },
-  "cmd_template": "ck benchmark program:<<<program_name>>> <<<?shut_up>>> <<<?deps >>> --speed --repetitions=1 --dep_add_tags.python=v3 --dep_add_tags.mlperf-inference-src=upstream.master --dep_add_tags.loadgen-config-file=<<<lg_config>>> --dep_add_tags.compiler=<<<compiler_tags>>> --env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>> --env.CK_LOADGEN_BUFFER_SIZE=<<<buffer_size>>> <<<?ck_env >>> --record --record_repo=local --record_uoa=mlperf.open.image-classification.<<<system>>>.<<<library>>>.<<<model>>>.<<<scenario>>>.<<<mode>>><<<mode_extension>>>.<<<dataset_size>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
+  "accu_init": {
+    "ck_env": [
+        "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>",
+        "--env.CK_LOADGEN_BUFFER_SIZE=<<<buffer_size>>>"
+    ],
+    "deps": [
+        "--dep_add_tags.python=v3",
+        "--dep_add_tags.mlperf-inference-src=upstream.master",
+        "--dep_add_tags.loadgen-config-file=<<<lg_config>>>",
+        "--dep_add_tags.compiler=<<<compiler_tags>>>"
+    ],
+    "record_uoa":
+        "mlperf.open.image-classification.<<<system>>>.<<<library>>>.<<<model>>>.<<<scenario>>>.<<<mode>>><<<mode_extension>>>.<<<dataset_size>>>"
+  },
+  "cmd_template": "ck benchmark program:<<<program_name>>> --speed --repetitions=1 <<<?shut_up>>> <<<?deps >>> <<<?ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>>"
 }
