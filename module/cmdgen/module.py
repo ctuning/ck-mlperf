@@ -122,7 +122,7 @@ def gen(i):
             print("Substitution iteration #{}".format(iteration))
 
     if interactive:
-        print("The generated command:\n\t{}".format(subst_output))
+        print("The generated command:\n  {}".format(subst_output.replace(' --', ' \\\n    --')))
 
     return { 'return': 0, 'cmd': subst_output }
 
