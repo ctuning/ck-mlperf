@@ -75,9 +75,11 @@ def setup(i):
     root_dir = os.path.dirname(v05_dir)
     
     env[ep] = root_dir
-    for ver_subdir in ('v0.5', 'v0.7'):
-        ver_suffix = ver_subdir.replace('.','').upper()
-        env[ep + '_' + ver_suffix] = env[ep + '_' + 'VLATEST'] = os.path.join(root_dir, ver_subdir)
+    for ver_subdir in ('v0.5', 'v0.7', 'v0.8'):
+        ver_suffix  = ver_subdir.replace('.','').upper()
+        ver_fulldir = os.path.join(root_dir, ver_subdir)
+        if os.path.isdir( ver_fulldir ):
+            env[ep + '_' + ver_suffix] = env[ep + '_' + 'VLATEST'] = ver_fulldir
 
     env[ep+'_LOADGEN'] = os.path.join(root_dir, 'loadgen')
     env['PYTHONPATH'] = python_dir + ( ';%PYTHONPATH%' if winh=='yes' else ':${PYTHONPATH}')
