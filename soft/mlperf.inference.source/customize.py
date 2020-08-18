@@ -70,12 +70,15 @@ def setup(i):
     ep=cus['env_prefix']
 
     classification_and_detection_dir = os.path.dirname(os.path.dirname(os.path.dirname(fp)))
+    python_dir = os.path.join(classification_and_detection_dir, 'python')
     v05_dir  = os.path.dirname(classification_and_detection_dir)
     root_dir = os.path.dirname(v05_dir)
-    python_dir=os.path.join(classification_and_detection_dir,'python')
     
     env[ep] = root_dir
-    env[ep+'_V05'] = v05_dir
+    for ver_subdir in ('v0.5', 'v0.7'):
+        ver_suffix = ver_subdir.replace('.','').upper()
+        env[ep + '_' + ver_suffix] = env[ep + '_' + 'VLATEST'] = os.path.join(root_dir, ver_subdir)
+
     env[ep+'_LOADGEN'] = os.path.join(root_dir, 'loadgen')
     env['PYTHONPATH'] = python_dir + ( ';%PYTHONPATH%' if winh=='yes' else ':${PYTHONPATH}')
 
