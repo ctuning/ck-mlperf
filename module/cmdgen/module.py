@@ -69,8 +69,11 @@ def gen(i):
         param_value = input_params[param_name]
 
         if param_name in build_map:
+            specific_accu_map = build_map[param_name]
             # Start with the specific value, but fallback to default:
-            accu_map = build_map[param_name].get(param_value) or build_map[param_name]['###']
+            accu_map = specific_accu_map.get(param_value) or specific_accu_map.get('###')
+            if accu_map==None:
+                return {'return':1, 'error':"build_map[{}] is missing both '{}' and '###' values".format(param_name, param_value)}
 
             for accu_name in accu_map:
                 if accu_name not in accu:
