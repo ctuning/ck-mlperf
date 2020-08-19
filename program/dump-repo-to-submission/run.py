@@ -230,7 +230,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
 
     ## figure out the transformation path:
     if program_name == 'mlperf-inference-v0.7':
-        recorded_transformation_path = '? -> OpenVINO'
+        recorded_transformation_path = 'TF? -> OpenVINO'
     elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
         if benchmark in ['resnet', 'resnet50']:
             recorded_transformation_path = 'TF -> TFLite'
