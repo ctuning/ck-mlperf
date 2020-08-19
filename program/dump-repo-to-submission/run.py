@@ -118,6 +118,7 @@ inference_engine_to_printable = {
     'tflite':           'TFLite',
     'tensorrt':         'TensorRT',
     'tensorflow':       'TensorFlow',
+    'openvino':         'OpenVINO',
 }
 
 backend_to_printable = {
@@ -146,6 +147,9 @@ def dump_system_description_dictionary(target_path, division, platform, inferenc
         status = 'unofficial'
     else:
         status = 'available'
+
+    if inference_engine not in inference_engine_to_printable:
+        raise Exception("inference_engine '{}' is unknown, please add it to inference_engine_to_printable dictionary".format(inference_engine))
 
     framework = inference_engine_to_printable[inference_engine] + ' ' + inference_engine_version + \
                 (' ({})'.format(backend_to_printable[backend]) if backend else '')
@@ -185,14 +189,15 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if target_path in implementation_cache:
         return implementation_cache[target_path]
 
-    model_env = model_dict['cus']['install_env']
+    model_install_env = model_dict['cus']['install_env']
+    model_env = model_dict['dict']['env']
     model_tags = model_dict['dict']['tags']
 
-    recorded_model_retraining = model_env.get('ML_MODEL_RETRAINING', 'no')
+    recorded_model_retraining = model_install_env.get('ML_MODEL_RETRAINING', 'no')
 
     ## fetch recorded model data types, if available, guess if unavailable:
-    recorded_model_data_type = model_env.get('ML_MODEL_DATA_TYPE')
-    recorded_model_input_data_type = model_env.get('ML_MODEL_INPUT_DATA_TYPE')
+    recorded_model_data_type = model_install_env.get('ML_MODEL_DATA_TYPE')
+    recorded_model_input_data_type = model_install_env.get('ML_MODEL_INPUT_DATA_TYPE')
 
 
     if not recorded_model_data_type:
@@ -212,16 +217,21 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if recorded_model_input_data_type in model_input_type_mapping:
         recorded_model_input_data_type = model_input_type_mapping[recorded_model_input_data_type]
 
-
     ## fetching/constructing the URL of the (original) model:
-    if 'PACKAGE_URL' not in model_env:  # this model is a result of conversion
-        model_env = model_dict['dict']['deps']['model-source']['dict']['customize']['install_env']
+    if 'PACKAGE_URL' not in model_install_env:  # this model is a result of conversion
+        model_deps = model_dict['dict']['deps']
+        if 'model-source' in model_deps:
+            model_install_env = model_deps['model-source']['dict']['customize']['install_env']
+        else:
+            starting_weights_filename = model_env['CK_ENV_OPENVINO_MODEL_FILENAME'] # assume it was detected
 
-    recorded_model_url = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
-
+    if not starting_weights_filename:
+        starting_weights_filename = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
 
     ## figure out the transformation path:
-    if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+    if program_name == 'mlperf-inference-v0.7':
+        recorded_transformation_path = '? -> OpenVINO'
+    elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
         if benchmark in ['resnet', 'resnet50']:
             recorded_transformation_path = 'TF -> TFLite'
         else:
@@ -234,7 +244,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     elif program_name == 'mlperf-inference-vision':
         recorded_transformation_path = 'None (TensorFlow)'
     else:
-        raise Exception("Don't know how to derive the transformation path of the model")
+        raise Exception("Don't know how to derive the transformation path of the model for program:{}".format(program_name))
 
     # Initial model is never supplied in one of these, so there must have been a transformation:
     if inference_engine in ['armnn', 'tensorrt']:
@@ -244,7 +254,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
         'retraining': recorded_model_retraining,
         'input_data_types': recorded_model_input_data_type,
         'weight_data_types': recorded_model_data_type,
-        'starting_weights_filename': recorded_model_url,
+        'starting_weights_filename': starting_weights_filename,
         'weight_transformations': recorded_transformation_path,
 
     }
@@ -967,6 +977,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         print('Error: %s' % r['error'])
         exit(1)
     experiments = r['lst']
+    print("Found {} {} entries in repository {}".format(len(experiments), module_uoa, repo_uoa))
 
     for experiment in experiments:
         data_uoa = experiment['data_uoa']
@@ -1124,7 +1135,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             implementation_readme_file.writelines(implementation_readme)
         if implementation_readme == '':
             print('  |_ %s [EMPTY]' % implementation_readme_name)
-            raise
+            # raise
         else:
             print('  |_ %s' % implementation_readme_name)
 
@@ -1178,53 +1189,57 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 measurements_notes_file.writelines(measurements_notes)
             print('  |_ %s [for %s %s]' % (measurements_notes_name, division, task))
 
-        # Try to find environment for 'user.conf'.
-        if program_name.endswith('-loadgen'):
-            program_config_tag = program_name[:-len('-loadgen')]
-        else:
-            program_config_tag = program_name
-        loadgen_config_tags='loadgen,config,'+program_config_tag    # FIXME: needs to be fixed on the soft: entry side
-        lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
-        if lgc['return']>0:
-            print('Error: %s' % lgc['error'])
-            exit(1)
-        envs = lgc['lst']
-        if len(envs) > 1:
-           # Found several environments.
-           print('Error: More than one environment found with tags=\'%s\'' % loadgen_config_tags)
-           exit(1)
-        elif len(envs) == 1:
-            # Found exactly one environment.
-            lgc = ck.access({'action':'load', 'module_uoa':'env', 'data_uoa':envs[0]['data_uoa']})
+
+        # With newer programs instead of per-program configs we have recorded per-run configs, which will be dumped later elsewhere
+        if program_name != 'mlperf-inference-v0.7':
+
+            # Try to find environment for 'user.conf'.
+            if program_name.endswith('-loadgen'):
+                program_config_tag = program_name[:-len('-loadgen')]
+            else:
+                program_config_tag = program_name
+            loadgen_config_tags='loadgen,config,'+program_config_tag    # FIXME: needs to be fixed on the soft: entry side
+            lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
             if lgc['return']>0:
                 print('Error: %s' % lgc['error'])
                 exit(1)
-            # CK_ENV_LOADGEN_CONFIG=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf
-            # CK_ENV_LOADGEN_CONFIG_FILE=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf/user.conf
-            user_conf_path=lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG_FILE']
-            user_conf_name=user_conf_path[len(lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG'])+1:]
-        elif len(envs) == 0:
-            # Not found any environments: copy 'user.conf' from implementation source.
-            user_conf_name = 'user.conf'
-            implementation_path = get_program_path(program_name)
-            if not implementation_path:
-                raise Exception("Invalid implementation path!")
-            user_conf_path = os.path.join(implementation_path, user_conf_name)
-        copy2(user_conf_path, scenario_dir)
-        print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
+            envs = lgc['lst']
+            if len(envs) > 1:
+               # Found several environments.
+               print('Error: More than one environment found with tags=\'%s\'' % loadgen_config_tags)
+               exit(1)
+            elif len(envs) == 1:
+                # Found exactly one environment.
+                lgc = ck.access({'action':'load', 'module_uoa':'env', 'data_uoa':envs[0]['data_uoa']})
+                if lgc['return']>0:
+                    print('Error: %s' % lgc['error'])
+                    exit(1)
+                # CK_ENV_LOADGEN_CONFIG=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf
+                # CK_ENV_LOADGEN_CONFIG_FILE=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf/user.conf
+                user_conf_path=lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG_FILE']
+                user_conf_name=user_conf_path[len(lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG'])+1:]
+            elif len(envs) == 0:
+                # Not found any environments: copy 'user.conf' from implementation source.
+                user_conf_name = 'user.conf'
+                implementation_path = get_program_path(program_name)
+                if not implementation_path:
+                    raise Exception("Invalid implementation path!")
+                user_conf_path = os.path.join(implementation_path, user_conf_name)
+            copy2(user_conf_path, scenario_dir)
+            print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
 
-        # Copy 'mlperf.conf' from MLPerf Inference source.
-        mlperf_conf_name = 'mlperf.conf'
-        mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
-        if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
-            # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
-            with open(mlperf_conf_path, 'w') as mlperf_conf_file:
-                mlperf_conf_file.writelines(mlperf_conf_6122045)
-            print('  |_ %s [from %s]' % (mlperf_conf_name, 'github.com/mlperf/inference@6122045'))
-        else:
-            upstream_mlperf_conf_path = os.path.join(upstream_path, 'v0.5', 'mlperf.conf')
-            copy2(upstream_mlperf_conf_path, mlperf_conf_path)
-            print('  |_ %s [from %s]' % (mlperf_conf_name, upstream_mlperf_conf_path))
+            # Copy 'mlperf.conf' from MLPerf Inference source.
+            mlperf_conf_name = 'mlperf.conf'
+            mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
+            if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+                # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
+                with open(mlperf_conf_path, 'w') as mlperf_conf_file:
+                    mlperf_conf_file.writelines(mlperf_conf_6122045)
+                print('  |_ %s [from %s]' % (mlperf_conf_name, 'github.com/mlperf/inference@6122045'))
+            else:
+                upstream_mlperf_conf_path = os.path.join(upstream_path, 'v0.5', 'mlperf.conf')
+                copy2(upstream_mlperf_conf_path, mlperf_conf_path)
+                print('  |_ %s [from %s]' % (mlperf_conf_name, upstream_mlperf_conf_path))
 
         # Write submission_checklist.txt into the same directory later, once accuracy.txt is parsed.
 
@@ -1304,6 +1319,17 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             else:
                 last_dir = mode_dir
             print(last_dir)
+
+            # FIXME: Per-datapoint configs should belong here, but this must be confirmed!
+            #
+            mlperf_conf = characteristics['run'].get('mlperf_conf',{})
+            if len(mlperf_conf.keys())>0:
+                for config_name in mlperf_conf.keys():
+                    config_path = os.path.join(last_dir, config_name)
+
+                    with open(config_path, 'w') as config_file_descriptor:
+                        config_file_descriptor.writelines(mlperf_conf[config_name])
+                    print('  |_ {}'.format(config_name))
 
             # Dump files in the leaf directory.
             mlperf_log = characteristics['run'].get('mlperf_log',{})
