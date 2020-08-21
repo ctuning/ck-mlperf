@@ -22,7 +22,10 @@ def ck_postprocess(i):
   print('\n--------------------------------')
 
   env               = i['env']
+  deps              = i['deps']
   SIDELOAD_JSON     = env.get('CK_LOADGEN_SIDELOAD_JSON', '')
+  model_env         = deps['weights']['dict']['env']
+  use_inv_map       = model_env.get('ML_MODEL_USE_INV_MAP', '') in ("YES", "Yes", "yes", "TRUE", "True", "true", "ON", "On", "on", "1", 1)
 
   save_dict = {}
 
@@ -60,7 +63,6 @@ def ck_postprocess(i):
     accuracy_mode = True
 
   if accuracy_mode:
-    deps = i['deps']
     accuracy_script = os.path.join( deps['mlperf-inference-src']['dict']['env']['CK_ENV_MLPERF_INFERENCE_V05'],
                                     'classification_and_detection', 'tools', 'accuracy-coco.py' )
 
@@ -77,6 +79,8 @@ def ck_postprocess(i):
               '--coco-dir', coco_dir,
               '--mlperf-accuracy-file', MLPERF_LOG_ACCURACY_JSON,
     ]
+    if use_inv_map:
+        command.append( '--use-inv-map' )
 
     output = check_output(command).decode('ascii')
 
