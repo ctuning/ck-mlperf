@@ -15,6 +15,7 @@ MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
+MLPERF_USER_CONF         = 'user.conf'
 ACCURACY_TXT             = 'accuracy.txt'
 
 
@@ -27,11 +28,15 @@ def ck_postprocess(i):
   model_env         = deps['weights']['dict']['env']
   use_inv_map       = model_env.get('ML_MODEL_USE_INV_MAP', '') in ("YES", "Yes", "yes", "TRUE", "True", "true", "ON", "On", "on", "1", 1)
 
+  inference_src_env = deps['mlperf-inference-src']['dict']['env']
+  INFERENCE_VLATEST = inference_src_env.get('CK_ENV_MLPERF_INFERENCE_VLATEST', 'MiSsInG_DiR')
+  MLPERF_MAIN_CONF  = os.path.join(INFERENCE_VLATEST, 'mlperf.conf')
+
   save_dict = {}
 
   # Save logs.
-  save_dict['mlperf_log'] = {}
-  mlperf_log_dict = save_dict['mlperf_log']
+  mlperf_log_dict   = save_dict['mlperf_log'] = {}
+  mlperf_conf_dict  = save_dict['mlperf_conf'] = {}
 
   with open(MLPERF_LOG_ACCURACY_JSON, 'r') as accuracy_file:
     mlperf_log_dict['accuracy'] = json.load(accuracy_file)
@@ -56,6 +61,14 @@ def ck_postprocess(i):
     with open(MLPERF_LOG_TRACE_JSON, 'r') as trace_file:
       mlperf_log_dict['trace'] = json.load(trace_file)
 
+  if os.path.exists( MLPERF_MAIN_CONF ):
+      with open(MLPERF_MAIN_CONF, 'r') as main_conf_file:
+        mlperf_conf_dict['mlperf.conf'] = main_conf_file.readlines()
+
+  if os.path.exists( MLPERF_USER_CONF ):
+      with open(MLPERF_USER_CONF, 'r') as user_conf_file:
+        mlperf_conf_dict['user.conf'] = user_conf_file.readlines()
+
 
   # Check accuracy in accuracy mode.
   accuracy_mode = False
@@ -63,7 +76,7 @@ def ck_postprocess(i):
     accuracy_mode = True
 
   if accuracy_mode:
-    accuracy_script = os.path.join( deps['mlperf-inference-src']['dict']['env']['CK_ENV_MLPERF_INFERENCE_V05'],
+    accuracy_script = os.path.join( inference_src_env['CK_ENV_MLPERF_INFERENCE_V05'],
                                     'classification_and_detection', 'tools', 'accuracy-coco.py' )
 
     dataset_source = deps['dataset']['dict']['deps'].get('dataset-source',{})
