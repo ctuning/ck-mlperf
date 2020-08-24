@@ -33,15 +33,18 @@ def iterate(i):
 
     for param_name in input_params.keys():
         param_value = input_params[param_name]
-        print("'{}' --> '{}'".format(param_name, param_value))
-        matchObj = re.match('(\w+)([,:])', param_name)
+        matchObj = re.match('(\w+)([,:])((-?\d+):(-?\d+))?', param_name)
         if matchObj:
             pure_name   = matchObj.group(1)
             delimiter   = matchObj.group(2)
             index_name.append( pure_name )
-            index_range.append( param_value.split(delimiter) )
-    print(index_name)
-    print(index_range)
+            if matchObj.group(3):
+                range_from  = int(matchObj.group(4))
+                range_to    = int(matchObj.group(5))
+                index_range.append( range(range_from, range_to+1) )
+            else:
+                index_range.append( param_value.split(delimiter) )
+    print(dict(zip(index_name, index_range)))
     print('-'*80)
 
     dimensions  = len(index_name)
