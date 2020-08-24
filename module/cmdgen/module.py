@@ -151,7 +151,7 @@ def gen(i):
     if r['return']>0: return r
     param_dicts = r['param_dicts']
 
-    cmds = []
+    cmds    = []
     for input_params in param_dicts:
 
         # Accumulating values:
@@ -220,11 +220,12 @@ def gen(i):
                 iteration += 1
                 # print("Substitution iteration #{}".format(iteration))
 
-        if interactive:
-            print('# '+'-'*80)
-            print("\n{}\n".format(subst_output.replace(' --', ' \\\n    --')))
 
-        cmds.append( subst_output )
+        if subst_output not in cmds:
+            cmds.append( subst_output )
+            if interactive:
+                print('# '+'-'*80)
+                print("\n{}\n".format(subst_output.replace(' --', ' \\\n    --')))
 
     return { 'return': 0, 'cmds': cmds }
 
