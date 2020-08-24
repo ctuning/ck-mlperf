@@ -20,6 +20,53 @@ def init(i):
     return {'return':0}
 
 
+def iterate(i):
+
+    import re
+
+    input_params = i.copy()
+    for unwanted_key in ('action', 'repo_uoa', 'module_uoa', 'data_uoa', 'cid', 'cids', 'xcids', 'out'):
+        input_params.pop(unwanted_key, None)
+
+    index_name = []
+    index_range = []
+
+    for param_name in input_params.keys():
+        param_value = input_params[param_name]
+        print("'{}' --> '{}'".format(param_name, param_value))
+        matchObj = re.match('(\w+)([,:])', param_name)
+        if matchObj:
+            pure_name   = matchObj.group(1)
+            delimiter   = matchObj.group(2)
+            index_name.append( pure_name )
+            index_range.append( param_value.split(delimiter) )
+    print(index_name)
+    print(index_range)
+    print('-'*80)
+
+    dimensions  = len(index_name)
+    multi_idx   = [0] * dimensions
+    current_dim = 0
+    while True:
+        multi_value = [(index_name[i], index_range[i][multi_idx[i]]) for i in range(dimensions) ]
+        print("{} -> {}".format(multi_idx, multi_value))
+
+        multi_idx[current_dim] += 1
+        # carry avalanche:
+        while current_dim<dimensions and multi_idx[current_dim]>=len(index_range[current_dim]):
+            multi_idx[current_dim] = 0
+            current_dim += 1
+            if current_dim<dimensions:
+                multi_idx[current_dim] += 1
+
+        if current_dim<dimensions:
+            current_dim=0
+        else:
+            break
+
+    return {'return':0}
+
+
 def gen(i):
     """
     Input:  {

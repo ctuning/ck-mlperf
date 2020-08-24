@@ -3,6 +3,9 @@
     "gen": {
       "desc": "Generate a command using a template, input params and the mapping"
     },
+    "iterate": {
+      "desc": "Test the parameter ranges"
+    },
     "map_keys": {
       "desc": "Return the list of keys of build_map dictionary"
     },
