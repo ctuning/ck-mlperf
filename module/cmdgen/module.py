@@ -46,21 +46,21 @@ def iterate(i):
 
     dimensions  = len(index_name)
     multi_idx   = [0] * dimensions
-    current_dim = 0
+    current_dim = dimensions-1
     while True:
         multi_value = [(index_name[i], index_range[i][multi_idx[i]]) for i in range(dimensions) ]
         print("{} -> {}".format(multi_idx, multi_value))
 
         multi_idx[current_dim] += 1
         # carry avalanche:
-        while current_dim<dimensions and multi_idx[current_dim]>=len(index_range[current_dim]):
+        while current_dim>=0 and multi_idx[current_dim]>=len(index_range[current_dim]):
             multi_idx[current_dim] = 0
-            current_dim += 1
-            if current_dim<dimensions:
+            current_dim -= 1
+            if current_dim>=0:
                 multi_idx[current_dim] += 1
 
-        if current_dim<dimensions:
-            current_dim=0
+        if current_dim>=0:
+            current_dim = dimensions-1
         else:
             break
 
