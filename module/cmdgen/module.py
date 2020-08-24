@@ -178,7 +178,7 @@ def gen(i):
                     for accu_value in accu_value_list:
                         accu[accu_name].append( accu_value.replace('###', param_value) )
 
-        if interactive:
+        if False and interactive:
             print('-'*80)
             print("Accu contents:")
             pprint(accu)
@@ -218,10 +218,11 @@ def gen(i):
             can_substitute  = bool( re.search(anchor_regexpr, subst_output) )
             if interactive:
                 iteration += 1
-                print("Substitution iteration #{}".format(iteration))
+                # print("Substitution iteration #{}".format(iteration))
 
         if interactive:
-            print("The generated command:\n  {}".format(subst_output.replace(' --', ' \\\n    --')))
+            print('# '+'-'*80)
+            print("\n{}\n".format(subst_output.replace(' --', ' \\\n    --')))
 
         cmds.append( subst_output )
 
