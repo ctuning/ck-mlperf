@@ -1,10 +1,10 @@
 {
   "actions": {
     "gen": {
-      "desc": "Generate a command using a template, input params and the mapping"
+      "desc": "Generate commands using a template, iterable input params and the mapping"
     },
     "iterate": {
-      "desc": "Test the parameter ranges"
+      "desc": "Generate parameter dictionaries from command line arguments (some of which are given as lists/ranges)"
     },
     "map_keys": {
       "desc": "Return the list of keys of build_map dictionary"
@@ -13,7 +13,7 @@
       "desc": "Return the list of values of a particular build_map mapping"
     },
     "run": {
-      "desc": "Execute the generated command"
+      "desc": "Execute the generated commands"
     },
     "show": {
       "desc": "Shows data content of a specific cmdgen entry"
