@@ -206,8 +206,9 @@ def gen(i):
                             accu_value_list = [ accu_value_list ]
                         subst_output = subst_output.replace(expression, accu_sep.join(accu_value_list) )
                 elif anchor_name in input_params:
-                    # print("Substituting {} -> {} from input_params".format(expression, accu_sep.join(input_params[anchor_name])))
-                    subst_output = subst_output.replace(expression, accu_sep.join(input_params[anchor_name]) )
+                    # print("Substituting {} -> {} from input_params".format(expression, input_params[anchor_name]))
+
+                    subst_output = subst_output.replace(expression, input_params[anchor_name] )
                 elif optional=='?':
                     # print("Substituting optional {} -> ''".format(expression))
                     subst_output = subst_output.replace(expression, '')
