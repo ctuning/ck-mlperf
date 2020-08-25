@@ -65,7 +65,7 @@ def iterate(i):
                 range_from  = int(matchObj.group(4))
                 range_to    = int(matchObj.group(5))
                 range_step  = int(matchObj.group(6)) if matchObj.group(6) else 1
-                index_range.append( range(range_from, range_to+1, range_step) )
+                index_range.append( [ str(n) for n in range(range_from, range_to+1, range_step) ] )
             else:
                 delimiter   = matchObj.group(2)
                 index_range.append( param_value.split(delimiter) )
