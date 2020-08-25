@@ -84,7 +84,8 @@ def iterate(i):
         if interactive:
             print(multi_value)
 
-        multi_idx[current_dim] += 1
+        if current_dim>=0:
+            multi_idx[current_dim] += 1
         # carry avalanche:
         while current_dim>=0 and multi_idx[current_dim]>=len(index_range[current_dim]):
             multi_idx[current_dim] = 0
