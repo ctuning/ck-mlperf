@@ -194,7 +194,7 @@ def gen(i):
 
         # Substitute the accumulated values into command template:
         #
-        anchor_regexpr  = '(<<<(\??)(\w+)(.?)>>>)'
+        anchor_regexpr  = '((?:<<<|{{{)(\??)(\w+)(.?)(?:>>>|}}}))'
         subst_output    = entry_dict['cmd_template']
         can_substitute  = bool( re.search(anchor_regexpr, subst_output) )
         iteration       = 0
