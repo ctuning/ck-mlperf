@@ -131,6 +131,7 @@ def gen(i):
             ck gen cmdgen:ls
             ck gen cmdgen:ls --mode=long --home
             ck gen cmdgen:ls --mode,=long,short,single
+            ck gen cmdgen:ls --mode=short --files:=$PATH
     """
 
     import re
@@ -255,6 +256,8 @@ def run(i):
     Test:
             ck run cmdgen:ls
             ck run cmdgen:ls --mode=long --home
+            ck run cmdgen:ls --mode,=long,short,single
+            ck run cmdgen:ls --mode=short --files:=$PATH
     """
 
     import os
