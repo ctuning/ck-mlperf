@@ -25,8 +25,8 @@ def ck_postprocess(i):
   env               = i['env']
   deps              = i['deps']
   SIDELOAD_JSON     = env.get('CK_LOADGEN_SIDELOAD_JSON', '')
-  INFERENCE_VLATEST = deps['mlperf-inference-src']['dict']['env'].get('CK_ENV_MLPERF_INFERENCE_VLATEST', 'MiSsInG_DiR')
-  MLPERF_MAIN_CONF  = os.path.join(INFERENCE_VLATEST, 'mlperf.conf')
+  inference_src_env = deps['mlperf-inference-src']['dict']['env']
+  MLPERF_MAIN_CONF  = inference_src_env['CK_ENV_MLPERF_INFERENCE_MLPERF_CONF']
 
   save_dict = {}
 
@@ -71,7 +71,7 @@ def ck_postprocess(i):
     accuracy_mode = True
 
   if accuracy_mode:
-    accuracy_script = os.path.join( deps['mlperf-inference-src']['dict']['env']['CK_ENV_MLPERF_INFERENCE_V05'],
+    accuracy_script = os.path.join( inference_src_env['CK_ENV_MLPERF_INFERENCE_VLATEST'],
                                     'classification_and_detection', 'tools', 'accuracy-imagenet.py' )
     imagenet_labels_filepath = deps['imagenet-aux']['dict']['env']['CK_CAFFE_IMAGENET_VAL_TXT']
 

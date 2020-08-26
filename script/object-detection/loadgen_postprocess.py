@@ -29,8 +29,8 @@ def ck_postprocess(i):
   use_inv_map       = model_env.get('ML_MODEL_USE_INV_MAP', '') in ("YES", "Yes", "yes", "TRUE", "True", "true", "ON", "On", "on", "1", 1)
 
   inference_src_env = deps['mlperf-inference-src']['dict']['env']
-  INFERENCE_VLATEST = inference_src_env.get('CK_ENV_MLPERF_INFERENCE_VLATEST', 'MiSsInG_DiR')
-  MLPERF_MAIN_CONF  = os.path.join(INFERENCE_VLATEST, 'mlperf.conf')
+  MLPERF_MAIN_CONF  = inference_src_env['CK_ENV_MLPERF_INFERENCE_MLPERF_CONF']
+
 
   save_dict = {}
 
@@ -76,7 +76,7 @@ def ck_postprocess(i):
     accuracy_mode = True
 
   if accuracy_mode:
-    accuracy_script = os.path.join( inference_src_env['CK_ENV_MLPERF_INFERENCE_V05'],
+    accuracy_script = os.path.join( inference_src_env['CK_ENV_MLPERF_INFERENCE_VLATEST'],
                                     'classification_and_detection', 'tools', 'accuracy-coco.py' )
 
     dataset_source = deps['dataset']['dict']['deps'].get('dataset-source',{})
