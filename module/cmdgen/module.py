@@ -134,6 +134,7 @@ def gen(i):
     """
 
     import re
+    from copy import deepcopy
     from pprint import pprint
 
     interactive     = i.get('out')=='con'
@@ -164,7 +165,7 @@ def gen(i):
 
         # Accumulating values:
         #
-        accu        = entry_dict.get('accu_init', {}).copy()
+        accu        = deepcopy( entry_dict.get('accu_init', {}) )
         for param_name in input_params:
             param_value = input_params[param_name]
 
