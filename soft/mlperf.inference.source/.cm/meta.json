@@ -7,13 +7,14 @@
     "limit_recursion_dir_search": {
       "linux": 5
     },
-    "soft_file_universal": "v0.5$#sep#$classification_and_detection$#sep#$README.md"
+    "soft_file_universal": "inference$#sep#$loadgen$#sep#$README.md"
   },
   "soft_name": "MLPerf Inference source",
   "tags": [
     "uninstalled",
     "mlperf",
     "inference",
+    "src",
     "source"
   ],
   "template": "no"
