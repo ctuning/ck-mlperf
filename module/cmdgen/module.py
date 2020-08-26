@@ -27,10 +27,13 @@ def iterate(i):
 
                     Please note the expected command line syntax for iterable values:
 
-                --alpha=alphaval1   - a single value
-                --beta:-5:6         - a range of integer values
-                --gamma,=10,20,30   - a list of values (comma-separated)
-                --delta:=11,22,33   - another list of values (semicolon-separated)
+                --alpha=val         - a single value of any type
+
+                --beta,=10,20,30    - a list of values (comma-separated)
+                --beta:=10:20:30    - a list of values (colon-separated)
+
+                --delta:12:18       - a range of integer values (step=1 by default), inclusive of both lower and upper bounds.
+                --delta:12:18:3     - a range of integer values (step=3), inclusive of both lower and upper bounds.
             }
 
     Output: {
@@ -39,8 +42,8 @@ def iterate(i):
                 (error)             - error text if return > 0
             }
     Test:
-            ck iterate cmdgen --alpha,=11,22,33 --beta:-9:-7 --delta=single --gamma,=one,two,three
-            ck iterate cmdgen --alpha,=11,22,33 --beta:-9:-7 --delta=single --gamma,=one,two,three --out=json
+            ck iterate cmdgen --alpha,=11,22,33 --beta:-9:-7 --delta=single --gamma:=one:two:three
+            ck iterate cmdgen --alpha,=11,22,33 --beta:-9:-7 --delta=single --gamma:=one:two:three --out=json
     """
     import re
 
@@ -110,10 +113,13 @@ def gen(i):
 
                     Please note the expected command line syntax for iterable values:
 
-                --alpha=alphaval1   - a single value
-                --beta:-5:6         - a range of integer values
-                --gamma,=10,20,30   - a list of values (comma-separated)
-                --delta:=11,22,33   - another list of values (semicolon-separated)
+                --alpha=val         - a single value of any type
+
+                --beta,=10,20,30    - a list of values (comma-separated)
+                --beta:=10:20:30    - a list of values (colon-separated)
+
+                --delta:12:18       - a range of integer values (step=1 by default), inclusive of both lower and upper bounds.
+                --delta:12:18:3     - a range of integer values (step=3), inclusive of both lower and upper bounds.
             }
 
     Output: {
