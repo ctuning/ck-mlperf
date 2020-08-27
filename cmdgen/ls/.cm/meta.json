@@ -1,4 +1,7 @@
 {
+  "defaults": {
+    "files": [ "." ]
+  },
   "build_map": {
     "home": {
       "yes": {
@@ -26,5 +29,5 @@
       }
     }
   },
-  "cmd_template": "<<<?before_cmd>>> ls <<<?options >>> <<<?files >>> <<<?after_cmd>>>"
+  "cmd_template": "<<<?before_cmd>>> ls <<<?options >>> <<<files >>> <<<?after_cmd>>>"
 }

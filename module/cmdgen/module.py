@@ -149,11 +149,13 @@ def gen(i):
     if r['return']>0: return r
 
     entry_dict  = r['dict']
-    build_map   = entry_dict.get('build_map', {})
     if interactive:
         print("Entry contents:")
         pprint(entry_dict)
         print("")
+
+    build_map   = entry_dict.get('build_map', {})
+    defaults    = entry_dict.get('defaults', {})
 
     i['action'] = 'iterate'
     i['out']    = ''
@@ -209,15 +211,23 @@ def gen(i):
                     if anchor_name in input_params:
                         return {'return':1, 'error':"Both input_params and accu contain '{}' anchor, ambiguous substitution".format(anchor_name)}
                     else:
-                        # print("Substituting {} -> {} from accu".format(expression, accu_sep.join(accu[anchor_name])))
                         accu_value_list = accu[anchor_name]
                         if type(accu_value_list)!=list:
                             accu_value_list = [ accu_value_list ]
                         subst_output = subst_output.replace(expression, accu_sep.join(accu_value_list) )
-                elif anchor_name in input_params:
-                    # print("Substituting {} -> {} from input_params".format(expression, input_params[anchor_name]))
 
+                        # print("Substituting {} -> {} from accu".format(expression, accu_sep.join(accu[anchor_name])))
+                elif anchor_name in input_params:
                     subst_output = subst_output.replace(expression, input_params[anchor_name] )
+
+                    # print("Substituting {} -> {} from input_params".format(expression, input_params[anchor_name]))
+                elif anchor_name in defaults:
+                    default_value_list = defaults[anchor_name]
+                    if type(default_value_list)!=list:
+                        default_value_list = [ default_value_list ]
+                    subst_output = subst_output.replace(expression, accu_sep.join(default_value_list) )
+
+                    # print("Substituting {} -> {} from defaults".format(expression, defaults[anchor_name]))
                 elif optional=='?':
                     # print("Substituting optional {} -> ''".format(expression))
                     subst_output = subst_output.replace(expression, '')
