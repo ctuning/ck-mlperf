@@ -229,7 +229,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
         starting_weights_filename = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
 
     ## figure out the transformation path:
-    if program_name == 'mlperf-inference-v0.7':
+    if program_name == 'openvino-loadgen-v0.7-drop':
         recorded_transformation_path = 'TF? -> OpenVINO'
     elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
         if benchmark in ['resnet', 'resnet50']:
@@ -1191,7 +1191,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
 
         # With newer programs instead of per-program configs we have recorded per-run configs, which will be dumped later elsewhere
-        if program_name != 'mlperf-inference-v0.7':
+        if program_name != 'openvino-loadgen-v0.7-drop':
 
             # Try to find environment for 'user.conf'.
             if program_name.endswith('-loadgen'):
