@@ -1158,13 +1158,13 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if not os.path.exists(system_dir): os.mkdir(system_dir)
         benchmark_dir = os.path.join(system_dir, benchmark)
         if not os.path.exists(benchmark_dir): os.mkdir(benchmark_dir)
-        scenario_dir = os.path.join(benchmark_dir, scenario)
-        if not os.path.exists(scenario_dir): os.mkdir(scenario_dir)
-        print(scenario_dir)
+        mscenario_dir = os.path.join(benchmark_dir, scenario)
+        if not os.path.exists(mscenario_dir): os.mkdir(mscenario_dir)
+        print(mscenario_dir)
 
         # Create '<system_desc_id>_<implementation_id>.json'.
         system_implementation_json_name = system+'_'+program_name+'.json'
-        system_implementation_json_path = os.path.join(scenario_dir, system_implementation_json_name)
+        system_implementation_json_path = os.path.join(mscenario_dir, system_implementation_json_name)
 
         implementation_benchmark_json = dump_implementation_dictionary(system_implementation_json_path, pipeline['dependencies']['weights'], inference_engine, program_name, benchmark)
         print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
@@ -1172,7 +1172,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
         # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
         measurements_readme_name = 'README.md'
-        measurements_readme_path = os.path.join(scenario_dir, measurements_readme_name)
+        measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
         measurements_readme = measurements_readmes.get(division+'-'+task, '')
         if measurements_readme != '':
             with open(measurements_readme_path, 'w') as measurements_readme_file:
@@ -1183,7 +1183,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
         # Create 'NOTES.txt'.
         measurements_notes_name = 'NOTES.txt'
-        measurements_notes_path = os.path.join(scenario_dir, measurements_notes_name)
+        measurements_notes_path = os.path.join(mscenario_dir, measurements_notes_name)
         measurements_notes = notes
         if measurements_notes != '':
             with open(measurements_notes_path, 'w') as measurements_notes_file:
@@ -1226,12 +1226,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 if not implementation_path:
                     raise Exception("Invalid implementation path!")
                 user_conf_path = os.path.join(implementation_path, user_conf_name)
-            copy2(user_conf_path, scenario_dir)
+            copy2(user_conf_path, mscenario_dir)
             print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
 
             # Copy 'mlperf.conf' from MLPerf Inference source.
             mlperf_conf_name = 'mlperf.conf'
-            mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
+            mlperf_conf_path = os.path.join(mscenario_dir, mlperf_conf_name)
             if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
                 # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
                 with open(mlperf_conf_path, 'w') as mlperf_conf_file:
@@ -1326,6 +1326,9 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             mlperf_conf = characteristics['run'].get('mlperf_conf',{})
             if len(mlperf_conf.keys())>0:
                 for config_name in mlperf_conf.keys():
+                    ## FIXME: we need a smart switch to mscenario:
+                    #
+                    #config_path = os.path.join(mscenario_dir, config_name)
                     config_path = os.path.join(last_dir, config_name)
 
                     with open(config_path, 'w') as config_file_descriptor:
