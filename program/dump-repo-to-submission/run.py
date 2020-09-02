@@ -861,7 +861,7 @@ def get_checklist(checklist_template=checklist_template, name='Anton Lokhmotov',
 
 # null = get_checklist(system='rpi4-armnn-v19.08-neon', system_name='Raspberry Pi 4 (rpi4)', benchmark='mobilenet', accuracy_pc=70.241, numerics='uint8')
 # null = get_checklist(system='hikey960-tflite-v1.15', system_name='Linaro HiKey 960 (hikey960)', benchmark='resnet', accuracy_pc=75.692, revision='deadbeef')
-null = get_checklist(system='velociti-tensorflow-v1.14-cpu', name='Anton Lokhmotov; Emanuele Vitali', email='anton@dividiti.com; emanuele.vitali@polimi.it', system_name='HP Z640 G1X62EA workstation (velociti)', division='open', category='RDI', benchmark='ssd-mobilenet-fpn')
+# null = get_checklist(system='velociti-tensorflow-v1.14-cpu', name='Anton Lokhmotov; Emanuele Vitali', email='anton@dividiti.com; emanuele.vitali@polimi.it', system_name='HP Z640 G1X62EA workstation (velociti)', division='open', category='RDI', benchmark='ssd-mobilenet-fpn')
 
 
 # <a id="check"></a>
@@ -963,6 +963,7 @@ repos_object_detection_open = [
 # In[ ]:
 
 upstream_path=os.environ.get('CK_ENV_MLPERF_INFERENCE','')
+vlatest_path=os.environ.get('CK_ENV_MLPERF_INFERENCE_VLATEST')
 
 # In[ ]:
 
@@ -1404,15 +1405,16 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 accuracy_txt_name = 'accuracy.txt'
                 accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
                 if task == 'image-classification':
-                    accuracy_imagenet_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
-                    accuracy_txt = subprocess.getoutput('python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path))
+                    accuracy_imagenet_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
+                    accuracy_cmd = 'python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path)
+                    accuracy_txt = subprocess.getoutput(accuracy_cmd)
 
                     # The last (and only line) is e.g. "accuracy=76.442%, good=38221, total=50000".
                     accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', accuracy_line)
                     accuracy_pc = float(match.group(1))
                 elif task == 'object-detection':
-                    accuracy_coco_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-coco.py')
+                    accuracy_coco_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-coco.py')
 #                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
                     accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path))
                     # The last line is e.g. "mAP=13.323%".
