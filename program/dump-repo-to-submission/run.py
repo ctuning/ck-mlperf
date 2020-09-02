@@ -1472,12 +1472,11 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
     return
 
 
+submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
 repo = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
-    check_experimental_results(repo_uoa, audit=False)
-
-submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
+    check_experimental_results(repo_uoa, submitter=submitter, audit=False)
 
 # ### Extract audit repos
 
