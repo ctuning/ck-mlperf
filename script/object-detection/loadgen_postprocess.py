@@ -25,6 +25,7 @@ def ck_postprocess(i):
   env               = i['env']
   deps              = i['deps']
   SIDELOAD_JSON     = env.get('CK_LOADGEN_SIDELOAD_JSON', '')
+  include_trace     = env.get('CK_LOADGEN_INCLUDE_TRACE', '') in ('YES', 'Yes', 'yes', 'TRUE', 'True', 'true', 'ON', 'On', 'on', '1')
   model_env         = deps['weights']['dict']['env']
   use_inv_map       = model_env.get('ML_MODEL_USE_INV_MAP', '') in ("YES", "Yes", "yes", "TRUE", "True", "true", "ON", "On", "on", "1", 1)
 
@@ -55,11 +56,11 @@ def ck_postprocess(i):
   with open(MLPERF_LOG_DETAIL_TXT, 'r') as detail_file:
     mlperf_log_dict['detail'] = detail_file.readlines()
 
-  if os.stat(MLPERF_LOG_TRACE_JSON).st_size==0:
-    mlperf_log_dict['trace'] = {}
-  else:
+  if include_trace and os.stat(MLPERF_LOG_TRACE_JSON).st_size!=0:
     with open(MLPERF_LOG_TRACE_JSON, 'r') as trace_file:
       mlperf_log_dict['trace'] = json.load(trace_file)
+  else:
+    mlperf_log_dict['trace'] = {}
 
   if os.path.exists( MLPERF_MAIN_CONF ):
       with open(MLPERF_MAIN_CONF, 'r') as main_conf_file:
