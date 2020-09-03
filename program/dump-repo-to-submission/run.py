@@ -133,7 +133,7 @@ backend_to_printable = {
 
 system_description_cache = {}
 
-def dump_system_description_dictionary(target_path, division, platform, inference_engine, inference_engine_version, backend):
+def dump_system_description_dictionary(target_path, submitter_desc, division, platform, inference_engine, inference_engine_version, backend):
 
     if target_path in system_description_cache:
         return system_description_cache[target_path]
@@ -157,7 +157,7 @@ def dump_system_description_dictionary(target_path, division, platform, inferenc
     template = deepcopy(platform_templates[platform])
     template.update({
         'division'  : division,
-        'submitter' : 'dividiti', # 'dividiti' if platform != 'velociti' else 'dividiti, Politecnico di Milano'
+        'submitter' : submitter_desc,
         'status'    : status,
         'framework' : framework,
     })
@@ -969,7 +969,7 @@ vlatest_path=os.environ.get('CK_ENV_MLPERF_INFERENCE_VLATEST')
 
 root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 
-def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', submitter='dividiti', path=None, audit=False):
+def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', submitter='dividiti', submitter_desc='dividiti', path=None, audit=False):
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
     
@@ -1107,7 +1107,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         system_json_name = '%s.json' % system
         system_json_path = os.path.join(systems_dir, system_json_name)
 
-        system_json = dump_system_description_dictionary(system_json_path, division, platform, inference_engine, inference_engine_version, backend)
+        system_json = dump_system_description_dictionary(system_json_path, submitter_desc, division, platform, inference_engine, inference_engine_version, backend)
         print('%s' % systems_dir)
         print('  |_ %s [%s]' % (system_json_name, division_system))
 
@@ -1474,11 +1474,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
     return
 
 
-submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
+submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER', 'dividiti')
+submitter_desc = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER_DESC', submitter)   # description 'dividiti, Politecnico di Milano' used for a combined submission
 repo = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
-    check_experimental_results(repo_uoa, submitter=submitter, audit=False)
+    check_experimental_results(repo_uoa, submitter=submitter, submitter_desc=submitter_desc, audit=False)
 
 # ### Extract audit repos
 
