@@ -1324,15 +1324,20 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             # FIXME: Per-datapoint configs should belong here, but this must be confirmed!
             #
             mlperf_conf = characteristics['run'].get('mlperf_conf',{})
-            if len(mlperf_conf.keys())>0:
-                for config_name in mlperf_conf.keys():
-                    ## FIXME: we need a smart switch to mscenario:
-                    #
-                    #config_path = os.path.join(mscenario_dir, config_name)
-                    config_path = os.path.join(last_dir, config_name)
+            for config_name in mlperf_conf.keys():
+                config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
+                full_config_path = config_path = os.path.join(config_dir, config_name)
+                if os.path.exists(full_config_path):
+                    with open(full_config_path, 'r') as existing_config_fd:
+                        existing_config_lines = existing_config_fd.readlines()
 
-                    with open(config_path, 'w') as config_file_descriptor:
-                        config_file_descriptor.writelines(mlperf_conf[config_name])
+                    if existing_config_lines == mlperf_conf[config_name]:
+                        print("Found an identical {} file, skipping it".format(full_config_path))
+                    else:
+                        raise Exception("Found an existing {} file with different contents".format(full_config_path))
+                else:
+                    with open(config_path, 'w') as new_config_fd:
+                        new_config_fd.writelines(mlperf_conf[config_name])
                     print('  |_ {}'.format(config_name))
 
             # Dump files in the leaf directory.
