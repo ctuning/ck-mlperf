@@ -1,3 +1,5 @@
+* 2020.09.03 - [FGG] added module:mlbox to abstract MLBox
+
 * 2018.12.15 - [FGG] fixed compilation of SyLT for Android
 
 * 2018.11.27 - [FGG] added soft,package and program for FAI-PEP
