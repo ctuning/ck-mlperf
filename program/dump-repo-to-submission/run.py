@@ -982,6 +982,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
     for experiment in experiments:
         data_uoa = experiment['data_uoa']
+        repo_uoa = experiment['repo_uoa']
         r = ck.access({'action':'list_points', 'repo_uoa':repo_uoa, 'module_uoa':module_uoa, 'data_uoa':data_uoa})
         if r['return']>0:
             print('Error: %s' % r['error'])
