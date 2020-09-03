@@ -969,10 +969,12 @@ vlatest_path=os.environ.get('CK_ENV_MLPERF_INFERENCE_VLATEST')
 
 root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 
-def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', submitter='dividiti', submitter_desc='dividiti', path=None, audit=False):
+def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='', submitter='dividiti', submitter_desc='dividiti', path=None, audit=False):
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
     
+    if extra_tags:
+        tags += ',' + extra_tags
     r = ck.access({'action':'search', 'repo_uoa':repo_uoa, 'module_uoa':module_uoa, 'tags':tags})
     if r['return']>0:
         print('Error: %s' % r['error'])
@@ -1483,12 +1485,13 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
     return
 
 
-submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER', 'dividiti')
-submitter_desc = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER_DESC', submitter)   # description 'dividiti, Politecnico di Milano' used for a combined submission
-repo = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
+submitter       = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER', 'dividiti')
+submitter_desc  = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER_DESC', submitter)   # description 'dividiti, Politecnico di Milano' used for a combined submission
+repo            = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
+extra_tags      = os.environ.get('CK_MLPERF_SUBMISSION_EXTRA_TAGS','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
-    check_experimental_results(repo_uoa, submitter=submitter, submitter_desc=submitter_desc, audit=False)
+    check_experimental_results(repo_uoa, extra_tags=extra_tags, submitter=submitter, submitter_desc=submitter_desc, audit=False)
 
 # ### Extract audit repos
 
