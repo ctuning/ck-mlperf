@@ -3,6 +3,7 @@
     "division": "",
     "submitter": "dividiti",
     "status": "available",
+    "system_type": "edge",
     "system_name": "Firefly-RK3399 (firefly)",
 
     "number_of_nodes": "1",

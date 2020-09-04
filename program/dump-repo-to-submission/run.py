@@ -118,6 +118,7 @@ inference_engine_to_printable = {
     'tflite':           'TFLite',
     'tensorrt':         'TensorRT',
     'tensorflow':       'TensorFlow',
+    'openvino':         'OpenVINO',
 }
 
 backend_to_printable = {
@@ -132,7 +133,7 @@ backend_to_printable = {
 
 system_description_cache = {}
 
-def dump_system_description_dictionary(target_path, division, platform, inference_engine, inference_engine_version, backend):
+def dump_system_description_dictionary(target_path, submitter_desc, division, platform, inference_engine, inference_engine_version, backend):
 
     if target_path in system_description_cache:
         return system_description_cache[target_path]
@@ -147,13 +148,16 @@ def dump_system_description_dictionary(target_path, division, platform, inferenc
     else:
         status = 'available'
 
+    if inference_engine not in inference_engine_to_printable:
+        raise Exception("inference_engine '{}' is unknown, please add it to inference_engine_to_printable dictionary".format(inference_engine))
+
     framework = inference_engine_to_printable[inference_engine] + ' ' + inference_engine_version + \
                 (' ({})'.format(backend_to_printable[backend]) if backend else '')
 
     template = deepcopy(platform_templates[platform])
     template.update({
         'division'  : division,
-        'submitter' : 'dividiti', # 'dividiti' if platform != 'velociti' else 'dividiti, Politecnico di Milano'
+        'submitter' : submitter_desc,
         'status'    : status,
         'framework' : framework,
     })
@@ -185,14 +189,15 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if target_path in implementation_cache:
         return implementation_cache[target_path]
 
-    model_env = model_dict['cus']['install_env']
+    model_install_env = model_dict['cus']['install_env']
+    model_env = model_dict['dict']['env']
     model_tags = model_dict['dict']['tags']
 
-    recorded_model_retraining = model_env.get('ML_MODEL_RETRAINING', 'no')
+    recorded_model_retraining = model_install_env.get('ML_MODEL_RETRAINING', 'no')
 
     ## fetch recorded model data types, if available, guess if unavailable:
-    recorded_model_data_type = model_env.get('ML_MODEL_DATA_TYPE')
-    recorded_model_input_data_type = model_env.get('ML_MODEL_INPUT_DATA_TYPE')
+    recorded_model_data_type = model_install_env.get('ML_MODEL_DATA_TYPE')
+    recorded_model_input_data_type = model_install_env.get('ML_MODEL_INPUT_DATA_TYPE')
 
 
     if not recorded_model_data_type:
@@ -212,16 +217,21 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if recorded_model_input_data_type in model_input_type_mapping:
         recorded_model_input_data_type = model_input_type_mapping[recorded_model_input_data_type]
 
-
     ## fetching/constructing the URL of the (original) model:
-    if 'PACKAGE_URL' not in model_env:  # this model is a result of conversion
-        model_env = model_dict['dict']['deps']['model-source']['dict']['customize']['install_env']
+    if 'PACKAGE_URL' not in model_install_env:  # this model is a result of conversion
+        model_deps = model_dict['dict']['deps']
+        if 'model-source' in model_deps:
+            model_install_env = model_deps['model-source']['dict']['customize']['install_env']
+        else:
+            starting_weights_filename = model_env['CK_ENV_OPENVINO_MODEL_FILENAME'] # assume it was detected
 
-    recorded_model_url = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
-
+    if not starting_weights_filename:
+        starting_weights_filename = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
 
     ## figure out the transformation path:
-    if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+    if program_name == 'openvino-loadgen-v0.7-drop':
+        recorded_transformation_path = 'TF? -> OpenVINO'
+    elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
         if benchmark in ['resnet', 'resnet50']:
             recorded_transformation_path = 'TF -> TFLite'
         else:
@@ -234,7 +244,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     elif program_name == 'mlperf-inference-vision':
         recorded_transformation_path = 'None (TensorFlow)'
     else:
-        raise Exception("Don't know how to derive the transformation path of the model")
+        raise Exception("Don't know how to derive the transformation path of the model for program:{}".format(program_name))
 
     # Initial model is never supplied in one of these, so there must have been a transformation:
     if inference_engine in ['armnn', 'tensorrt']:
@@ -244,7 +254,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
         'retraining': recorded_model_retraining,
         'input_data_types': recorded_model_input_data_type,
         'weight_data_types': recorded_model_data_type,
-        'starting_weights_filename': recorded_model_url,
+        'starting_weights_filename': starting_weights_filename,
         'weight_transformations': recorded_transformation_path,
 
     }
@@ -851,7 +861,7 @@ def get_checklist(checklist_template=checklist_template, name='Anton Lokhmotov',
 
 # null = get_checklist(system='rpi4-armnn-v19.08-neon', system_name='Raspberry Pi 4 (rpi4)', benchmark='mobilenet', accuracy_pc=70.241, numerics='uint8')
 # null = get_checklist(system='hikey960-tflite-v1.15', system_name='Linaro HiKey 960 (hikey960)', benchmark='resnet', accuracy_pc=75.692, revision='deadbeef')
-null = get_checklist(system='velociti-tensorflow-v1.14-cpu', name='Anton Lokhmotov; Emanuele Vitali', email='anton@dividiti.com; emanuele.vitali@polimi.it', system_name='HP Z640 G1X62EA workstation (velociti)', division='open', category='RDI', benchmark='ssd-mobilenet-fpn')
+# null = get_checklist(system='velociti-tensorflow-v1.14-cpu', name='Anton Lokhmotov; Emanuele Vitali', email='anton@dividiti.com; emanuele.vitali@polimi.it', system_name='HP Z640 G1X62EA workstation (velociti)', division='open', category='RDI', benchmark='ssd-mobilenet-fpn')
 
 
 # <a id="check"></a>
@@ -953,23 +963,28 @@ repos_object_detection_open = [
 # In[ ]:
 
 upstream_path=os.environ.get('CK_ENV_MLPERF_INFERENCE','')
+vlatest_path=os.environ.get('CK_ENV_MLPERF_INFERENCE_VLATEST')
 
 # In[ ]:
 
 root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 
-def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', submitter='dividiti', path=None, audit=False):
+def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='', submitter='dividiti', submitter_desc='dividiti', path=None, audit=False):
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
     
+    if extra_tags:
+        tags += ',' + extra_tags
     r = ck.access({'action':'search', 'repo_uoa':repo_uoa, 'module_uoa':module_uoa, 'tags':tags})
     if r['return']>0:
         print('Error: %s' % r['error'])
         exit(1)
     experiments = r['lst']
+    print("Found {} {} entries in repository {}".format(len(experiments), module_uoa, repo_uoa))
 
     for experiment in experiments:
         data_uoa = experiment['data_uoa']
+        repo_uoa = experiment['repo_uoa']
         r = ck.access({'action':'list_points', 'repo_uoa':repo_uoa, 'module_uoa':module_uoa, 'data_uoa':data_uoa})
         if r['return']>0:
             print('Error: %s' % r['error'])
@@ -1095,7 +1110,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         system_json_name = '%s.json' % system
         system_json_path = os.path.join(systems_dir, system_json_name)
 
-        system_json = dump_system_description_dictionary(system_json_path, division, platform, inference_engine, inference_engine_version, backend)
+        system_json = dump_system_description_dictionary(system_json_path, submitter_desc, division, platform, inference_engine, inference_engine_version, backend)
         print('%s' % systems_dir)
         print('  |_ %s [%s]' % (system_json_name, division_system))
 
@@ -1124,7 +1139,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             implementation_readme_file.writelines(implementation_readme)
         if implementation_readme == '':
             print('  |_ %s [EMPTY]' % implementation_readme_name)
-            raise
+            # raise
         else:
             print('  |_ %s' % implementation_readme_name)
 
@@ -1146,13 +1161,13 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if not os.path.exists(system_dir): os.mkdir(system_dir)
         benchmark_dir = os.path.join(system_dir, benchmark)
         if not os.path.exists(benchmark_dir): os.mkdir(benchmark_dir)
-        scenario_dir = os.path.join(benchmark_dir, scenario)
-        if not os.path.exists(scenario_dir): os.mkdir(scenario_dir)
-        print(scenario_dir)
+        mscenario_dir = os.path.join(benchmark_dir, scenario)
+        if not os.path.exists(mscenario_dir): os.mkdir(mscenario_dir)
+        print(mscenario_dir)
 
         # Create '<system_desc_id>_<implementation_id>.json'.
         system_implementation_json_name = system+'_'+program_name+'.json'
-        system_implementation_json_path = os.path.join(scenario_dir, system_implementation_json_name)
+        system_implementation_json_path = os.path.join(mscenario_dir, system_implementation_json_name)
 
         implementation_benchmark_json = dump_implementation_dictionary(system_implementation_json_path, pipeline['dependencies']['weights'], inference_engine, program_name, benchmark)
         print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
@@ -1160,7 +1175,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
         # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
         measurements_readme_name = 'README.md'
-        measurements_readme_path = os.path.join(scenario_dir, measurements_readme_name)
+        measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
         measurements_readme = measurements_readmes.get(division+'-'+task, '')
         if measurements_readme != '':
             with open(measurements_readme_path, 'w') as measurements_readme_file:
@@ -1171,60 +1186,64 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
         # Create 'NOTES.txt'.
         measurements_notes_name = 'NOTES.txt'
-        measurements_notes_path = os.path.join(scenario_dir, measurements_notes_name)
+        measurements_notes_path = os.path.join(mscenario_dir, measurements_notes_name)
         measurements_notes = notes
         if measurements_notes != '':
             with open(measurements_notes_path, 'w') as measurements_notes_file:
                 measurements_notes_file.writelines(measurements_notes)
             print('  |_ %s [for %s %s]' % (measurements_notes_name, division, task))
 
-        # Try to find environment for 'user.conf'.
-        if program_name.endswith('-loadgen'):
-            program_config_tag = program_name[:-len('-loadgen')]
-        else:
-            program_config_tag = program_name
-        loadgen_config_tags='loadgen,config,'+program_config_tag    # FIXME: needs to be fixed on the soft: entry side
-        lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
-        if lgc['return']>0:
-            print('Error: %s' % lgc['error'])
-            exit(1)
-        envs = lgc['lst']
-        if len(envs) > 1:
-           # Found several environments.
-           print('Error: More than one environment found with tags=\'%s\'' % loadgen_config_tags)
-           exit(1)
-        elif len(envs) == 1:
-            # Found exactly one environment.
-            lgc = ck.access({'action':'load', 'module_uoa':'env', 'data_uoa':envs[0]['data_uoa']})
+
+        # With newer programs instead of per-program configs we have recorded per-run configs, which will be dumped later elsewhere
+        if program_name != 'openvino-loadgen-v0.7-drop':
+
+            # Try to find environment for 'user.conf'.
+            if program_name.endswith('-loadgen'):
+                program_config_tag = program_name[:-len('-loadgen')]
+            else:
+                program_config_tag = program_name
+            loadgen_config_tags='loadgen,config,'+program_config_tag    # FIXME: needs to be fixed on the soft: entry side
+            lgc = ck.access({'action':'search', 'module_uoa':'env', 'tags':loadgen_config_tags})
             if lgc['return']>0:
                 print('Error: %s' % lgc['error'])
                 exit(1)
-            # CK_ENV_LOADGEN_CONFIG=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf
-            # CK_ENV_LOADGEN_CONFIG_FILE=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf/user.conf
-            user_conf_path=lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG_FILE']
-            user_conf_name=user_conf_path[len(lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG'])+1:]
-        elif len(envs) == 0:
-            # Not found any environments: copy 'user.conf' from implementation source.
-            user_conf_name = 'user.conf'
-            implementation_path = get_program_path(program_name)
-            if not implementation_path:
-                raise Exception("Invalid implementation path!")
-            user_conf_path = os.path.join(implementation_path, user_conf_name)
-        copy2(user_conf_path, scenario_dir)
-        print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
+            envs = lgc['lst']
+            if len(envs) > 1:
+               # Found several environments.
+               print('Error: More than one environment found with tags=\'%s\'' % loadgen_config_tags)
+               exit(1)
+            elif len(envs) == 1:
+                # Found exactly one environment.
+                lgc = ck.access({'action':'load', 'module_uoa':'env', 'data_uoa':envs[0]['data_uoa']})
+                if lgc['return']>0:
+                    print('Error: %s' % lgc['error'])
+                    exit(1)
+                # CK_ENV_LOADGEN_CONFIG=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf
+                # CK_ENV_LOADGEN_CONFIG_FILE=/home/anton/CK_REPOS/ck-mlperf/soft/config.loadgen/image-classification-armnn-tflite-loadgen-conf/user.conf
+                user_conf_path=lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG_FILE']
+                user_conf_name=user_conf_path[len(lgc['dict']['env']['CK_ENV_LOADGEN_CONFIG'])+1:]
+            elif len(envs) == 0:
+                # Not found any environments: copy 'user.conf' from implementation source.
+                user_conf_name = 'user.conf'
+                implementation_path = get_program_path(program_name)
+                if not implementation_path:
+                    raise Exception("Invalid implementation path!")
+                user_conf_path = os.path.join(implementation_path, user_conf_name)
+            copy2(user_conf_path, mscenario_dir)
+            print('  |_ %s [from %s]' % (user_conf_name, user_conf_path))
 
-        # Copy 'mlperf.conf' from MLPerf Inference source.
-        mlperf_conf_name = 'mlperf.conf'
-        mlperf_conf_path = os.path.join(scenario_dir, mlperf_conf_name)
-        if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
-            # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
-            with open(mlperf_conf_path, 'w') as mlperf_conf_file:
-                mlperf_conf_file.writelines(mlperf_conf_6122045)
-            print('  |_ %s [from %s]' % (mlperf_conf_name, 'github.com/mlperf/inference@6122045'))
-        else:
-            upstream_mlperf_conf_path = os.path.join(upstream_path, 'v0.5', 'mlperf.conf')
-            copy2(upstream_mlperf_conf_path, mlperf_conf_path)
-            print('  |_ %s [from %s]' % (mlperf_conf_name, upstream_mlperf_conf_path))
+            # Copy 'mlperf.conf' from MLPerf Inference source.
+            mlperf_conf_name = 'mlperf.conf'
+            mlperf_conf_path = os.path.join(mscenario_dir, mlperf_conf_name)
+            if program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+                # Write a snapshot from https://github.com/dividiti/inference/blob/61220457dec221ed1984c62bd9d382698bd71bc6/v0.5/mlperf.conf
+                with open(mlperf_conf_path, 'w') as mlperf_conf_file:
+                    mlperf_conf_file.writelines(mlperf_conf_6122045)
+                print('  |_ %s [from %s]' % (mlperf_conf_name, 'github.com/mlperf/inference@6122045'))
+            else:
+                upstream_mlperf_conf_path = os.path.join(upstream_path, 'v0.5', 'mlperf.conf')
+                copy2(upstream_mlperf_conf_path, mlperf_conf_path)
+                print('  |_ %s [from %s]' % (mlperf_conf_name, upstream_mlperf_conf_path))
 
         # Write submission_checklist.txt into the same directory later, once accuracy.txt is parsed.
 
@@ -1305,6 +1324,25 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 last_dir = mode_dir
             print(last_dir)
 
+            # FIXME: Per-datapoint configs should belong here, but this must be confirmed!
+            #
+            mlperf_conf = characteristics['run'].get('mlperf_conf',{})
+            for config_name in mlperf_conf.keys():
+                config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
+                full_config_path = config_path = os.path.join(config_dir, config_name)
+                if os.path.exists(full_config_path):
+                    with open(full_config_path, 'r') as existing_config_fd:
+                        existing_config_lines = existing_config_fd.readlines()
+
+                    if existing_config_lines == mlperf_conf[config_name]:
+                        print("Found an identical {} file, skipping it".format(full_config_path))
+                    else:
+                        raise Exception("Found an existing {} file with different contents".format(full_config_path))
+                else:
+                    with open(config_path, 'w') as new_config_fd:
+                        new_config_fd.writelines(mlperf_conf[config_name])
+                    print('  |_ {}'.format(config_name))
+
             # Dump files in the leaf directory.
             mlperf_log = characteristics['run'].get('mlperf_log',{})
             # Summary file (with errors and warnings in accuracy mode, with statistics in performance mode).
@@ -1378,15 +1416,16 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 accuracy_txt_name = 'accuracy.txt'
                 accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
                 if task == 'image-classification':
-                    accuracy_imagenet_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
-                    accuracy_txt = subprocess.getoutput('python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path))
+                    accuracy_imagenet_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
+                    accuracy_cmd = 'python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path)
+                    accuracy_txt = subprocess.getoutput(accuracy_cmd)
 
                     # The last (and only line) is e.g. "accuracy=76.442%, good=38221, total=50000".
                     accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', accuracy_line)
                     accuracy_pc = float(match.group(1))
                 elif task == 'object-detection':
-                    accuracy_coco_py = os.path.join(upstream_path, 'v0.5', 'classification_and_detection', 'tools', 'accuracy-coco.py')
+                    accuracy_coco_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-coco.py')
 #                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
                     accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path))
                     # The last line is e.g. "mAP=13.323%".
@@ -1446,12 +1485,13 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
     return
 
 
-repo = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
+submitter       = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER', 'dividiti')
+submitter_desc  = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER_DESC', submitter)   # description 'dividiti, Politecnico di Milano' used for a combined submission
+repo            = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
+extra_tags      = os.environ.get('CK_MLPERF_SUBMISSION_EXTRA_TAGS','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
-    check_experimental_results(repo_uoa, audit=False)
-
-submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
+    check_experimental_results(repo_uoa, extra_tags=extra_tags, submitter=submitter, submitter_desc=submitter_desc, audit=False)
 
 # ### Extract audit repos
 
@@ -1470,7 +1510,7 @@ submitter = os.environ.get('CK_MLPERF_SUBMISSION_SUBMITTER','dividiti')
 
 
 print("*" * 100)
-submission_checker_py = os.path.join(upstream_path, 'v0.5', 'tools', 'submission', 'submission-checker.py')
+submission_checker_py = os.path.join(upstream_path, 'tools', 'submission', 'submission-checker.py')
 # The checker has a weird bug. When submitting to open, 'closed/<organization>/results' must exist on disk.
 # Vice versa, When submitting to closed, 'open/<organization>/results' must exist on disk.
 # Therefore, create both directories if they do not exist before invoking the checker.

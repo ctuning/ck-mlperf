@@ -1,0 +1,139 @@
+{
+  "build_map": {
+    "system": {
+        "mate10pro": {
+            "compiler_tags": "llvm,v6"
+        },
+        "hikey": {
+            "compiler_tags": "gcc,v7"
+        },
+        "firefly": {
+            "compiler_tags": "gcc,v7"
+        },
+        "###": {
+            "compiler_tags": "gcc,v8"
+        }
+    },
+    "implementation": {
+      "armnn": {
+        "lg_config": "image-classification-armnn-tflite",
+        "program_name": "image-classification-armnn-tflite-loadgen"
+      },
+      "tflite": {
+        "lg_config": "image-classification-tflite",
+        "program_name": "image-classification-tflite-loadgen"
+      }
+    },
+    "model": {
+        "resnet": {
+            "deps": "--dep_add_tags.weights=resnet"
+        },
+        "effnet0": {
+            "deps": "--dep_add_tags.weights=efficientnet,lite0,fp32"
+        },
+        "effnet0-quant": {
+            "deps": "--dep_add_tags.weights=efficientnet,lite0,int8"
+        }
+    },
+    "preprocessing": {
+        "opencv": {
+            "deps": "--dep_add_tags.images=full,crop.875,preprocessed,using-opencv",
+            "preprocessed_tag": "preprocessed.opencv"
+        },
+        "pillow": {
+            "deps": "--dep_add_tags.images=full,crop.875,preprocessed,using-pillow",
+            "preprocessed_tag": "preprocessed.pillow"
+        }
+    },
+    "library": {
+      "armnn-v19.08-neon": {
+        "ck_env": "--env.USE_NEON=1",
+        "deps": "--dep_add_tags.library=armnn,v19.08,neon",
+        "record_tags": [
+            "inference_engine.armnn",
+            "inference_engine_version.v19.08",
+            "inference_engine_backend.neon"
+        ]
+      },
+      "armnn-v19.08-opencl": {
+        "ck_env": "--env.USE_OPENCL=1",
+        "deps": "--dep_add_tags.library=armnn,v19.08,opencl",
+        "record_tags": [
+            "inference_engine.armnn",
+            "inference_engine_version.v19.08",
+            "inference_engine_backend.opencl"
+        ]
+      },
+      "tflite-v1.13.1": {
+        "deps": "--dep_add_tags.library=tflite,v1.13.1",
+        "record_tags": "inference_engine.tflite,inference_engine_version.1.13.1",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v1.13.1"
+        ]
+      },
+      "tflite-v2.2.0-ruy": {
+        "deps": "--dep_add_tags.library=tflite,v2.2.0",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v2.2.0",
+            "inference_engine_backend.ruy"
+        ]
+      }
+    },
+    "mode": {
+      "accuracy": {
+        "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
+        "dataset_size": "50000",
+        "buffer_size": "500",
+        "record_tags": "mode.accuracy",
+        "mode_extension": ".<<<preprocessed_tag>>>"
+      },
+      "performance": {
+        "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
+        "dataset_size": "1024",
+        "buffer_size": "1024",
+        "record_tags": "mode.performance",
+        "mode_extension": ""
+      }
+    },
+    "quiet": {
+      "yes": {
+        "shut_up": "--env.CK_SILENT_MODE=YES --skip_print_timers --skip_stat_analysis --process_multi_keys"
+      }
+    },
+    "scenario": {
+      "multistream": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=MultiStream",
+        "record_tags": "scenario.###"
+      },
+      "offline": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline",
+        "record_tags": "scenario.###"
+      },
+      "server": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Server",
+        "record_tags": "scenario.###"
+      },
+      "singlestream": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream",
+        "record_tags": "scenario.###"
+      }
+    }
+  },
+  "accu_init": {
+    "ck_env": [
+        "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>",
+        "--env.CK_LOADGEN_BUFFER_SIZE=<<<buffer_size>>>"
+    ],
+    "deps": [
+        "--dep_add_tags.python=v3",
+        "--dep_add_tags.mlperf-inference-src=upstream.master",
+        "--dep_add_tags.loadgen-config-file=<<<lg_config>>>",
+        "--dep_add_tags.compiler=<<<compiler_tags>>>"
+    ],
+    "record_uoa":
+        "mlperf.open.image-classification.<<<system>>>.<<<library>>>.<<<model>>>.<<<scenario>>>.<<<mode>>><<<mode_extension>>>.<<<dataset_size>>>"
+  },
+  "cmd_template": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else ck benchmark program:<<<program_name>>> --speed --repetitions=1 <<<?shut_up>>> <<<?deps >>> <<<?ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>> ; fi"
+}
