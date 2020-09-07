@@ -59,7 +59,7 @@ def setup(i):
     iv=i.get('interactive','')
 
     cus=i.get('customize',{})
-    fp=cus.get('full_path','')
+    full_path=cus.get('full_path','')
 
     hosd=i['host_os_dict']
     tosd=i['target_os_dict']
@@ -69,14 +69,27 @@ def setup(i):
     env=i['env']
     ep=cus['env_prefix']
 
-    classification_and_detection_dir = os.path.dirname(os.path.dirname(os.path.dirname(fp)))
-    v05_dir  = os.path.dirname(classification_and_detection_dir)
-    root_dir = os.path.dirname(v05_dir)
-    python_dir=os.path.join(classification_and_detection_dir,'python')
-    
-    env[ep] = root_dir
-    env[ep+'_V05'] = v05_dir
-    env[ep+'_LOADGEN'] = os.path.join(root_dir, 'loadgen')
-    env['PYTHONPATH'] = python_dir + ( ';%PYTHONPATH%' if winh=='yes' else ':${PYTHONPATH}')
+    loadgen_dir     = os.path.dirname( full_path )
+    inference_dir   = os.path.dirname( loadgen_dir )
+
+    env[ep] = inference_dir
+
+    for ver_subdir in ('v0.5', 'v0.7', 'vision'):
+        ver_suffix  = ver_subdir.replace('.','').upper()
+        ver_fulldir = os.path.join(inference_dir, ver_subdir)
+        mlperf_candidate    = os.path.join( ver_fulldir, 'mlperf.conf' )
+        if os.path.exists( mlperf_candidate ):
+            env[ep+'_MLPERF_CONF'] = mlperf_candidate
+
+        if os.path.isdir( ver_fulldir ):
+            env[ep + '_' + ver_suffix] = env[ep + '_' + 'VLATEST'] = ver_fulldir
+            python_dir = os.path.join( ver_fulldir, 'classification_and_detection', 'python' )
+
+    mlperf_candidate    = os.path.join( inference_dir, 'mlperf.conf' )
+    if os.path.exists( mlperf_candidate ):
+        env[ep+'_MLPERF_CONF'] = mlperf_candidate
+
+    env[ep+'_LOADGEN']  = loadgen_dir
+    env['PYTHONPATH']   = python_dir + ( ';%PYTHONPATH%' if winh=='yes' else ':${PYTHONPATH}')
 
     return {'return':0, 'bat':s}

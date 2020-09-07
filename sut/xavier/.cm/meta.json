@@ -3,6 +3,7 @@
     "division": "closed",
     "submitter": "NVIDIA",
     "status": "available",
+    "system_type": "edge",
     "system_name": "NVIDIA Jetson AGX Xavier",
 
     "number_of_nodes": "1",
