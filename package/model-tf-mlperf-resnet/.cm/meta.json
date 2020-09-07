@@ -39,6 +39,7 @@
     "resnet50", 
     "resnet50-v1.5", 
     "v1.5",
+    "side.224",
     "mlperf",
     "weights",
     "frozen",

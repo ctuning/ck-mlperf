@@ -37,6 +37,7 @@
     "nchw",
     "resnet",
     "resnet50",
+    "side.224",
     "mlperf",
     "downloaded"
   ],
