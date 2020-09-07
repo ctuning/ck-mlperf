@@ -1,0 +1,39 @@
+{
+  "data": {
+    "division": "closed",
+    "submitter": "dividiti",
+    "status": "available",
+    "system_name": "AWS g4dn.4xlarge",
+
+    "number_of_nodes": "1",
+    "host_processor_model_name": "Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz",
+    "host_processors_per_node": "1",
+    "host_processor_core_count": "16",
+    "host_processor_frequency": "2.50GHz",
+    "host_processor_caches": "L1I$ 512=16x32 KiB, L1D$ 512=16x32 KiB, L2$ 1024 KiB, L3$ 36608 KiB",
+    "host_memory_configuration": "",     
+    "host_memory_capacity": "64GB",
+    "host_storage_capacity": "225GB",
+    "host_storage_type": "",
+    "host_processor_interconnect": "",
+    "host_networking": "",
+    "host_networking_topology": "",
+
+    "accelerators_per_node": "0",
+    "accelerator_model_name": "N/A",
+    "accelerator_frequency": "",
+    "accelerator_host_interconnect": "",
+    "accelerator_interconnect": "",
+    "accelerator_interconnect_topology": "",
+    "accelerator_memory_capacity": "N/A",
+    "accelerator_memory_configuration": "",
+    "accelerator_on-chip_memories": "",
+    "cooling": "",
+    "hw_notes": "https://aws.amazon.com/ec2/instance-types/g4/",
+
+    "framework": "OpenVINO",
+    "operating_system": "Amazon Linux 2",
+    "other_software_stack": "Ubuntu 18.04.5 under Docker version 19.03.6-ce, build 369ce74",
+    "sw_notes": "Powered by Collective Knowledge v1.15.0"
+  }
+}
