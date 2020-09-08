@@ -1,6 +1,37 @@
 {
+  "accu_init": {
+    "ck_env": [
+        "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>",
+        "--env.CK_LOADGEN_BUFFER_SIZE=<<<buffer_size>>>"
+    ],
+    "deps": [
+        "--dep_add_tags.python=v3",
+        "--dep_add_tags.mlperf-inference-src=upstream.master",
+        "--dep_add_tags.loadgen-config-file=<<<lg_config>>>",
+        "--dep_add_tags.compiler=<<<compiler_tags>>>"
+    ],
+    "record_tags": [
+      "mlperf",
+      "division.<<<division>>>",
+      "task.image-classification",
+      "platform.<<<sut>>>",
+      "scenario.<<<scenario>>>",
+      "mode.<<<mode>>>",
+      "workload.<<<model>>>"
+    ],
+    "record_uoa_parts": [
+        "mlperf",
+        "<<<division>>>",
+        "<<<sut>>>",
+        "<<<library>>>",
+        "<<<model>>>",
+        "<<<scenario>>>",
+        "<<<mode>>><<<mode_extension>>>",
+        "<<<dataset_size>>>"
+    ]
+  },
   "build_map": {
-    "system": {
+    "sut": {
         "mate10pro": {
             "compiler_tags": "llvm,v6"
         },
@@ -66,7 +97,6 @@
       },
       "tflite-v1.13.1": {
         "deps": "--dep_add_tags.library=tflite,v1.13.1",
-        "record_tags": "inference_engine.tflite,inference_engine_version.1.13.1",
         "record_tags": [
             "inference_engine.tflite",
             "inference_engine_version.v1.13.1"
@@ -86,54 +116,64 @@
         "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
         "dataset_size": "50000",
         "buffer_size": "500",
-        "record_tags": "mode.accuracy",
-        "mode_extension": ".<<<preprocessed_tag>>>"
+        "mode_extension": ".<<<preprocessed_tag>>>",
+        "output_file": "accuracy.txt"
       },
       "performance": {
         "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
         "dataset_size": "1024",
         "buffer_size": "1024",
-        "record_tags": "mode.performance",
-        "mode_extension": ""
-      }
-    },
-    "quiet": {
-      "yes": {
-        "shut_up": "--env.CK_SILENT_MODE=YES --skip_print_timers --skip_stat_analysis --process_multi_keys"
+        "mode_extension": "",
+        "output_file": "mlperf_log_summary.txt"
       }
     },
     "scenario": {
-      "multistream": {
-        "ck_env": "--env.CK_LOADGEN_SCENARIO=MultiStream",
-        "record_tags": "scenario.###"
-      },
       "offline": {
-        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline",
-        "record_tags": "scenario.###"
-      },
-      "server": {
-        "ck_env": "--env.CK_LOADGEN_SCENARIO=Server",
-        "record_tags": "scenario.###"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline"
       },
       "singlestream": {
-        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream",
-        "record_tags": "scenario.###"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream"
+      }
+    },
+    "compile": {
+      "yes": {
+        "screen_output": "",
+        "shell_wrapped_cmd": "<<<ck_compile_program>>>"
+      }
+    },
+    "no_record": {
+      "yes": {
+        "shell_wrapped_cmd": "<<<wrapped_ck_run_program>>>"
+      }
+    },
+    "verbose": {
+      "yes": {
+        "print_output_file": "<<<print_output_file_cmd>>>"
+      },
+      "all": {
+        "screen_output": "",
+        "print_output_file": "<<<print_output_file_cmd>>>"
       }
     }
+
   },
-  "accu_init": {
-    "ck_env": [
-        "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>",
-        "--env.CK_LOADGEN_BUFFER_SIZE=<<<buffer_size>>>"
-    ],
-    "deps": [
-        "--dep_add_tags.python=v3",
-        "--dep_add_tags.mlperf-inference-src=upstream.master",
-        "--dep_add_tags.loadgen-config-file=<<<lg_config>>>",
-        "--dep_add_tags.compiler=<<<compiler_tags>>>"
-    ],
-    "record_uoa":
-        "mlperf.open.image-classification.<<<system>>>.<<<library>>>.<<<model>>>.<<<scenario>>>.<<<mode>>><<<mode_extension>>>.<<<dataset_size>>>"
-  },
-  "cmd_template": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else ck benchmark program:<<<program_name>>> --speed --repetitions=1 <<<?shut_up>>> <<<?deps >>> <<<?ck_env >>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>,<<<preprocessed_tag>>> ; fi"
+  "cmd_template": "<<<shell_wrapped_cmd>>>",
+  "defaults": {
+    "shell_wrapped_cmd": "<<<wrapped_ck_benchmark_program>>>",
+
+    "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
+
+    "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>",
+    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
+
+    "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",
+    "ck_compile_program": "ck compile <<<run_or_benchmark_common>>>",
+    "ck_run_program": "ck run <<<run_or_benchmark_common>>>",
+    "ck_benchmark_program": "ck benchmark <<<run_or_benchmark_common>>> --skip_stat_analysis --process_multi_keys --repetitions=<<<repetitions>>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>",
+
+    "division": "open",
+    "record_uoa": "<<<record_uoa_parts->>>",
+    "repetitions": "1",
+    "screen_output": "--env.CK_SILENT_MODE=YES --skip_print_timers"
+  }
 }

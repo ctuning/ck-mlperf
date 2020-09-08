@@ -99,7 +99,7 @@
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "ImageNet dataset (preprocessed subset)",
-      "sort": 20,
+      "sort": 35,
       "tags": "dataset,imagenet,preprocessed"
     },
     "loadgen-config-file": {
@@ -122,6 +122,9 @@
       "tags": "mlperf,inference,source"
     },
     "weights": {
+      "pass_matching_tags_to": {
+        "side.": [ "images" ]
+      },
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "TensorFlow Lite model and weights",
