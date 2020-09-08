@@ -28,8 +28,19 @@
     "source"
   ],
   "variations": {
-    "upstream.master": {
+    "r0.7": {
       "on_by_default": "yes",
+      "extra_env": {
+        "PACKAGE_URL": "https://github.com/mlperf/inference",
+        "PACKAGE_GIT_CHECKOUT": "r0.7"
+      },
+      "extra_customize": {
+        "package_extra_name": " (official v0.7 branch)",
+        "version": "r0.7"
+      }
+    },
+    "upstream.master": {
+      "on_by_default": "no",
       "extra_env": {
         "PACKAGE_URL": "https://github.com/mlperf/inference"
       },
