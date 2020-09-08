@@ -17,14 +17,14 @@
       "platform.<<<sut>>>",
       "scenario.<<<scenario>>>",
       "mode.<<<mode>>>",
-      "workload.<<<model>>>"
+      "workload.<<<model_readable>>>"
     ],
     "record_uoa_parts": [
         "mlperf",
         "<<<division>>>",
         "<<<sut>>>",
         "<<<library>>>",
-        "<<<model>>>",
+        "<<<model_readable>>>",
         "<<<scenario>>>",
         "<<<mode>>><<<mode_extension>>>",
         "<<<dataset_size>>>"
@@ -60,13 +60,21 @@
     },
     "model": {
         "resnet": {
-            "deps": "--dep_add_tags.weights=resnet"
+            "deps": "--dep_add_tags.weights=resnet",
+            "division": "closed",
+            "model_readable": "###"
         },
         "effnet0": {
-            "deps": "--dep_add_tags.weights=efficientnet,lite0,fp32"
+            "deps": "--dep_add_tags.weights=efficientnet,lite0,fp32",
+            "model_readable": "###"
         },
         "effnet0-quant": {
-            "deps": "--dep_add_tags.weights=efficientnet,lite0,int8"
+            "deps": "--dep_add_tags.weights=efficientnet,lite0,int8",
+            "model_readable": "###"
+        },
+        "###": {
+            "deps": "--dep_add_tags.weights=mobilenet,###",
+            "model_readable": "mobilenet_###"
         }
     },
     "preprocessing": {
