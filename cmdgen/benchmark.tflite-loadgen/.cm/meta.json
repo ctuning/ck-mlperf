@@ -64,15 +64,11 @@
             "division": "closed",
             "model_readable": "###"
         },
-        "effnet0": {
-            "deps": "--dep_add_tags.weights=efficientnet,lite0,fp32",
-            "model_readable": "###"
+        "lite.": {
+            "deps": "--dep_add_tags.weights=efficientnet,int8,###",
+            "model_readable": "effnet_###"
         },
-        "effnet0-quant": {
-            "deps": "--dep_add_tags.weights=efficientnet,lite0,int8",
-            "model_readable": "###"
-        },
-        "###": {
+        "v[123]-.*": {
             "deps": "--dep_add_tags.weights=mobilenet,###",
             "model_readable": "mobilenet_###"
         }

@@ -174,8 +174,21 @@ def gen(i):
 
             if param_name in build_map:
                 specific_accu_map = build_map[param_name]
-                # Start with the specific value, but fallback to default:
-                accu_map = specific_accu_map.get(param_value) or specific_accu_map.get('###')
+
+                # Start with the specific value:
+                accu_map = specific_accu_map.get(param_value)
+
+                # if not found, try matching a pattern:
+                if accu_map == None:
+                    for pattern_candidate in specific_accu_map:
+                        if re.search('^'+pattern_candidate+'$', param_value):
+                            accu_map = specific_accu_map[pattern_candidate]
+
+                # if still not found, try the universal default:
+                if accu_map == None:
+                    accu_map = specific_accu_map.get('###')
+
+                # if still not found, fail gracefully:
                 if accu_map==None:
                     return {'return':1, 'error':"build_map[{}] is missing both '{}' and '###' values".format(param_name, param_value)}
 
