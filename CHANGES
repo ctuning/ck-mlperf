@@ -1,8 +1,10 @@
-* 2020.09.03 - [FGG] added module:mlbox to abstract MLBox
+* 2020.09.04 - [Fursin] moved module:mlbox to ctuning/ck-mlbox repo
 
-* 2018.12.15 - [FGG] fixed compilation of SyLT for Android
+* 2020.09.03 - [Fursin] added module:mlbox to abstract MLBox
 
-* 2018.11.27 - [FGG] added soft,package and program for FAI-PEP
-             - [FGG] added basic workflow for MLPerf SyLT
-             - [FGG] added soft and package for MLModelScope
+* 2018.12.15 - [Fursin] fixed compilation of SyLT for Android
+
+* 2018.11.27 - [Fursin] added soft,package and program for FAI-PEP
+             - [Fursin] added basic workflow for MLPerf SyLT
+             - [Fursin] added soft and package for MLModelScope
 
