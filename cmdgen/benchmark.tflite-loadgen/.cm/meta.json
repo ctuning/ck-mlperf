@@ -32,6 +32,9 @@
   },
   "build_map": {
     "sut": {
+        "mac": {
+            "compiler_tags": "llvm,v10"
+        },
         "mate10pro": {
             "compiler_tags": "llvm,v6"
         },
@@ -68,11 +71,11 @@
     },
     "preprocessing": {
         "opencv": {
-            "deps": "--dep_add_tags.images=full,crop.875,preprocessed,using-opencv",
+            "deps": "--dep_add_tags.images=crop.875,preprocessed,using-opencv",
             "preprocessed_tag": "preprocessed.opencv"
         },
         "pillow": {
-            "deps": "--dep_add_tags.images=full,crop.875,preprocessed,using-pillow",
+            "deps": "--dep_add_tags.images=crop.875,preprocessed,using-pillow",
             "preprocessed_tag": "preprocessed.pillow"
         }
     },
@@ -114,15 +117,15 @@
     "mode": {
       "accuracy": {
         "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
-        "dataset_size": "50000",
-        "buffer_size": "500",
+        "recommended_dataset_size": "50000",
+        "recommended_buffer_size": "500",
         "mode_extension": ".<<<preprocessed_tag>>>",
         "output_file": "accuracy.txt"
       },
       "performance": {
         "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
-        "dataset_size": "1024",
-        "buffer_size": "1024",
+        "recommended_dataset_size": "1024",
+        "recommended_buffer_size": "1024",
         "mode_extension": "",
         "output_file": "mlperf_log_summary.txt"
       }
@@ -137,7 +140,6 @@
     },
     "compile": {
       "yes": {
-        "screen_output": "",
         "shell_wrapped_cmd": "<<<ck_compile_program>>>"
       }
     },
@@ -166,11 +168,13 @@
     "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>",
     "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
 
+    "ck_compile_program": "ck compile program:<<<program_name>>> <<<?deps >>>",
     "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",
-    "ck_compile_program": "ck compile <<<run_or_benchmark_common>>>",
     "ck_run_program": "ck run <<<run_or_benchmark_common>>>",
     "ck_benchmark_program": "ck benchmark <<<run_or_benchmark_common>>> --skip_stat_analysis --process_multi_keys --repetitions=<<<repetitions>>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>",
 
+    "dataset_size": "<<<recommended_dataset_size>>>",
+    "buffer_size": "<<<recommended_buffer_size>>>",
     "division": "open",
     "record_uoa": "<<<record_uoa_parts->>>",
     "repetitions": "1",
