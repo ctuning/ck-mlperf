@@ -71,6 +71,10 @@
         "v[123]-.*": {
             "deps": "--dep_add_tags.weights=mobilenet,###",
             "model_readable": "mobilenet_###"
+        },
+        "edgetpu_.*": {
+            "deps": "--dep_add_tags.weights=mobilenet,###",
+            "model_readable": "mobilenet_###"
         }
     },
     "preprocessing": {
