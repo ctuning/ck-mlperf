@@ -258,7 +258,7 @@ def gen(i):
         if subst_output not in cmds:
             cmds.append( subst_output )
             if interactive:
-                print('# '+'-'*80)
+                print('# ' + '-'*40 +' cmd #{}: '.format(len(cmds)) + '-'*40 )
                 print("\n{}\n".format(subst_output.replace(' --', ' \\\n    --')))
 
     return { 'return': 0, 'cmds': cmds }
@@ -293,15 +293,16 @@ def run(i):
     if r['return']>0: return r
     cmds = r['cmds']
 
-    for cmd in cmds:
+    for cmd_idx in range(len(cmds)):
+        cmd = cmds[cmd_idx]
         if interactive:
-            print('='*80)
+            print('# ' + '='*40 +' cmd #{}: '.format(cmd_idx+1) + '='*40 )
             print("Running command:\n\t"+cmd)
             print('')
         os.system(cmd)
 
     if interactive:
-        print('='*80)
+        print('='*90)
 
     return { 'return': 0 }
 
