@@ -3,7 +3,7 @@
     "division": "closed",
     "submitter": "DELL EMC",
     "status": "available",
-    "system_type": "server",
+    "system_type": "datacenter",
     "system_name": "PowerEdge R740xd",
 
     "number_of_nodes": "1",
