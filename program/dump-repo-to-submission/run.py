@@ -199,7 +199,6 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     recorded_model_data_type = model_install_env.get('ML_MODEL_DATA_TYPE')
     recorded_model_input_data_type = model_install_env.get('ML_MODEL_INPUT_DATA_TYPE')
 
-
     if not recorded_model_data_type:
         if {'non-quantized', 'fp32', 'float', 'float32'} & set(model_tags):
             recorded_model_data_type = 'fp32'
@@ -1430,8 +1429,9 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     accuracy_pc = float(match.group(1))
                 elif task == 'object-detection':
                     accuracy_coco_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-coco.py')
-#                    os.environ['PYTHONPATH'] = pythonpath_coco+':'+os.environ.get('PYTHONPATH','')
-                    accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path))
+                    use_inv_map = bool(pipeline['dependencies']['weights']['cus']['install_env'].get('ML_MODEL_USE_INV_MAP','0'))
+                    use_inv_map_flag = '--use-inv-map' if use_inv_map else ''
+                    accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {} {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path, use_inv_map_flag))
                     # The last line is e.g. "mAP=13.323%".
                     accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
