@@ -229,8 +229,8 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
         starting_weights_filename = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
 
     ## figure out the transformation path:
-    if program_name == 'openvino-loadgen-v0.7-drop':
-        recorded_transformation_path = 'TF? -> OpenVINO'
+    if program_name.startswith('openvino-loadgen'):
+        recorded_transformation_path = 'TF -> OpenVINO (refer to intel_calibration.adoc under closed/Intel/measurements).'
     elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
         if benchmark in ['resnet', 'resnet50']:
             recorded_transformation_path = 'TF -> TFLite'
@@ -308,6 +308,10 @@ object detection models and run with TensorRT.
 - [vision_with_ck branch in dividiti's fork of mlperf/inference](https://github.com/dividiti/inference/tree/vision_with_ck).
 - [Docker image with instructions](https://github.com/ctuning/ck-mlperf/tree/master/docker/mlperf-inference-vision-with-ck.tensorrt.ubuntu-18.04).
 - [Jupyter notebook](https://nbviewer.jupyter.org/urls/dl.dropbox.com/s/1xlv5oacgobrfd4/mlperf-inference-v0.5-dividiti.ipynb)
+"""
+
+implementation_readmes['openvino-loadgen-v0.7-drop'] = """# MLPerf Inference v0.7 - OpenVINO
+Please refer to `closed/Intel/code`.
 """
 
 # In[ ]:
