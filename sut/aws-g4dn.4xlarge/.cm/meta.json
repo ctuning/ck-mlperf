@@ -3,6 +3,7 @@
     "division": "closed",
     "submitter": "dividiti",
     "status": "available",
+    "system_type": "server",
     "system_name": "AWS g4dn.4xlarge",
 
     "number_of_nodes": "1",
