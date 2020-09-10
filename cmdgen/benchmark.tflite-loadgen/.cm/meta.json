@@ -120,6 +120,30 @@
             "inference_engine_version.v2.2.0",
             "inference_engine_backend.ruy"
         ]
+      },
+      "tflite-v2.3": {
+        "deps": "--dep_add_tags.library=tflite,v2.3.90",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v2.3.0",
+            "inference_engine_backend.eigen"
+        ]
+      },
+      "tflite-v2.3-ruy": {
+        "deps": "--dep_add_tags.library=tflite,v2.3.90,with.ruy",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v2.3.0",
+            "inference_engine_backend.ruy"
+        ]
+      },
+      "tflite-v2.3-xnnpack": {
+        "deps": "--dep_add_tags.library=tflite,v2.3.90,with.xnnpack",
+        "record_tags": [
+            "inference_engine.tflite",
+            "inference_engine_version.v2.3.0",
+            "inference_engine_backend.xnnpack"
+        ]
       }
     },
     "mode": {
