@@ -1259,7 +1259,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         #                 mlperf_log_trace.json
         #             accuracy/
         #               mlperf_log_accuracy.json
-        #         compliance_checker_log.txt
+        #         submission_checker_log.txt
         #
         results_dir = os.path.join(organization_dir, 'results')
         if not os.path.exists(results_dir): os.mkdir(results_dir)
@@ -1521,7 +1521,7 @@ subprocess.run(['mkdir', '-p', closed_org_results_dir])
 # Run the checker.
 checker_log = subprocess.getoutput('python3 {} --input {} --submitter {}'.format(submission_checker_py, root_dir, submitter))
 print(checker_log)
-checker_log_name = 'compliance_checker_log.txt'
+checker_log_name = 'submission_checker_log.txt'
 # Write the checker results once closed/<organization> and once under open/<organization>.
 for results_dir in [ open_org_results_dir, closed_org_results_dir ]:
     checker_log_path = os.path.join(results_dir, checker_log_name)
