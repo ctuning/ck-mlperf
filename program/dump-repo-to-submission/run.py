@@ -310,6 +310,7 @@ object detection models and run with TensorRT.
 """
 
 implementation_readmes['openvino-loadgen-v0.7-drop'] = """# MLPerf Inference v0.7 - OpenVINO
+
 Please refer to `closed/Intel/code`.
 """
 
@@ -1422,8 +1423,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     accuracy_imagenet_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
                     accuracy_cmd = 'python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path)
                     accuracy_txt = subprocess.getoutput(accuracy_cmd)
-
-                    # The last (and only line) is e.g. "accuracy=76.442%, good=38221, total=50000".
+                    # The last (and only) line is e.g. "accuracy=76.442%, good=38221, total=50000".
                     accuracy_line = accuracy_txt.split('\n')[-1]
                     match = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', accuracy_line)
                     accuracy_pc = float(match.group(1))
@@ -1438,12 +1438,18 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     if match:
                         accuracy_pc = float(match.group(1))
                     else:
-                        raise Exception("Could not parse accuracy from: "+accuracy_txt)
+                        raise Exception("Could not parse accuracy from: " + accuracy_txt)
                 else:
                     raise Exception("Invalid task '%s'!" % task)
                 with open(accuracy_txt_path, 'w') as accuracy_txt_file:
-                    accuracy_txt_file.write(accuracy_txt)
                     print('  |_ %s [%.3f%% parsed from "%s"]' % (accuracy_txt_name, accuracy_pc, accuracy_line))
+                    # Append a new line for the truncate script to work as expected.
+                    accuracy_txt += os.linesep
+                    accuracy_txt_file.write(accuracy_txt)
+
+            # FIXME: skip generating a submission checklist until an update is available:
+            # https://github.com/mlperf/inference_policies/issues/170
+            continue
             # Generate submission_checklist.txt for each system, benchmark and scenario under "measurements/".
             if mode == 'accuracy' and not audit:
                 checklist_name = 'submission_checklist.txt'
@@ -1462,11 +1468,8 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 # We could check in user.conf, but we would need to parse it.
                 performance_sample_count = 1024 if task == 'image-classification' else 256
                 # Write the checklist.
-                if division == 'open' and task == 'object-detection':
-                    # Collaboration between dividiti and Politecnico di Milano.
-                    print(system)
-                    checklist = get_checklist(name='Anton Lokhmotov; Emanuele Vitali',
-                                              email='anton@dividiti.com; emanuele.vitali@polimi.it',
+                if submitter == 'dividiti':
+                    checklist = get_checklist(name='Anton Lokhmotov', email='anton@dividiti.com',
                                               division=division, task=task, system=system,
                                               system_name=system_json['system_name'], category=system_json['status'],
                                               revision=loadgen_revision, benchmark=benchmark, accuracy_pc=accuracy_pc,
@@ -1495,23 +1498,24 @@ repo            = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
 extra_tags      = os.environ.get('CK_MLPERF_SUBMISSION_EXTRA_TAGS','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
-    check_experimental_results(repo_uoa, extra_tags=extra_tags, submitter=submitter, submitter_desc=submitter_desc, audit=False)
+    check_experimental_results(repo_uoa, extra_tags=extra_tags,
+                               submitter=submitter, submitter_desc=submitter_desc, audit=False)
 
-# ### Extract audit repos
-
-# In[ ]:
-
-
-# # audit_repos = repos_image_classification_closed_audit + repos_image_classification_open_audit
-# audit_repos = [ 'mlperf.closed.image-classification.mate10pro.audit' ]
-# for repo_uoa in audit_repos:
-#     check_experimental_results(repo_uoa, path=path, submitter=submitter, audit=True)
-
-
-# ### Run submission checker
-
-# In[ ]:
-
+print("*" * 100)
+truncate_accuracy_log_py = os.path.join(upstream_path, 'tools', 'submission', 'truncate_accuracy_log.py')
+# Since we generate submissions from CK entries, no need to keep the original log accuracy files.
+backup_dir = '/tmp'
+open_org_backup_dir = os.path.join(backup_dir, 'open', submitter)
+closed_org_backup_dir = os.path.join(backup_dir, 'closed', submitter)
+subprocess.run(['rm', '-rf', open_org_backup_dir])
+subprocess.run(['rm', '-rf', closed_org_backup_dir])
+# Run the truncate accuracy log script.
+truncate_accuracy_log = subprocess.getoutput(
+        'python3 {} --submitter {} --input {} --backup {}'
+        .format(truncate_accuracy_log_py, submitter, root_dir, backup_dir))
+print(truncate_accuracy_log)
+# truncate_accuracy_log_name = 'truncate_accuracy_log.txt'
+# TODO: Write the script log?
 
 print("*" * 100)
 submission_checker_py = os.path.join(upstream_path, 'tools', 'submission', 'submission-checker.py')
@@ -1522,11 +1526,13 @@ open_org_results_dir = os.path.join(root_dir, 'open', submitter, 'results')
 closed_org_results_dir = os.path.join(root_dir, 'closed', submitter, 'results')
 subprocess.run(['mkdir', '-p', open_org_results_dir])
 subprocess.run(['mkdir', '-p', closed_org_results_dir])
-# Run the checker.
-checker_log = subprocess.getoutput('python3 {} --input {} --submitter {}'.format(submission_checker_py, root_dir, submitter))
+# Run the submission checker script.
+checker_log = subprocess.getoutput(
+        'python3 {} --submitter {} --input {}'
+        .format(submission_checker_py, submitter, root_dir))
 print(checker_log)
 checker_log_name = 'submission_checker_log.txt'
-# Write the checker results once closed/<organization> and once under open/<organization>.
+# Write the script log once closed/<organization> and once under open/<organization>.
 for results_dir in [ open_org_results_dir, closed_org_results_dir ]:
     checker_log_path = os.path.join(results_dir, checker_log_name)
     with open(checker_log_path, 'w') as checker_log_file:
