@@ -1375,14 +1375,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 detail_txt_file.writelines(detail)
                 print('  |_ %s' % detail_txt_name)
             # Accuracy file (with accuracy dictionary).
-            # TODO: Move the next 5 lines into the (if mode == 'accuracy') block,
-            # once the submission checker no longer complains as follows:
-            # "performance/run_1 has file list mismatch (['mlperf_log_accuracy.json'])"
-            accuracy_json_name = 'mlperf_log_accuracy.json'
-            accuracy_json_path = os.path.join(last_dir, accuracy_json_name)
-            with open(accuracy_json_path, 'w') as accuracy_json_file:
-                json.dump(mlperf_log.get('accuracy',{}), accuracy_json_file, indent=2)
-                print('  |_ %s' % accuracy_json_name)
+            if mode == 'accuracy':
+                accuracy_json_name = 'mlperf_log_accuracy.json'
+                accuracy_json_path = os.path.join(last_dir, accuracy_json_name)
+                with open(accuracy_json_path, 'w') as accuracy_json_file:
+                    json.dump(mlperf_log.get('accuracy',{}), accuracy_json_file, indent=2)
+                    print('  |_ %s' % accuracy_json_name)
             # Do what's required by NVIDIA's audit tests.
             if audit:
                 test_path = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', test)
