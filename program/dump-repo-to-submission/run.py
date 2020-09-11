@@ -1336,11 +1336,14 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 last_dir = mode_dir
             print(last_dir)
 
-            # FIXME: Per-datapoint configs should belong here, but this must be confirmed!
-            #
             mlperf_conf = characteristics['run'].get('mlperf_conf',{})
             for config_name in mlperf_conf.keys():
-                config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
+                # FIXME: Per-datapoint user configs belong here, but this must be confirmed!
+                # https://github.com/mlperf/policies/issues/57
+                #config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
+
+                # For now, still write under measurements/ according to the current rules.
+                config_dir = mscenario_dir
                 full_config_path = config_path = os.path.join(config_dir, config_name)
                 if os.path.exists(full_config_path):
                     with open(full_config_path, 'r') as existing_config_fd:
