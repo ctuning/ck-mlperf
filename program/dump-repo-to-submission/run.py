@@ -1176,17 +1176,25 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         implementation_benchmark_json = dump_implementation_dictionary(system_implementation_json_path, pipeline['dependencies']['weights'], inference_engine, program_name, benchmark)
         print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
 
-
-        # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
-        measurements_readme_name = 'README.md'
-        measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
-        measurements_readme = measurements_readmes.get(division+'-'+task, '')
-        if measurements_readme != '':
-            with open(measurements_readme_path, 'w') as measurements_readme_file:
-                measurements_readme_file.writelines(measurements_readme)
-            print('  |_ %s [for %s %s]' % (measurements_readme_name, division, task))
+        if program_name == 'openvino-loadgen-v0.7-drop':
+            program_path = get_program_path(program_name)
+            program_readme_name = 'README.{}-{}.md'.format(benchmark, scenario)
+            program_readme_path = os.path.join(program_path, program_readme_name)
+            measurements_readme_name = 'README.md'
+            measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
+            copy2(program_readme_path, measurements_readme_path)
+            print('  |_ %s [from %s]' % (measurements_readme_name, program_readme_path))
         else:
-            raise Exception("Invalid measurements README!")
+            # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
+            measurements_readme_name = 'README.md'
+            measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
+            measurements_readme = measurements_readmes.get(division+'-'+task, '')
+            if measurements_readme != '':
+                with open(measurements_readme_path, 'w') as measurements_readme_file:
+                    measurements_readme_file.writelines(measurements_readme)
+                print('  |_ %s [for %s %s]' % (measurements_readme_name, division, task))
+            else:
+                raise Exception("Invalid measurements README!")
 
         # Create 'NOTES.txt'.
         measurements_notes_name = 'NOTES.txt'
