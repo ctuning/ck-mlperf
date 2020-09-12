@@ -100,6 +100,10 @@ import ck.kernel as ck
 print ('CK version: %s' % ck.__version__)
 
 
+# For a particular division, are any results present in the repo?
+any_open_results = False
+any_closed_results = False
+
 # <a id="systems"></a>
 # ## Systems
 
@@ -193,6 +197,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     model_env = model_dict['dict']['env']
     model_tags = model_dict['dict']['tags']
 
+    recorded_model_name = model_install_env.get('ML_MODEL_MODEL_NAME')
     recorded_model_retraining = model_install_env.get('ML_MODEL_RETRAINING', 'no')
 
     ## fetch recorded model data types, if available, guess if unavailable:
@@ -229,7 +234,13 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
 
     ## figure out the transformation path:
     if program_name.startswith('openvino-loadgen'):
-        recorded_transformation_path = 'TF -> OpenVINO (refer to intel_calibration.adoc under closed/Intel/measurements).'
+        if recorded_model_name == 'resnet50':
+            model_source = 'TF'
+        elif recorded_model_name == 'ssd-resnet34':
+            model_source = 'ONNX'
+        else:
+            model_source = 'Unknown'
+        recorded_transformation_path = model_source + ' -> OpenVINO (please refer to closed/Intel/calibration/OpenVINO)'
     elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
         if benchmark in ['resnet', 'resnet50']:
             recorded_transformation_path = 'TF -> TFLite'
@@ -579,8 +590,111 @@ gnmt.Server.target_latency_percentile = 97
 
 # In[ ]:
 
+# See https://github.com/mlperf/inference_policies/issues/170
+checklist_template_0_7 = """MLPerf Inference 0.7 Self-Certification Checklist
 
-checklist_template = """MLPerf Inference 0.5 Self-Certification Checklist
+Name of Certifying Engineer(s): %(name)s
+
+Email of Certifying Engineer(s): %(email)s
+
+Name of System(s) Under Test: %(system_name)s
+
+Does the submission run the same code in accuracy and performance
+modes? (check one)
+- [x] Yes
+- [ ] No
+
+Where is the LoadGen trace stored? (check one)
+- [x] Host DRAM
+- [ ] Other, please specify:
+
+Are the weights calibrated using data outside of the calibration set?
+(check one)
+- [ ] Yes
+- [x] No
+
+What untimed pre-processing does the submission use? (check all that apply)
+- [x] Resize
+- [x] Reorder channels or transpose
+- [ ] Pad
+- [x] A single crop
+- [x] Mean subtraction and normalization
+- [ ] Convert to whitelisted format
+- [ ] No pre-processing
+- [ ] Other, please specify:
+
+What numerics does the submission use? (check all that apply)
+- [ ] INT4
+- [%(numerics_int8)s] INT8
+- [ ] INT16
+- [ ] INT32
+- [%(numerics_uint8)s] UINT8
+- [ ] UINT16
+- [ ] UINT32
+- [ ] FP11
+- [%(numerics_fp32)s] FP16
+- [ ] BF16
+- [%(numerics_fp32)s] FP32
+- [ ] Other, please specify:
+
+Which of the following techniques does the submission use? (check all that apply)
+- [ ] Wholesale weight replacement
+- [ ] Weight supplements
+- [ ] Discarding non-zero weight elements
+- [ ] Pruning
+- [ ] Caching queries
+- [ ] Caching responses
+- [ ] Caching intermediate computations
+- [ ] Modifying weights during the timed portion of an inference run
+- [ ] Weight quantization algorithms that are similar in size to the
+non-zero weights they produce
+- [ ] Hard coding the total number of queries
+- [ ] Techniques that boost performance for fixed length experiments but
+are inapplicable to long-running services except in the offline
+scenario
+- [ ] Using knowledge of the LoadGen implementation to predict upcoming
+lulls or spikes in the server scenario
+- [ ] Treating beams in a beam search differently. For example,
+employing different precision for different beams
+- [ ] Changing the number of beams per beam search relative to the reference
+- [ ] Incorporating explicit statistical information about the performance or accuracy sets
+- [ ] Techniques that take advantage of upsampled images.
+- [ ] Techniques that only improve performance when there are identical samples in a query.
+- [x] None of the above
+
+Is the submission congruent with all relevant MLPerf rules?
+- [x] Yes
+- [ ] No
+
+For each SUT, does the submission accurately reflect the real-world
+performance of the SUT?
+- [x] Yes
+- [ ] No
+"""
+
+def get_checklist_0_7(checklist_template=checklist_template_0_7,
+        name='Anton Lokhmotov', email='anton@dividiti.com',
+        system_name='Raspberry Pi 4 (rpi4)', numerics='fp32'):
+    def tick(var): return "x" if var else " "
+    print("=" * 100)
+    print(system_name)
+    print("=" * 100)
+    checklist = checklist_template % {
+        "name" : name,
+        "email" : email,
+        "system_name": system_name,
+        "numerics_int8": tick(numerics=='int8'),
+        "numerics_uint8": tick(numerics=='uint8'),
+        "numerics_fp32": tick(numerics=='fp16'),
+        "numerics_fp32": tick(numerics=='fp32'),
+    }
+    print(checklist)
+    print("-" * 100)
+
+    return checklist
+
+
+checklist_template_0_5 = """MLPerf Inference 0.5 Self-Certification Checklist
 
 Name of Certifying Engineer(s): %(name)s
 
@@ -793,11 +907,12 @@ performance of the SUT?
 - [x] Yes
 - [ ] No"""
 
-def get_checklist(checklist_template=checklist_template, name='Anton Lokhmotov', email='anton@dividiti.com',
-                  system='rpi4-tflite-v1.15', system_name='Raspberry Pi 4 (rpi4)', revision='61220457de',
-                  division='closed', category='available', task='image-classification', benchmark='mobilenet', scenario='singlestream',
-                  performance_sample_count=1024, performance_sample_count_met=True,
-                  accuracy_pc=12.345, accuracy_met=True, numerics='fp32'):
+def get_checklist_0_5(checklist_template=checklist_template_0_5,
+        name='Anton Lokhmotov', email='anton@dividiti.com',
+        system='rpi4-tflite-v1.15', system_name='Raspberry Pi 4 (rpi4)', revision='61220457de',
+        division='closed', category='available', task='image-classification', benchmark='mobilenet', scenario='singlestream',
+        performance_sample_count=1024, performance_sample_count_met=True,
+        accuracy_pc=12.345, accuracy_met=True, numerics='fp32'):
     def tick(var): return "x" if var else " "
     print("=" * 100)
     print(system)
@@ -817,7 +932,7 @@ def get_checklist(checklist_template=checklist_template, name='Anton Lokhmotov',
         # Division.
         "closed" : tick(division=='closed'),
         "open" : tick(division=='open'),
-        # Division.
+        # Category.
         "category_available" : tick(category.lower()=='available'),
         "category_preview" : tick(category.lower()=='preview'),
         "category_rdi" : tick(category.lower()=='rdi'),
@@ -863,9 +978,9 @@ def get_checklist(checklist_template=checklist_template, name='Anton Lokhmotov',
     
     return checklist
 
-# null = get_checklist(system='rpi4-armnn-v19.08-neon', system_name='Raspberry Pi 4 (rpi4)', benchmark='mobilenet', accuracy_pc=70.241, numerics='uint8')
-# null = get_checklist(system='hikey960-tflite-v1.15', system_name='Linaro HiKey 960 (hikey960)', benchmark='resnet', accuracy_pc=75.692, revision='deadbeef')
-# null = get_checklist(system='velociti-tensorflow-v1.14-cpu', name='Anton Lokhmotov; Emanuele Vitali', email='anton@dividiti.com; emanuele.vitali@polimi.it', system_name='HP Z640 G1X62EA workstation (velociti)', division='open', category='RDI', benchmark='ssd-mobilenet-fpn')
+# null = get_checklist_0_5(system='rpi4-armnn-v19.08-neon', system_name='Raspberry Pi 4 (rpi4)', benchmark='mobilenet', accuracy_pc=70.241, numerics='uint8')
+# null = get_checklist_0_5(system='hikey960-tflite-v1.15', system_name='Linaro HiKey 960 (hikey960)', benchmark='resnet', accuracy_pc=75.692, revision='deadbeef')
+# null = get_checklist_0_5(system='velociti-tensorflow-v1.14-cpu', name='Anton Lokhmotov; Emanuele Vitali', email='anton@dividiti.com; emanuele.vitali@polimi.it', system_name='HP Z640 G1X62EA workstation (velociti)', division='open', category='RDI', benchmark='ssd-mobilenet-fpn')
 
 
 # <a id="check"></a>
@@ -984,7 +1099,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         print('Error: %s' % r['error'])
         exit(1)
     experiments = r['lst']
-    print("Found {} {} entries in repository {}".format(len(experiments), module_uoa, repo_uoa))
+    print("Found {} {} entries in repository '{}'".format(len(experiments), module_uoa, repo_uoa))
 
     for experiment in experiments:
         data_uoa = experiment['data_uoa']
@@ -1080,7 +1195,10 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             raise Exception("Expected 'accuracy' or 'performance' or 'audit' in experiment_tags!")
 
 #         if mode == 'accuracy': continue
-            
+
+        if division == 'closed': any_closed_results = True
+        if division == 'open':   any_open_results   = True
+
         organization = submitter
 
         if not inference_engine:
@@ -1309,195 +1427,198 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             mode_dir = os.path.join(test_dir, mode)
             if not os.path.exists(mode_dir): os.mkdir(mode_dir)
 
-        # For each point (should be one point for each performance run).
-        for (point, point_idx) in zip(experiment_points, range(1,len(experiment_points)+1)):
+        run_idx = 0
+        # For each experiment point (can be more than one if manually combining data from separate runs). 
+        for point in experiment_points:
             point_file_path = os.path.join(experiment_path, 'ckp-%s.0001.json' % point)
             with open(point_file_path) as point_file:
                 point_data_raw = json.load(point_file)
             characteristics_list = point_data_raw['characteristics_list']
-            characteristics = characteristics_list[0]
-
-            # Set the leaf directory.
-            if mode == 'performance':
-                run_dir = os.path.join(mode_dir, 'run_%d' % point_idx)
-                if not os.path.exists(run_dir): os.mkdir(run_dir)
-                last_dir = run_dir
-                # Performance notes. Should ideally go inside the run_x dir, but the checker complains.
-                if 'velociti' in experiment_tags and 'tensorrt' in experiment_tags:
-                    num_streams = point_data_raw['choices']['env'].get('CK_LOADGEN_MULTISTREAMNESS', '')
-                    if num_streams == '': num_streams = '?'
-                    performance_notes = 'uid={}: {} streams'.format(point, num_streams)
-                    performance_notes_name = run_dir + '.txt'
-                    performance_notes_path = os.path.join(mode_dir, performance_notes_name)
-                    with open(performance_notes_path, 'w') as performance_notes_file:
-                        performance_notes_file.writelines(performance_notes)
-                        print('  |_ %s' % performance_notes_name)
-            else:
-                last_dir = mode_dir
-            print(last_dir)
-
-            mlperf_conf = characteristics['run'].get('mlperf_conf',{})
-            for config_name in mlperf_conf.keys():
-                # FIXME: Per-datapoint user configs belong here, but this must be confirmed!
-                # https://github.com/mlperf/policies/issues/57
-                #config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
-
-                # For now, still write under measurements/ according to the current rules.
-                config_dir = mscenario_dir
-                full_config_path = config_path = os.path.join(config_dir, config_name)
-                if os.path.exists(full_config_path):
-                    with open(full_config_path, 'r') as existing_config_fd:
-                        existing_config_lines = existing_config_fd.readlines()
-
-                    if existing_config_lines == mlperf_conf[config_name]:
-                        print("Found an identical {} file, skipping it".format(full_config_path))
-                    else:
-                        raise Exception("Found an existing {} file with different contents".format(full_config_path))
+            # For each repetition (can be more than one for server).
+            for characteristics in characteristics_list:
+                run_idx += 1
+                # Set the leaf directory.
+                if mode == 'performance':
+                    run_dir = os.path.join(mode_dir, 'run_%d' % run_idx)
+                    if not os.path.exists(run_dir): os.mkdir(run_dir)
+                    last_dir = run_dir
+                    # Performance notes. Should ideally go inside the run_x dir, but the checker complains.
+                    if 'velociti' in experiment_tags and 'tensorrt' in experiment_tags:
+                        num_streams = point_data_raw['choices']['env'].get('CK_LOADGEN_MULTISTREAMNESS', '')
+                        if num_streams == '': num_streams = '?'
+                        performance_notes = 'uid={}: {} streams'.format(point, num_streams)
+                        performance_notes_name = run_dir + '.txt'
+                        performance_notes_path = os.path.join(mode_dir, performance_notes_name)
+                        with open(performance_notes_path, 'w') as performance_notes_file:
+                            performance_notes_file.writelines(performance_notes)
+                            print('  |_ %s' % performance_notes_name)
                 else:
-                    with open(config_path, 'w') as new_config_fd:
-                        new_config_fd.writelines(mlperf_conf[config_name])
-                    print('  |_ {}'.format(config_name))
+                    last_dir = mode_dir
+                print(last_dir)
 
-            # Dump files in the leaf directory.
-            mlperf_log = characteristics['run'].get('mlperf_log',{})
-            # Summary file (with errors and warnings in accuracy mode, with statistics in performance mode).
-            summary_txt_name = 'mlperf_log_summary.txt'
-            summary_txt_path = os.path.join(last_dir, summary_txt_name)
-            summary = mlperf_log.get('summary','')
-            with open(summary_txt_path, 'w') as summary_txt_file:
-                summary_txt_file.writelines(summary)
-                print('  |_ %s' % summary_txt_name)
-            # Detail file (with settings).
-            detail_txt_name = 'mlperf_log_detail.txt'
-            detail_txt_path = os.path.join(last_dir, detail_txt_name)
-            detail = mlperf_log.get('detail','')
-            with open(detail_txt_path, 'w') as detail_txt_file:
-                detail_txt_file.writelines(detail)
-                print('  |_ %s' % detail_txt_name)
-            # Accuracy file (with accuracy dictionary).
-            if mode == 'accuracy':
-                accuracy_json_name = 'mlperf_log_accuracy.json'
-                accuracy_json_path = os.path.join(last_dir, accuracy_json_name)
-                with open(accuracy_json_path, 'w') as accuracy_json_file:
-                    json.dump(mlperf_log.get('accuracy',{}), accuracy_json_file, indent=2)
-                    print('  |_ %s' % accuracy_json_name)
-            # Do what's required by NVIDIA's audit tests.
-            if audit:
-                test_path = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', test)
-                if 'TEST01' in experiment_tags:
-                    # Verify that the accuracy (partially) dumped for the audit test matches that for the submision.
-                    verify_accuracy_py = os.path.join(test_path, 'verify_accuracy.py')
-                    submission_accuracy_json_path = os.path.join(accuracy_dir, accuracy_json_name)
-                    verify_accuracy_txt = subprocess.getoutput('python3 {} -a {} -p {}'.format(verify_accuracy_py, submission_accuracy_json_path, accuracy_json_path))
-                    verify_accuracy_txt_name = 'verify_accuracy.txt'
-                    verify_accuracy_txt_path = os.path.join(test_dir, verify_accuracy_txt_name)
-                    with open(verify_accuracy_txt_path, 'w') as verify_accuracy_txt_file:
-                        verify_accuracy_txt_file.write(verify_accuracy_txt)
-                        print('%s' % test_dir)
-                        print('  |_ %s' % verify_accuracy_txt_name)
-                if test in [ 'TEST01', 'TEST03', 'TEST05' ]:
-                    # Verify that the performance for the audit test matches that for the submission.
-                    verify_performance_py = os.path.join(test_path, 'verify_performance.py')
-                    submission_summary_txt_path = os.path.join(performance_dir, summary_txt_name)
-                    verify_performance_txt = subprocess.getoutput('python3 {} -r {} -t {}'.format(verify_performance_py, submission_summary_txt_path, summary_txt_path))
-                    verify_performance_txt_name = 'verify_performance.txt'
-                    verify_performance_txt_path = os.path.join(test_dir, verify_performance_txt_name)
-                    with open(verify_performance_txt_path, 'w') as verify_performance_txt_file:
-                        verify_performance_txt_file.write(verify_performance_txt)
-                        print('%s' % test_dir)
-                        print('  |_ %s' % verify_performance_txt_name)
-                if test in [ 'TEST04-A', 'TEST04-B' ]:
-                    test04a_summary_txt_path = os.path.join(scenario_dir, 'TEST04-A', 'performance', 'run_1', summary_txt_name)
-                    test04b_summary_txt_path = os.path.join(scenario_dir, 'TEST04-B', 'performance', 'run_1', summary_txt_name)
-                    if os.path.exists(test04a_summary_txt_path) and os.path.exists(test04b_summary_txt_path):
-                        # If both tests have been processed, verify that their performance matches.
-                        verify_performance_py = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', 'TEST04-A', 'verify_test4_performance.py')
-                        #print("python3 {} -u {} -s {}".format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
-                        verify_performance_txt = subprocess.getoutput('python3 {} -u {} -s {}'.format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
-                        #print(verify_performance_txt)
+                mlperf_conf = characteristics['run'].get('mlperf_conf',{})
+                for config_name in mlperf_conf.keys():
+                    # FIXME: Per-datapoint user configs belong here, but this must be confirmed!
+                    # https://github.com/mlperf/policies/issues/57
+                    #config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
+
+                    # For now, still write under measurements/ according to the current rules.
+                    config_dir = mscenario_dir
+                    full_config_path = config_path = os.path.join(config_dir, config_name)
+                    if os.path.exists(full_config_path):
+                        with open(full_config_path, 'r') as existing_config_fd:
+                            existing_config_lines = existing_config_fd.readlines()
+
+                        if existing_config_lines == mlperf_conf[config_name]:
+                            print("Found an identical {} file, skipping it".format(full_config_path))
+                        else:
+                            raise Exception("Found an existing {} file with different contents".format(full_config_path))
+                    else:
+                        with open(config_path, 'w') as new_config_fd:
+                            new_config_fd.writelines(mlperf_conf[config_name])
+                        print('  |_ {}'.format(config_name))
+
+                # Dump files in the leaf directory.
+                mlperf_log = characteristics['run'].get('mlperf_log',{})
+                # Summary file (with errors and warnings in accuracy mode, with statistics in performance mode).
+                summary_txt_name = 'mlperf_log_summary.txt'
+                summary_txt_path = os.path.join(last_dir, summary_txt_name)
+                summary = mlperf_log.get('summary','')
+                with open(summary_txt_path, 'w') as summary_txt_file:
+                    summary_txt_file.writelines(summary)
+                    print('  |_ %s' % summary_txt_name)
+                # Detail file (with settings).
+                detail_txt_name = 'mlperf_log_detail.txt'
+                detail_txt_path = os.path.join(last_dir, detail_txt_name)
+                detail = mlperf_log.get('detail','')
+                with open(detail_txt_path, 'w') as detail_txt_file:
+                    detail_txt_file.writelines(detail)
+                    print('  |_ %s' % detail_txt_name)
+                # Accuracy file (with accuracy dictionary).
+                if mode == 'accuracy':
+                    accuracy_json_name = 'mlperf_log_accuracy.json'
+                    accuracy_json_path = os.path.join(last_dir, accuracy_json_name)
+                    with open(accuracy_json_path, 'w') as accuracy_json_file:
+                        json.dump(mlperf_log.get('accuracy',{}), accuracy_json_file, indent=2)
+                        print('  |_ %s' % accuracy_json_name)
+                # Do what's required by NVIDIA's audit tests.
+                if audit:
+                    test_path = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', test)
+                    if 'TEST01' in experiment_tags:
+                        # Verify that the accuracy (partially) dumped for the audit test matches that for the submision.
+                        verify_accuracy_py = os.path.join(test_path, 'verify_accuracy.py')
+                        submission_accuracy_json_path = os.path.join(accuracy_dir, accuracy_json_name)
+                        verify_accuracy_txt = subprocess.getoutput('python3 {} -a {} -p {}'.format(verify_accuracy_py, submission_accuracy_json_path, accuracy_json_path))
+                        verify_accuracy_txt_name = 'verify_accuracy.txt'
+                        verify_accuracy_txt_path = os.path.join(test_dir, verify_accuracy_txt_name)
+                        with open(verify_accuracy_txt_path, 'w') as verify_accuracy_txt_file:
+                            verify_accuracy_txt_file.write(verify_accuracy_txt)
+                            print('%s' % test_dir)
+                            print('  |_ %s' % verify_accuracy_txt_name)
+                    if test in [ 'TEST01', 'TEST03', 'TEST05' ]:
+                        # Verify that the performance for the audit test matches that for the submission.
+                        verify_performance_py = os.path.join(test_path, 'verify_performance.py')
+                        submission_summary_txt_path = os.path.join(performance_dir, summary_txt_name)
+                        verify_performance_txt = subprocess.getoutput('python3 {} -r {} -t {}'.format(verify_performance_py, submission_summary_txt_path, summary_txt_path))
                         verify_performance_txt_name = 'verify_performance.txt'
-                        verify_performance_txt_path = os.path.join(scenario_dir, 'TEST04-A', verify_performance_txt_name)
+                        verify_performance_txt_path = os.path.join(test_dir, verify_performance_txt_name)
                         with open(verify_performance_txt_path, 'w') as verify_performance_txt_file:
                             verify_performance_txt_file.write(verify_performance_txt)
-                            print('%s' % os.path.join(scenario_dir, 'TEST04-A'))
+                            print('%s' % test_dir)
                             print('  |_ %s' % verify_performance_txt_name)
-                    else:
-                        # Need both A/B tests to be processed. Wait for the other one.
-                        continue
-            # Generate accuracy.txt.
-            if mode == 'accuracy' or mode == 'submission':
-                accuracy_txt_name = 'accuracy.txt'
-                accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
-                if task == 'image-classification':
-                    accuracy_imagenet_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
-                    accuracy_cmd = 'python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path)
-                    accuracy_txt = subprocess.getoutput(accuracy_cmd)
-                    # The last (and only) line is e.g. "accuracy=76.442%, good=38221, total=50000".
-                    accuracy_line = accuracy_txt.split('\n')[-1]
-                    match = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', accuracy_line)
-                    accuracy_pc = float(match.group(1))
-                elif task == 'object-detection':
-                    accuracy_coco_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-coco.py')
-                    use_inv_map = bool(pipeline['dependencies']['weights']['cus']['install_env'].get('ML_MODEL_USE_INV_MAP','0'))
-                    use_inv_map_flag = '--use-inv-map' if use_inv_map else ''
-                    accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {} {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path, use_inv_map_flag))
-                    # The last line is e.g. "mAP=13.323%".
-                    accuracy_line = accuracy_txt.split('\n')[-1]
-                    match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
-                    if match:
+                    if test in [ 'TEST04-A', 'TEST04-B' ]:
+                        test04a_summary_txt_path = os.path.join(scenario_dir, 'TEST04-A', 'performance', 'run_1', summary_txt_name)
+                        test04b_summary_txt_path = os.path.join(scenario_dir, 'TEST04-B', 'performance', 'run_1', summary_txt_name)
+                        if os.path.exists(test04a_summary_txt_path) and os.path.exists(test04b_summary_txt_path):
+                            # If both tests have been processed, verify that their performance matches.
+                            verify_performance_py = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', 'TEST04-A', 'verify_test4_performance.py')
+                            #print("python3 {} -u {} -s {}".format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
+                            verify_performance_txt = subprocess.getoutput('python3 {} -u {} -s {}'.format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
+                            #print(verify_performance_txt)
+                            verify_performance_txt_name = 'verify_performance.txt'
+                            verify_performance_txt_path = os.path.join(scenario_dir, 'TEST04-A', verify_performance_txt_name)
+                            with open(verify_performance_txt_path, 'w') as verify_performance_txt_file:
+                                verify_performance_txt_file.write(verify_performance_txt)
+                                print('%s' % os.path.join(scenario_dir, 'TEST04-A'))
+                                print('  |_ %s' % verify_performance_txt_name)
+                        else:
+                            # Need both A/B tests to be processed. Wait for the other one.
+                            continue
+                # Generate accuracy.txt.
+                if mode == 'accuracy' or mode == 'submission':
+                    accuracy_txt_name = 'accuracy.txt'
+                    accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
+                    if task == 'image-classification':
+                        accuracy_imagenet_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
+                        accuracy_cmd = 'python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path)
+                        accuracy_txt = subprocess.getoutput(accuracy_cmd)
+                        # The last (and only) line is e.g. "accuracy=76.442%, good=38221, total=50000".
+                        accuracy_line = accuracy_txt.split('\n')[-1]
+                        match = re.match('accuracy=(.+)%, good=(\d+), total=(\d+)', accuracy_line)
                         accuracy_pc = float(match.group(1))
+                    elif task == 'object-detection':
+                        accuracy_coco_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-coco.py')
+                        use_inv_map = bool(pipeline['dependencies']['weights']['cus']['install_env'].get('ML_MODEL_USE_INV_MAP','0'))
+                        use_inv_map_flag = '--use-inv-map' if use_inv_map else ''
+                        accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {} {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path, use_inv_map_flag))
+                        # The last line is e.g. "mAP=13.323%".
+                        accuracy_line = accuracy_txt.split('\n')[-1]
+                        match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
+                        if match:
+                            accuracy_pc = float(match.group(1))
+                        else:
+                            raise Exception("Could not parse accuracy from: " + accuracy_txt)
                     else:
-                        raise Exception("Could not parse accuracy from: " + accuracy_txt)
-                else:
-                    raise Exception("Invalid task '%s'!" % task)
-                with open(accuracy_txt_path, 'w') as accuracy_txt_file:
-                    print('  |_ %s [%.3f%% parsed from "%s"]' % (accuracy_txt_name, accuracy_pc, accuracy_line))
-                    # Append a new line for the truncate script to work as expected.
-                    accuracy_txt += os.linesep
-                    accuracy_txt_file.write(accuracy_txt)
+                        raise Exception("Invalid task '%s'!" % task)
+                    with open(accuracy_txt_path, 'w') as accuracy_txt_file:
+                        print('  |_ %s [%.3f%% parsed from "%s"]' % (accuracy_txt_name, accuracy_pc, accuracy_line))
+                        # Append a new line for the truncate script to work as expected.
+                        accuracy_txt += os.linesep
+                        accuracy_txt_file.write(accuracy_txt)
 
-            # FIXME: skip generating a submission checklist until an update is available:
-            # https://github.com/mlperf/inference_policies/issues/170
-            continue
-            # Generate submission_checklist.txt for each system, benchmark and scenario under "measurements/".
-            if mode == 'accuracy' and not audit:
-                checklist_name = 'submission_checklist.txt'
-                checklist_path = os.path.join(measurements_dir, system, benchmark, scenario, checklist_name)
+                # Generate submission_checklist.txt for each system, benchmark and scenario under "measurements/".
+                if mode == 'accuracy' and not audit:
+                    checklist_name = 'submission_checklist.txt'
+                    checklist_path = os.path.join(measurements_dir, system, benchmark, scenario, checklist_name)
+                    # Write the checklist.
+                    if submitter.lower() == 'dividiti':
+                        checklist = get_checklist_0_7(name='Anton Lokhmotov', email='anton@dividiti.com',
+                                                      system_name=system_json['system_name'],
+                                                      numerics=implementation_benchmark_json['weight_data_types'])
 
-                # Extract LoadGen revision from the second line of e.g.
-                # "pid": 28660, "tid": 28660, "ts": 8750ns : version : .5a1 @ 61220457de
-                # FIXME: In practice, the revision may be different for accuracy and performance runs
-                # (happened on rpi4 due to a late LoadGen fix). We would prefer to use one from
-                # the performance one, as it may be more critical for performance evaluation.
-                # However, as we only write the checklist from the accuracy run, we are somewhat stuck.
-                loadgen_revision = detail[1].split('@')[1].strip()
+                    elif submitter.lower() == 'dellemc':
+                        checklist = get_checklist_0_7(name='Vilmara Sanchez', email='Vilmara_Sanchez@dellteam.com',
+                                                      system_name=system_json['system_name'],
+                                                      numerics=implementation_benchmark_json['weight_data_types'])
 
-                # FIXME: The actual performance_sample_count can be extracted from the performance run.
-                # Again, this is not available to us here.
-                # We could check in user.conf, but we would need to parse it.
-                performance_sample_count = 1024 if task == 'image-classification' else 256
-                # Write the checklist.
-                if submitter == 'dividiti':
-                    checklist = get_checklist(name='Anton Lokhmotov', email='anton@dividiti.com',
-                                              division=division, task=task, system=system,
-                                              system_name=system_json['system_name'], category=system_json['status'],
-                                              revision=loadgen_revision, benchmark=benchmark, accuracy_pc=accuracy_pc,
-                                              performance_sample_count=performance_sample_count,
-                                              numerics=implementation_benchmark_json['weight_data_types'])
-                else:
-                    checklist = get_checklist(division=division, task=task, system=system,
-                                              system_name=system_json['system_name'], category=system_json['status'],
-                                              revision=loadgen_revision, benchmark=benchmark, accuracy_pc=accuracy_pc,
-                                              performance_sample_count=performance_sample_count,
-                                              numerics=implementation_benchmark_json['weight_data_types'])
-                with open(checklist_path, 'w') as checklist_file:
-                    checklist_file.writelines(checklist)
+                    else: # Keep as v0.5 example to catch any obvious mistakes.
 
-#             # Trace file (should omit trace from v0.5).
-#             trace_json_name = 'mlperf_log_trace.json'
-#             trace_json_path = os.path.join(last_dir, trace_json_name)
-#             with open(trace_json_path, 'w') as trace_json_file:
-#                 json.dump(mlperf_log.get('trace',{}), trace_json_file, indent=2)
+                        # Extract LoadGen revision from the second line of e.g.
+                        # "pid": 28660, "tid": 28660, "ts": 8750ns : version : .5a1 @ 61220457de
+                        # FIXME: In practice, the revision may be different for accuracy and performance runs
+                        # (happened on rpi4 due to a late LoadGen fix). We would prefer to use one from
+                        # the performance one, as it may be more critical for performance evaluation.
+                        # However, as we only write the checklist from the accuracy run, we are somewhat stuck.
+                        loadgen_revision = detail[1].split('@')[1].strip()
+
+                        # FIXME: The actual performance_sample_count can be extracted from the performance run.
+                        # Again, this is not available to us here.
+                        # We could check in user.conf, but we would need to parse it.
+                        performance_sample_count = 1024 if task == 'image-classification' else 256
+
+                        checklist = get_checklist_0_5(division=division, task=task, system=system,
+                                                      system_name=system_json['system_name'], category=system_json['status'],
+                                                      revision=loadgen_revision, benchmark=benchmark, accuracy_pc=accuracy_pc,
+                                                      performance_sample_count=performance_sample_count,
+                                                      numerics=implementation_benchmark_json['weight_data_types'])
+                    with open(checklist_path, 'w') as checklist_file:
+                        checklist_file.writelines(checklist)
+
+#                 # Trace file (should omit trace from v0.5).
+#                 trace_json_name = 'mlperf_log_trace.json'
+#                 trace_json_path = os.path.join(last_dir, trace_json_name)
+#                 with open(trace_json_path, 'w') as trace_json_file:
+#                     json.dump(mlperf_log.get('trace',{}), trace_json_file, indent=2)
     return
 
 
@@ -1528,24 +1649,31 @@ print(truncate_accuracy_log)
 
 print("*" * 100)
 submission_checker_py = os.path.join(upstream_path, 'tools', 'submission', 'submission-checker.py')
-# The checker has a weird bug. When submitting to open, 'closed/<organization>/results' must exist on disk.
-# Vice versa, When submitting to closed, 'open/<organization>/results' must exist on disk.
-# Therefore, create both directories if they do not exist before invoking the checker.
+
 open_org_results_dir = os.path.join(root_dir, 'open', submitter, 'results')
 closed_org_results_dir = os.path.join(root_dir, 'closed', submitter, 'results')
-subprocess.run(['mkdir', '-p', open_org_results_dir])
-subprocess.run(['mkdir', '-p', closed_org_results_dir])
+
+# # For v0.5, the checker had a weird bug, which may no longer be there. 
+# # When submitting to open, 'closed/<organization>/results' must have existed on disk.
+# # Vice versa, when submitting to closed, 'open/<organization>/results' must have existed on disk.
+# # Therefore, we created both directories if they did not exist before invoking the checker.
+# subprocess.run(['mkdir', '-p', open_org_results_dir])
+# subprocess.run(['mkdir', '-p', closed_org_results_dir])
+
 # Run the submission checker script.
 checker_log = subprocess.getoutput(
         'python3 {} --submitter {} --input {}'
         .format(submission_checker_py, submitter, root_dir))
 print(checker_log)
 checker_log_name = 'submission_checker_log.txt'
-# Write the script log once closed/<organization> and once under open/<organization>.
-for results_dir in [ open_org_results_dir, closed_org_results_dir ]:
+
+# Write the script log under closed/<organization> and/or under open/<organization>.
+results_dirs = []
+if any_closed_results: results_dirs.append(closed_org_results_dir)
+if any_open_results:   results_dirs.append(open_org_results_dir)
+for results_dir in results_dirs:
     checker_log_path = os.path.join(results_dir, checker_log_name)
     with open(checker_log_path, 'w') as checker_log_file:
         checker_log_file.write(checker_log)
         print(results_dir)
         print('  |_%s' % checker_log_name)
-
