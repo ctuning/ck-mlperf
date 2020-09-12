@@ -529,7 +529,7 @@ gnmt.Server.target_latency_percentile = 97
 #
 # $ wget https://www.dropbox.com/s/3mmefvxc15m9o5b/mlperf.open.image-classification.firefly.armnn-v19.08.opencl.zip
 # $ ck add repo --zip=mlperf.open.image-classification.firefly.armnn-v19.08.opencl.zip
-#  
+#
 # $ wget https://www.dropbox.com/s/hrupp4o4apo3dfa/mlperf.open.image-classification.firefly.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.open.image-classification.firefly.armnn-v19.08.neon.zip
 # ```
@@ -539,13 +539,13 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/2gbbpsd2pjurvc8/mlperf.open.image-classification.hikey960.tflite-v1.15.zip
 # $ ck add repo --zip=mlperf.open.image-classification.hikey960.tflite-v1.15.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/rmttjnxzih9snzh/mlperf.open.image-classification.hikey960.tflite-v1.15.mobilenet-v1-quantized.zip
 # $ ck add repo --zip=mlperf.open.image-classification.hikey960.tflite-v1.15.mobilenet-v1-quantized.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/m5illg8i2tse5hg/mlperf.open.image-classification.hikey960.armnn-v19.08.opencl.zip
 # $ ck add repo --zip=mlperf.open.image-classification.hikey960.armnn-v19.08.opencl.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/3cujqfe4ps0g66h/mlperf.open.image-classification.hikey960.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.open.image-classification.hikey960.armnn-v19.08.neon.zip
 # ```
@@ -555,10 +555,10 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/awhdqjq3p4tre2q/mlperf.open.image-classification.rpi4.tflite-v1.15.zip
 # $ ck add repo --zip=mlperf.open.image-classification.rpi4.tflite-v1.15.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/rf8vsg5firhjzf8/mlperf.open.image-classification.rpi4.tflite-v1.15.mobilenet-v1-quantized.zip
 # $ ck add repo --zip=mlperf.open.image-classification.rpi4.tflite-v1.15.mobilenet-v1-quantized.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/0oketvqml7gyzl0/mlperf.open.image-classification.rpi4.armnn-v19.08.neon.zip
 # $ ck add repo --zip=mlperf.open.image-classification.rpi4.armnn-v19.08.neon.zip
 # ```
@@ -568,7 +568,7 @@ gnmt.Server.target_latency_percentile = 97
 # ```
 # $ wget https://www.dropbox.com/s/avi6h9m2demz5zr/mlperf.open.image-classification.mate10pro.tflite-v1.13.mobilenet.zip
 # $ ck add repo --zip=mlperf.open.image-classification.mate10pro.tflite-v1.13.mobilenet.zip
-# 
+#
 # $ wget https://www.dropbox.com/s/soaw27zcjb8hhww/mlperf.open.image-classification.mate10pro.tflite-v1.13.mobilenet-v1-quantized.zip
 # $ ck add repo --zip=mlperf.open.image-classification.mate10pro.tflite-v1.13.mobilenet-v1-quantized.zip
 # ```
@@ -738,7 +738,7 @@ Please fill in the following tables adding lines as necessary:
 |          |           |             |          |                  |                  |
 
 ### Offline Results Table
-| SUT Name | Benchmark | Sample Count | Accuracy | 
+| SUT Name | Benchmark | Sample Count | Accuracy |
 |----------|-----------|--------------|----------|
 |          |           |              |          |
 
@@ -967,7 +967,7 @@ def get_checklist_0_5(checklist_template=checklist_template_0_5,
         "revision_55c0ea4e77": tick(revision=='55c0ea4e77'),
         "revision_d31c18fbd9": tick(revision=='d31c18fbd9'),
         "revision_1d0e06e54a": tick(revision=='1d0e06e54a'),
-        "revision_other":  tick(revision_other), 
+        "revision_other":  tick(revision_other),
         "revision_other_specify": revision if revision_other else '',
         # Numerics.
         "numerics_uint8": tick(numerics=='uint8'),
@@ -975,7 +975,7 @@ def get_checklist_0_5(checklist_template=checklist_template_0_5,
     }
     print(checklist)
     print("-" * 100)
-    
+
     return checklist
 
 # null = get_checklist_0_5(system='rpi4-armnn-v19.08-neon', system_name='Raspberry Pi 4 (rpi4)', benchmark='mobilenet', accuracy_pc=70.241, numerics='uint8')
@@ -1091,7 +1091,7 @@ root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='', submitter='dividiti', submitter_desc='dividiti', path=None, audit=False):
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
-    
+
     if extra_tags:
         tags += ',' + extra_tags
     r = ck.access({'action':'search', 'repo_uoa':repo_uoa, 'module_uoa':module_uoa, 'tags':tags})
@@ -1169,7 +1169,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 backend = ''
                 notes = '======= DEMO ======='
         elif 'accuracy' in experiment_tags:
-            # FIXME: With the benefit of hindsight, [ ..., "armnn-v19.08", "neon", ... ] should have come 
+            # FIXME: With the benefit of hindsight, [ ..., "armnn-v19.08", "neon", ... ] should have come
             # as one tag "armnn-v19.08-neon", since we join them in this notebook anyway.
             if 'neon' in experiment_tags or 'opencl' in experiment_tags:
                 # Expected format: [ "mlperf", "open", "image-classification", "firefly", "armnn-v19.08", "neon", "mobilenet-v1-0.5-128", "singlestream", "accuracy", "using-opencv" ]
@@ -1222,7 +1222,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if not os.path.exists(division_dir): os.mkdir(division_dir)
         organization_dir = os.path.join(division_dir, organization)
         if not os.path.exists(organization_dir): os.mkdir(organization_dir)
-        
+
         #
         #     "systems"/
         #       <system_desc_id>.json
@@ -1428,7 +1428,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             if not os.path.exists(mode_dir): os.mkdir(mode_dir)
 
         run_idx = 0
-        # For each experiment point (can be more than one if manually combining data from separate runs). 
+        # For each experiment point (can be more than one if manually combining data from separate runs).
         for point in experiment_points:
             point_file_path = os.path.join(experiment_path, 'ckp-%s.0001.json' % point)
             with open(point_file_path) as point_file:
@@ -1653,7 +1653,7 @@ submission_checker_py = os.path.join(upstream_path, 'tools', 'submission', 'subm
 open_org_results_dir = os.path.join(root_dir, 'open', submitter, 'results')
 closed_org_results_dir = os.path.join(root_dir, 'closed', submitter, 'results')
 
-# # For v0.5, the checker had a weird bug, which may no longer be there. 
+# # For v0.5, the checker had a weird bug, which may no longer be there.
 # # When submitting to open, 'closed/<organization>/results' must have existed on disk.
 # # Vice versa, when submitting to closed, 'open/<organization>/results' must have existed on disk.
 # # Therefore, we created both directories if they did not exist before invoking the checker.
