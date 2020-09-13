@@ -207,8 +207,10 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if not recorded_model_data_type:
         if {'non-quantized', 'fp32', 'float', 'float32'} & set(model_tags):
             recorded_model_data_type = 'fp32'
-        elif {'quantized', 'quant', 'uint8'} & set(model_tags):
-            recorded_model_data_type = 'uint8'
+        elif {'uint8'} & set(model_tags): # 'quantized', 'quant', 
+            recorded_model_data_type = 'uint8' # 'quantized', 'quant', 
+        elif {'int8'} & set(model_tags):
+            recorded_model_data_type = 'int8'
         else:
             print("Warning: could not guess whether the model is quantized or not - please add tags or attributes")
             recorded_model_data_type = 'fp32'
@@ -632,7 +634,7 @@ What numerics does the submission use? (check all that apply)
 - [ ] UINT16
 - [ ] UINT32
 - [ ] FP11
-- [%(numerics_fp32)s] FP16
+- [%(numerics_fp16)s] FP16
 - [ ] BF16
 - [%(numerics_fp32)s] FP32
 - [ ] Other, please specify:
@@ -685,7 +687,7 @@ def get_checklist_0_7(checklist_template=checklist_template_0_7,
         "system_name": system_name,
         "numerics_int8": tick(numerics=='int8'),
         "numerics_uint8": tick(numerics=='uint8'),
-        "numerics_fp32": tick(numerics=='fp16'),
+        "numerics_fp16": tick(numerics=='fp16'),
         "numerics_fp32": tick(numerics=='fp32'),
     }
     print(checklist)
