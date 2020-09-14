@@ -72,7 +72,6 @@
         },
         "run_cmd_main": "$#BIN_FILE#$",
         "run_delete_files": [
-            "audit.config"
         ],
         "run_input_files": [
           "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
