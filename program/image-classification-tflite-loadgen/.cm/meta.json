@@ -56,6 +56,7 @@
           "CK_ENV_DATASET_IMAGENET_PREPROCESSED_INPUT_SQUARE_SIDE",
           "CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA",
           "CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN",
+          "ML_MODEL_MODEL_NAME",
           "ML_MODEL_GIVEN_CHANNEL_MEANS"
         ],
         "fine_grain_timer_file": "tmp-ck-timer.json",
@@ -67,7 +68,7 @@
         "pre_process_via_ck": {
           "data_uoa": "b98ee24399ef4c3a",
           "module_uoa": "script",
-          "script_name": "schindler"
+          "script_name": "loadgen_preprocess"
         },
         "run_cmd_main": "$#BIN_FILE#$",
         "run_delete_files": [
@@ -101,17 +102,6 @@
       "name": "ImageNet dataset (preprocessed subset)",
       "sort": 35,
       "tags": "dataset,imagenet,preprocessed"
-    },
-    "loadgen-config-file": {
-      "enable_if_env": [
-        { "CK_LOADGEN_CONF_FILE": [""] }
-      ],
-      "force_target_as_host": "yes",
-      "add_to_path": "no",
-      "local": "yes",
-      "name": "LoadGen Config file",
-      "sort": 40,
-      "tags": "loadgen,config"
     },
     "mlperf-inference-src": {
       "force_target_as_host": "yes",
@@ -155,9 +145,9 @@
     "CK_LOADGEN_MODE": "",
     "CK_LOADGEN_SCENARIO": "SingleStream",
     "CK_LOADGEN_SUPPORT": "YES",
-    "CK_LOADGEN_MAX_DURATION_S": 0,
-    "CK_LOADGEN_OFFLINE_EXPECTED_QPS": 0,
-    "CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS": 0,
+    "CK_LOADGEN_USER_CONF": "user.conf",
+    "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
+    "CK_MLPERF_PRE_SCHINDLER": "YES",
     "CK_RESULTS_DIR": "predictions",
     "CK_VERBOSE": 1,
     "CK_SKIP_IMAGES": 0
