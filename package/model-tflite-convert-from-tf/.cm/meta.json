@@ -87,6 +87,7 @@
       "extra_env": {
         "ML_MODEL_TO_CONVERT": "resnet50_v1",
         "ML_MODEL_GIVEN_CHANNEL_MEANS": "123.68 116.78 103.94",
+        "ML_MODEL_MODEL_NAME": "resnet50",
         "MODEL_INPUT_LAYER_NAME": "input_tensor",
         "MODEL_NORMALIZE_DATA": "0",
         "MODEL_SUBTRACT_MEAN": "YES",
