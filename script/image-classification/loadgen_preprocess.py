@@ -56,7 +56,6 @@ def user_conf_and_audit_config(i):
         'CK_LOADGEN_TARGET_LATENCY':                    ('target_latency', 1),
         'CK_LOADGEN_TARGET_QPS':                        ('target_qps', 1),
 
-        'CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS':   ('single_stream_expected_latency_ns', 1000*1000),
         'CK_LOADGEN_MAX_DURATION_S':                    ('max_duration_ms', 1000),
         'CK_LOADGEN_OFFLINE_EXPECTED_QPS':              ('offline_expected_qps', 1),
     }
