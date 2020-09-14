@@ -1,0 +1,84 @@
+{
+  "check_exit_status": "yes",
+  "customize": {
+    "install_env": {
+      "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "MODEL_ANCHORS": "flatanchors.txt",
+      "MODEL_CLASSES": "flatlabels.txt",
+      "MODEL_DATASET_TYPE": "coco",
+      "MODEL_IMAGE_CHANNELS": "3",
+      "MODEL_IMAGE_HEIGHT": "300",
+      "MODEL_IMAGE_WIDTH": "300",
+      "MODEL_INPUT_LAYER_NAME": "normalized_input_image_tensor",
+      "MODEL_LABELMAP_FILE": "mscoco_label_map.pbtxt",
+      "MODEL_MAX_CLASSES_PER_DETECTION": "1",
+      "MODEL_MAX_DETECTIONS": "100",
+      "MODEL_NEED_BACKGROUND_CORRECTION": "YES",
+      "MODEL_NMS_IOU_THRESHOLD": "0.6",
+      "MODEL_NMS_SCORE_THRESHOLD": "0.3",
+      "MODEL_NORMALIZE_DATA": "YES",
+      "MODEL_NUM_CLASSES": "90",
+      "MODEL_SCALE_H": "5.0",
+      "MODEL_SCALE_W": "5.0",
+      "MODEL_SCALE_X": "10.0",
+      "MODEL_SCALE_Y": "10.0",
+      "MODEL_SUBTRACT_MEAN": "0",
+      "PACKAGE_SKIP_CLEAN_PACKAGE": "YES",
+      "PACKAGE_SKIP_LINUX_MAKE": "YES",
+      "PACKAGE_UNGZIP": "NO",
+      "PACKAGE_UNTAR": "NO",
+      "PACKAGE_UNTAR_EXTRA": "",
+      "PACKAGE_URL": "https://github.com/google-coral/edgetpu/raw/master/test_data/",
+      "PACKAGE_WGET": "YES"
+    },
+    "no_os_in_suggested_path": "yes",
+    "no_ver_in_suggested_path": "yes",
+    "skip_file_check": "yes",
+    "version": "reference"
+  },
+  "deps": {},
+  "end_full_path_universal": "detect.tflite",
+  "only_for_host_os_tags": [],
+  "only_for_target_os_tags": [],
+  "package_name": "TFLite model for edgetpu (MLPerf SSD-MobileNet)",
+  "process_script": "install",
+  "soft_uoa": "439b9f1757f27091",
+  "suggested_path": "model-tflite-mlperf-ssd-mobilenet-edgetpu-downloaded",
+  "tags": [
+    "model",
+    "tflite",
+    "object-detection",
+    "mlperf",
+    "ssd-mobilenet",
+    "ssd",
+    "mobilenet",
+    "nhwc",
+    "vcoco",
+    "quantized",
+    "downloaded",
+    "edgetpu"
+  ],
+  "use_scripts_from_another_entry": {
+    "data_uoa": "download-and-install-package",
+    "module_uoa": "script"
+  },
+  "variations": {
+    "v1": {
+      "extra_env": {
+        "PACKAGE_NAME": "ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite",
+        "MODEL_TFLITE_GRAPH_FAST_NMS": "ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite",
+        "MODEL_TFLITE_GRAPH_NO_NMS": "ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite",
+        "MODEL_TFLITE_GRAPH_REGULAR_NMS": "ssd_mobilenet_v1_coco_quant_postprocess_edgetpu.tflite"
+      },
+      "on_by_default": "yes"
+    },
+    "v2": {
+      "extra_env": {
+        "PACKAGE_NAME": "ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite",
+        "MODEL_TFLITE_GRAPH_FAST_NMS": "ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite",
+        "MODEL_TFLITE_GRAPH_NO_NMS": "ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite",
+        "MODEL_TFLITE_GRAPH_REGULAR_NMS": "ssd_mobilenet_v2_coco_quant_postprocess_edgetpu.tflite"
+      }
+    }
+  }
+}
