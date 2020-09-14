@@ -1090,7 +1090,7 @@ vlatest_path=os.environ.get('CK_ENV_MLPERF_INFERENCE_VLATEST')
 
 root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 
-def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='', submitter='dividiti', submitter_desc='dividiti', path=None, audit=False):
+def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='', submitter='dividiti', submitter_desc='dividiti', path=None, compliance=False, version='v0.7'):
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
 
@@ -1157,6 +1157,15 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     scenario = value
                 elif attribute == 'mode':
                     mode = value
+                elif attribute == 'compliance':
+                    test = value
+
+        # Skip performance and accuracy experiments when doing a compliance pass.
+        if compliance and test == '':
+            continue
+        # Skip compliance experiments when not doing a compliance pass.
+        if not compliance and test != '':
+            continue
 
         if division and task and platform and inference_engine and benchmark and scenario and mode:
             library = inference_engine + (('-' + inference_engine_version) if inference_engine_version else '')
@@ -1403,10 +1412,9 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         if not os.path.exists(scenario_dir): os.mkdir(scenario_dir)
         mode_dir = os.path.join(scenario_dir, mode)
         if not os.path.exists(mode_dir): os.mkdir(mode_dir)
-        print(mode_dir)
-
-        if audit:
-            # Deal with a subset of audit tests.
+        # Create a compliance directory structure.
+        if compliance:
+            # Deal with a subset of tests.
 #             if test not in [ 'TEST03' ]: # [ 'TEST01', 'TEST03', 'TEST04-A', 'TEST04-B', 'TEST05' ]:
 #                 continue
             # Save the accuracy and performance dirs for the corresponding submission experiment.
@@ -1416,9 +1424,14 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             mode = 'performance' if test != 'TEST03' else 'submission'
             # Create a similar directory structure to results_dir, with another level, test_dir,
             # between scenario_dir and mode_dir.
-            audit_dir = os.path.join(organization_dir, 'audit')
-            if not os.path.exists(audit_dir): os.mkdir(audit_dir)
-            system_dir = os.path.join(audit_dir, system)
+            if version == 'v0.5':
+                audit_dir = os.path.join(organization_dir, 'audit')
+                if not os.path.exists(audit_dir): os.mkdir(audit_dir)
+                system_dir = os.path.join(audit_dir, system)
+            else: # v0.7+
+                compliance_dir = os.path.join(organization_dir, 'compliance')
+                if not os.path.exists(compliance_dir): os.mkdir(compliance_dir)
+                system_dir = os.path.join(compliance_dir, system)
             if not os.path.exists(system_dir): os.mkdir(system_dir)
             benchmark_dir = os.path.join(system_dir, benchmark)
             if not os.path.exists(benchmark_dir): os.mkdir(benchmark_dir)
@@ -1428,6 +1441,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             if not os.path.exists(test_dir): os.mkdir(test_dir)
             mode_dir = os.path.join(test_dir, mode)
             if not os.path.exists(mode_dir): os.mkdir(mode_dir)
+        print(mode_dir)
 
         run_idx = 0
         # For each experiment point (can be more than one if manually combining data from separate runs).
@@ -1503,14 +1517,36 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     with open(accuracy_json_path, 'w') as accuracy_json_file:
                         json.dump(mlperf_log.get('accuracy',{}), accuracy_json_file, indent=2)
                         print('  |_ %s' % accuracy_json_name)
-                # Do what's required by NVIDIA's audit tests.
-                if audit:
-                    test_path = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', test)
-                    if 'TEST01' in experiment_tags:
-                        # Verify that the accuracy (partially) dumped for the audit test matches that for the submision.
+                # Accuracy file (with accuracy dictionary).
+                if compliance and test == 'TEST01':
+                    accuracy_json_name = 'mlperf_log_accuracy.json'
+                    # The script for truncating accuracy logs expects to find the log under 'TEST01/accuracy'.
+                    fake_accuracy_dir = os.path.join(test_dir, 'accuracy')
+                    if not os.path.exists(fake_accuracy_dir): os.mkdir(fake_accuracy_dir)
+                    accuracy_json_path = os.path.join(fake_accuracy_dir, accuracy_json_name)
+                    with open(accuracy_json_path, 'w') as accuracy_json_file:
+                        json.dump(mlperf_log.get('accuracy',{}), accuracy_json_file, indent=2)
+                        print('  |_ %s' % accuracy_json_name)
+                # Do what's required by NVIDIA's compliance tests.
+                if compliance:
+                    if version == 'v0.5':
+                        test_path = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', test)
+                    else: # v0.7+
+                        test_path = os.path.join(upstream_path, 'compliance', 'nvidia', test)
+                    if 'TEST01' in experiment_tags or test == 'TEST01':
+                        # Verify that the accuracy (partially) dumped for the test matches that for the submision.
+                        if version == 'v0.5':
+                            submission_accuracy_flag = '-a'
+                            test_accuracy_flag = '-p'
+                        else: # v0.7+
+                            submission_accuracy_flag = '-r'
+                            test_accuracy_flag = '-t'
                         verify_accuracy_py = os.path.join(test_path, 'verify_accuracy.py')
                         submission_accuracy_json_path = os.path.join(accuracy_dir, accuracy_json_name)
-                        verify_accuracy_txt = subprocess.getoutput('python3 {} -a {} -p {}'.format(verify_accuracy_py, submission_accuracy_json_path, accuracy_json_path))
+                        print("submission_accuracy_json_path={}".format(submission_accuracy_json_path))
+                        print("accuracy_json_path={}".format(accuracy_json_path))
+                        verify_accuracy_txt = subprocess.getoutput('python3 {} {} {} {} {}' \
+                                              .format(verify_accuracy_py, submission_accuracy_flag, submission_accuracy_json_path, test_accuracy_flag, accuracy_json_path))
                         verify_accuracy_txt_name = 'verify_accuracy.txt'
                         verify_accuracy_txt_path = os.path.join(test_dir, verify_accuracy_txt_name)
                         with open(verify_accuracy_txt_path, 'w') as verify_accuracy_txt_file:
@@ -1518,10 +1554,11 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                             print('%s' % test_dir)
                             print('  |_ %s' % verify_accuracy_txt_name)
                     if test in [ 'TEST01', 'TEST03', 'TEST05' ]:
-                        # Verify that the performance for the audit test matches that for the submission.
+                        # Verify that the performance for the test matches that for the submission.
                         verify_performance_py = os.path.join(test_path, 'verify_performance.py')
                         submission_summary_txt_path = os.path.join(performance_dir, summary_txt_name)
                         verify_performance_txt = subprocess.getoutput('python3 {} -r {} -t {}'.format(verify_performance_py, submission_summary_txt_path, summary_txt_path))
+                        verify_performance_txt += os.linesep
                         verify_performance_txt_name = 'verify_performance.txt'
                         verify_performance_txt_path = os.path.join(test_dir, verify_performance_txt_name)
                         with open(verify_performance_txt_path, 'w') as verify_performance_txt_file:
@@ -1533,7 +1570,10 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                         test04b_summary_txt_path = os.path.join(scenario_dir, 'TEST04-B', 'performance', 'run_1', summary_txt_name)
                         if os.path.exists(test04a_summary_txt_path) and os.path.exists(test04b_summary_txt_path):
                             # If both tests have been processed, verify that their performance matches.
-                            verify_performance_py = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', 'TEST04-A', 'verify_test4_performance.py')
+                            if version == 'v0.5':
+                                verify_performance_py = os.path.join(upstream_path, 'v0.5', 'audit', 'nvidia', 'TEST04-A', 'verify_test4_performance.py')
+                            else:
+                                verify_performance_py = os.path.join(upstream_path, 'compliance', 'nvidia', 'TEST04-A', 'verify_test4_performance.py')
                             #print("python3 {} -u {} -s {}".format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
                             verify_performance_txt = subprocess.getoutput('python3 {} -u {} -s {}'.format(verify_performance_py, test04a_summary_txt_path, test04b_summary_txt_path))
                             #print(verify_performance_txt)
@@ -1547,9 +1587,12 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                             # Need both A/B tests to be processed. Wait for the other one.
                             continue
                 # Generate accuracy.txt.
-                if mode == 'accuracy' or mode == 'submission':
+                if mode == 'accuracy' or mode == 'submission' or (compliance and test == 'TEST01'):
                     accuracy_txt_name = 'accuracy.txt'
-                    accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
+                    if compliance and test == 'TEST01':
+                        accuracy_txt_path = os.path.join(fake_accuracy_dir, accuracy_txt_name)
+                    else:
+                        accuracy_txt_path = os.path.join(last_dir, accuracy_txt_name)
                     if task == 'image-classification':
                         accuracy_imagenet_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-imagenet.py')
                         accuracy_cmd = 'python3 {} --imagenet-val-file {} --mlperf-accuracy-file {}'.format(accuracy_imagenet_py, imagenet_val_file, accuracy_json_path)
@@ -1579,7 +1622,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                         accuracy_txt_file.write(accuracy_txt)
 
                 # Generate submission_checklist.txt for each system, benchmark and scenario under "measurements/".
-                if mode == 'accuracy' and not audit:
+                if mode == 'accuracy' and not compliance:
                     checklist_name = 'submission_checklist.txt'
                     checklist_path = os.path.join(measurements_dir, system, benchmark, scenario, checklist_name)
                     # Write the checklist.
@@ -1630,8 +1673,12 @@ repo            = os.environ.get('CK_MLPERF_SUBMISSION_REPO','')
 extra_tags      = os.environ.get('CK_MLPERF_SUBMISSION_EXTRA_TAGS','')
 repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
+    # First, process performance and accuracy data.
     check_experimental_results(repo_uoa, extra_tags=extra_tags,
-                               submitter=submitter, submitter_desc=submitter_desc, audit=False)
+                               submitter=submitter, submitter_desc=submitter_desc, compliance=False)
+    # Then, process compliance data.
+    check_experimental_results(repo_uoa, extra_tags=extra_tags,
+                               submitter=submitter, submitter_desc=submitter_desc, compliance=True)
 
 print("*" * 100)
 truncate_accuracy_log_py = os.path.join(upstream_path, 'tools', 'submission', 'truncate_accuracy_log.py')
