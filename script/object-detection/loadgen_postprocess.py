@@ -63,17 +63,17 @@ def ck_postprocess(i):
     mlperf_log_dict['trace'] = {}
 
   if os.path.exists( MLPERF_MAIN_CONF ):
-      with open(MLPERF_MAIN_CONF, 'r') as main_conf_file:
-        mlperf_conf_dict['mlperf.conf'] = main_conf_file.readlines()
+    with open(MLPERF_MAIN_CONF, 'r') as main_conf_file:
+      mlperf_conf_dict['mlperf.conf'] = main_conf_file.readlines()
 
   if os.path.exists( MLPERF_USER_CONF ):
-      with open(MLPERF_USER_CONF, 'r') as user_conf_file:
-        mlperf_conf_dict['user.conf'] = user_conf_file.readlines()
+    with open(MLPERF_USER_CONF, 'r') as user_conf_file:
+      mlperf_conf_dict['user.conf'] = user_conf_file.readlines()
 
 
   # Check accuracy in accuracy mode.
-  # NB: Used to be (mlperf_log_dict['accuracy'] != []) but this proved to be unreliable with compliance testing.
-  accuracy_mode = (save_dict['parsed_summary'].get('Mode') == 'Accuracy')
+  # NB: Used to be just (mlperf_log_dict['accuracy'] != []) but this proved to be unreliable with compliance testing.
+  accuracy_mode = (mlperf_log_dict['accuracy'] != []) or (save_dict['parsed_summary'].get('Mode') == 'Accuracy')
   if accuracy_mode:
     accuracy_script = os.path.join( inference_src_env['CK_ENV_MLPERF_INFERENCE_VLATEST'],
                                     'classification_and_detection', 'tools', 'accuracy-coco.py' )
