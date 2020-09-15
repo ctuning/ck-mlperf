@@ -4,6 +4,7 @@
     "*package_extra_name": " (mobilenet-v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_KIND>>$-$<<MODEL_MOBILENET_PRECISION>>$-$<<MODEL_MOBILENET_MULTIPLIER>>$-$<<MODEL_MOBILENET_RESOLUTION>>$)",
     "*version": "$<<MODEL_MOBILENET_VERSION>>$.$<<MODEL_MOBILENET_MULTIPLIER>>$.$<<MODEL_MOBILENET_RESOLUTION>>$",
     "install_env": {
+      "*ML_MODEL_MODEL_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$$<<QUANT_SUFFIX>>$",
       "*MODEL_IMAGE_HEIGHT": "$<<MODEL_MOBILENET_RESOLUTION>>$",
       "*MODEL_IMAGE_WIDTH": "$<<MODEL_MOBILENET_RESOLUTION>>$",
       "*PACKAGE_NAME": "v$<<MODEL_MOBILENET_VERSION>>$-$<<MODEL_MOBILENET_KIND>>$_$<<MODEL_MOBILENET_RESOLUTION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_PRECISION>>$.tgz",
@@ -59,6 +60,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "large",
         "MODEL_MOBILENET_PRECISION": "float",
+        "QUANT_SUFFIX": "",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -73,6 +75,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "large",
         "MODEL_MOBILENET_PRECISION": "uint8",
+        "QUANT_SUFFIX": "_quant",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -87,6 +90,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "large",
         "MODEL_MOBILENET_PRECISION": "float",
+        "QUANT_SUFFIX": "",
         "MODEL_MOBILENET_MULTIPLIER": "0.75",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -101,6 +105,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "small",
         "MODEL_MOBILENET_PRECISION": "float",
+        "QUANT_SUFFIX": "",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -115,6 +120,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "small",
         "MODEL_MOBILENET_PRECISION": "uint8",
+        "QUANT_SUFFIX": "_quant",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -129,6 +135,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "small",
         "MODEL_MOBILENET_PRECISION": "float",
+        "QUANT_SUFFIX": "",
         "MODEL_MOBILENET_MULTIPLIER": "0.75",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -143,6 +150,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "large-minimalistic",
         "MODEL_MOBILENET_PRECISION": "float",
+        "QUANT_SUFFIX": "",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -157,6 +165,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "large-minimalistic",
         "MODEL_MOBILENET_PRECISION": "uint8",
+        "QUANT_SUFFIX": "_quant",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },
@@ -171,6 +180,7 @@
       "extra_env": {
         "MODEL_MOBILENET_KIND": "small-minimalistic",
         "MODEL_MOBILENET_PRECISION": "float",
+        "QUANT_SUFFIX": "",
         "MODEL_MOBILENET_MULTIPLIER": "1.0",
         "MODEL_MOBILENET_RESOLUTION": "224"
       },

@@ -3,6 +3,7 @@
   "customize": {
     "install_env": {
       "ML_MODEL_DATA_LAYOUT": "NHWC", 
+      "*ML_MODEL_MODEL_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$$<<QUANT_SUFFIX>>$",
       "MODEL_NORMALIZE_DATA": "YES", 
       "MODEL_SUBTRACT_MEAN": "0", 
       "MODEL_INPUT_LAYER_NAME": "input", 

@@ -3,6 +3,8 @@
   "customize": {
     "install_env": {
       "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "*ML_MODEL_MODEL_NAME": "mobilenet_v$<<MODEL_MOBILENET_VERSION>>$_$<<MODEL_MOBILENET_MULTIPLIER>>$_$<<MODEL_MOBILENET_RESOLUTION>>$$<<QUANT_SUFFIX>>$",
+      "QUANT_SUFFIX": "",
       "MODEL_INPUT_LAYER_NAME": "input",
       "MODEL_NORMALIZE_DATA": "YES",
       "MODEL_OUTPUT_LAYER_NAME": "MobilenetV2/Predictions/Reshape_1",
