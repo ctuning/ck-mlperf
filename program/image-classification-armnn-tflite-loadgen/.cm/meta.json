@@ -186,6 +186,7 @@
     "CK_LOADGEN_SCENARIO": "SingleStream",
     "CK_LOADGEN_SUPPORT": "YES",
     "CK_LOADGEN_TRIGGER_COLD_RUN": "yes",
+    "CK_LOADGEN_USER_CONF": "user.conf",
     "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
     "CK_MLPERF_PRE_SCHINDLER": "YES",
     "CK_RESULTS_DIR": "predictions",
