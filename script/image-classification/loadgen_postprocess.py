@@ -67,8 +67,9 @@ def ck_postprocess(i):
       mlperf_conf_dict['user.conf'] = user_conf_file.readlines()
 
   # Check accuracy in accuracy mode.
-  # NB: Used to be just (mlperf_log_dict['accuracy'] != []) but this proved to be unreliable with compliance testing.
-  accuracy_mode = (mlperf_log_dict['accuracy'] != []) or (save_dict['parsed_summary'].get('Mode') == 'Accuracy')
+  # NB: Used to be just (mlperf_log_dict['accuracy'] != []) but this proved
+  # to be unreliable with compliance TEST01 which samples accuracy.
+  accuracy_mode = (save_dict['parsed_summary'] == {})
   if accuracy_mode:
     accuracy_script = os.path.join( inference_src_env['CK_ENV_MLPERF_INFERENCE_VLATEST'],
                                     'classification_and_detection', 'tools', 'accuracy-imagenet.py' )
