@@ -4,12 +4,15 @@
     "*package_name": "TFLite EfficientNet Model ($<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<ML_MODEL_DATA_TYPE>>$)",
     "version": "v1",
     "install_env": {
+      "*ML_MODEL_MODEL_NAME": "efficientnet_$<<MODEL_EFFICIENTNET_LITE_KIND>>$_$<<MODEL_RESOLUTION>>$_$<<ML_MODEL_DATA_TYPE>>$",
       "*PACKAGE_NAME": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$.tar.gz",
       "*PACKAGE_NAME_EFFICIENTNET_LITE": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$",
       "*PACKAGE_NAME_EFFICIENTNET_LITE_WITH_PRECISION": "efficientnet-$<<MODEL_EFFICIENTNET_LITE_KIND>>$-$<<ML_MODEL_DATA_TYPE>>$",
       "WEIGHTS_FILE": "model.ckpt",
       "ML_MODEL_FILE_FORMAT": "tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "*MODEL_IMAGE_HEIGHT": "$<<MODEL_RESOLUTION>>$",
+      "*MODEL_IMAGE_WIDTH": "$<<MODEL_RESOLUTION>>$",
       "MODEL_INPUT_LAYER_NAME": "images",
       "MODEL_SUBTRACT_MEAN": "0",
       "MODEL_NORMALIZE_DATA": "YES",
@@ -53,6 +56,7 @@
     },
     "lite0":{
       "extra_env": {
+        "MODEL_RESOLUTION": "224",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0"
       },
       "extra_tags": [
@@ -62,6 +66,7 @@
     },
     "lite1":{
       "extra_env": {
+        "MODEL_RESOLUTION": "240",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite1"
       },
       "extra_tags": [
@@ -70,6 +75,7 @@
     },
     "lite2":{
       "extra_env": {
+        "MODEL_RESOLUTION": "260",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2"
       },
       "extra_tags": [
@@ -78,6 +84,7 @@
     },
     "lite3":{
       "extra_env": {
+        "MODEL_RESOLUTION": "280",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite3"
       },
       "extra_tags": [
@@ -86,6 +93,7 @@
     },
     "lite4":{
       "extra_env": {
+        "MODEL_RESOLUTION": "300",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite4"
       },
       "extra_tags": [
