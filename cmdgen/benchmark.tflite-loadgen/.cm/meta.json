@@ -26,7 +26,7 @@
         "<<<library>>>",
         "<<<model_readable>>>",
         "<<<scenario>>>",
-        "<<<mode>>><<<mode_extension>>><<<scenario_extension>>>"
+        "<<<mode>>><<<mode_extension>>>"
     ]
   },
   "build_map": {
@@ -145,18 +145,18 @@
       "performance": {
         "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
         "recommended_dataset_size": "1024",
-        "mode_extension": "",
+        "mode_extension": "<<<performance_mode_extension>>>",
         "output_file": "mlperf_log_summary.txt"
       }
     },
     "scenario": {
       "offline": {
         "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline",
-        "scenario_extension": ""
+        "performance_mode_extension": ""
       },
       "singlestream": {
         "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream",
-        "scenario_extension": "-target_latency.<<<target_latency>>>"
+        "performance_mode_extension": "-target_latency.<<<target_latency>>>"
       }
     },
     "buffer_size": {
