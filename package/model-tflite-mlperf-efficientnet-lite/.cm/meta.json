@@ -54,7 +54,7 @@
       },
       "on_by_default": "yes"
     },
-    "lite0":{
+    "lite0": {
       "extra_env": {
         "MODEL_RESOLUTION": "224",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite0"
@@ -64,7 +64,7 @@
       ],
       "on_by_default": "yes"
     },
-    "lite1":{
+    "lite1": {
       "extra_env": {
         "MODEL_RESOLUTION": "240",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite1"
@@ -73,7 +73,7 @@
         "side.240"
       ]
     },
-    "lite2":{
+    "lite2": {
       "extra_env": {
         "MODEL_RESOLUTION": "260",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite2"
@@ -82,7 +82,7 @@
         "side.260"
       ]
     },
-    "lite3":{
+    "lite3": {
       "extra_env": {
         "MODEL_RESOLUTION": "280",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite3"
@@ -91,7 +91,7 @@
         "side.280"
       ]
     },
-    "lite4":{
+    "lite4": {
       "extra_env": {
         "MODEL_RESOLUTION": "300",
         "MODEL_EFFICIENTNET_LITE_KIND": "lite4"
@@ -100,25 +100,25 @@
         "side.300"
       ]
     },
-    "int8":{
-      "extra_env":{
+    "quantized": {
+      "extra_env": {
         "ML_MODEL_INPUT_DATA_TYPE": "uint8",
         "ML_MODEL_OUTPUT_DATA_TYPE": "uint8",
         "ML_MODEL_DATA_TYPE": "int8"
       },
-      "extra_tags":[
-        "quantized"
+      "extra_tags": [
+        "int8"
       ],
       "on_by_default": "yes"
     },
-    "fp32":{
-      "extra_env":{
+    "non-quantized": {
+      "extra_env": {
         "ML_MODEL_INPUT_DATA_TYPE": "float32",
         "ML_MODEL_OUTPUT_DATA_TYPE": "float32",
         "ML_MODEL_DATA_TYPE": "fp32"
       },
-      "extra_tags":[
-        "non-quantized"
+      "extra_tags": [
+        "fp32", "float", "float32"
       ]
     }
   }
