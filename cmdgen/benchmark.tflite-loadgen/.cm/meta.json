@@ -47,6 +47,12 @@
         "xavier": {
             "compiler_tags": "gcc,v7"
         },
+        "rpi4": {
+            "compiler_tags": "gcc,v8"
+        },
+        "rpi4coral": {
+            "compiler_tags": "gcc,v9"
+        },
         "###": {
             "compiler_tags": "gcc,v8"
         }
