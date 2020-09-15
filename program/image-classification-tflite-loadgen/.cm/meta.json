@@ -71,8 +71,6 @@
           "script_name": "loadgen_preprocess"
         },
         "run_cmd_main": "$#BIN_FILE#$",
-        "run_delete_files": [
-        ],
         "run_input_files": [
           "$<<CK_ENV_TENSORFLOW_MODEL_TFLITE_FILEPATH>>$",
           "$<<?CK_ENV_LOADGEN_CONFIG_FILE>>$",
