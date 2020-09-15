@@ -33,8 +33,8 @@
     "hw_notes": "http://en.t-firefly.com/product/rk3399/; http://opensource.rock-chips.com/wiki_RK3399",
 
     "framework": "",
-    "operating_system": "Ubuntu 16.04.6 LTS; kernel 4.4.77 #554 (Thu Nov 30 11:30:11 HKT 2017)",
-    "other_software_stack": "GCC 7.4.0; Python 3.5.2; OpenCL driver 1.2 v1.r13p0-00rel0-git(a4271c9).31ba04af2d3c01618138bef3aed66c2c",
-    "sw_notes": "Powered by Collective Knowledge v1.11.1"
+    "operating_system": "Ubuntu 16.04.7 LTS; kernel 4.4.77 #554 (Thu Nov 30 11:30:11 HKT 2017)",
+    "other_software_stack": "GCC 7.5.0; Python 3.5.2; OpenCL driver 1.2 v1.r13p0-00rel0-git(a4271c9).31ba04af2d3c01618138bef3aed66c2c",
+    "sw_notes": "Powered by Collective Knowledge v1.15.0"
   }
 }
