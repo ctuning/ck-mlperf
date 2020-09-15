@@ -7,6 +7,7 @@
         "--dep_add_tags.compiler=<<<compiler_tags>>>",
         "--dep_add_tags.python=v3",
         "--dep_add_tags.mlperf-inference-src=r0.7",
+        "--dep_add_tags.weights=<<<model_tags,>>>",
         "--dep_add_tags.images=crop.875,preprocessed,using-<<<preprocessed_using>>>"
     ],
     "record_tags": [
@@ -52,21 +53,26 @@
     },
     "model": {
         "resnet50": {
-            "deps": "--dep_add_tags.weights=###",
             "division": "closed",
+            "model_tags": [ "###" ],
             "model_readable": "###"
         },
         "lite.": {
-            "deps": "--dep_add_tags.weights=efficientnet,int8,###",
+            "model_tags": [ "efficientnet", "###" ],
             "model_readable": "effnet_###"
         },
         "v[123]-.*": {
-            "deps": "--dep_add_tags.weights=mobilenet,###",
+            "model_tags": [ "mobilenet", "###" ],
             "model_readable": "mobilenet_###"
         },
         "edgetpu_.*": {
-            "deps": "--dep_add_tags.weights=mobilenet,###",
+            "model_tags": [ "mobilenet", "###" ],
             "model_readable": "mobilenet_###"
+        }
+    },
+    "model_extra_tags": {
+        "###": {
+            "model_tags": [ "###" ]
         }
     },
     "library": {
