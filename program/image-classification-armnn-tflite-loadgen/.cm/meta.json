@@ -138,7 +138,7 @@
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "ImageNet dataset (preprocessed subset)",
-      "sort": 20,
+      "sort": 35,
       "tags": "dataset,imagenet,preprocessed"
     },
     "lib-python-numpy": {
@@ -147,17 +147,6 @@
       "name": "Python NumPy library",
       "sort": 60,
       "tags": "lib,python-package,numpy"
-    },
-    "loadgen-config-file": {
-      "enable_if_env": [
-        { "CK_LOADGEN_CONF_FILE": [""] }
-      ],
-      "force_target_as_host": "yes",
-      "add_to_path": "no",
-      "local": "yes",
-      "name": "LoadGen Config file",
-      "sort": 40,
-      "tags": "loadgen,config"
     },
     "mlperf-inference-src": {
       "force_target_as_host": "yes",
@@ -175,6 +164,9 @@
       "tags": "compiler,lang-python"
     },
     "weights": {
+      "pass_matching_tags_to": {
+        "side.": [ "images" ]
+      },
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "TensorFlow Lite model and weights",
