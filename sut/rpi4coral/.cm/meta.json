@@ -4,7 +4,7 @@
     "submitter": "dividiti",
     "status": "available",
     "system_type": "edge",
-    "system_name": "Raspberry Pi 4 (rpi4)",
+    "system_name": "Raspberry Pi 4 with Coral (rpi4coral)",
 
     "number_of_nodes": "1",
     "host_processor_model_name": "Arm Cortex-A72 MP4",
@@ -20,8 +20,8 @@
     "host_networking": "-",
     "host_networking_topology": "-",
 
-    "accelerators_per_node": "0",
-    "accelerator_model_name": "-",
+    "accelerators_per_node": "1",
+    "accelerator_model_name": "Coral USB Accelearator",
     "accelerator_frequency": "-",
     "accelerator_host_interconnect": "-",
     "accelerator_interconnect": "-",
@@ -29,13 +29,13 @@
     "accelerator_memory_capacity": "-",
     "accelerator_memory_configuration": "-",
     "accelerator_on-chip_memories": "-",
-    "cooling": "http://www.raspberrypiwiki.com/index.php/Armor_Case_B",
+
+    "cooling": "MakerHawk Pi-FAN DC Brushless Cooling Fan LD3007MS",
     "hw_notes": "https://www.raspberrypi.org/products/raspberry-pi-4-model-b/specifications/",
 
     "framework": "",
-    "operating_system": "Raspbian Bullseye (Debian 11); kernel Linux rpi4 5.4.51-v7l+ #1327 SMP (Thu Jul 23 11:04:39 BST 2020)",
-    
-    "other_software_stack": "GCC 9.3.0; Python 3.7.9",
+    "operating_system": "Ubuntu 20.04.1; kernel 5.4.0-1018-raspi #20-Ubuntu SMP (Sun Sep 6 05:11:16 UTC 2020)",
+    "other_software_stack": "GCC 9.3.0; Python 3.8.2",
     "sw_notes": "Powered by Collective Knowledge v1.15.0"
   }
 }
