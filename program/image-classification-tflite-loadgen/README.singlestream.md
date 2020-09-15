@@ -14,7 +14,7 @@
 <a name="resnet50"></a>
 ### ResNet50
 
-#### Performance
+#### Performance **TESTED**
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
@@ -22,7 +22,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 --verbose --sut=xavier
 ```
 
-#### Accuracy
+#### Accuracy **TESTED**
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
@@ -64,13 +64,10 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 --verbose --sut=xavier
 ```
 
-#### Compliance **TODO**
-
-
 <a name="mobilenet_v2"></a>
 ### MobileNet-v2
 
-#### Performance **TESTING**
+#### Performance **TESTED**
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
@@ -89,9 +86,6 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 --scenario=singlestream --mode=accuracy --dataset_size=50000 \
 --verbose --sut=xavier
 ```
-
-#### Compliance **TODO**
-
 
 <a name="mobilenet_v3"></a>
 ### MobileNet-v3
@@ -114,16 +108,13 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 --verbose --sut=xavier
 ```
 
-#### Compliance **TODO**
-
-
 <a name="efficientnet"></a>
 ### EfficientNet
 
-#### Performance **NOT TESTED**
+#### Performance **TESTED ON 20 PREPROCESSED SAMPLES**
 
 ```bash
-$ ck gen cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
+$ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 --model:=`ck list_variations misc --query_module_uoa=package --tags=model,tflite,effnet --variation_prefix=lite --separator=:` \
 --model_extra_tags,=non-quantized,quantized \
 --scenario=singlestream --mode=performance --target_latency=10 \
@@ -133,11 +124,9 @@ $ ck gen cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 #### Accuracy **NOT TESTED**
 
 ```bash
-$ ck gen cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
+$ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 --model:=`ck list_variations misc --query_module_uoa=package --tags=model,tflite,effnet --variation_prefix=lite --separator=:` \
 --model_extra_tags,=non-quantized,quantized \
 --scenario=singlestream --mode=accuracy --dataset_size=50000 \
 --verbose --sut=xavier
 ```
-
-#### Compliance **TODO**
