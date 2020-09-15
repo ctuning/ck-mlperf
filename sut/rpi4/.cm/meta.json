@@ -33,8 +33,9 @@
     "hw_notes": "https://www.raspberrypi.org/products/raspberry-pi-4-model-b/specifications/",
 
     "framework": "",
-    "operating_system": "Raspbian Buster (Debian 10); kernel 4.19.66-v7l+ #1253 (Thu Aug 15 12:02:08 BST 2019)",
-    "other_software_stack": "GCC 8.3.0; Python 3.7.3",
-    "sw_notes": "Powered by Collective Knowledge v1.11.1"
+    "operating_system": "Raspbian Bullseye (Debian 11); kernel Linux rpi4 5.4.51-v7l+ #1327 SMP (Thu Jul 23 11:04:39 BST 2020)",
+    
+    "other_software_stack": "GCC 9.3.0; Python 3.7.9",
+    "sw_notes": "Powered by Collective Knowledge v1.15.0"
   }
 }
