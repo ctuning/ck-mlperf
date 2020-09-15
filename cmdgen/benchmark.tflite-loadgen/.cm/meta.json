@@ -24,7 +24,7 @@
         "<<<library>>>",
         "<<<model_readable>>>",
         "<<<scenario>>>",
-        "<<<mode>>><<<mode_extension>>>",
+        "<<<mode>>><<<mode_extension>>><<<scenario_extension>>>",
         "<<<dataset_size>>>"
     ]
   },
@@ -160,10 +160,12 @@
     },
     "scenario": {
       "offline": {
-        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline",
+        "scenario_extension": ""
       },
       "singlestream": {
-        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream",
+        "scenario_extension": "-target_latency.<<<target_latency>>>"
       }
     },
     "buffer_size": {
@@ -178,6 +180,18 @@
         "ck_env": "--env.CK_LOADGEN_BUFFER_SIZE=###",
         "record_uoa_parts": "buffer_size.###",
         "record_tags": "buffer_size.###"
+      }
+    },
+    "target_latency": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_TARGET_LATENCY=###",
+        "record_tags": "target_latency.###"
+      }
+    },
+    "target_qps": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_TARGET_QPS=###",
+        "record_tags": "target_qps.###"
       }
     },
 
