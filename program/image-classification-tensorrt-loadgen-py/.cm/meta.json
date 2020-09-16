@@ -13,6 +13,11 @@
       "run_time": {
         "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ ../tensorrt_classify_loadgen.py",
         "fine_grain_timer_file": "tmp-ck-timer.json",
+        "pre_process_via_ck": {
+          "data_uoa": "b98ee24399ef4c3a",
+          "module_uoa": "script",
+          "script_name": "loadgen_preprocess"
+        },
         "post_process_via_ck": {
           "data_uoa": "b98ee24399ef4c3a",
           "module_uoa": "script",
@@ -102,9 +107,11 @@
     "CK_LOADGEN_BUFFER_SIZE": 8, 
     "CK_LOADGEN_DATASET_SIZE": 20,
     "CK_LOADGEN_MULTISTREAMNESS": "",
-    "CK_LOADGEN_CONF_FILE": "", 
     "CK_LOADGEN_MODE": "AccuracyOnly", 
-    "CK_LOADGEN_SCENARIO": "SingleStream"
+    "CK_LOADGEN_SCENARIO": "SingleStream",
+    "CK_LOADGEN_USER_CONF": "user.conf",
+    "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
+    "CK_VERBOSE": 0
   }, 
   "tags": [
     "loadgen", 
