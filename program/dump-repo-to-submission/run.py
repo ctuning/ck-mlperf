@@ -224,6 +224,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
         recorded_model_input_data_type = model_input_type_mapping[recorded_model_input_data_type]
 
     ## fetching/constructing the URL of the (original) model:
+    starting_weights_filename = None
     if 'PACKAGE_URL' not in model_install_env:  # this model is a result of conversion
         model_deps = model_dict['dict']['deps']
         if 'model-source' in model_deps:
@@ -232,7 +233,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
             starting_weights_filename = model_env['CK_ENV_OPENVINO_MODEL_FILENAME'] # assume it was detected
 
     if not starting_weights_filename:
-        starting_weights_filename = model_env['PACKAGE_URL'].rstrip('/') + '/' + model_env['PACKAGE_NAME']
+        starting_weights_filename = model_install_env['PACKAGE_URL'].rstrip('/') + '/' + model_install_env['PACKAGE_NAME']
 
     ## figure out the transformation path:
     if program_name.startswith('openvino-loadgen'):
@@ -1336,7 +1337,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 
 
         # With newer programs instead of per-program configs we have recorded per-run configs, which will be dumped later elsewhere
-        if program_name != 'openvino-loadgen-v0.7-drop':
+        if version == 'v0.5':
 
             # Try to find environment for 'user.conf'.
             if program_name.endswith('-loadgen'):
@@ -1481,15 +1482,26 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                     # For now, still write under measurements/ according to the current rules.
                     config_dir = mscenario_dir
                     full_config_path = config_path = os.path.join(config_dir, config_name)
+
+                    write_config = True
                     if os.path.exists(full_config_path):
                         with open(full_config_path, 'r') as existing_config_fd:
                             existing_config_lines = existing_config_fd.readlines()
 
-                        if existing_config_lines == mlperf_conf[config_name]:
-                            print("Found an identical {} file, skipping it".format(full_config_path))
+                        if set(existing_config_lines) == set(mlperf_conf[config_name]):
+                            print("Found an identical '{}' file, skipping it".format(full_config_path))
+                            write_config = False
                         else:
-                            raise Exception("Found an existing {} file with different contents".format(full_config_path))
-                    else:
+                            print("Warning: Found an existing '{}' file with different contents:\n-- old: {}\n-- new: {}".format(full_config_path, existing_config_lines, mlperf_conf[config_name]))
+                            if set(existing_config_lines) > set(mlperf_conf[config_name]):
+                                print("The existing config fully includes the new candidate, keeping the existing one")
+                                write_config = False
+                            elif set(existing_config_lines) < set(mlperf_conf[config_name]):
+                                print("The existing config is fully contained in the new candidate, overwriting the existing one")
+                            else:
+                                raise Exception("Probably a conflict, please investigate!")
+
+                    if write_config:
                         with open(config_path, 'w') as new_config_fd:
                             new_config_fd.writelines(mlperf_conf[config_name])
                         print('  |_ {}'.format(config_name))
