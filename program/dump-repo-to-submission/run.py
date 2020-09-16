@@ -128,7 +128,7 @@ inference_engine_to_printable = {
 backend_to_printable = {
     'neon':             'Neon',
     'opencl':           'OpenCL',
-    'ruy':              'Ruy',
+    'ruy':              'ruy',
     'cpu':              'CPU',
     'cuda':             'CUDA',
     'tensorrt':         'TensorRT-static',
@@ -1266,16 +1266,28 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         # Create 'README.md'.
         implementation_readme_name = 'README.md'
         implementation_readme_path = os.path.join(implementation_dir, implementation_readme_name)
-#         pprint(program_name)
-#         pprint(implementation_readmes)
-        implementation_readme = implementation_readmes.get(program_name, '')
-        with open(implementation_readme_path, 'w') as implementation_readme_file:
-            implementation_readme_file.writelines(implementation_readme)
-        if implementation_readme == '':
-            print('  |_ %s [EMPTY]' % implementation_readme_name)
+        if program_name in [ 'openvino-loadgen-v0.7-drop' ]:
+            program_path = get_program_path(program_name)
+            program_readme_name = 'README.setup.md'
+            program_readme_path = os.path.join(program_path, program_readme_name)
+            copy2(program_readme_path, implementation_readme_path)
+            print('  |_ %s [from %s]' % (implementation_readme_name, program_readme_path))
+        elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+            program_path = get_program_path(program_name)
+            program_readme_name = 'README.md'
+            program_readme_path = os.path.join(program_path, program_readme_name)
+            copy2(program_readme_path, implementation_readme_path)
+            print('  |_ %s [from %s]' % (implementation_readme_name, program_readme_path))
+        else: # v0.5
+#           pprint(implementation_readmes)
+            implementation_readme = implementation_readmes.get(program_name, '')
+            with open(implementation_readme_path, 'w') as implementation_readme_file:
+                implementation_readme_file.writelines(implementation_readme)
+            if implementation_readme == '':
+                print('  |_ %s [EMPTY]' % implementation_readme_name)
             # raise
-        else:
-            print('  |_ %s' % implementation_readme_name)
+            else:
+                print('  |_ %s' % implementation_readme_name)
 
         #
         #     "measurements"/
@@ -1314,7 +1326,15 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
             copy2(program_readme_path, measurements_readme_path)
             print('  |_ %s [from %s]' % (measurements_readme_name, program_readme_path))
-        else:
+        elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+            program_path = get_program_path(program_name)
+            program_readme_name = 'README.{}.md'.format(scenario)
+            program_readme_path = os.path.join(program_path, program_readme_name)
+            measurements_readme_name = 'README.md'
+            measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
+            copy2(program_readme_path, measurements_readme_path)
+            print('  |_ %s [from %s]' % (measurements_readme_name, program_readme_path))
+        else: # v0.5
             # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
             measurements_readme_name = 'README.md'
             measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
