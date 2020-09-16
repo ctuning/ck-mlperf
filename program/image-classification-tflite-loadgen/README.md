@@ -101,7 +101,7 @@ Median latency:                   426440993ns  (2.34499 fps)
 Average latency:                  433287227ns  (2.30794 fps)
 90 percentile latency:            460194271ns  (2.173 fps)
 Max latency:                      679467557ns  (1.47174 fps)
------------------------------------------------------------- 
+------------------------------------------------------------
 ```
 
 ## Explore different models

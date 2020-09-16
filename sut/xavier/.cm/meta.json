@@ -10,12 +10,12 @@
     "host_processor_model_name": "NVIDIA Carmel (ARMv8.2)",
     "host_processors_per_node": "1",
     "host_processor_core_count": "8",
-    "host_processor_frequency": "2265.5 MHz",
+    "host_processor_frequency": "2265.6 MHz",
     "host_processor_caches": "8MB L2 (2MB per dual cluster)/4 MB L3 (shared)",
     "host_memory_configuration": "",     
-    "host_memory_capacity": "16 GB",
-    "host_storage_capacity": "32 GB",
-    "host_storage_type": "eMMC 5.1",
+    "host_memory_capacity": "32 GB",
+    "host_storage_capacity": "400 GB",
+    "host_storage_type": "SanDisk Extreme microSD",
     "host_processor_interconnect": "",
     "host_networking": "",
     "host_networking_topology": "",
@@ -32,9 +32,9 @@
     "cooling": "",
     "hw_notes": "GPU and both DLAs are used in Offline and MultiStream scenarios",
 
-    "framework": "JetPack 4.3 DP, TensorRT 6.0, cuDNN 7.6.3, CUDA 10.0, cub 1.8.0",
-    "operating_system": "Ubuntu 18.04.3",
-    "other_software_stack": "pycuda 2019.1, pytorch 1.1, torchvision 0.2.2.post3",
-    "sw_notes": ""
+    "framework": "JetPack 4.3, TensorRT 6.0.1, cuDNN 7.6.3, CUDA 10.0.326",
+    "operating_system": "Ubuntu 18.04.5",
+    "other_software_stack": "PyCUDA 2019.1.2",
+    "sw_notes": "Powered by Collective Knowledge v1.15.0"
   }
 }
