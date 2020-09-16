@@ -58,9 +58,9 @@ $ ck install package --tags=dataset,imagenet,preprocessed,using-opencv,side.280,
 $ ck install package --tags=dataset,imagenet,preprocessed,using-opencv,side.300,full --ask
 ```
 
-### [Detect ImageNet on an arm dev board](https://github.com/arm-software/armnn-mlperf#preprocess-on-an-x86-machine-and-detect-on-an-arm-dev-board)
+### [Detect ImageNet on a dev board](https://github.com/arm-software/armnn-mlperf#preprocess-on-an-x86-machine-and-detect-on-an-arm-dev-board)
 
-Copy a preprocessed ImageNet dataset to a dev board e.g. under `/dasetets/` and register it with CK according to its resolution e.g.:
+Copy a preprocessed ImageNet dataset onto a dev board e.g. under `/datasets` and register it with CK according to its resolution e.g.:
 
 ```bash
 $ echo opencv-side.240 | ck detect soft --tags=dataset,imagenet,preprocessed,rgb8 \
