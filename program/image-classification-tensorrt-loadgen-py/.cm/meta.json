@@ -33,7 +33,7 @@
       "force_target_as_host": "yes", 
       "local": "yes", 
       "name": "ImageNet dataset (preprocessed subset)", 
-      "sort": 20, 
+      "sort": 32,
       "tags": "dataset,imagenet,preprocessed"
     }, 
     "imagenet-helper": {
@@ -73,6 +73,9 @@
       "tags": "lib,python-package,tensorrt-helper"
     },
     "weights": {
+      "pass_matching_tags_to": {
+        "side.": [ "images" ]
+      },
       "local": "yes", 
       "name": "TensorRT model", 
       "sort": 30, 
