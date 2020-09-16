@@ -111,7 +111,7 @@
     "CK_LOADGEN_SCENARIO": "SingleStream",
     "CK_LOADGEN_USER_CONF": "user.conf",
     "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
-    "CK_VERBOSE": 0
+    "CK_VERBOSE": 1
   }, 
   "tags": [
     "loadgen", 
