@@ -1,5 +1,7 @@
 # MLPerf Inference - Image Classification - TFLite
 
+This C++ implementation runs TFLite models for Image Classification using TFLite.
+
 ## Prerequisites
 
 ### [Preprocess ImageNet on an x86 machine](https://github.com/arm-software/armnn-mlperf#preprocess-on-an-x86-machine-and-detect-on-an-arm-dev-board)
@@ -103,5 +105,4 @@ Max latency:                      679467557ns  (1.47174 fps)
 ```
 
 ## Explore different models
-
-
+**TODO**
