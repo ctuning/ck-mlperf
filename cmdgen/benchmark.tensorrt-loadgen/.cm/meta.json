@@ -71,13 +71,13 @@
     },
     "model": {
       "resnet50": {
-        "program_name": "image-classification-tflite-loadgen",
+        "program_name": "image-classification-tensorrt-loadgen-py",
         "task": "image-classification",
         "full_dataset_size": "50000",
         "performance_dataset_size": "1024"
       },
       "mobilenet": {
-        "program_name": "image-classification-tflite-loadgen",
+        "program_name": "image-classification-tensorrt-loadgen-py",
         "task": "image-classification",
         "full_dataset_size": "50000",
         "performance_dataset_size": "1024"
