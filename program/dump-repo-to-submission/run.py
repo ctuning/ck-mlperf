@@ -1532,9 +1532,18 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 # Dump files in the leaf directory.
                 mlperf_log = characteristics['run'].get('mlperf_log',{})
                 # Summary file (with errors and warnings in accuracy mode, with statistics in performance mode).
+                summary = mlperf_log.get('summary','')
+                # Check that the summary corresponds to a VALID run, skip otherwise.
+                parsed_summary = {}
+                for line in summary:
+                  pair = line.strip().split(': ', 1)
+                  if len(pair)==2:
+                    parsed_summary[ pair[0].strip() ] = pair[1].strip()
+                if mode == 'performance' and parsed_summary['Result is'] != 'VALID':
+                  run_idx -= 1
+                  continue
                 summary_txt_name = 'mlperf_log_summary.txt'
                 summary_txt_path = os.path.join(last_dir, summary_txt_name)
-                summary = mlperf_log.get('summary','')
                 with open(summary_txt_path, 'w') as summary_txt_file:
                     summary_txt_file.writelines(summary)
                     print('  |_ %s' % summary_txt_name)
