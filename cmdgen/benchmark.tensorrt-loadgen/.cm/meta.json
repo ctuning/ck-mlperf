@@ -101,6 +101,13 @@
         "record_tags": "multistreamness.###"
       }
     },
+    "nstreams": {
+      "###": {
+        "multistreamness": "###",
+        "ck_env": "--env.CK_LOADGEN_MULTISTREAMNESS=###",
+        "record_tags": "multistreamness.###"
+      }
+    },
     "batch_size": {
       "###": {
         "ck_env": "--env.CK_BATCH_SIZE=###",
