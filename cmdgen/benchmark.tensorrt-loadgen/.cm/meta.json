@@ -49,7 +49,7 @@
         "ck_env": "--env.CK_LOADGEN_SCENARIO=MultiStream",
         "performance_mode_extension": "",
         "record_uoa_parts": [
-            "multistreamness.<<<multistreamness>>>",
+            "nstreams.<<<nstreams>>>",
             "batch_size.<<<batch_size>>>"
         ]
       }
@@ -96,17 +96,10 @@
         "performance_dataset_size": "256"
       }
     },
-    "multistreamness": {
-      "###": {
-        "ck_env": "--env.CK_LOADGEN_MULTISTREAMNESS=###",
-        "record_tags": "multistreamness.###"
-      }
-    },
     "nstreams": {
       "###": {
-        "multistreamness": "###",
         "ck_env": "--env.CK_LOADGEN_MULTISTREAMNESS=###",
-        "record_tags": "multistreamness.###"
+        "record_tags": "nstreams.###"
       }
     },
     "batch_size": {
