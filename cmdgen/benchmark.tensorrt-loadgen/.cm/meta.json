@@ -1,7 +1,8 @@
 {
   "accu_init": {
     "ck_env": [
-      "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>"
+      "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>",
+      "--env.CK_VERBOSE=<<<verbosity>>>"
     ],
     "deps": [
       "--dep_add_tags.mlperf-inference-src=r0.7",
@@ -57,13 +58,15 @@
         "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
         "mode_extension": "-dataset_size.<<<dataset_size>>>-<<<preprocessed_tag>>>",
         "output_file": "accuracy.txt",
-        "recommended_dataset_size": "<<<full_dataset_size>>>"
+        "recommended_dataset_size": "<<<full_dataset_size>>>",
+        "recommended_verbosity": "1"
       },
       "performance": {
         "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
         "mode_extension": "<<<performance_mode_extension>>>",
         "output_file": "mlperf_log_summary.txt",
-        "recommended_dataset_size": "<<<performance_dataset_size>>>"
+        "recommended_dataset_size": "<<<performance_dataset_size>>>",
+        "recommended_verbosity": "0"
       }
     },
     "model": {
@@ -100,7 +103,7 @@
     },
     "batch_size": {
       "###": {
-        "ck_env": "--env.CK_LOADGEN_BATCH_SIZE=###",
+        "ck_env": "--env.CK_BATCH_SIZE=###",
         "record_tags": "batch_size.###"
       }
     },
@@ -136,6 +139,11 @@
         "shell_wrapped_cmd": "<<<wrapped_ck_run_program>>>"
       }
     },
+    "verbosity": {
+      "###": {
+        "ck_env": "--env.CK_VERBOSE=###"
+      }
+    },
     "verbose": {
       "all": {
         "print_output_file": "<<<print_output_file_cmd>>>",
@@ -155,6 +163,7 @@
     "inference_engine": "tensorrt",
     "inference_engine_version": "6.0",
     "sut": "xavier",
+    "verbosity": "<<<recommended_verbosity>>>",
     "preprocessed_tag": "preprocessed_using.<<<preprocessed_using>>>",
     "preprocessed_using": "opencv",
     "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
