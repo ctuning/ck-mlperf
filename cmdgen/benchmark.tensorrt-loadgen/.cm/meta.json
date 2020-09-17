@@ -129,6 +129,12 @@
         "record_uoa_parts": "buffer_size.###"
       }
     },
+    "max_query_count": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_MAX_QUERY_COUNT=###",
+        "record_tags": "max_query_count.###"
+      }
+    },
     "target_latency": {
       "###": {
         "ck_env": "--env.CK_LOADGEN_TARGET_LATENCY=###",
