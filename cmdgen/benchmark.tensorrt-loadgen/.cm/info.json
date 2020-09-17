@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "c21654d4caa6b98a",
+  "backup_module_uid": "4282b15de48f4d05",
+  "backup_module_uoa": "cmdgen",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-09-17T11:27:52.967501",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "benchmark.tensorrt-loadgen"
+}

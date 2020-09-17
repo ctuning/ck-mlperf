@@ -1,0 +1,169 @@
+{
+  "accu_init": {
+    "ck_env": [
+      "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>"
+    ],
+    "deps": [
+      "--dep_add_tags.mlperf-inference-src=r0.7",
+      "--dep_add_tags.weights=<<<model>>>",
+      "--dep_add_tags.images=crop.875,preprocessed,using-<<<preprocessed_using>>>"
+    ],
+    "record_tags": [
+      "mlperf",
+      "division.<<<division>>>",
+      "task.<<<task>>>",
+      "inference_engine.<<<inference_engine>>>",
+      "inference_engine_version.<<<inference_engine_version>>>",
+      "platform.<<<sut>>>",
+      "scenario.<<<scenario>>>",
+      "mode.<<<mode>>>",
+      "workload.<<<model>>>",
+      "<<<preprocessed_tag>>>"
+    ],
+    "record_uoa_parts": [
+      "mlperf",
+      "<<<division>>>",
+      "<<<sut>>>",
+      "<<<inference_engine>>>.<<<inference_engine_version>>>",
+      "<<<model>>>",
+      "<<<scenario>>>",
+      "<<<mode>>><<<mode_extension>>>"
+    ]
+  },
+  "build_map": {
+    "scenario": {
+      "offline": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline",
+        "performance_mode_extension": "",
+        "record_uoa_parts": [
+            "batch_size.<<<batch_size>>>"
+        ]
+      },
+      "singlestream": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream",
+        "performance_mode_extension": "-target_latency.<<<target_latency>>>"
+      },
+      "multistream": {
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=MultiStream",
+        "performance_mode_extension": "",
+        "record_uoa_parts": [
+            "multistreamness.<<<multistreamness>>>",
+            "batch_size.<<<batch_size>>>"
+        ]
+      }
+    },
+    "mode": {
+      "accuracy": {
+        "ck_env": "--env.CK_LOADGEN_MODE=AccuracyOnly",
+        "mode_extension": "-dataset_size.<<<dataset_size>>>-<<<preprocessed_tag>>>",
+        "output_file": "accuracy.txt",
+        "recommended_dataset_size": "<<<full_dataset_size>>>"
+      },
+      "performance": {
+        "ck_env": "--env.CK_LOADGEN_MODE=PerformanceOnly",
+        "mode_extension": "<<<performance_mode_extension>>>",
+        "output_file": "mlperf_log_summary.txt",
+        "recommended_dataset_size": "<<<performance_dataset_size>>>"
+      }
+    },
+    "model": {
+      "resnet50": {
+        "program_name": "image-classification-tflite-loadgen",
+        "task": "image-classification",
+        "full_dataset_size": "50000",
+        "performance_dataset_size": "1024"
+      },
+      "mobilenet": {
+        "program_name": "image-classification-tflite-loadgen",
+        "task": "image-classification",
+        "full_dataset_size": "50000",
+        "performance_dataset_size": "1024"
+      },
+      "ssd-mobilenet": {
+        "program_name": "object-detection-tensorrt-loadgen-py",
+        "task": "object-detection",
+        "full_dataset_size": "5000",
+        "performance_dataset_size": "256"
+      },
+      "ssd-resnet34": {
+        "program_name": "object-detection-tensorrt-loadgen-py",
+        "task": "object-detection",
+        "full_dataset_size": "5000",
+        "performance_dataset_size": "256"
+      }
+    },
+    "multistreamness": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_MULTISTREAMNESS=###",
+        "record_tags": "multistreamness.###"
+      }
+    },
+    "batch_size": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_BATCH_SIZE=###",
+        "record_tags": "batch_size.###"
+      }
+    },
+
+    "buffer_size": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_BUFFER_SIZE=###",
+        "record_tags": "buffer_size.###",
+        "record_uoa_parts": "buffer_size.###"
+      }
+    },
+    "performance_sample_count_override": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_BUFFER_SIZE=###",
+        "record_tags": "buffer_size.###",
+        "record_uoa_parts": "buffer_size.###"
+      }
+    },
+    "target_latency": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_TARGET_LATENCY=###",
+        "record_tags": "target_latency.###"
+      }
+    },
+    "target_qps": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_TARGET_QPS=###",
+        "record_tags": "target_qps.###"
+      }
+    },
+    "no_record": {
+      "yes": {
+        "shell_wrapped_cmd": "<<<wrapped_ck_run_program>>>"
+      }
+    },
+    "verbose": {
+      "all": {
+        "print_output_file": "<<<print_output_file_cmd>>>",
+        "screen_output": ""
+      },
+      "yes": {
+        "print_output_file": "<<<print_output_file_cmd>>>"
+      }
+    }
+  },
+  "cmd_template": "<<<shell_wrapped_cmd>>>",
+  "defaults": {
+    "ck_benchmark_program": "ck benchmark <<<run_or_benchmark_common>>> --skip_stat_analysis --process_multi_keys --repetitions=<<<repetitions>>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>",
+    "ck_run_program": "ck run <<<run_or_benchmark_common>>>",
+    "dataset_size": "<<<recommended_dataset_size>>>",
+    "division": "closed",
+    "inference_engine": "tensorrt",
+    "inference_engine_version": "6.0",
+    "sut": "xavier",
+    "preprocessed_tag": "preprocessed_using.<<<preprocessed_using>>>",
+    "preprocessed_using": "opencv",
+    "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
+    "record_uoa": "<<<record_uoa_parts->>>",
+    "repetitions": "1",
+    "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",
+    "screen_output": "--env.CK_SILENT_MODE=YES --skip_print_timers",
+    "shell_wrapped_cmd": "<<<wrapped_ck_benchmark_program>>>",
+    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
+    "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>"
+  }
+}
