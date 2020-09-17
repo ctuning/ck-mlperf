@@ -7,16 +7,11 @@
       "sort": 0,
       "tags": "compiler,lang-cpp"
     },
-    "lib-tflite": {
+    "library": {
       "local": "yes",
       "name": "TensorFlow Lite library",
       "sort": 20,
-      "tags": "lib,tflite,for.coral",
-      "version": [
-        2,
-        3,
-        99
-      ]
+      "tags": "lib,tflite"
     },
     "lib-mlperf_loadgen": {
       "local": "yes",
@@ -115,69 +110,6 @@
           "mlperf_log_summary.txt",
           "mlperf_log_trace.json"
         ]
-      },
-      "run_vars": {
-        "USE_EDGETPU" : "NO",
-        "CORRECT_RESULT": "0"
-      }
-    },
-    "edgetpu": {
-      "ignore_return_code": "no",
-      "run_time": {
-        "copy_env_to_remote": [
-          "CK_ENV_TENSORFLOW_MODEL_CLASSES",
-          "CK_ENV_TENSORFLOW_MODEL_DATASET_TYPE",
-          "CK_ENV_TENSORFLOW_MODEL_IMAGE_HEIGHT",
-          "CK_ENV_TENSORFLOW_MODEL_IMAGE_WIDTH",
-          "CK_ENV_TENSORFLOW_MODEL_IMAGE_CHANNELS",
-          "CK_ENV_TENSORFLOW_MODEL_MAX_DETECTIONS",
-          "CK_ENV_TENSORFLOW_MODEL_NEED_BACKGROUND_CORRECTION",
-          "CK_ENV_TENSORFLOW_MODEL_NORMALIZE_DATA",
-          "CK_ENV_TENSORFLOW_MODEL_NUM_CLASSES",
-          "CK_ENV_TENSORFLOW_MODEL_SUBTRACT_MEAN",
-          "CK_ENV_TENSORFLOW_MODEL_TFLITE_GRAPH_REGULAR_NMS",
-          "CK_ENV_TENSORFLOW_MODEL_TFLITE_GRAPH_FAST_NMS",
-          "CK_ENV_TENSORFLOW_MODEL_TFLITE_GRAPH_NO_NMS",
-          "CK_ENV_TENSORFLOW_MODEL_NMS_SCORE_THRESHOLD",
-          "CK_ENV_TENSORFLOW_MODEL_NMS_IOU_THRESHOLD",
-          "CK_ENV_TENSORFLOW_MODEL_SCALE_H",
-          "CK_ENV_TENSORFLOW_MODEL_SCALE_W",
-          "CK_ENV_TENSORFLOW_MODEL_SCALE_X",
-          "CK_ENV_TENSORFLOW_MODEL_SCALE_Y",
-          "CK_ENV_DATASET_OBJ_DETECTION_PREPROCESSED_SUBSET_FOF",
-          "USE_EDGETPU"
-        ],
-        "fine_grain_timer_file": "tmp-ck-timer.json",
-        "post_process_via_ck": {
-          "data_uoa": "24c98b0cee248d93",
-          "module_uoa": "script",
-          "script_name": "loadgen_postprocess"
-        },
-        "pre_process_via_ck": {
-          "data_uoa": "24c98b0cee248d93",
-          "module_uoa": "script",
-          "script_name": "schindler"
-        },
-        "run_cmd_main": "$#BIN_FILE#$",
-        "run_input_files": [
-          "$<<CK_ENV_LIB_STDCPP_DYNAMIC>>$",
-          "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/detect_fast_nms.tflite",
-          "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/detect_no_nms.tflite",
-          "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/detect_regular_nms.tflite",
-          "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/flatlabels.txt",
-          "$<<?CK_ENV_LOADGEN_CONFIG_FILE>>$",
-          "$<<?CK_LOADGEN_CONF_FILE>>$"
-        ],
-        "run_output_files": [
-          "mlperf_log_accuracy.json",
-          "mlperf_log_detail.txt",
-          "mlperf_log_summary.txt",
-          "mlperf_log_trace.json"
-        ]
-      },
-      "run_vars": {
-        "USE_EDGETPU" : "YES",
-        "CORRECT_RESULT": "1"
       }
     }
   },
