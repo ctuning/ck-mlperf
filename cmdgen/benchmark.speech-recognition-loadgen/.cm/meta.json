@@ -1,0 +1,99 @@
+{
+  "accu_init": {
+    "ck_env": [
+      "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>",
+      "--env.CK_VERBOSE=<<<verbosity>>>"
+    ],
+    "record_tags": [
+      "mlperf",
+      "division.<<<division>>>",
+      "task.<<<task>>>",
+      "inference_engine.<<<inference_engine>>>",
+      "inference_engine_version.<<<inference_engine_version>>>",
+      "platform.<<<sut>>>",
+      "scenario.<<<scenario>>>",
+      "mode.<<<mode>>>",
+      "workload.<<<model>>>",
+      "<<<preprocessed_tag>>>"
+    ],
+    "record_uoa_parts": [
+      "mlperf",
+      "<<<division>>>",
+      "<<<sut>>>",
+      "<<<inference_engine>>>",
+      "<<<inference_engine_version>>>",
+      "<<<model>>>",
+      "<<<scenario>>>"
+    ]
+  },
+  "build_map": {
+    "mode": {
+      "accuracy": {
+        "ck_env": "--cmd_key=accuracy",
+        "output_file": "accuracy.txt",
+        "recommended_dataset_size": "<<<full_dataset_size>>>",
+        "recommended_verbosity": "1"
+      },
+      "performance": {
+        "ck_env": "--cmd_key=performance",
+        "output_file": "mlperf_log_summary.txt",
+        "recommended_dataset_size": "<<<performance_dataset_size>>>",
+        "recommended_verbosity": "0"
+      }
+    },
+    "model": {
+      "rnnt": {
+        "full_dataset_size": "50000",
+        "performance_dataset_size": "1024",
+        "program_name": "speech-recognition-pytorch-loadgen",
+        "task": "speech-recognition"
+      }
+    },
+    "no_record": {
+      "yes": {
+        "shell_wrapped_cmd": "<<<wrapped_ck_run_program>>>"
+      }
+    },
+    "scenario": {
+      "multistream": {
+        "ck_env": "--env.CK_RNNT_SCENARIO=MultiStream"
+      },
+      "offline": {
+        "ck_env": "--env.CK_RNNT_SCENARIO=Offline"
+      },
+      "singlestream": {
+        "ck_env": "--env.CK_RNNT_SCENARIO=SingleStream"
+      }
+    },
+    "verbose": {
+      "all": {
+        "print_output_file": "<<<print_output_file_cmd>>>",
+        "screen_output": ""
+      },
+      "yes": {
+        "print_output_file": "<<<print_output_file_cmd>>>"
+      }
+    }
+  },
+  "cmd_template": "<<<shell_wrapped_cmd>>>",
+  "defaults": {
+    "ck_benchmark_program": "ck benchmark <<<run_or_benchmark_common>>> --skip_stat_analysis --process_multi_keys --repetitions=<<<repetitions>>> --record --record_repo=local --record_uoa=<<<record_uoa>>> --tags=<<<record_tags,>>>",
+    "ck_run_program": "ck run <<<run_or_benchmark_common>>>",
+    "dataset_size": "<<<recommended_dataset_size>>>",
+    "division": "closed",
+    "inference_engine": "tensorrt",
+    "inference_engine_version": "v6.0",
+    "preprocessed_tag": "preprocessed_using.<<<preprocessed_using>>>",
+    "preprocessed_using": "opencv",
+    "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
+    "record_uoa": "<<<record_uoa_parts->>>",
+    "repetitions": "1",
+    "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",
+    "screen_output": "--env.CK_SILENT_MODE=YES --skip_print_timers",
+    "shell_wrapped_cmd": "<<<wrapped_ck_benchmark_program>>>",
+    "sut": "xavier",
+    "verbosity": "<<<recommended_verbosity>>>",
+    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
+    "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>"
+  }
+}
