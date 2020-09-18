@@ -407,27 +407,6 @@ void TestSingleStream(Program *prg) {
     exit(1);
   }
 
-
-  //ts.min_query_count = std::min( prg->available_images_max(), prg->images_in_memory_max() )*2;
-  //ts.max_query_count = 20;
-  //ts.min_duration_ms = 0;
-  //ts.max_duration_ms = 2000;
-
-  const float single_stream_target_latency_ms = getenv_f("CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS");
-  if (single_stream_target_latency_ms > 0.0) {
-    ts.single_stream_expected_latency_ns = single_stream_target_latency_ms * 1000 * 1000;
-  }
-
-  const float max_duration_s = getenv_f("CK_LOADGEN_MAX_DURATION_S");
-  if (max_duration_s > 0.0) {
-    ts.max_duration_ms = max_duration_s * 1000;
-  }
-
-  const float expected_qps = getenv_f("CK_LOADGEN_OFFLINE_EXPECTED_QPS");
-  if (expected_qps > 0.0) {
-    ts.offline_expected_qps = expected_qps;
-  }
-
   mlperf::LogSettings log_settings;
   log_settings.log_output.prefix_with_datetime = false;
   log_settings.enable_trace = false;
