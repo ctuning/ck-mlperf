@@ -53,7 +53,7 @@
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "Preprocessed subset of COCO dataset",
-      "sort": 20,
+      "sort": 37,
       "tags": "dataset,preprocessed,object-detection,coco"
     },
     "coco-helper": {
@@ -99,6 +99,9 @@
       "tags": "tensorrt,plugin,nms"
     },
     "weights": {
+      "pass_matching_tags_to": {
+        "side.": [ "dataset" ]
+      },
       "local": "yes",
       "name": "TensorRT object detection model",
       "sort": 30,
