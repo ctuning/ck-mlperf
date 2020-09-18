@@ -312,10 +312,19 @@ This C++ implementation uses ArmNN with the TFLite frontend to run TFLite models
 """
 
 implementation_readmes['image-classification-tensorrt-loadgen-py'] = """# MLPerf Inference - Image Classification - TensorRT
-This Python implementation uses TensorRT to run models Image Classification on Arm Cortex CPUs and Arm Mali GPUs.
+
+This Python implementation uses TensorRT to run models Image Classification on NVIDIA GPUs.
 
 ### Links
 - [Source code](https://github.com/ctuning/ck-mlperf/tree/master/program/image-classification-tensorrt-loadgen-py).
+"""
+
+implementation_readmes['object-detection-tensorrt-loadgen-py'] = """# MLPerf Inference - Object Detection - TensorRT
+
+This Python implementation uses TensorRT to run models Object Detection on NVIDIA GPUs.
+
+### Links
+- [Source code](https://github.com/ctuning/ck-mlperf/tree/master/program/object-detection-tensorrt-loadgen-py).
 """
 
 implementation_readmes['mlperf-inference-vision'] = """# MLPerf Inference - Object Detection - TensorFlow
