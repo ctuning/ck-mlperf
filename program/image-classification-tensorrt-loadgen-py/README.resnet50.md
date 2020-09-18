@@ -13,7 +13,7 @@
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=resnet50 --mode=performance --target_latency=2.0 \
+--model=resnet50 --mode=performance --target_latency=2.5 \
 --scenario=singlestream --batch_size=1
 ```
 
@@ -31,11 +31,11 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 <a name="multistream"></a>
 ### MultiStream
 
-#### Performance
+#### Performance ((272,160 == 9! * 3/4) > 270,336)
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=resnet50 --mode=performance --max_query_count=1440 \
+--model=resnet50 --mode=performance --max_query_count=272160 \
 --scenario=multistream --batch_size=69 --nstreams={{{batch_size}}}
 ```
 
@@ -57,7 +57,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=resnet50 --mode=performance --target_qps=2000 \
+--model=resnet50 --mode=performance --target_qps=1500 \
 --scenario=offline --batch_size=70
 ```
 

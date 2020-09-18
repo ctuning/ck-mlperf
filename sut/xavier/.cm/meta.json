@@ -30,7 +30,7 @@
     "accelerator_memory_configuration": "SRAM",
     "accelerator_on-chip_memories": "1MB (128KB/SM) L1 + 512KB L2 + 4MB (DLA)",
     "cooling": "",
-    "hw_notes": "GPU and both DLAs are used in Offline and MultiStream scenarios",
+    "hw_notes": "DLAs are not used in the Offline and MultiStream scenarios (GPU only)",
 
     "framework": "JetPack 4.3, TensorRT 6.0.1, cuDNN 7.6.3, CUDA 10.0.326",
     "operating_system": "Ubuntu 18.04.5",
