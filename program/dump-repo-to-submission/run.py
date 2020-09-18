@@ -1328,23 +1328,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         implementation_benchmark_json = dump_implementation_dictionary(system_implementation_json_path, pipeline['dependencies']['weights'], inference_engine, program_name, benchmark)
         print('  |_ %s [for %s]' % (system_implementation_json_name, program_and_model_combination))
 
-        if program_name == 'openvino-loadgen-v0.7-drop':
-            program_path = get_program_path(program_name)
-            program_readme_name = 'README.{}-{}.md'.format(benchmark, scenario)
-            program_readme_path = os.path.join(program_path, program_readme_name)
-            measurements_readme_name = 'README.md'
-            measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
-            copy2(program_readme_path, measurements_readme_path)
-            print('  |_ %s [from %s]' % (measurements_readme_name, program_readme_path))
-        elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
-            program_path = get_program_path(program_name)
-            program_readme_name = 'README.{}.md'.format(scenario)
-            program_readme_path = os.path.join(program_path, program_readme_name)
-            measurements_readme_name = 'README.md'
-            measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
-            copy2(program_readme_path, measurements_readme_path)
-            print('  |_ %s [from %s]' % (measurements_readme_name, program_readme_path))
-        else: # v0.5
+        if version == 'v0.5':
             # Create 'README.md' based on the division and task (basically, mentions a division- and task-specific script).
             measurements_readme_name = 'README.md'
             measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
@@ -1355,6 +1339,20 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 print('  |_ %s [for %s %s]' % (measurements_readme_name, division, task))
             else:
                 raise Exception("Invalid measurements README!")
+        else:
+            if program_name == 'openvino-loadgen-v0.7-drop':
+                program_readme_name = 'README.{}-{}.md'.format(benchmark, scenario)
+            elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+                program_readme_name = 'README.{}.md'.format(scenario)
+            elif program_name in [ 'image-classification-tensorrt-loadgen-py', 'object-detection-tensorrt-loadgen-py' ]:
+                program_readme_name = 'README.{}.md'.format(benchmark)
+
+            program_path = get_program_path(program_name)
+            program_readme_path = os.path.join(program_path, program_readme_name)
+            measurements_readme_name = 'README.md'
+            measurements_readme_path = os.path.join(mscenario_dir, measurements_readme_name)
+            copy2(program_readme_path, measurements_readme_path)
+            print('  |_ %s [from %s]' % (measurements_readme_name, program_readme_path))
 
         # Create 'NOTES.txt'.
         measurements_notes_name = 'NOTES.txt'
