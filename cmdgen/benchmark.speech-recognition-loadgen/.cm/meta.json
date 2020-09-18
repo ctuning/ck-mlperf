@@ -13,8 +13,7 @@
       "platform.<<<sut>>>",
       "scenario.<<<scenario>>>",
       "mode.<<<mode>>>",
-      "workload.<<<model>>>",
-      "<<<preprocessed_tag>>>"
+      "workload.<<<model>>>"
     ],
     "record_uoa_parts": [
       "mlperf",
@@ -29,13 +28,13 @@
   "build_map": {
     "mode": {
       "accuracy": {
-        "ck_env": "--cmd_key=accuracy",
+        "ck_env": "--cmd_key=accuracy-bench",
         "output_file": "accuracy.txt",
         "recommended_dataset_size": "<<<full_dataset_size>>>",
         "recommended_verbosity": "1"
       },
       "performance": {
-        "ck_env": "--cmd_key=performance",
+        "ck_env": "--cmd_key=performance-bench",
         "output_file": "mlperf_log_summary.txt",
         "recommended_dataset_size": "<<<performance_dataset_size>>>",
         "recommended_verbosity": "0"
@@ -43,8 +42,8 @@
     },
     "model": {
       "rnnt": {
-        "full_dataset_size": "50000",
-        "performance_dataset_size": "1024",
+        "full_dataset_size": "2513",
+        "performance_dataset_size": "2513",
         "program_name": "speech-recognition-pytorch-loadgen",
         "task": "speech-recognition"
       }
@@ -65,7 +64,64 @@
         "ck_env": "--env.CK_RNNT_SCENARIO=SingleStream"
       }
     },
-    "verbose": {
+    "sut": {
+      "aws-g4dn.4xlarge": {
+        "compiler_tags": "gcc,v7"
+      },
+      "dellemc_r740xd6248": {
+        "compiler_tags": "gcc,v7"
+      }
+    },
+    "batch_size": {
+      "###": {
+        "ck_env": "--env.CK_BATCH_SIZE=###",
+        "record_tags": "batch_size.###"
+      }
+    },
+    "buffer_size": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_BUFFER_SIZE=###",
+        "record_tags": "buffer_size.###",
+        "record_uoa_parts": "buffer_size.###"
+      }
+    },
+    "performance_sample_count_override": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_BUFFER_SIZE=###",
+        "record_tags": "buffer_size.###",
+        "record_uoa_parts": "buffer_size.###"
+      }
+    },
+    "max_query_count": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_MAX_QUERY_COUNT=###",
+        "record_tags": "max_query_count.###",
+        "record_uoa_parts": "max_query_count.###"
+      }
+    },
+    "target_latency": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_TARGET_LATENCY=###",
+        "record_tags": "target_latency.###"
+      }
+    },
+    "target_qps": {
+      "###": {
+        "ck_env": "--env.CK_LOADGEN_TARGET_QPS=###",
+        "record_tags": "target_qps.###",
+        "record_uoa_parts": "target_qps.###"
+      }
+    },
+    "no_record": {
+      "yes": {
+        "shell_wrapped_cmd": "<<<wrapped_ck_run_program>>>"
+      }
+    },
+    "verbosity": {
+      "###": {
+        "ck_env": "--env.CK_VERBOSE=###"
+      }
+    },    "verbose": {
       "all": {
         "print_output_file": "<<<print_output_file_cmd>>>",
         "screen_output": ""
@@ -81,17 +137,14 @@
     "ck_run_program": "ck run <<<run_or_benchmark_common>>>",
     "dataset_size": "<<<recommended_dataset_size>>>",
     "division": "closed",
-    "inference_engine": "tensorrt",
-    "inference_engine_version": "v6.0",
-    "preprocessed_tag": "preprocessed_using.<<<preprocessed_using>>>",
-    "preprocessed_using": "opencv",
+    "inference_engine": "pytorch",
+    "inference_engine_version": "v1.15.1",
     "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
     "record_uoa": "<<<record_uoa_parts->>>",
     "repetitions": "1",
     "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",
     "screen_output": "--env.CK_SILENT_MODE=YES --skip_print_timers",
     "shell_wrapped_cmd": "<<<wrapped_ck_benchmark_program>>>",
-    "sut": "xavier",
     "verbosity": "<<<recommended_verbosity>>>",
     "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
     "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>"
