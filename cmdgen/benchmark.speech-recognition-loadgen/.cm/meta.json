@@ -68,6 +68,9 @@
       "aws-g4dn.4xlarge": {
         "compiler_tags": "gcc,v7"
       },
+      "dellemc_r640xd6248r": {
+        "compiler_tags": "gcc,v7"
+      },
       "dellemc_r740xd6248": {
         "compiler_tags": "gcc,v7"
       }
