@@ -133,6 +133,7 @@ backend_to_printable = {
     'cuda':             'CUDA',
     'tensorrt':         'TensorRT-static',
     'tensorrt-dynamic': 'TensorRT-dynamic',
+    'edgetpu':          'EdgeTPU',
 }
 
 system_description_cache = {}
@@ -211,6 +212,9 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
             recorded_model_data_type = 'uint8' # 'quantized', 'quant', 
         elif {'int8'} & set(model_tags):
             recorded_model_data_type = 'int8'
+        elif {'quantized', 'quant'} & set(model_tags):  # FIXME! This is a guess at best!
+            print("Warning: could not guess the quantized data type - assuming int8 for now!")
+            recorded_model_data_type = 'int8'
         else:
             print("Warning: could not guess whether the model is quantized or not - please add tags or attributes")
             recorded_model_data_type = 'fp32'
@@ -250,6 +254,10 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
             recorded_transformation_path = 'TF -> TFLite'
         else:
             recorded_transformation_path = 'TFLite'
+    elif program_name == 'object-detection-tflite-loadgen':
+        if benchmark.endswith('-edgetpu'):  # in need of a better signal
+            recorded_transformation_path = 'TF -> EdgeTPU'
+
     elif program_name == 'image-classification-tensorrt-loadgen-py':
         if benchmark in ['resnet', 'resnet50']:
             recorded_transformation_path = 'ONNX'
@@ -1355,6 +1363,8 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 program_readme_name = 'README.{}.md'.format(scenario)
             elif program_name in [ 'image-classification-tensorrt-loadgen-py', 'object-detection-tensorrt-loadgen-py' ]:
                 program_readme_name = 'README.{}.md'.format(benchmark)
+            elif program_name == 'object-detection-tflite-loadgen':
+                program_readme_name = 'README.md'
 
             program_path = get_program_path(program_name)
             program_readme_path = os.path.join(program_path, program_readme_name)
