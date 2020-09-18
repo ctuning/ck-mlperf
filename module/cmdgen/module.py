@@ -72,6 +72,8 @@ def iterate(i):
             else:
                 delimiter   = matchObj.group(2)
                 index_range.append( param_value.split(delimiter) )
+        else:
+            return {'return':1, 'error':"Could not recognize parameter '{}'".format(param_name)}
 
     if interactive:
         print(dict(zip(index_name, index_range)))
