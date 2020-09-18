@@ -116,8 +116,8 @@
   },
   "run_vars": {
     "CK_BATCH_SIZE": 1, 
-    "CK_LOADGEN_BUFFER_SIZE": 8, 
-    "CK_LOADGEN_DATASET_SIZE": 20, 
+    "CK_LOADGEN_BUFFER_SIZE": 256,
+    "CK_LOADGEN_DATASET_SIZE": 50,
     "CK_LOADGEN_MODE": "AccuracyOnly", 
     "CK_LOADGEN_MULTISTREAMNESS": "", 
     "CK_LOADGEN_SCENARIO": "SingleStream",
