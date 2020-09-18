@@ -84,7 +84,7 @@
       "local": "yes", 
       "name": "TensorRT model", 
       "sort": 30, 
-      "tags": "tensorrt,model,image-classification"
+      "tags": "tensorrt,model"
     },
     "python": {
       "force_target_as_host": "yes",

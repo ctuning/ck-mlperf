@@ -111,7 +111,7 @@
       "local": "yes",
       "name": "TensorRT object detection model",
       "sort": 30,
-      "tags": "tensorrt,model,object-detection"
+      "tags": "tensorrt,model"
     }
   },
   "run_vars": {
