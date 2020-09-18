@@ -6,7 +6,7 @@
     ],
     "deps": [
       "--dep_add_tags.mlperf-inference-src=r0.7",
-      "--dep_add_tags.weights=<<<model>>>",
+      "--dep_add_tags.weights=<<<model>>>.<<<scenario>>>",
       "--dep_add_tags.images=crop.875,preprocessed,using-<<<preprocessed_using>>>"
     ],
     "record_tags": [
