@@ -58,7 +58,7 @@ def iterate(i):
 
     for param_name in input_params.keys():
         param_value = input_params[param_name]
-        matchObj = re.match('(\w+)([,:])?((-?\d+):(-?\d+)(?:\:(\d+))?)?', param_name)
+        matchObj = re.match('(\w+)([,:])?((-?\d+):(-?\d+)(?:\:(\d+))?)?$', param_name)
         if matchObj:
             pure_name   = matchObj.group(1)
             index_name.append( pure_name )
