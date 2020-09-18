@@ -235,6 +235,7 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if not starting_weights_filename:
         starting_weights_filename = model_install_env['PACKAGE_URL'].rstrip('/') + '/' + model_install_env['PACKAGE_NAME']
 
+    recorded_transformation_path = None
     ## figure out the transformation path:
     if program_name.startswith('openvino-loadgen'):
         if recorded_model_name == 'resnet50':
@@ -254,10 +255,16 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
             recorded_transformation_path = 'ONNX'
         else:
             recorded_transformation_path = 'TF'
+    elif program_name == 'object-detection-tensorrt-loadgen-py':
+        if benchmark in ['ssd-small', 'ssd-mobilenet']:
+            recorded_transformation_path = 'TF'
+        elif benchmark in ['ssd-large', 'ssd-resnet', 'ssd-resnet34']:
+            recorded_transformation_path = 'TF'
     elif program_name == 'mlperf-inference-vision':
         recorded_transformation_path = 'None (TensorFlow)'
-    else:
-        raise Exception("Don't know how to derive the transformation path of the model for program:{}".format(program_name))
+
+    if not recorded_transformation_path:
+        raise Exception("Don't know how to derive the transformation path of the model for program:{} and benchmark {}".format(program_name, benchmark))
 
     # Initial model is never supplied in one of these, so there must have been a transformation:
     if inference_engine in ['armnn', 'tensorrt']:
@@ -1647,16 +1654,17 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                         accuracy_pc = float(match.group(1))
                     elif task == 'object-detection':
                         accuracy_coco_py = os.path.join(vlatest_path, 'classification_and_detection', 'tools', 'accuracy-coco.py')
-                        use_inv_map = bool(pipeline['dependencies']['weights']['cus']['install_env'].get('ML_MODEL_USE_INV_MAP','0'))
+                        use_inv_map = bool(int(pipeline['dependencies']['weights']['cus']['install_env'].get('ML_MODEL_USE_INV_MAP','0')))
                         use_inv_map_flag = '--use-inv-map' if use_inv_map else ''
-                        accuracy_txt = subprocess.getoutput('python3 {} --coco-dir {} --mlperf-accuracy-file {} {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path, use_inv_map_flag))
+                        accuracy_cmd = 'python3 {} --coco-dir {} --mlperf-accuracy-file {} {}'.format(accuracy_coco_py, coco_dir, accuracy_json_path, use_inv_map_flag)
+                        accuracy_txt = subprocess.getoutput( accuracy_cmd )
                         # The last line is e.g. "mAP=13.323%".
                         accuracy_line = accuracy_txt.split('\n')[-1]
                         match = re.match('mAP\=([\d\.]+)\%', accuracy_line)
                         if match:
                             accuracy_pc = float(match.group(1))
                         else:
-                            raise Exception("Could not parse accuracy from: " + accuracy_txt)
+                            raise Exception("Could not parse accuracy from: '{}' by running the command:\n\t{}".format(accuracy_txt, accuracy_cmd))
                     else:
                         raise Exception("Invalid task '%s'!" % task)
                     with open(accuracy_txt_path, 'w') as accuracy_txt_file:
