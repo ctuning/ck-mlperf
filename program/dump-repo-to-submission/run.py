@@ -257,6 +257,8 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     elif program_name == 'object-detection-tflite-loadgen':
         if benchmark.endswith('-edgetpu'):  # in need of a better signal
             recorded_transformation_path = 'TF -> EdgeTPU'
+        else:
+            recorded_transformation_path = 'TF -> TFlite'
 
     elif program_name == 'image-classification-tensorrt-loadgen-py':
         if benchmark in ['resnet', 'resnet50']:
