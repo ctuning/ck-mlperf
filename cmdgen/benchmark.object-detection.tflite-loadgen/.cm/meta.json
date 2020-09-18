@@ -17,6 +17,7 @@
       "platform.<<<sut>>>",
       "inference_engine.<<<inference_engine>>>",
       "inference_engine_version.<<<inference_engine_version>>>",
+      "inference_engine_backend.<<<inference_engine_backend>>>",
       "scenario.<<<scenario>>>",
       "mode.<<<mode>>>",
       "workload.<<<model_readable>>>",
@@ -28,6 +29,7 @@
       "<<<sut>>>",
       "<<<inference_engine>>>",
       "<<<inference_engine_version>>>",
+      "<<<inference_engine_backend>>>",
       "<<<library>>>",
       "<<<model_readable>>>",
       "<<<scenario>>>",
@@ -51,56 +53,45 @@
       "tflite-v1.13.1": {
         "deps": "--dep_add_tags.library=tflite,v1.13.1",
         "program_name": "object-detection-tflite-loadgen",
-        "record_tags": [
-          "inference_engine.tflite",
-          "inference_engine_version.v1.13.1"
-        ]
+        "inference_engine": "tflite",
+        "inference_engine_version": "v1.13.1",
+        "inference_engine_backend": "eigen"
       },
       "tflite-v2.2.0-ruy": {
         "deps": "--dep_add_tags.library=tflite,v2.2.0",
         "program_name": "object-detection-tflite-loadgen",
-        "record_tags": [
-          "inference_engine.tflite",
-          "inference_engine_version.v2.2.0",
-          "inference_engine_backend.ruy"
-        ]
+        "inference_engine": "tflite",
+        "inference_engine_version": "v2.2.0",
+        "inference_engine_backend": "ruy"
       },
       "tflite-v2.3": {
         "deps": "--dep_add_tags.library=tflite,v2.3.90",
         "program_name": "object-detection-tflite-loadgen",
-        "record_tags": [
-          "inference_engine.tflite",
-          "inference_engine_version.v2.3.0",
-          "inference_engine_backend.eigen"
-        ]
+        "inference_engine": "tflite",
+        "inference_engine_version": "v2.3.0",
+        "inference_engine_backend": "eigen"
       },
       "tflite-v2.3-ruy": {
         "deps": "--dep_add_tags.library=tflite,v2.3.90,with.ruy",
         "program_name": "object-detection-tflite-loadgen",
-        "record_tags": [
-          "inference_engine.tflite",
-          "inference_engine_version.v2.3.0",
-          "inference_engine_backend.ruy"
-        ]
+        "inference_engine": "tflite",
+        "inference_engine_version": "v2.3.0",
+        "inference_engine_backend": "ruy"
       },
       "tflite-v2.3-xnnpack": {
         "deps": "--dep_add_tags.library=tflite,v2.3.90,with.xnnpack",
         "program_name": "object-detection-tflite-loadgen",
-        "record_tags": [
-          "inference_engine.tflite",
-          "inference_engine_version.v2.3.0",
-          "inference_engine_backend.xnnpack"
-        ]
+        "inference_engine": "tflite",
+        "inference_engine_version": "v2.3.0",
+        "inference_engine_backend": "xnnpack"
       },
       "tflite-edgetpu": {
         "ck_env": "--env.USE_EDGETPU=1",
         "deps": "--dep_add_tags.library=tflite,for.coral",
         "program_name": "object-detection-tflite-loadgen",
-        "record_tags": [
-          "inference_engine.tflite",
-          "inference_engine_version.for.coral",
-          "inference_engine_backend.edgetpu"
-        ]
+        "inference_engine": "tflite",
+        "inference_engine_version": "for.coral",
+        "inference_engine_backend": "edgetpu"
       }
     },
     "mode": {
