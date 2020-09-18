@@ -85,13 +85,12 @@
         ],
         "fine_grain_timer_file": "tmp-ck-timer.json",
         "post_process_via_ck": {
-          "data_uoa": "24c98b0cee248d93",
+          "data_uoa": "object-detection",
           "module_uoa": "script",
           "script_name": "loadgen_postprocess"
         },
         "pre_process_via_ck": {
-          "comment": "NOTE: we are calling an image-classification preprocessor from an object-detection program here",
-          "data_uoa": "image-classification",
+          "data_uoa": "object-detection",
           "module_uoa": "script",
           "script_name": "loadgen_preprocess"
         },
@@ -191,6 +190,7 @@
     "CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS": 0,
     "CK_LOADGEN_USER_CONF": "user.conf",
     "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
+    "CK_MLPERF_PRE_SCHINDLER": "YES",
     "CK_ANNOTATIONS_OUT_DIR": "annotations",
     "CK_BATCH_COUNT": 1,
     "CK_BATCH_SIZE": 1,

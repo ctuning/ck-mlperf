@@ -13,8 +13,7 @@
       "run_time": {
         "fine_grain_timer_file": "tmp-ck-timer.json", 
         "pre_process_via_ck": {
-          "comment": "NOTE: we are calling an image-classification preprocessor from an object-detection program here",
-          "data_uoa": "image-classification",
+          "data_uoa": "object-detection",
           "module_uoa": "script",
           "script_name": "loadgen_preprocess"
         },
