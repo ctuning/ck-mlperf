@@ -72,6 +72,7 @@
   },
   "variations": {
     "from-zenodo": {
+      "on_by_default": "yes",
       "extra_env": {
         "PACKAGE_URL": "https://zenodo.org/record/3361502/files"
       }

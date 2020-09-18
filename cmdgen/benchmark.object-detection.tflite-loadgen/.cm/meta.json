@@ -30,7 +30,6 @@
       "<<<inference_engine>>>",
       "<<<inference_engine_version>>>",
       "<<<inference_engine_backend>>>",
-      "<<<library>>>",
       "<<<model_readable>>>",
       "<<<scenario>>>",
       "<<<mode>>><<<mode_extension>>>"
@@ -109,16 +108,19 @@
       }
     },
     "model": {
-      "from-zenodo": {
+      "non-quantized": {
         "division": "closed",
         "model_tags": [
+          "ssd-mobilenet",
           "###"
         ]
       },
       "v[12]": {
+        "division": "open",
         "model_tags": [
           "ssd-mobilenet",
-          "###"
+          "###",
+          "edgetpu"
         ]
       }
     },
