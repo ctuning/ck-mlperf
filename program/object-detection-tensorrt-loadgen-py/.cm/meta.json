@@ -12,8 +12,14 @@
       "ignore_return_code": "no", 
       "run_time": {
         "fine_grain_timer_file": "tmp-ck-timer.json", 
+        "pre_process_via_ck": {
+          "comment": "NOTE: we are calling an image-classification preprocessor from an object-detection program here",
+          "data_uoa": "image-classification",
+          "module_uoa": "script",
+          "script_name": "loadgen_preprocess"
+        },
         "post_process_via_ck": {
-          "data_uoa": "24c98b0cee248d93", 
+          "data_uoa": "object-detection",
           "module_uoa": "script", 
           "script_name": "loadgen_postprocess"
         }, 
@@ -111,11 +117,12 @@
   "run_vars": {
     "CK_BATCH_SIZE": 1, 
     "CK_LOADGEN_BUFFER_SIZE": 8, 
-    "CK_LOADGEN_CONF_FILE": "", 
     "CK_LOADGEN_DATASET_SIZE": 20, 
     "CK_LOADGEN_MODE": "AccuracyOnly", 
     "CK_LOADGEN_MULTISTREAMNESS": "", 
     "CK_LOADGEN_SCENARIO": "SingleStream",
+    "CK_LOADGEN_USER_CONF": "user.conf",
+    "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
     "CK_VERBOSE": 1
   }, 
   "tags": [

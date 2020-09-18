@@ -21,10 +21,13 @@ LOADGEN_SCENARIO        = os.getenv('CK_LOADGEN_SCENARIO', 'SingleStream')
 LOADGEN_MODE            = os.getenv('CK_LOADGEN_MODE', 'AccuracyOnly')
 LOADGEN_BUFFER_SIZE     = int(os.getenv('CK_LOADGEN_BUFFER_SIZE'))          # set to how many samples are you prepared to keep in memory at once
 LOADGEN_DATASET_SIZE    = int(os.getenv('CK_LOADGEN_DATASET_SIZE'))         # set to how many total samples to choose from (0 = full set)
-LOADGEN_CONF_FILE       = os.getenv('CK_LOADGEN_CONF_FILE', '')
-LOADGEN_MODEL_NAME      = os.getenv('CK_LOADGEN_MODEL_NAME', 'random_model_name')
 LOADGEN_COUNT_OVERRIDE  = os.getenv('CK_LOADGEN_COUNT_OVERRIDE', '')        # if not set, use value from LoadGen's config file
 LOADGEN_MULTISTREAMNESS = os.getenv('CK_LOADGEN_MULTISTREAMNESS', '')       # if not set, use value from LoadGen's config file
+
+MLPERF_CONF_PATH        = os.environ['CK_ENV_MLPERF_INFERENCE_MLPERF_CONF']
+USER_CONF_PATH          = os.environ['CK_LOADGEN_USER_CONF']
+MODEL_NAME              = os.getenv('ML_MODEL_MODEL_NAME', 'unknown_model')
+
 
 ## Model properties:
 #
@@ -168,8 +171,8 @@ def benchmark_using_loadgen():
     }[LOADGEN_MODE]
 
     ts = lg.TestSettings()
-    if LOADGEN_CONF_FILE:
-        ts.FromConfig(LOADGEN_CONF_FILE, LOADGEN_MODEL_NAME, LOADGEN_SCENARIO)
+    ts.FromConfig(MLPERF_CONF_PATH, MODEL_NAME, LOADGEN_SCENARIO)
+    ts.FromConfig(USER_CONF_PATH, MODEL_NAME, LOADGEN_SCENARIO)
     ts.scenario = scenario
     ts.mode     = mode
 
