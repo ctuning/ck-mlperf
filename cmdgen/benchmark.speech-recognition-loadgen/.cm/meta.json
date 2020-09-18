@@ -132,6 +132,39 @@
       "yes": {
         "print_output_file": "<<<print_output_file_cmd>>>"
       }
+    },
+    "plugin_pre": {
+      "pytorch": {
+        "ck_env": ["--env.CK_RNNT_PRE_BACKEND=pytorch", "--env.CK_RNNT_PRE=orig"]
+      },
+      "pytorch_quant": {
+        "ck_env": ["--env.CK_RNNT_PRE_BACKEND=pytorch", "--env.CK_RNNT_PRE=orig-quant"]
+      },
+      "onnx": {
+        "ck_env": ["--env.CK_RNNT_PRE_BACKEND=onnx", "--env.CK_RNNT_PRE=orig"]
+      }
+    },
+    "plugin_post": {
+      "pytorch": {
+        "ck_env": ["--env.CK_RNNT_POST_BACKEND=pytorch", "--env.CK_RNNT_POST=orig"]
+      },
+      "pytorch_quant": {
+        "ck_env": ["--env.CK_RNNT_POST_BACKEND=pytorch", "--env.CK_RNNT_POST=orig-quant"]
+      },
+      "onnx": {
+        "ck_env": ["--env.CK_RNNT_POST_BACKEND=onnx", "--env.CK_RNNT_POST=orig"]
+      }
+    },
+    "plugin_dec": {
+      "pytorch": {
+        "ck_env": ["--env.CK_RNNT_DEC_BACKEND=pytorch", "--env.CK_RNNT_DEC=orig"]
+      },
+      "pytorch_quant": {
+        "ck_env": ["--env.CK_RNNT_DEC_BACKEND=pytorch", "--env.CK_RNNT_DEC=orig-quant"]
+      },
+      "onnx": {
+        "ck_env": ["--env.CK_RNNT_DEC_BACKEND=onnx", "--env.CK_RNNT_DEC=orig"]
+      }
     }
   },
   "cmd_template": "<<<shell_wrapped_cmd>>>",
