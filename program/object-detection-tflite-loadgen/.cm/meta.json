@@ -90,19 +90,19 @@
           "script_name": "loadgen_postprocess"
         },
         "pre_process_via_ck": {
-          "data_uoa": "24c98b0cee248d93",
+          "comment": "NOTE: we are calling an image-classification preprocessor from an object-detection program here",
+          "data_uoa": "image-classification",
           "module_uoa": "script",
-          "script_name": "schindler"
+          "script_name": "loadgen_preprocess"
         },
+
         "run_cmd_main": "$#BIN_FILE#$",
         "run_input_files": [
           "$<<CK_ENV_LIB_STDCPP_DYNAMIC>>$",
           "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/detect_fast_nms.tflite",
           "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/detect_no_nms.tflite",
           "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/detect_regular_nms.tflite",
-          "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/flatlabels.txt",
-          "$<<?CK_ENV_LOADGEN_CONFIG_FILE>>$",
-          "$<<?CK_LOADGEN_CONF_FILE>>$"
+          "$<<CK_ENV_TENSORFLOW_MODEL_ROOT>>$/flatlabels.txt"
         ],
         "run_output_files": [
           "mlperf_log_accuracy.json",
@@ -120,17 +120,6 @@
       "name": "Preprocessed images",
       "sort": 20,
       "tags": "dataset,object-detection,preprocessed"
-    },
-    "loadgen-config-file": {
-      "enable_if_env": [
-        { "CK_LOADGEN_CONF_FILE": [""] }
-      ],
-      "force_target_as_host": "yes",
-      "add_to_path": "no",
-      "local": "yes",
-      "name": "LoadGen Config file",
-      "sort": 40,
-      "tags": "loadgen,config"
     },
     "lib-python-matplotlib": {
       "force_target_as_host": "yes",
@@ -191,7 +180,6 @@
     }
   },
   "run_vars": {
-    "CK_LOADGEN_CONF_FILE": "",
     "CK_LOADGEN_TRIGGER_COLD_RUN": "yes",
     "CK_LOADGEN_DATASET_SIZE": 0,
     "CK_LOADGEN_BUFFER_SIZE": 1024,
@@ -201,6 +189,8 @@
     "CK_LOADGEN_MAX_DURATION_S": 0,
     "CK_LOADGEN_OFFLINE_EXPECTED_QPS": 0,
     "CK_LOADGEN_SINGLE_STREAM_TARGET_LATENCY_MS": 0,
+    "CK_LOADGEN_USER_CONF": "user.conf",
+    "CK_MLPERF_PRE_USER_CONF_AND_AUDIT_CONFIG": "YES",
     "CK_ANNOTATIONS_OUT_DIR": "annotations",
     "CK_BATCH_COUNT": 1,
     "CK_BATCH_SIZE": 1,

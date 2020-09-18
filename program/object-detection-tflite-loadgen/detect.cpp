@@ -368,19 +368,17 @@ void TestSingleStream(Program *prg) {
   SystemUnderTestSingleStream sut(prg);
   QuerySampleLibrarySingleStream qsl(prg);
 
-  const std::string conf_override_file_path = getenv_opt_s("CK_LOADGEN_CONF_FILE", ""); // this one can be provided manually
+  const std::string mlperf_conf_path = getenv_s("CK_ENV_MLPERF_INFERENCE_MLPERF_CONF");
+  const std::string user_conf_path = getenv_s("CK_LOADGEN_USER_CONF");
 
-  const std::string config_file_path = conf_override_file_path != ""
-      ? conf_override_file_path
-      : getenv_s("CK_ENV_LOADGEN_CONFIG_FILE"); // this one comes from a resolved dependency IF the above has not been provided
-
-  std::string guenther_model_name = "anything_else";
+  std::string model_name = getenv_opt_s("ML_MODEL_MODEL_NAME", "unknown_model");
 
   const std::string scenario_string = getenv_s("CK_LOADGEN_SCENARIO");
   const std::string mode_string = getenv_s("CK_LOADGEN_MODE");
 
-  std::cout << "Config path: " << config_file_path << std::endl;
-  std::cout << "Guenther Model Name: " << guenther_model_name << std::endl;
+  std::cout << "Path to mlperf.conf : " << mlperf_conf_path << std::endl;
+  std::cout << "Path to user.conf : " << user_conf_path << std::endl;
+  std::cout << "Model Name: " << model_name << std::endl;
   std::cout << "LoadGen Scenario: " << scenario_string << std::endl;
   std::cout << "LoadGen Mode: " << ( mode_string != "" ? mode_string : "(empty string)" ) << std::endl;
 
@@ -399,10 +397,16 @@ void TestSingleStream(Program *prg) {
               : ( mode_string == "PerformanceOnly")     ? mlperf::TestMode::PerformanceOnly
               : ( mode_string == "FindPeakPerformance") ? mlperf::TestMode::FindPeakPerformance : mlperf::TestMode::SubmissionRun;
 
-  if (ts.FromConfig(config_file_path, guenther_model_name, scenario_string)) {
-    std::cout << "Issue with config file " << config_file_path << std::endl;
+  if (ts.FromConfig(mlperf_conf_path, model_name, scenario_string)) {
+    std::cout << "Issue with mlperf.conf file at " << mlperf_conf_path << std::endl;
     exit(1);
   }
+
+  if (ts.FromConfig(user_conf_path, model_name, scenario_string)) {
+    std::cout << "Issue with user.conf file at " << user_conf_path << std::endl;
+    exit(1);
+  }
+
 
   //ts.min_query_count = std::min( prg->available_images_max(), prg->images_in_memory_max() )*2;
   //ts.max_query_count = 20;
