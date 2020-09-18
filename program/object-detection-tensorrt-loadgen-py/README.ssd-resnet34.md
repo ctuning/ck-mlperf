@@ -9,7 +9,7 @@
 $ ck install package --tags=dataset,object-detection,preprocessed,using-opencv,full,side.1200 --ask
 ```
 
-<a name="ssd-resnet"></a>
+<a name="ssd-resnet34"></a>
 ## SSD-MobileNet
 
 <a name="singlestream"></a>
@@ -27,7 +27,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=ssd-resnet --mode=accuracy --dataset_size=5000 \
+--model=ssd-resnet34 --mode=accuracy --dataset_size=5000 \
 --scenario=singlestream --batch_size=1
 ```
 
@@ -41,7 +41,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=ssd-resnet --mode=performance --target_qps=50 \
+--model=ssd-resnet34 --mode=performance --target_qps=50 \
 --scenario=offline --batch_size=2
 ```
 
@@ -49,7 +49,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=ssd-resnet --mode=accuracy --dataset_size=5000 \
+--model=ssd-resnet34 --mode=accuracy --dataset_size=5000 \
 --scenario=offline --batch_size=2
 ```
 
@@ -63,7 +63,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=ssd-resnet --mode=performance --max_query_count=272160 \
+--model=ssd-resnet34 --mode=performance --max_query_count=272160 \
 --scenario=multistream --batch_size=2 --nstreams={{{batch_size}}}
 ```
 
@@ -71,7 +71,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
---model=ssd-resnet --mode=accuracy --dataset_size=5000 \
+--model=ssd-resnet34 --mode=accuracy --dataset_size=5000 \
 --scenario=multistream --batch_size=2 --nstreams={{{batch_size}}}
 ```
 

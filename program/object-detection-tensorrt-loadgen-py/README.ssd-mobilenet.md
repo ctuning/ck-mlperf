@@ -64,7 +64,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 --model=ssd-mobilenet --mode=performance --max_query_count=272160 \
---scenario=multistream --batch_size=78 --nstreams={{{batch_size}}}
+--scenario=multistream --batch_size=75 --nstreams={{{batch_size}}}
 ```
 
 #### Accuracy
@@ -72,7 +72,7 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 ```bash
 $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 --model=ssd-mobilenet --mode=accuracy --dataset_size=5000 \
---scenario=multistream --batch_size=78 --nstreams={{{batch_size}}}
+--scenario=multistream --batch_size=80 --nstreams={{{batch_size}}}
 ```
 
 #### Compliance **TODO**
