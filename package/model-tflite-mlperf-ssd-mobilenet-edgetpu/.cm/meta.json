@@ -3,6 +3,7 @@
   "customize": {
     "install_env": {
       "ML_MODEL_DATA_LAYOUT": "NHWC",
+      "ML_MODEL_MODEL_NAME": "ssd-mobilenet-edgetpu",
       "MODEL_ANCHORS": "flatanchors.txt",
       "MODEL_CLASSES": "flatlabels.txt",
       "MODEL_DATASET_TYPE": "coco",

@@ -6,6 +6,7 @@
       "MODEL_TFLITE_GRAPH_FAST_NMS": "detect_fast_nms.tflite",
       "MODEL_TFLITE_GRAPH_NO_NMS": "detect_no_nms.tflite",
       "ML_MODEL_DATA_LAYOUT": "NHWC", 
+      "ML_MODEL_MODEL_NAME": "ssd-mobilenet", 
       "MODEL_ANCHORS": "flatanchors.txt",
       "MODEL_CLASSES": "flatlabels.txt",
       "MODEL_LABELMAP_FILE": "mscoco_label_map.pbtxt",
