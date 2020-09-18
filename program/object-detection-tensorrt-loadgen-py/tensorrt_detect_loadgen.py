@@ -40,7 +40,8 @@ LOADGEN_DATASET_SIZE = LOADGEN_DATASET_SIZE or len(image_path_list)
 
 
 def tick(letter, quantity=1):
-    print(letter + (str(quantity) if quantity>1 else ''), end='')
+    if VERBOSITY_LEVEL:
+        print(letter + (str(quantity) if quantity>1 else ''), end='')
 
 
 # Currently loaded preprocessed images are stored in a dictionary:
@@ -48,7 +49,8 @@ preprocessed_image_buffer = {}
 
 
 def load_query_samples(sample_indices):     # 0-based indices in our whole dataset
-    print("load_query_samples({})".format(sample_indices))
+    if VERBOSITY_LEVEL > 1:
+        print("load_query_samples({})".format(sample_indices))
 
     tick('B', len(sample_indices))
 
@@ -57,7 +59,9 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
         preprocessed_image_buffer[sample_index] = np.array(img)
         tick('l')
-    print('')
+
+    if VERBOSITY_LEVEL:
+        print('')
 
 
 def unload_query_samples(sample_indices):
@@ -66,14 +70,16 @@ def unload_query_samples(sample_indices):
 
     preprocessed_image_buffer = {}
     tick('U')
-    print('')
+
+    if VERBOSITY_LEVEL:
+        print('')
 
 
 def issue_queries(query_samples):
 
     global BATCH_SIZE 
 
-    if VERBOSITY_LEVEL:
+    if VERBOSITY_LEVEL > 2:
         printable_query = [(qs.index, qs.id) for qs in query_samples]
         print("issue_queries( {} )".format(printable_query))
     tick('Q', len(query_samples))
@@ -85,10 +91,11 @@ def issue_queries(query_samples):
         trimmed_batch_results, inference_time_s = inference_for_given_batch(batch_data)
         actual_batch_size = len(trimmed_batch_results)
 
-        print("[batch of {}] inference={:.2f} ms".format(actual_batch_size, inference_time_s*1000))
+        if VERBOSITY_LEVEL > 1:
+            print("[batch of {}] inference={:.2f} ms".format(actual_batch_size, inference_time_s*1000))
 
         tick('p', len(batch))
-        if VERBOSITY_LEVEL:
+        if VERBOSITY_LEVEL > 2:
             print("predicted_batch_results = {}".format(trimmed_batch_results))
 
         response = []
