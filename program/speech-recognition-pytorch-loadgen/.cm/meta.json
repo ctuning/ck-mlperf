@@ -37,14 +37,21 @@
           "module_uoa": "script",
           "script_name": "loadgen_postprocess"
         },
-        "run_cmd_main": "$<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/run.py --dataset_dir  $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../ --manifest $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json --pytorch_config_toml $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch/configs/rnnt.toml --pytorch_checkpoint $<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt  --log_dir $<<PWD>>$ --scenario $<<CK_RNNT_SCENARIO>>$ --backend $<<CK_RNNT_BACKEND>>$ --instr"
+        "run_cmd_main": "$PYTHONPATH=$PYTHONPATH:$<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch <<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/run.py --dataset_dir  $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../ --manifest $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json --pytorch_config_toml $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch/configs/rnnt.toml --pytorch_checkpoint $<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt  --log_dir $<<PWD>>$ --scenario $<<CK_RNNT_SCENARIO>>$ --backend $<<CK_RNNT_BACKEND>>$ --instr"
       }
     },
     "accuracy-bench": {
       "ignore_return_code": "no",
       "run_time": {
         "pre_process_via_ck": {
-          "script_name": "preprocess"
+          "data_uoa": "speech-recognition",
+          "module_uoa": "script",
+          "script_name": "loadgen_preprocess"
+        },
+        "post_process_via_ck": {
+          "data_uoa": "speech-recognition",
+          "module_uoa": "script",
+          "script_name": "loadgen_postprocess"
         },
         "run_cmd_main": "PYTHONPATH=$PYTHONPATH:$<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch $<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/run.py --dataset_dir  $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../ --manifest $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json --pytorch_config_toml $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch/configs/rnnt.toml --pytorch_checkpoint $<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt  --log_dir $<<PWD>>$ --scenario $<<CK_RNNT_SCENARIO>>$ --backend $<<CK_RNNT_BACKEND>>$ --accuracy --mlperf_conf $<<CK_ENV_MLPERF_INFERENCE_MLPERF_CONF>>$ --user_conf $<<CK_LOADGEN_USER_CONF>>$"
       }
@@ -53,7 +60,14 @@
       "ignore_return_code": "no",
       "run_time": {
         "pre_process_via_ck": {
-          "script_name": "preprocess"
+          "data_uoa": "speech-recognition",
+          "module_uoa": "script",
+          "script_name": "loadgen_preprocess"
+        },
+        "post_process_via_ck": {
+          "data_uoa": "speech-recognition",
+          "module_uoa": "script",
+          "script_name": "loadgen_postprocess"
         },
         "run_cmd_main": "PYTHONPATH=$PYTHONPATH:$<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch $<<CK_ENV_COMPILER_PYTHON_FILE>>$ $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/run.py --dataset_dir  $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/../ --manifest $<<CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR>>$/wav-list.json --pytorch_config_toml $<<CK_ENV_MLPERF_INFERENCE>>$/speech_recognition/rnnt/pytorch/configs/rnnt.toml --pytorch_checkpoint $<<CK_ENV_MODEL_PYTORCH>>$/rnnt.pt  --log_dir $<<PWD>>$ --scenario $<<CK_RNNT_SCENARIO>>$ --backend $<<CK_RNNT_BACKEND>>$ --mlperf_conf $<<CK_ENV_MLPERF_INFERENCE_MLPERF_CONF>>$ --user_conf $<<CK_LOADGEN_USER_CONF>>$"
       }
@@ -90,7 +104,7 @@
       "sort": 50,
       "tags": "mlperf,inference,source,dividiti.rnnt"
     },
-    "model": {
+    "weights": {
       "local": "yes",
       "name": "PyTorch RNN-T model",
       "sort": 80,

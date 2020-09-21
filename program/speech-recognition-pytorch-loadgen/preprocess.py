@@ -21,7 +21,7 @@ def ck_preprocess(i):
     pythonpath = ""
 
   os.environ['PYTHONPATH'] = pythonpath + \
-                               os.path.join(inferencepath,"v0.7/speech_recognition/rnnt") + ":" + \
-                               os.path.join(inferencepath,"v0.7/speech_recognition/rnnt/pytorch")
+                               os.path.join(inferencepath,"speech_recognition/rnnt") + ":" + \
+                               os.path.join(inferencepath,"speech_recognition/rnnt/pytorch")
 
   return {'return': 0}
