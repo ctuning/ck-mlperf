@@ -1,14 +1,14 @@
 {
   "accu_init": {
     "ck_env": [
-        "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>"
+      "--env.CK_LOADGEN_DATASET_SIZE=<<<dataset_size>>>"
     ],
     "deps": [
-        "--dep_add_tags.compiler=<<<compiler_tags>>>",
-        "--dep_add_tags.python=v3",
-        "--dep_add_tags.mlperf-inference-src=r0.7",
-        "--dep_add_tags.weights=<<<model_tags,>>>",
-        "--dep_add_tags.images=crop.875,preprocessed,using-<<<preprocessed_using>>>"
+      "--dep_add_tags.compiler=<<<compiler_tags>>>",
+      "--dep_add_tags.python=v3",
+      "--dep_add_tags.mlperf-inference-src=r0.7",
+      "--dep_add_tags.weights=<<<model_tags,>>>",
+      "--dep_add_tags.images=crop.875,preprocessed,using-<<<preprocessed_using>>>"
     ],
     "record_tags": [
       "mlperf",
@@ -21,61 +21,74 @@
       "<<<preprocessed_tag>>>"
     ],
     "record_uoa_parts": [
-        "mlperf",
-        "<<<division>>>",
-        "<<<sut>>>",
-        "<<<library>>>",
-        "<<<model_readable>>>",
-        "<<<scenario>>>",
-        "<<<mode>>><<<mode_extension>>>"
+      "mlperf",
+      "<<<division>>>",
+      "<<<sut>>>",
+      "<<<library>>>",
+      "<<<model_readable>>>",
+      "<<<scenario>>>",
+      "<<<mode>>><<<mode_extension>>>"
     ]
   },
   "build_map": {
     "sut": {
-        "mac": {
-            "compiler_tags": "llvm,v10"
-        },
-        "mate10pro": {
-            "compiler_tags": "llvm,v6"
-        },
-        "hikey": {
-            "compiler_tags": "gcc,v7"
-        },
-        "firefly": {
-            "compiler_tags": "gcc,v7"
-        },
-        "xavier": {
-            "compiler_tags": "gcc,v7"
-        },
-        "rpi4": {
-            "compiler_tags": "gcc,v8"
-        },
-        "rpi4coral": {
-            "compiler_tags": "gcc,v9"
-        },
-        "###": {
-            "compiler_tags": "gcc,v8"
-        }
+      "mac": {
+        "compiler_tags": "llvm,v10"
+      },
+      "mate10pro": {
+        "compiler_tags": "llvm,v6"
+      },
+      "hikey": {
+        "compiler_tags": "gcc,v7"
+      },
+      "firefly": {
+        "compiler_tags": "gcc,v7"
+      },
+      "xavier": {
+        "compiler_tags": "gcc,v7"
+      },
+      "rpi4": {
+        "compiler_tags": "gcc,v8"
+      },
+      "rpi4coral": {
+        "compiler_tags": "gcc,v9"
+      },
+      "###": {
+        "compiler_tags": "gcc,v8"
+      }
+    },
+    "compliance": {
+      "###": {
+        "ck_env": "--env.CK_MLPERF_COMPLIANCE_TEST=### --env.CK_LOADGEN_MODE=Performance",
+        "mode": "performance",
+        "mode_extension": "-compliance.###",
+        "record_tags": "compliance.###",
+        "recommended_repetitions": "1",
+        "recommended_dataset_size": "1024",
+        "output_file": "mlperf_log_summary.txt",
+        "compliance_config_file": "audit.config",
+        "remove_compliance_config_file": "<<<remove_compliance_config_file_cmd>>>"
+      }
     },
     "model": {
-        "resnet50": {
-            "division": "closed",
-            "model_tags": [ "###" ]
-        },
-        "lite.": {
-            "model_tags": [ "efficientnet", "###" ]
-        },
-        "v[123]-.*": {
-            "model_tags": [ "mobilenet", "###" ]
-        },
-        "edgetpu_.*": {
-            "model_tags": [ "mobilenet", "###" ]
-        }
+      "resnet50": {
+        "division": "closed",
+        "model_tags": [ "###" ]
+      },
+      "lite.": {
+        "model_tags": [ "efficientnet", "###" ]
+      },
+      "v[123]-.*": {
+        "model_tags": [ "mobilenet", "###" ]
+      },
+      "edgetpu_.*": {
+        "model_tags": [ "mobilenet", "###" ]
+      }
     },
     "model_extra_tags": {
-        "###": {
-            "model_tags": [ "###" ]
-        }
+      "###": {
+        "model_tags": [ "###" ]
+      }
     },
     "library": {
       "armnn-v20.08-neon": {
@@ -83,9 +96,9 @@
         "deps": "--dep_add_tags.library=armnn,rel.20.08,neon",
         "program_name": "image-classification-armnn-tflite-loadgen",
         "record_tags": [
-            "inference_engine.armnn",
-            "inference_engine_version.v20.08",
-            "inference_engine_backend.neon"
+          "inference_engine.armnn",
+          "inference_engine_version.v20.08",
+          "inference_engine_backend.neon"
         ]
       },
       "armnn-v20.08-opencl": {
@@ -93,53 +106,53 @@
         "deps": "--dep_add_tags.library=armnn,rel.20.08,opencl",
         "program_name": "image-classification-armnn-tflite-loadgen",
         "record_tags": [
-            "inference_engine.armnn",
-            "inference_engine_version.v20.08",
-            "inference_engine_backend.opencl"
+          "inference_engine.armnn",
+          "inference_engine_version.v20.08",
+          "inference_engine_backend.opencl"
         ]
       },
       "tflite-v1.13.1": {
         "deps": "--dep_add_tags.library=tflite,v1.13.1",
         "program_name": "image-classification-tflite-loadgen",
         "record_tags": [
-            "inference_engine.tflite",
-            "inference_engine_version.v1.13.1"
+          "inference_engine.tflite",
+          "inference_engine_version.v1.13.1"
         ]
       },
       "tflite-v2.2.0-ruy": {
         "deps": "--dep_add_tags.library=tflite,v2.2.0",
         "program_name": "image-classification-tflite-loadgen",
         "record_tags": [
-            "inference_engine.tflite",
-            "inference_engine_version.v2.2.0",
-            "inference_engine_backend.ruy"
+          "inference_engine.tflite",
+          "inference_engine_version.v2.2.0",
+          "inference_engine_backend.ruy"
         ]
       },
       "tflite-v2.3": {
         "deps": "--dep_add_tags.library=tflite,v2.3.90",
         "program_name": "image-classification-tflite-loadgen",
         "record_tags": [
-            "inference_engine.tflite",
-            "inference_engine_version.v2.3.0",
-            "inference_engine_backend.eigen"
+          "inference_engine.tflite",
+          "inference_engine_version.v2.3.0",
+          "inference_engine_backend.eigen"
         ]
       },
       "tflite-v2.3-ruy": {
         "deps": "--dep_add_tags.library=tflite,v2.3.90,with.ruy",
         "program_name": "image-classification-tflite-loadgen",
         "record_tags": [
-            "inference_engine.tflite",
-            "inference_engine_version.v2.3.0",
-            "inference_engine_backend.ruy"
+          "inference_engine.tflite",
+          "inference_engine_version.v2.3.0",
+          "inference_engine_backend.ruy"
         ]
       },
       "tflite-v2.3-xnnpack": {
         "deps": "--dep_add_tags.library=tflite,v2.3.90,with.xnnpack",
         "program_name": "image-classification-tflite-loadgen",
         "record_tags": [
-            "inference_engine.tflite",
-            "inference_engine_version.v2.3.0",
-            "inference_engine_backend.xnnpack"
+          "inference_engine.tflite",
+          "inference_engine_version.v2.3.0",
+          "inference_engine_backend.xnnpack"
         ]
       }
     },
@@ -221,8 +234,10 @@
 
     "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
 
+    "remove_compliance_config_file_cmd": "&& rm `ck find program:<<<program_name>>>`/tmp/<<<compliance_config_file>>>",
+
     "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>",
-    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
+    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> <<<?remove_compliance_config_file>>> ; fi",
 
     "ck_compile_program": "ck compile program:<<<program_name>>> <<<?deps >>>",
     "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",

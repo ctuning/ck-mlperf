@@ -34,12 +34,11 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
 accuracy=76.442%, good=38221, total=50000
 ```
 
-#### Compliance **NOT TESTED**
+#### Compliance
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=tflite-v2.2.0-ruy \
---model=resnet50 --scenario=singlestream --mode=performance --target_latency=88 \
---compliance,=TEST04-A,TEST04-B,TEST05,TEST01 \
+--model=resnet50 --scenario=singlestream --compliance,=TEST04-A,TEST04-B,TEST05,TEST01 \
 --verbose --sut=xavier
 ```
 
