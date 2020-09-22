@@ -48,13 +48,16 @@
       "force_target_as_host": "yes",
       "local": "yes",
       "name": "ImageNet dataset (preprocessed subset)",
-      "sort": 20,
+      "sort": 30,
       "tags": "dataset,imagenet,preprocessed"
     },
     "weights": {
+      "pass_matching_tags_to": {
+        "side.": [ "images" ]
+      },
       "local": "yes", 
       "name": "ONNX model", 
-      "sort": 30, 
+      "sort": 20,
       "tags": "model,image-classification,onnx"
     }, 
     "imagenet-helper": {
