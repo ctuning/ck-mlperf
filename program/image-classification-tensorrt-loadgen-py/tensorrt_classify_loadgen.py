@@ -70,7 +70,7 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
     tick('B', len_sample_indices)
 
-    if preprocessed_image_buffer==None:     # only do this once, once we know the expected size of the buffer
+    if preprocessed_image_buffer is None:     # only do this once, once we know the expected size of the buffer
         preprocessed_image_buffer = np.empty((len_sample_indices, MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH), dtype=MODEL_INPUT_DATA_TYPE)
 
     for buffer_index, sample_index in zip(range(len_sample_indices), sample_indices):
