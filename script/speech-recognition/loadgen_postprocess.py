@@ -9,16 +9,25 @@
 import os
 import json
 import re
+from subprocess import check_output
 
 MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
+ACCURACY_TXT             = 'accuracy.txt'
 
 RNNT_TIMING_INSTRUMENTATION_JSON = 'instr_timing.json'
 RNNT_ACC_INSTRUMENTATION_JSON    = 'instr_accuracy.json'
 
 LABELS = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"]
+
+
+
+
+
+
+
 
 def logits_to_string(logits, labels):
     labels_map = dict([(i, labels[i]) for i in range(len(labels))])
@@ -29,6 +38,7 @@ def keyval(d, key):
     if isinstance(v, dict):
         result = keyval(v, key)
         if result != None:
+          #print(k)
           return result
     else:
         if(k == key):
@@ -71,6 +81,31 @@ def ck_postprocess(i):
   accuracy_mode = False
   if mlperf_log_dict['accuracy'] != []:
     accuracy_mode = True
+
+    inference_dir = i['deps']['lib-python-loadgen']['dict']['deps']['mlperf-inference']['dict']['env']['CK_ENV_MLPERF_INFERENCE']
+    accuracy_script = os.path.join( inference_dir, 'speech_recognition', 'rnnt', 'accuracy_eval.py' )
+
+    dataset_dir = os.path.join(keyval(i, 'CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR'), '..')
+    manifest = os.path.join(keyval(i, 'CK_ENV_DATASET_AUDIO_PREPROCESSED_DIR'),'wav-list.json')
+
+    command = [ i['deps']['python']['dict']['env']['CK_ENV_COMPILER_PYTHON_FILE'], accuracy_script,
+              '--log_dir', '.',
+              '--dataset_dir', dataset_dir,
+              '--manifest', manifest ]
+
+    output = check_output(command).decode('ascii')
+
+    print(output)
+
+    with open(ACCURACY_TXT, 'w') as accuracy_file:
+      accuracy_file.write(output)
+
+    matchObj  = re.search('Word Error Rate: (.+)%, accuracy=(.+)%', output)
+
+
+    save_dict['wer']      = float( matchObj.group(1) )
+    save_dict['accuracy'] = float( matchObj.group(2) )
+
 
   if os.path.isfile(RNNT_TIMING_INSTRUMENTATION_JSON) and \
      os.path.isfile(RNNT_ACC_INSTRUMENTATION_JSON):
