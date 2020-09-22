@@ -107,14 +107,11 @@ def load_image_by_index_and_normalize(image_index):
 
 
 def load_preprocessed_batch(image_list, image_index):
-    batch_data = []
-    for _ in range(BATCH_SIZE):
-        img = load_image_by_index_and_normalize(image_index)
-
-        batch_data.append( [img] )
+    batch_data = np.empty([BATCH_SIZE, MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH], dtype=MODEL_INPUT_DATA_TYPE)
+    for in_batch_idx in range(BATCH_SIZE):
+        batch_data[in_batch_idx] = load_image_by_index_and_normalize(image_index)
         image_index += 1
 
-    batch_data = np.concatenate(batch_data, axis=0)
     #print('Data shape: {}'.format(batch_data.shape))
 
     if MODEL_USE_DLA and MODEL_MAX_BATCH_SIZE>len(batch_data):
