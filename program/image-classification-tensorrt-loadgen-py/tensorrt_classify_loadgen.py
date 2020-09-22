@@ -56,17 +56,24 @@ def tick(letter, quantity=1):
 
 
 # Currently loaded preprocessed images are stored in pre-allocated numpy arrays:
-preprocessed_image_buffer = np.empty((LOADGEN_BUFFER_SIZE, MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH), dtype=MODEL_INPUT_DATA_TYPE)
+preprocessed_image_buffer = None
 preprocessed_image_map = np.empty(LOADGEN_DATASET_SIZE, dtype=np.int)   # this type should be able to hold indices in range 0:LOADGEN_DATASET_SIZE
 
 
 def load_query_samples(sample_indices):     # 0-based indices in our whole dataset
+    global preprocessed_image_buffer
+
     if VERBOSITY_LEVEL > 1:
         print("load_query_samples({})".format(sample_indices))
 
-    tick('B', len(sample_indices))
+    len_sample_indices = len(sample_indices)
 
-    for buffer_index, sample_index in zip(range(len(sample_indices)), sample_indices):
+    tick('B', len_sample_indices)
+
+    if preprocessed_image_buffer==None:     # only do this once, once we know the expected size of the buffer
+        preprocessed_image_buffer = np.empty((len_sample_indices, MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH), dtype=MODEL_INPUT_DATA_TYPE)
+
+    for buffer_index, sample_index in zip(range(len_sample_indices), sample_indices):
         preprocessed_image_map[sample_index] = buffer_index
         preprocessed_image_buffer[buffer_index] = np.array( load_image_by_index_and_normalize(sample_index) )
 
