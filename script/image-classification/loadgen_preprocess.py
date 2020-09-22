@@ -75,16 +75,22 @@ def user_conf_and_audit_config(i):
     # Copy 'audit.config' for compliance testing into the current directory ('tmp').
     compliance_test_config = 'audit.config'
     compliance_test = env.get('CK_MLPERF_COMPLIANCE_TEST','')
-    inference_root = dep_env('mlperf-inference-src', 'CK_ENV_MLPERF_INFERENCE')
-    if compliance_test != '' and inference_root != '':
-        if compliance_test in [ 'TEST01', 'TEST04-A', 'TEST04-B', 'TEST05' ]:
-            compliance_test_source_dir = os.path.join(inference_root, 'compliance', 'nvidia', compliance_test)
-            if compliance_test in [ 'TEST01' ]: compliance_test_source_dir = os.path.join(compliance_test_source_dir, model_name)
-            compliance_test_config_source_path = os.path.join(compliance_test_source_dir, compliance_test_config)
-            compliance_test_config_target_path = os.path.join(os.path.abspath(os.path.curdir), compliance_test_config)
-            copy2(compliance_test_config_source_path, compliance_test_config_target_path)
+    compliance_test_config_target_path = os.path.join(os.path.abspath(os.path.curdir), compliance_test_config)
+    if compliance_test != '':
+        inference_root = dep_env('mlperf-inference-src', 'CK_ENV_MLPERF_INFERENCE')
+        if inference_root != '':
+            if compliance_test in [ 'TEST01', 'TEST04-A', 'TEST04-B', 'TEST05' ]:
+                compliance_test_source_dir = os.path.join(inference_root, 'compliance', 'nvidia', compliance_test)
+                if compliance_test in [ 'TEST01' ]: compliance_test_source_dir = os.path.join(compliance_test_source_dir, model_name)
+                compliance_test_config_source_path = os.path.join(compliance_test_source_dir, compliance_test_config)
+                copy2(compliance_test_config_source_path, compliance_test_config_target_path)
+            else:
+                raise Exception("Error: Unsupported compliance test: '{}'".format(compliance_test))
         else:
-            raise Exception("Warning: Unsupported compliance test: '{}'".format(compliance_test))
+                raise Exception("Error: the environment variable CK_ENV_MLPERF_INFERENCE necessary to run compliance tests is empty")
+    elif os.path.isfile(compliance_test_config_target_path):
+        print("Not in compliance test mode - deleting the file '{}'".format(compliance_test_config_target_path))
+        os.remove(compliance_test_config_target_path)
 
     print('=-=-=-=-=- done.\n')
 
