@@ -9,10 +9,6 @@
 <a name="singlestream"></a>
 ### SingleStream
 
-```bash
-$ ck install package --tags=model,tensorrt,resnet50.singlestream,for.xavier
-```
-
 #### Performance
 
 ```bash
@@ -35,10 +31,6 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 <a name="offline"></a>
 ### Offline
 
-```bash
-$ ck install package --tags=model,tensorrt,resnet50.offline,for.xavier
-```
-
 #### Performance
 
 ```bash
@@ -60,10 +52,6 @@ $ ck run cmdgen:benchmark.tensorrt-loadgen --verbose \
 
 <a name="multistream"></a>
 ### MultiStream
-
-```bash
-$ ck install package --tags=model,tensorrt,resnet50.multistream,for.xavier
-```
 
 #### Performance ((272,160 == 9! * 3/4) > 270,336)
 
