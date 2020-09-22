@@ -7,7 +7,8 @@ import sys
 import time
 
 from imagenet_helper import (load_image_by_index_and_normalize, image_list, class_labels,
-    MODEL_DATA_LAYOUT, MODEL_USE_DLA, BATCH_SIZE)
+    MODEL_DATA_LAYOUT, MODEL_USE_DLA, BATCH_SIZE,
+    MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH, MODEL_INPUT_DATA_TYPE)
 
 from tensorrt_helper import (initialize_predictor, inference_for_given_batch)
 
@@ -54,8 +55,9 @@ def tick(letter, quantity=1):
         print(letter + (str(quantity) if quantity>1 else ''), end='')
 
 
-# Currently loaded preprocessed images are stored in a dictionary:
-preprocessed_image_buffer = {}
+# Currently loaded preprocessed images are stored in pre-allocated numpy arrays:
+preprocessed_image_buffer = np.empty((LOADGEN_BUFFER_SIZE, MODEL_IMAGE_CHANNELS, MODEL_IMAGE_HEIGHT, MODEL_IMAGE_WIDTH), dtype=MODEL_INPUT_DATA_TYPE)
+preprocessed_image_map = np.empty(LOADGEN_DATASET_SIZE, dtype=np.int)   # this type should be able to hold indices in range 0:LOADGEN_DATASET_SIZE
 
 
 def load_query_samples(sample_indices):     # 0-based indices in our whole dataset
@@ -64,10 +66,10 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
     tick('B', len(sample_indices))
 
-    for sample_index in sample_indices:
-        img = load_image_by_index_and_normalize(sample_index)
+    for buffer_index, sample_index in zip(range(len(sample_indices)), sample_indices):
+        preprocessed_image_map[sample_index] = buffer_index
+        preprocessed_image_buffer[buffer_index] = np.array( load_image_by_index_and_normalize(sample_index) )
 
-        preprocessed_image_buffer[sample_index] = np.array(img)
         tick('l')
 
     if VERBOSITY_LEVEL:
@@ -76,9 +78,6 @@ def load_query_samples(sample_indices):     # 0-based indices in our whole datas
 
 def unload_query_samples(sample_indices):
     #print("unload_query_samples({})".format(sample_indices))
-    global preprocessed_image_buffer
-
-    preprocessed_image_buffer = {}
     tick('U')
 
     if VERBOSITY_LEVEL:
@@ -98,7 +97,7 @@ def issue_queries(query_samples):
 
     for j in range(0, len(query_samples), BATCH_SIZE):
         batch       = query_samples[j:j+BATCH_SIZE]   # NB: the last one may be shorter than BATCH_SIZE in length
-        batch_data  = [ preprocessed_image_buffer[qs.index] for qs in batch ]
+        batch_data  = preprocessed_image_buffer[preprocessed_image_map[ [qs.index for qs in batch] ]]
 
         trimmed_batch_results, inference_time_s = inference_for_given_batch(batch_data)
         actual_batch_size = len(trimmed_batch_results)
