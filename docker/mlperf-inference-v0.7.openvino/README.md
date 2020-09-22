@@ -6,6 +6,21 @@ This collection of images from [dividiti](http://dividiti.com) tests automated, 
 |-|-|-|-|
 | `ubuntu-20.04` | 3.8.2 | 9.3.0 ||
 
+<a name="setup_ck"></a>
+## Set up Collective Knowledge
+
+You will need to install [Collective Knowledge](http://cknowledge.org) to build images and save benchmarking results.
+Please follow the [CK installation instructions](https://github.com/ctuning/ck#installation) and then pull our object detection repository:
+
+```bash
+$ ck pull repo:ck-mlperf
+```
+
+**NB:** Refresh all CK repositories after any updates (e.g. bug fixes):
+```bash
+$ ck pull all
+```
+
 ## Build
 
 To build an image e.g. from `Dockerfile.ubuntu-20.04`:

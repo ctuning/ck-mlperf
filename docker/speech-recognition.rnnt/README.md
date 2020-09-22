@@ -33,6 +33,22 @@ It is instructive to diff the following image pairs:
 - `amazonlinux` and `amazonlinux.glow` (as the latter is derived from the former).
 - `amazonlinux.glow` and `amazonlinux.glow.min` (as the latter is derived from the former).
 
+<a name="setup_ck"></a>
+## Set up Collective Knowledge
+
+You will need to install [Collective Knowledge](http://cknowledge.org) to build images and save benchmarking results.
+Please follow the [CK installation instructions](https://github.com/ctuning/ck#installation) and then pull our object detection repository:
+
+```bash
+$ ck pull repo:ck-mlperf
+```
+
+**NB:** Refresh all CK repositories after any updates (e.g. bug fixes):
+```bash
+$ ck pull all
+```
+
+
 ## Build
 
 To build an image e.g. from `Dockerfile.centos-7`:
