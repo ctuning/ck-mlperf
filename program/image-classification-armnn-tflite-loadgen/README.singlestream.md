@@ -9,7 +9,7 @@
 
 #### Performance
 
-##### Neon **DONE**
+##### Neon
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -17,7 +17,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 --verbose --sut=firefly
 ```
 
-##### OpenCL **DONE**
+##### OpenCL
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-opencl \
@@ -27,7 +27,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-opencl \
 
 #### Accuracy
 
-##### Neon **NOT TESTED**
+##### Neon
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -36,7 +36,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 ...
 ```
 
-##### OpenCL **NOT TESTED**
+##### OpenCL
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-opencl \
@@ -47,28 +47,26 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-opencl \
 
 #### Compliance
 
-##### Neon **NOT TESTED**
+##### Neon
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
---model=resnet50 --scenario=singlestream --mode=performance --target_latency=400 \
---compliance,=TEST04-A,TEST04-B,TEST05,TEST01 \
+--model=resnet50 --scenario=singlestream  --compliance,=TEST04-A,TEST04-B,TEST05,TEST01 \
 --verbose --sut=firefly
 ```
 
-##### OpenCL **NOT TESTED**
+##### OpenCL
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-opencl \
---model=resnet50 --scenario=singlestream --mode=performance --target_latency=400 \
---compliance,=TEST04-A,TEST04-B,TEST05,TEST01 \
+--model=resnet50 --scenario=singlestream --compliance,=TEST04-A,TEST04-B,TEST05,TEST01 \
 --verbose --sut=firefly
 ```
 
 
 ### MobileNet-v1
 
-#### Performance **NOT TESTED**
+#### Performance
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -78,7 +76,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 --verbose --sut=firefly
 ```
 
-#### Accuracy **NOT TESTED**
+#### Accuracy
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -90,7 +88,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 
 ### MobileNet-v2
 
-#### Performance **NOT TESTED**
+#### Performance
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -100,7 +98,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 --verbose --sut=firefly
 ```
 
-#### Accuracy **NOT TESTED**
+#### Accuracy
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -121,7 +119,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 --verbose --sut=firefly
 ```
 
-#### Accuracy **NOT TESTED**
+#### Accuracy
 
 ```bash
 $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -132,7 +130,7 @@ $ ck run cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 
 ### EfficientNet
 
-#### Performance **NOT TESTED**
+#### Performance
 
 ```bash
 $ ck gen cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
@@ -142,7 +140,7 @@ $ ck gen cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
 --verbose --sut=firefly
 ```
 
-#### Accuracy **NOT TESTED**
+#### Accuracy
 
 ```bash
 $ ck gen cmdgen:benchmark.tflite-loadgen --library=armnn-v20.08-neon \
