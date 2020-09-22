@@ -8,6 +8,7 @@
       "--dep_add_tags.python=v3",
       "--dep_add_tags.mlperf-inference-src=r0.7",
       "--dep_add_tags.weights=<<<model_tags,>>>",
+      "--dep_add_tags.edgetpu-lib=<<<edgetpu_tags,>>>",
       "--dep_add_tags.dataset=dataset,object-detection,preprocessed,full,using-<<<preprocessed_using>>>"
     ],
     "record_tags": [
@@ -31,6 +32,7 @@
       "<<<inference_engine_version>>>",
       "<<<inference_engine_backend>>>",
       "<<<model_readable>>>",
+      "<<<edgetpu_tags>>>",
       "<<<scenario>>>",
       "<<<mode>>><<<mode_extension>>>"
     ]
@@ -128,6 +130,18 @@
       "###": {
         "model_tags": [
           "###"
+        ]
+      }
+    },
+    "edgetpu_lib": {
+      "std": {
+        "edgetpu_tags": [
+          "std_14.1_arm64"
+        ]
+      },
+      "max": {
+        "edgetpu_tags": [
+          "max_14.1_arm64"
         ]
       }
     },
