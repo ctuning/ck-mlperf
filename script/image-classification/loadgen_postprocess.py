@@ -16,6 +16,7 @@ MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
 MLPERF_USER_CONF         = 'user.conf'
+MLPERF_AUDIT_CONF        = 'audit.config'
 ACCURACY_TXT             = 'accuracy.txt'
 
 
@@ -58,13 +59,10 @@ def ck_postprocess(i):
   else:
     mlperf_log_dict['trace'] = {}
 
-  if os.path.exists( MLPERF_MAIN_CONF ):
-    with open(MLPERF_MAIN_CONF, 'r') as main_conf_file:
-      mlperf_conf_dict['mlperf.conf'] = main_conf_file.readlines()
-
-  if os.path.exists( MLPERF_USER_CONF ):
-    with open(MLPERF_USER_CONF, 'r') as user_conf_file:
-      mlperf_conf_dict['user.conf'] = user_conf_file.readlines()
+  for conf_path in (MLPERF_MAIN_CONF, MLPERF_USER_CONF, MLPERF_AUDIT_CONF):
+    if os.path.exists( conf_path ):
+      with open(conf_path, 'r') as conf_fd:
+        mlperf_conf_dict[ os.path.basename(conf_path) ] = conf_fd.readlines()
 
   # Check accuracy in accuracy mode.
   # NB: Used to be just (mlperf_log_dict['accuracy'] != []) but this proved
