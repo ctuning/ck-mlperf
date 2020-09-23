@@ -241,6 +241,7 @@
     "model_readable": "<<<model_tags->>>",
     "preprocessed_tag": "preprocessed_using.<<<preprocessed_using>>>",
     "preprocessed_using": "pillow",
+    "edgetpu_tags": "max_14.1_arm64",
     "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
     "record_uoa": "<<<record_uoa_parts->>>",
     "repetitions": "1",
