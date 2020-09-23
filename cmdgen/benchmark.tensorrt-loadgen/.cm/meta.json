@@ -160,11 +160,6 @@
         "shell_wrapped_cmd": "<<<wrapped_ck_run_program>>>"
       }
     },
-    "verbosity": {
-      "###": {
-        "ck_env": "--env.CK_VERBOSE=###"
-      }
-    },
     "verbose": {
       "all": {
         "print_output_file": "<<<print_output_file_cmd>>>",
