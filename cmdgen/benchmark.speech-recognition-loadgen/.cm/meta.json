@@ -62,6 +62,9 @@
       },
       "singlestream": {
         "ck_env": "--env.CK_RNNT_SCENARIO=SingleStream"
+      },
+      "server": {
+        "ck_env": "--env.CK_RNNT_SCENARIO=Server"
       }
     },
     "sut": {
