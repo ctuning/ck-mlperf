@@ -109,6 +109,17 @@
         "recommended_dataset_size": "1024"
       }
     },
+    "compliance": {
+      "###": {
+        "ck_env": "--env.CK_MLPERF_COMPLIANCE_TEST=### --env.CK_LOADGEN_MODE=PerformanceOnly",
+        "mode": "performance",
+        "mode_extension": "-compliance.###",
+        "record_tags": "compliance.###",
+        "recommended_repetitions": "1",
+        "recommended_dataset_size": "1024",
+        "output_file": "mlperf_log_summary.txt"
+      }
+    },
     "model": {
       "non-quantized": {
         "division": "closed",
