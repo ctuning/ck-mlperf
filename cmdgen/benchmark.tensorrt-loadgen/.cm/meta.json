@@ -72,7 +72,7 @@
     },
     "compliance": {
       "###": {
-        "ck_env": "--env.CK_MLPERF_COMPLIANCE_TEST=### --env.CK_LOADGEN_MODE=Performance",
+        "ck_env": "--env.CK_MLPERF_COMPLIANCE_TEST=### --env.CK_LOADGEN_MODE=PerformanceOnly",
         "mode": "performance",
         "mode_extension": "-compliance.###",
         "record_tags": "compliance.###",
