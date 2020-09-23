@@ -31,7 +31,7 @@
     "dataset": {
       "local": "yes",
       "name": "Preprocessed images",
-      "sort": 20,
+      "sort": 30,
       "tags": "dataset,object-detection,preprocessed"
     },
     "coco-helper": {
@@ -83,9 +83,12 @@
       "tags": "tool,coco"
     },
     "weights": {
+      "pass_matching_tags_to": {
+        "side.": [ "dataset" ]
+      },
       "local": "yes",
       "name": "TensorFlow Object Detection model",
-      "sort": 30,
+      "sort": 20,
       "tags": "model,object-detection,onnx"
     }
   },
