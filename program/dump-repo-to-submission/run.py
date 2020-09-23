@@ -255,10 +255,10 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
         else:
             recorded_transformation_path = 'TFLite'
     elif program_name == 'object-detection-tflite-loadgen':
-        if benchmark.endswith('-edgetpu'):  # in need of a better signal
+        if benchmark.endswith('-edgetpu'):  # TODO: need a better signal
             recorded_transformation_path = 'TF -> EdgeTPU'
         else:
-            recorded_transformation_path = 'TF -> TFlite'
+            recorded_transformation_path = 'TF -> TFLite'
 
     elif program_name == 'image-classification-tensorrt-loadgen-py':
         if benchmark in ['resnet', 'resnet50']:
@@ -1301,7 +1301,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
             program_readme_path = os.path.join(program_path, program_readme_name)
             copy2(program_readme_path, implementation_readme_path)
             print('  |_ %s [from %s]' % (implementation_readme_name, program_readme_path))
-        elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+        elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen', 'object-detection-tflite-loadgen' ]:
             program_path = get_program_path(program_name)
             program_readme_name = 'README.md'
             program_readme_path = os.path.join(program_path, program_readme_name)
@@ -1361,12 +1361,10 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
         else:
             if program_name == 'openvino-loadgen-v0.7-drop':
                 program_readme_name = 'README.{}-{}.md'.format(benchmark, scenario)
-            elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen' ]:
+            elif program_name in [ 'image-classification-tflite-loadgen', 'image-classification-armnn-tflite-loadgen', 'object-detection-tflite-loadgen' ]:
                 program_readme_name = 'README.{}.md'.format(scenario)
             elif program_name in [ 'image-classification-tensorrt-loadgen-py', 'object-detection-tensorrt-loadgen-py' ]:
                 program_readme_name = 'README.{}.md'.format(benchmark)
-            elif program_name == 'object-detection-tflite-loadgen':
-                program_readme_name = 'README.md'
 
             program_path = get_program_path(program_name)
             program_readme_path = os.path.join(program_path, program_readme_name)
