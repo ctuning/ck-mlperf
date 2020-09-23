@@ -59,15 +59,13 @@
     },
     "compliance": {
       "###": {
-        "ck_env": "--env.CK_MLPERF_COMPLIANCE_TEST=### --env.CK_LOADGEN_MODE=Performance",
+        "ck_env": "--env.CK_MLPERF_COMPLIANCE_TEST=### --env.CK_LOADGEN_MODE=PerformanceOnly",
         "mode": "performance",
         "mode_extension": "-compliance.###",
         "record_tags": "compliance.###",
         "recommended_repetitions": "1",
         "recommended_dataset_size": "1024",
-        "output_file": "mlperf_log_summary.txt",
-        "compliance_config_file": "audit.config",
-        "remove_compliance_config_file": "<<<remove_compliance_config_file_cmd>>>"
+        "output_file": "mlperf_log_summary.txt"
       }
     },
     "model": {
@@ -234,10 +232,8 @@
 
     "print_output_file_cmd": "&& cat `ck find program:<<<program_name>>>`/tmp/<<<output_file>>>",
 
-    "remove_compliance_config_file_cmd": "&& rm `ck find program:<<<program_name>>>`/tmp/<<<compliance_config_file>>>",
-
     "wrapped_ck_run_program": "<<<ck_run_program>>> <<<?print_output_file>>>",
-    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> <<<?remove_compliance_config_file>>> ; fi",
+    "wrapped_ck_benchmark_program": "if [ -n \"`ck list local:experiment:<<<record_uoa>>>`\" ]; then echo 'Experiment <<<record_uoa>>> exists, skipping' ; else <<<ck_benchmark_program>>> \"@@@{'meta': {'ck_benchmark_program': '<<<ck_benchmark_program>>>'}}\" <<<?print_output_file>>> ; fi",
 
     "ck_compile_program": "ck compile program:<<<program_name>>> <<<?deps >>>",
     "run_or_benchmark_common": "program:<<<program_name>>> <<<screen_output>>> <<<?deps >>> <<<?ck_env >>>",
