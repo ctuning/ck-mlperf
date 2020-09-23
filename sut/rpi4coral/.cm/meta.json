@@ -21,7 +21,7 @@
     "host_networking_topology": "-",
 
     "accelerators_per_node": "1",
-    "accelerator_model_name": "Coral USB Accelearator",
+    "accelerator_model_name": "Coral USB Accelerator",
     "accelerator_frequency": "-",
     "accelerator_host_interconnect": "-",
     "accelerator_interconnect": "-",

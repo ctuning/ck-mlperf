@@ -158,6 +158,7 @@ def dump_system_description_dictionary(target_path, submitter_desc, division, pl
 
     framework = inference_engine_to_printable[inference_engine] + ' ' + inference_engine_version + \
                 (' ({})'.format(backend_to_printable[backend]) if backend else '')
+    framework = framework.replace('for.coral', 'for Coral')
 
     template = deepcopy(platform_templates[platform])
     template.update({
@@ -166,7 +167,9 @@ def dump_system_description_dictionary(target_path, submitter_desc, division, pl
         'status'    : status,
         'framework' : framework,
     })
-    if (not library_backend.startswith('tensorrt') and not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl')) or library_backend.endswith('cpu'):
+
+    if (not library_backend.endswith('edgetpu') and not library_backend.startswith('tensorrt') and not library_backend.startswith('tensorflow') and not library_backend.endswith('opencl')) \
+        or library_backend.endswith('cpu'):
         template.update({
             'accelerator_frequency' : '-',
             'accelerator_memory_capacity' : '-',
