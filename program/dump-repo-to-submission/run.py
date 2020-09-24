@@ -1527,12 +1527,13 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                 for config_name in mlperf_conf.keys():
                     # FIXME: Per-datapoint user configs belong here, but this must be confirmed!
                     # https://github.com/mlperf/policies/issues/57
-                    #config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir}[config_name]
+                    #config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': last_dir, 'audit.config': last_dir}[config_name]
 
                     # For now, still write under measurements/ according to the current rules.
-                    config_dir = mscenario_dir
-                    full_config_path = config_path = os.path.join(config_dir, config_name)
+                    config_dir = {'mlperf.conf': mscenario_dir, 'user.conf': mscenario_dir}.get(config_name)
+                    if not config_dir: continue
 
+                    full_config_path = config_path = os.path.join(config_dir, config_name)
                     write_config = True
                     if os.path.exists(full_config_path):
                         with open(full_config_path, 'r') as existing_config_fd:
@@ -1550,6 +1551,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                                 print("The existing config is fully contained in the new candidate, overwriting the existing one")
                             else:
                                 raise Exception("Probably a conflict, please investigate!")
+                                write_config = False
 
                     if write_config:
                         with open(config_path, 'w') as new_config_fd:
