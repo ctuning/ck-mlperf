@@ -13,6 +13,7 @@
 #include "system_under_test.h"
 #include "test_settings.h"
 
+#ifdef USE_EDGETPU
 
 #include "includes/edgetpu.h"
 
@@ -37,6 +38,8 @@ std::unique_ptr<tflite::Interpreter> BuildEdgeTpuInterpreter(
     }
     return interpreter;
 }
+
+#endif
 
 
 class Program {
@@ -71,13 +74,12 @@ public:
 
     ops::builtin::BuiltinOpResolver resolver;
 
-    if(settings->use_edgetpu) {
-        edgetpu_context = edgetpu::EdgeTpuManager::GetSingleton()->OpenDevice();
-        interpreter = BuildEdgeTpuInterpreter(*model, resolver, edgetpu_context.get());
-    }
-    else
-        InterpreterBuilder(*model, resolver)(&interpreter);
-
+#ifdef USE_EDGETPU
+    edgetpu_context = edgetpu::EdgeTpuManager::GetSingleton()->OpenDevice();
+    interpreter = BuildEdgeTpuInterpreter(*model, resolver, edgetpu_context.get());
+#else
+    InterpreterBuilder(*model, resolver)(&interpreter);
+#endif
 
     if (!interpreter)
         throw string("Failed to construct interpreter");
@@ -172,7 +174,9 @@ public:
 
   ~Program() {
       interpreter.reset();
+#ifdef USE_EDGETPU
       edgetpu_context.reset();
+#endif
   }
 
   //bool is_available_batch() {return session? session->get_next_batch(): false; }
@@ -240,7 +244,9 @@ private:
   unique_ptr<IBenchmark> benchmark;
   unique_ptr<tflite::Interpreter> interpreter;
   unique_ptr<tflite::FlatBufferModel> model;
+#ifdef USE_EDGETPU
   shared_ptr<edgetpu::EdgeTpuContext> edgetpu_context;
+#endif
 };
 
 

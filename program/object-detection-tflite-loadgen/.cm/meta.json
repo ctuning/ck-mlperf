@@ -23,7 +23,10 @@
       "local": "yes",
       "name": "Coral edgetpu API",
       "sort": 20,
-      "tags": "lib,edgetpu"
+      "tags": "lib,edgetpu",
+      "enable_if_env": [
+        { "USE_EDGETPU": ["YES", "yes", "Y", "y", "1", "True", "true"] }
+      ]
     },
     "lib-xopenme": {
       "local": "yes",
@@ -41,9 +44,9 @@
     "CK_ENV_LIB_MLPERF_LOADGEN_INCLUDE"
   ],
   "compiler_env": "CK_CXX",
-  "compiler_flags_as_env": "$<<CK_COMPILER_FLAG_CPP11>>$ $<<CK_ENV_LIB_TF_DEF>>$ -Wall -Wno-sign-compare",
+  "compiler_flags_as_env": "$<<CK_COMPILER_FLAG_CPP11>>$ $<<CK_ENV_LIB_TF_DEF>>$ $<<CK_ENV_LIB_EDGETPU_COMPILE_OPTIONS>>$ -Wall -Wno-sign-compare",
   "data_name": "object-detection-tflite-loadgen",
-  "extra_ld_vars": "$<<CK_ENV_LIB_TF_LINK_OPTIONS>>$ $<<CK_ENV_LIB_TF_LIBS_DIRS>>$ $<<CK_ENV_LIB_TF_LIBS>>$ -L$<<CK_ENV_LIB_EDGETPU_LIB_DIRS>>$ -ledgetpu -L$<<CK_ENV_LIB_MLPERF_LOADGEN_LIB>>$ -lmlperf_loadgen",
+  "extra_ld_vars": "$<<CK_ENV_LIB_TF_LINK_OPTIONS>>$ $<<CK_ENV_LIB_TF_LIBS_DIRS>>$ $<<CK_ENV_LIB_TF_LIBS>>$ $<<CK_ENV_LIB_EDGETPU_LINK_OPTIONS>>$ -L$<<CK_ENV_LIB_MLPERF_LOADGEN_LIB>>$ -lmlperf_loadgen",
   "linker_add_lib_as_env": [
     "CK_CXX_EXTRA",
     "CK_ENV_LIB_STDCPP_DYNAMIC"

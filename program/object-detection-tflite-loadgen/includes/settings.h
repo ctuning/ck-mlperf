@@ -344,7 +344,6 @@ public:
 
     const int images_in_memory_max = getenv_i("CK_LOADGEN_BUFFER_SIZE");
     const bool trigger_cold_run = getenv_b("CK_LOADGEN_TRIGGER_COLD_RUN");
-    const bool use_edgetpu = getenv_b("USE_EDGETPU");
 
 
 private:

@@ -43,7 +43,6 @@ def user_conf_and_audit_config(i):
     deps=i['deps']
     env=i['env']
 
-    # Try ML_MODEL_MODEL_NAME from the OpenVINO model first. If unavailable, try MODEL_NAME from its 'model-source' dependency.
     model_name = "rnnt"
     print('\n-=-=-=-=-= Generating user.conf for model "{}" ...'.format(model_name))
     scenario            = "-"
