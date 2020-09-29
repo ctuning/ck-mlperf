@@ -74,7 +74,7 @@ def user_conf_and_audit_config(i):
     # Copy 'audit.config' for compliance testing into the current directory ('tmp').
     compliance_test_config = 'audit.config'
     compliance_test = env.get('CK_MLPERF_COMPLIANCE_TEST','')
-    #inference_root = dep_env('mlperf-inference-src', 'CK_ENV_MLPERF_INFERENCE_')
+    inference_root = dep_env('mlperf-inference-src', 'CK_ENV_MLPERF_INFERENCE_')
     if compliance_test != '' and inference_root != '':
         if compliance_test in [ 'TEST01', 'TEST04-A', 'TEST04-B', 'TEST05' ]:
             compliance_test_source_dir = os.path.join(inference_root, 'compliance', 'nvidia', compliance_test)
@@ -105,7 +105,7 @@ def ck_preprocess(i):
 
     def dep_env(dep, var): return i['deps'][dep]['dict']['env'].get(var)
 
-    inferencepath = dep_env('mlperf-inference', 'CK_ENV_MLPERF_INFERENCE')
+    inferencepath = dep_env('mlperf-inference-src', 'CK_ENV_MLPERF_INFERENCE')
 
     try:
       pythonpath = os.environ['PYTHONPATH'] + ":"

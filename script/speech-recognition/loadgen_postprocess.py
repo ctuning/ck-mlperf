@@ -15,16 +15,14 @@ MLPERF_LOG_ACCURACY_JSON = 'mlperf_log_accuracy.json'
 MLPERF_LOG_DETAIL_TXT    = 'mlperf_log_detail.txt'
 MLPERF_LOG_SUMMARY_TXT   = 'mlperf_log_summary.txt'
 MLPERF_LOG_TRACE_JSON    = 'mlperf_log_trace.json'
+MLPERF_USER_CONF         = 'user.conf'
+MLPERF_AUDIT_CONF        = 'audit.config'
 ACCURACY_TXT             = 'accuracy.txt'
 
 RNNT_TIMING_INSTRUMENTATION_JSON = 'instr_timing.json'
 RNNT_ACC_INSTRUMENTATION_JSON    = 'instr_accuracy.json'
 
 LABELS = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "'"]
-
-
-
-
 
 
 
@@ -47,11 +45,19 @@ def keyval(d, key):
 def ck_postprocess(i):
   print('\n--------------------------------')
 
+  env               = i['env']
+  deps              = i['deps']
+  include_trace     = env.get('CK_LOADGEN_INCLUDE_TRACE', '') in ('YES', 'Yes', 'yes', 'TRUE', 'True', 'true', 'ON', 'On', 'on', '1')
+
+  inference_src_env = deps['mlperf-inference-src']['dict']['env']
+  MLPERF_MAIN_CONF  = inference_src_env['CK_ENV_MLPERF_INFERENCE_MLPERF_CONF']
+
   save_dict = {}
 
   # Save logs.
   save_dict['mlperf_log'] = {}
   mlperf_log_dict = save_dict['mlperf_log']
+  mlperf_conf_dict  = save_dict['mlperf_conf'] = {}
 
   with open(MLPERF_LOG_ACCURACY_JSON, 'r') as accuracy_file:
     mlperf_log_dict['accuracy'] = json.load(accuracy_file)
@@ -71,11 +77,15 @@ def ck_postprocess(i):
     mlperf_log_dict['detail'] = detail_file.readlines()
 
   import os
-  if os.stat(MLPERF_LOG_TRACE_JSON).st_size==0:
-    mlperf_log_dict['trace'] = {}
-  else:
+  if include_trace and os.stat(MLPERF_LOG_TRACE_JSON).st_size!=0:
     with open(MLPERF_LOG_TRACE_JSON, 'r') as trace_file:
       mlperf_log_dict['trace'] = json.load(trace_file)
+
+
+  for conf_path in (MLPERF_MAIN_CONF, MLPERF_USER_CONF, MLPERF_AUDIT_CONF):
+    if os.path.exists( conf_path ):
+      with open(conf_path, 'r') as conf_fd:
+        mlperf_conf_dict[ os.path.basename(conf_path) ] = conf_fd.readlines()
 
   # Check accuracy in accuracy mode.
   accuracy_mode = False

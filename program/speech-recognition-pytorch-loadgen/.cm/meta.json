@@ -80,7 +80,7 @@
       "sort": 60,
       "tags": "lib,python-package,loadgen"
     },
-    "mlperf-inference": {
+    "mlperf-inference-src": {
       "local": "yes",
       "name": "MLPerf Inference source (with RNN-T tweaks)",
       "sort": 50,
