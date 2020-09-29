@@ -28,13 +28,13 @@
   "build_map": {
     "mode": {
       "accuracy": {
-        "ck_env": "--cmd_key=accuracy-bench",
+        "ck_env": "--cmd_key=accuracy",
         "output_file": "accuracy.txt",
         "recommended_dataset_size": "<<<full_dataset_size>>>",
         "recommended_verbosity": "1"
       },
       "performance": {
-        "ck_env": "--cmd_key=performance-bench",
+        "ck_env": "--cmd_key=performance",
         "output_file": "mlperf_log_summary.txt",
         "recommended_dataset_size": "<<<performance_dataset_size>>>",
         "recommended_verbosity": "0"
@@ -55,16 +55,16 @@
     },
     "scenario": {
       "multistream": {
-        "ck_env": "--env.CK_RNNT_SCENARIO=MultiStream"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=MultiStream"
       },
       "offline": {
-        "ck_env": "--env.CK_RNNT_SCENARIO=Offline"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Offline"
       },
       "singlestream": {
-        "ck_env": "--env.CK_RNNT_SCENARIO=SingleStream"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=SingleStream"
       },
       "server": {
-        "ck_env": "--env.CK_RNNT_SCENARIO=Server"
+        "ck_env": "--env.CK_LOADGEN_SCENARIO=Server"
       }
     },
     "sut": {
