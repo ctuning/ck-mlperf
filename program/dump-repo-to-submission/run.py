@@ -1568,7 +1568,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                   pair = line.strip().split(': ', 1)
                   if len(pair)==2:
                     parsed_summary[ pair[0].strip() ] = pair[1].strip()
-                if mode == 'performance' and parsed_summary['Result is'] != 'VALID':
+                if mode == 'performance' and parsed_summary['Result is'] != 'VALID' and not compliance:
                   run_idx -= 1
                   continue
                 summary_txt_name = 'mlperf_log_summary.txt'
