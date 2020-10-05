@@ -1,0 +1,68 @@
+{
+  "backup_data_uid": "26415d8c090332ca",
+  "build_compiler_vars": {},
+  "data_name": "bert-reference-loadgen-py",
+  "main_language": "python",
+  "no_compile": "yes",
+  "no_target_file": "yes",
+  "process_in_tmp": "yes",
+  "program": "yes",
+  "run_cmds": {
+    "default": {
+      "ignore_return_code": "no",
+      "run_time": {
+        "run_cmd_main": "cd $<<CK_ENV_MLPERF_INFERENCE>>$/language/bert && $<<CK_ENV_COMPILER_PYTHON_FILE>>$ run.py --backend=pytorch --scenario=$<<CK_LOADGEN_SCENARIO>>$ $<<CK_LOADGEN_MODE_STRING>>$"
+      }
+    }
+  },
+  "run_deps": {
+    "mlperf-inference-src": {
+      "force_target_as_host": "yes",
+      "add_to_path": "no",
+      "local": "yes",
+      "name": "MLPerf Inference source",
+      "sort": 10,
+      "tags": "mlperf,inference,source"
+    },
+    "lib-python-loadgen": {
+      "local": "yes",
+      "name": "Python LoadGen library",
+      "sort": 20,
+      "tags": "lib,python-package,loadgen"
+    },
+    "lib-python-tensorflow": {
+      "local": "yes",
+      "name": "Python TensorFlow library",
+      "sort": 30,
+      "tags": "lib,python-package,tensorflow"
+    },
+    "lib-python-transformers": {
+      "local": "yes",
+      "name": "Python Transformers library",
+      "sort": 40,
+      "tags": "lib,python-package,transformers"
+    },
+    "lib-python-pytorch": {
+      "local": "yes",
+      "name": "Python Torch library",
+      "sort": 50,
+      "tags": "lib,python-package,pytorch"
+    },
+    "lib-python-onnxruntime": {
+      "local": "yes",
+      "name": "Python ONNX runtime library",
+      "sort": 60,
+      "tags": "lib,python-package,onnxruntime"
+    }
+  },
+  "run_vars": {
+    "CK_LOADGEN_MODE_STRING": "--accuracy",
+    "CK_LOADGEN_SCENARIO": "SingleStream"
+  },
+  "tags": [
+    "loadgen",
+    "bert",
+    "reference",
+    "lang-python"
+  ]
+}
