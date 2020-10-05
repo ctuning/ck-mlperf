@@ -11,7 +11,7 @@
     "default": {
       "ignore_return_code": "no",
       "run_time": {
-        "run_cmd_main": "cd $<<CK_ENV_MLPERF_INFERENCE>>$/language/bert && $<<CK_ENV_COMPILER_PYTHON_FILE>>$ run.py --backend=pytorch --scenario=$<<CK_LOADGEN_SCENARIO>>$ $<<CK_LOADGEN_MODE_STRING>>$"
+        "run_cmd_main": "../setup_and_run_bert.sh"
       }
     }
   },
@@ -56,6 +56,7 @@
     }
   },
   "run_vars": {
+    "CK_BERT_REF_BUILD_DIR": "/data/lg4/bert_ref_build",
     "CK_LOADGEN_MODE_STRING": "--accuracy",
     "CK_LOADGEN_SCENARIO": "SingleStream"
   },
