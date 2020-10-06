@@ -57,6 +57,7 @@
   },
   "run_vars": {
     "CK_BERT_REF_BUILD_DIR": "/data/lg4/bert_ref_build",
+    "CK_BERT_BACKEND": "pytorch",
     "CK_LOADGEN_MODE_STRING": "--accuracy",
     "CK_LOADGEN_SCENARIO": "SingleStream"
   },

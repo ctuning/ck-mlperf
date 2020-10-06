@@ -28,4 +28,4 @@ cp ${BERT_REF_ROOT}/create_squad_data.py ${BERT_REF_ROOT}/DeepLearningExamples/T
 
 sed -i'' 's/ accuracy-squad.py/ .\/accuracy-squad.py/g' ${BERT_REF_ROOT}/run.py
 
-$CK_ENV_COMPILER_PYTHON_FILE ${BERT_REF_ROOT}/run.py --backend=pytorch --scenario=${CK_LOADGEN_SCENARIO} $CK_LOADGEN_MODE_STRING
+$CK_ENV_COMPILER_PYTHON_FILE ${BERT_REF_ROOT}/run.py --backend=${CK_BERT_BACKEND} --scenario=${CK_LOADGEN_SCENARIO} $CK_LOADGEN_MODE_STRING
