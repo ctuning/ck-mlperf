@@ -1,6 +1,7 @@
 {
   "backup_data_uid": "26415d8c090332ca",
   "build_compiler_vars": {},
+  "pass_env_to_resolve": "yes",
   "data_name": "bert-reference-loadgen-py",
   "main_language": "python",
   "no_compile": "yes",
@@ -38,11 +39,22 @@
     },
     "lib-python-transformers": {
       "local": "yes",
-      "name": "Python Transformers library",
+      "name": "Python Transformers library (main)",
       "sort": 40,
       "tags": "lib,python-package,transformers",
       "version_from": [ 2, 4, 0],
       "version_to": [ 2, 4, 0]
+    },
+    "lib-python-transformers-override": {
+      "enable_if_env": [
+          { "CK_BERT_TRANSFORMERS_OVERRIDE":    ["on", "ON", "yes", "YES", "true", "TRUE", "1"] }
+      ],
+      "local": "yes",
+      "name": "Python Transformers library (patched override)",
+      "sort": 41,
+      "tags": "lib,python-package,transformers,patched",
+      "version_from": [ 2, 4, 0, 1],
+      "version_to": [ 2, 4, 0, 10]
     },
     "lib-python-pytorch": {
       "local": "yes",
@@ -60,6 +72,7 @@
   "run_vars": {
     "CK_BERT_REF_BUILD_DIR": "/data/lg4/bert_ref_build",
     "CK_BERT_BACKEND": "pytorch",
+    "CK_BERT_TRANSFORMERS_OVERRIDE": "no",
     "CK_LOADGEN_MODE_STRING": "",
     "_CK_LOADGEN_MODE_STRING": "--accuracy",
     "CK_LOADGEN_SCENARIO": "SingleStream"
