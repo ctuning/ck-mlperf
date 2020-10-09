@@ -33,6 +33,7 @@ fi
 cp ${BERT_REF_ROOT}/bert_config.json $CWD
 cp ${BERT_REF_ROOT}/user.conf $CWD
 
+git -C $BERT_REF_ROOT submodule update --init DeepLearningExamples
 make -f ${BERT_REF_ROOT}/Makefile download_data
 make -f ${BERT_REF_ROOT}/Makefile download_model
 
