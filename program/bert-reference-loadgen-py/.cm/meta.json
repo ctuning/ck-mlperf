@@ -70,7 +70,7 @@
     }
   },
   "run_vars": {
-    "CK_BERT_REF_BUILD_DIR": "/data/lg4/bert_ref_build",
+    "CK_BERT_DATA": "/data/lg4/bert_large_data",
     "CK_BERT_BACKEND": "pytorch",
     "CK_BERT_TRANSFORMERS_OVERRIDE": "no",
     "CK_LOADGEN_MODE_STRING": "",
