@@ -58,8 +58,11 @@ sed 's/ accuracy-squad.py/ .\/accuracy-squad.py/g' ${BERT_REF_ROOT}/run.py >${CW
 
 ## Adding one line to a Python script without disrupting the indentation structure:
 #
-EXTRA_LINE="if os.environ.get('CK_BERT_TRANSFORMERS_OVERRIDE','no').lower() in ('yes','on','true','1'): self.model.bert.set_weights_split()"
-sed "s/^\([\ \t]*\)\(self.model.load_state_dict.*\)/\1\2\n\1${EXTRA_LINE}/" ${BERT_REF_ROOT}/pytorch_SUT.py >${CWD}/pytorch_SUT.py
+OWN_PYTORCH_SUT=${CWD}/pytorch_SUT.py
+if [ ! -e "$OWN_PYTORCH_SUT" ]; then
+    EXTRA_LINE="if os.environ.get('CK_BERT_TRANSFORMERS_OVERRIDE','no').lower() in ('yes','on','true','1'): self.model.bert.set_weights_split()"
+    sed "s/^\([\ \t]*\)\(self.model.load_state_dict.*\)/\1\2\n\1${EXTRA_LINE}/" ${BERT_REF_ROOT}/pytorch_SUT.py >$OWN_PYTORCH_SUT
+fi
 
 rm -rf ${CWD}/utils
 mkdir ${CWD}/utils
