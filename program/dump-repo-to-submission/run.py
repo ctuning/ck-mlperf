@@ -179,6 +179,11 @@ def dump_system_description_dictionary(target_path, submitter_desc, division, pl
             'accelerators_per_node' : '0',
         })
 
+    if platform == 'xavier' and not library_backend.startswith('tensorrt'):
+        template.update({
+            'hw_notes': ''
+        })
+
     with open(target_path, 'w') as system_description_file:
         json.dump(template, system_description_file, indent=2)
 
@@ -1120,7 +1125,9 @@ vlatest_path=os.environ.get('CK_ENV_MLPERF_INFERENCE_VLATEST')
 
 root_dir=os.environ.get('CK_MLPERF_SUBMISSION_ROOT','')
 
-def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='', submitter='dividiti', submitter_desc='dividiti', path=None, compliance=False, version='v0.7'):
+def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf', extra_tags='',
+                               submitter='dividiti', submitter_desc='dividiti', path=None,
+                               compliance=False, version='v0.7', infer_offline_from_singlestream=False):
     if not os.path.exists(root_dir): os.mkdir(root_dir)
     print("Storing results under '%s'" % root_dir)
 
@@ -1550,7 +1557,7 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
                             elif set(existing_config_lines) < set(mlperf_conf[config_name]):
                                 print("The existing config is fully contained in the new candidate, overwriting the existing one")
                             else:
-                                raise Exception("Probably a conflict, please investigate!")
+                                #raise Exception("Probably a conflict, please investigate!")
                                 write_config = False
 
                     if write_config:
