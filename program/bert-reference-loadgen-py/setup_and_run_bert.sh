@@ -33,9 +33,14 @@ if [ ! -e "$BERT_BUILD" ]; then
     ln -s $CWD ${BERT_BUILD}/result
 fi
 
-
 cp ${BERT_REF_ROOT}/bert_config.json $CWD
-cp ${BERT_REF_ROOT}/user.conf $CWD
+
+OWN_USER_CONF=${CWD}/../user.conf
+if [ -e "$OWN_USER_CONF" ]; then
+    PATH_TO_USER_CONF=$OWN_USER_CONF
+else
+    PATH_TO_USER_CONF=${BERT_REF_ROOT}/user.conf
+fi
 
 git -C $BERT_REF_ROOT submodule update --init DeepLearningExamples
 make -f ${BERT_REF_ROOT}/Makefile download_data
@@ -62,4 +67,4 @@ cp ${BERT_REF_ROOT}/create_squad_data.py ${CWD}/utils/create_squad_data.py
 
 ## Run the patched version of run.py:
 #
-$CK_ENV_COMPILER_PYTHON_FILE ${CWD}/run.py --mlperf_conf=${CK_ENV_MLPERF_INFERENCE}/mlperf.conf --user_conf=${BERT_REF_ROOT}/user.conf --backend=${CK_BERT_BACKEND} --scenario=${CK_LOADGEN_SCENARIO} $CK_LOADGEN_MODE_STRING
+$CK_ENV_COMPILER_PYTHON_FILE ${CWD}/run.py --mlperf_conf=${CK_ENV_MLPERF_INFERENCE}/mlperf.conf --user_conf=${PATH_TO_USER_CONF} --backend=${CK_BERT_BACKEND} --scenario=${CK_LOADGEN_SCENARIO} $CK_LOADGEN_MODE_STRING
