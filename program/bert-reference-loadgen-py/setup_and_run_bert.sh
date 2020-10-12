@@ -54,7 +54,7 @@ ln -s ${BERT_REF_ROOT} ${CWD}/bert_code
 
 ## Patching some of BERT's scripts:
 #
-sed 's/ accuracy-squad.py/ .\/accuracy-squad.py/g' ${BERT_REF_ROOT}/run.py >${CWD}/run.py
+sed "s| accuracy-squad.py| ${BERT_REF_ROOT}/accuracy-squad.py|g" ${BERT_REF_ROOT}/run.py >${CWD}/run.py
 
 ## Adding one line to a Python script without disrupting the indentation structure:
 #
