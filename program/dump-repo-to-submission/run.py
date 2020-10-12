@@ -184,6 +184,11 @@ def dump_system_description_dictionary(target_path, submitter_desc, division, pl
             'hw_notes': ''
         })
 
+    if inference_engine == 'tflite' and inference_engine_version == 'v2.3.0':
+        template.update({
+            'sw_notes': template['sw_notes'] + '. Experimental CMake build from post-v2.3.0/pre-v2.4.0 revision.'
+        })
+
     with open(target_path, 'w') as system_description_file:
         json.dump(template, system_description_file, indent=2)
 
