@@ -23,7 +23,7 @@
       "local": "yes",
       "name": "MLPerf Inference source",
       "sort": 10,
-      "tags": "mlperf,inference,source"
+      "tags": "mlperf,inference,source,dividiti.bert"
     },
     "lib-python-loadgen": {
       "local": "yes",
