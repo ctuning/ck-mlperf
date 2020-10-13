@@ -56,6 +56,15 @@
         "package_extra_name": " (dividiti's fork)"
       }
     },
+    "dividiti.bert": {
+      "extra_env": {
+        "PACKAGE_URL": "https://github.com/dividiti/inference",
+        "PACKAGE_GIT_CLONE_FLAGS": "-b dvdt-bert"
+      },
+      "extra_customize": {
+        "package_extra_name": " (for program:bert-reference-loadgen-py)"
+      }
+    },
     "dividiti.vision_with_ck": {
       "extra_env": {
         "PACKAGE_URL": "https://github.com/dividiti/inference",
