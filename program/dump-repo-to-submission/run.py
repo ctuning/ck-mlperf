@@ -45,7 +45,7 @@ import json
 import re
 
 from pprint import pprint
-from shutil import copy2
+from shutil import copy2,copytree
 from copy import deepcopy
 
 
@@ -221,8 +221,8 @@ def dump_implementation_dictionary(target_path, model_dict, inference_engine, pr
     if not recorded_model_data_type:
         if {'non-quantized', 'fp32', 'float', 'float32'} & set(model_tags):
             recorded_model_data_type = 'fp32'
-        elif {'uint8'} & set(model_tags): # 'quantized', 'quant', 
-            recorded_model_data_type = 'uint8' # 'quantized', 'quant', 
+        elif {'uint8'} & set(model_tags): # 'quantized', 'quant',
+            recorded_model_data_type = 'uint8' # 'quantized', 'quant',
         elif {'int8'} & set(model_tags):
             recorded_model_data_type = 'int8'
         elif {'quantized', 'quant'} & set(model_tags):  # FIXME! This is a guess at best!
@@ -1750,6 +1750,22 @@ def check_experimental_results(repo_uoa, module_uoa='experiment', tags='mlperf',
 #                 trace_json_path = os.path.join(last_dir, trace_json_name)
 #                 with open(trace_json_path, 'w') as trace_json_file:
 #                     json.dump(mlperf_log.get('trace',{}), trace_json_file, indent=2)
+
+                # Infer Offline from SingleStream results if requested.
+                if infer_offline_from_singlestream and scenario == 'singlestream':
+                    results_singlestream_dir = scenario_dir
+                    results_offline_dir = results_singlestream_dir.replace('singlestream', 'offline')
+                    if not os.path.exists(results_offline_dir):
+                        copytree(results_singlestream_dir, results_offline_dir)
+                    else:
+                        print("Warning: '{}' already exists!".format(results_offline_dir))
+                    measurements_singlestream_dir = mscenario_dir
+                    measurements_offline_dir = measurements_singlestream_dir.replace('singlestream', 'offline')
+                    if not os.path.exists(measurements_offline_dir):
+                        copytree(measurements_singlestream_dir, measurements_offline_dir)
+                    else:
+                        print("Warning: '{}' already exists!".format(measurements_offline_dir))
+
     return
 
 
@@ -1761,10 +1777,12 @@ repos = [ repo ] if repo != '' else []
 for repo_uoa in repos:
     # First, process performance and accuracy data.
     check_experimental_results(repo_uoa, extra_tags=extra_tags,
-                               submitter=submitter, submitter_desc=submitter_desc, compliance=False)
+                               submitter=submitter, submitter_desc=submitter_desc,
+                               compliance=False, infer_offline_from_singlestream=False)
     # Then, process compliance data.
     check_experimental_results(repo_uoa, extra_tags=extra_tags,
-                               submitter=submitter, submitter_desc=submitter_desc, compliance=True)
+                               submitter=submitter, submitter_desc=submitter_desc,
+                               compliance=True, infer_offline_from_singlestream=False)
 
 print("*" * 100)
 truncate_accuracy_log_py = os.path.join(upstream_path, 'tools', 'submission', 'truncate_accuracy_log.py')
