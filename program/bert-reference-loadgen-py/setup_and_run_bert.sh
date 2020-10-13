@@ -52,9 +52,6 @@ make -f ${BERT_REF_ROOT}/Makefile download_model
 rm -f ${CWD}/bert_code
 ln -s ${BERT_REF_ROOT} ${CWD}/bert_code
 
-## Patching some of BERT's scripts:
-#
-sed "s| accuracy-squad.py| ${BERT_REF_ROOT}/accuracy-squad.py|g" ${BERT_REF_ROOT}/run.py >${CWD}/run.py
 
 ## Adding one line to a Python script without disrupting the indentation structure:
 #
@@ -64,10 +61,7 @@ if [ ! -e "$OWN_PYTORCH_SUT" ]; then
     sed "s/^\([\ \t]*\)\(self.model.load_state_dict.*\)/\1\2\n\1${EXTRA_LINE}/" ${BERT_REF_ROOT}/pytorch_SUT.py >$OWN_PYTORCH_SUT
 fi
 
-rm -rf ${CWD}/utils
-mkdir ${CWD}/utils
-cp ${BERT_REF_ROOT}/create_squad_data.py ${CWD}/utils/create_squad_data.py
 
-## Run the patched version of run.py:
+## Run BERT inference:
 #
-$CK_ENV_COMPILER_PYTHON_FILE ${CWD}/run.py --mlperf_conf=${CK_ENV_MLPERF_INFERENCE}/mlperf.conf --user_conf=${PATH_TO_USER_CONF} --backend=${CK_BERT_BACKEND} --scenario=${CK_LOADGEN_SCENARIO} $CK_LOADGEN_MODE_STRING
+$CK_ENV_COMPILER_PYTHON_FILE ${BERT_REF_ROOT}/run.py --mlperf_conf=${CK_ENV_MLPERF_INFERENCE}/mlperf.conf --user_conf=${PATH_TO_USER_CONF} --backend=${CK_BERT_BACKEND} --scenario=${CK_LOADGEN_SCENARIO} $CK_LOADGEN_MODE_STRING
