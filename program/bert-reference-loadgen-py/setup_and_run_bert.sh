@@ -57,7 +57,7 @@ ln -s ${BERT_REF_ROOT} ${CWD}/bert_code
 #
 OWN_PYTORCH_SUT=${CWD}/pytorch_SUT.py
 if [ ! -e "$OWN_PYTORCH_SUT" ]; then
-    EXTRA_LINE="if os.environ.get('CK_BERT_TRANSFORMERS_OVERRIDE','no').lower() in ('yes','on','true','1'): self.model.bert.set_weights_split()"
+    EXTRA_LINE="if hasattr(self.model.bert, 'set_weights_split'): self.model.bert.set_weights_split()"
     sed "s/^\([\ \t]*\)\(self.model.load_state_dict.*\)/\1\2\n\1${EXTRA_LINE}/" ${BERT_REF_ROOT}/pytorch_SUT.py >$OWN_PYTORCH_SUT
 fi
 
