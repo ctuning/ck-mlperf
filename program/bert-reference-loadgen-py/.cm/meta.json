@@ -39,22 +39,15 @@
     },
     "lib-python-transformers": {
       "local": "yes",
-      "name": "Python Transformers library (main)",
+      "name": "Python Transformers library",
       "sort": 40,
       "tags": "lib,python-package,transformers",
+      "update_tags_if_env" : {
+        "patched,with.split_heads": [ { "CK_BERT_TRANSFORMERS_OVERRIDE": ["on", "On", "ON", "yes", "Yes", "YES", "true", "True", "TRUE", "1"] } ],
+        "original":                 [ { "CK_BERT_TRANSFORMERS_OVERRIDE": ["off", "Off", "OFF", "no", "No", "NO", "false", "False", "FALSE", "0", ""] } ]
+      },
       "version_from": [ 2, 4, 0],
       "version_to": [ 2, 4, 0]
-    },
-    "lib-python-transformers-override": {
-      "enable_if_env": [
-          { "CK_BERT_TRANSFORMERS_OVERRIDE":    ["on", "ON", "yes", "YES", "true", "TRUE", "1"] }
-      ],
-      "local": "yes",
-      "name": "Python Transformers library (patched override)",
-      "sort": 41,
-      "tags": "lib,python-package,transformers,patched",
-      "version_from": [ 2, 4, 0, 1],
-      "version_to": [ 2, 4, 0, 10]
     },
     "lib-python-pytorch": {
       "local": "yes",
