@@ -43,7 +43,7 @@
       "sort": 40,
       "tags": "lib,python-package,transformers",
       "update_tags_if_env" : {
-        "patched,with.corsair":     [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "with.corsair" ] } ],
+        "patched,with.custom1":     [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "with.custom1" ] } ],
         "patched,with.split_heads": [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "with.split_heads" ] } ],
         "original":                 [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "default", "original" ] } ]
       },
