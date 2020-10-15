@@ -43,8 +43,9 @@
       "sort": 40,
       "tags": "lib,python-package,transformers",
       "update_tags_if_env" : {
-        "patched,with.split_heads": [ { "CK_BERT_TRANSFORMERS_OVERRIDE": ["on", "On", "ON", "yes", "Yes", "YES", "true", "True", "TRUE", "1"] } ],
-        "original":                 [ { "CK_BERT_TRANSFORMERS_OVERRIDE": ["off", "Off", "OFF", "no", "No", "NO", "false", "False", "FALSE", "0", ""] } ]
+        "patched,with.corsair":     [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "with.corsair" ] } ],
+        "patched,with.split_heads": [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "with.split_heads" ] } ],
+        "original":                 [ { "CK_BERT_TRANSFORMERS_VARIATION": [ "default", "original" ] } ]
       },
       "version_from": [ 2, 4, 0],
       "version_to": [ 2, 4, 0]
@@ -65,7 +66,7 @@
   "run_vars": {
     "CK_BERT_DATA": "/data/lg4/bert_large_data",
     "CK_BERT_BACKEND": "pytorch",
-    "CK_BERT_TRANSFORMERS_OVERRIDE": "no",
+    "CK_BERT_TRANSFORMERS_VARIATION": "original",
     "CK_LOADGEN_MODE_STRING": "",
     "_CK_LOADGEN_MODE_STRING": "--accuracy",
     "CK_LOADGEN_SCENARIO": "SingleStream"
