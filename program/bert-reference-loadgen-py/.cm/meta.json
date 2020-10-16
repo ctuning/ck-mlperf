@@ -57,6 +57,7 @@
       "tags": "lib,python-package,pytorch"
     },
     "lib-python-onnxruntime": {
+      "enable_if_env":  [ { "CK_BERT_BACKEND": "onnxruntime" } ],
       "local": "yes",
       "name": "Python ONNX runtime library",
       "sort": 60,
