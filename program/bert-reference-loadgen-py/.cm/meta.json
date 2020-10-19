@@ -68,9 +68,9 @@
     "CK_BERT_DATA": "/data/lg4/bert_large_data",
     "CK_BERT_BACKEND": "pytorch",
     "CK_BERT_TRANSFORMERS_VARIATION": "original",
-    "CK_LOADGEN_MODE_STRING": "",
-    "_CK_LOADGEN_MODE_STRING": "--accuracy",
-    "CK_LOADGEN_SCENARIO": "SingleStream"
+    "CK_LOADGEN_SCENARIO": "SingleStream",
+    "CK_LOADGEN_MODE": "PerformanceOnly",
+    "CK_LOADGEN_MAX_EXAMPLES": ""
   },
   "tags": [
     "loadgen",
