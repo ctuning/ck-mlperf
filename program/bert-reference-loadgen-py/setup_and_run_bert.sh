@@ -56,9 +56,12 @@ ln -s ${BERT_REF_ROOT} ${CWD}/bert_code
 ## Adding one line to a Python script without disrupting the indentation structure:
 #
 OWN_PYTORCH_SUT=${CWD}/pytorch_SUT.py
-if [ ! -e "$OWN_PYTORCH_SUT" ]; then
-    EXTRA_LINE="if hasattr(self.model.bert, 'set_weights_split'): self.model.bert.set_weights_split()"
-    sed "s/^\([\ \t]*\)\(self.model.load_state_dict.*\)/\1\2\n\1${EXTRA_LINE}/" ${BERT_REF_ROOT}/pytorch_SUT.py >$OWN_PYTORCH_SUT
+
+EXTRA_LINE="if hasattr(self.model.bert, 'set_weights_split'): self.model.bert.set_weights_split()"
+sed "s/^\([\ \t]*\)\(self.model.load_state_dict.*\)/\1\2\n\1${EXTRA_LINE}/" ${BERT_REF_ROOT}/pytorch_SUT.py >$OWN_PYTORCH_SUT
+
+if [ ! -z "${CK_DISABLE_CUDA}" ]; then
+    sed -i "s/\.cuda()//" $OWN_PYTORCH_SUT
 fi
 
 if [ "$CK_LOADGEN_MODE" = "AccuracyOnly" ] || [ "$CK_LOADGEN_MODE" = "Accuracy" ] || [ "$CK_LOADGEN_MODE" = "accuracy" ]; then
