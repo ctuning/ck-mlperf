@@ -79,6 +79,10 @@ def ck_postprocess(i):
     dataset_source = deps['dataset']['dict']['deps'].get('dataset-source',{})
     if dataset_source != {}: # preprocessed
         coco_dir = dataset_source['dict']['env']['CK_ENV_DATASET_COCO']
+    elif dataset_source == {} and deps['dataset']['dict']['env'].get('CK_ENV_DATASET_COCO','') == '': # preprocessed and detected
+        coco_annotations_file = deps['dataset']['dict']['env']['CK_ENV_DATASET_ANNOTATIONS'] # asked during detection
+        coco_annotations_dir = os.path.dirname(coco_annotations_file)
+        coco_dir = os.path.dirname(coco_annotations_dir)
     else: # original
         coco_dir = deps['dataset']['dict']['env']['CK_ENV_DATASET_COCO']
 
