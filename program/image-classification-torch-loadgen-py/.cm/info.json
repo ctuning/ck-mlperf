@@ -1,0 +1,15 @@
+{
+  "backup_data_uid": "19b1b517e2442579",
+  "backup_module_uid": "b0ac08fe1d3c2615",
+  "backup_module_uoa": "program",
+  "control": {
+    "engine": "CK",
+    "iso_datetime": "2020-11-13T11:43:09.714521",
+    "version": [
+      "1",
+      "9",
+      "7"
+    ]
+  },
+  "data_name": "image-classification-torch-loadgen-py"
+}
