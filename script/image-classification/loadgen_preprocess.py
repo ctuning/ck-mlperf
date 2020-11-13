@@ -43,8 +43,10 @@ def user_conf_and_audit_config(i):
     deps=i['deps']
     env=i['env']
 
-    # Try ML_MODEL_MODEL_NAME from the OpenVINO model first. If unavailable, try MODEL_NAME from its 'model-source' dependency.
-    model_name = dep_env('weights', 'ML_MODEL_MODEL_NAME') or deps['weights']['dict']['deps']['model-source']['dict']['customize']['install_env']['MODEL_NAME']
+    # Try ML_MODEL_MODEL_NAME from the environment, then from the 'weights' model dependency, then try to find MODEL_NAME of its 'model-source' dependency:
+    model_name = ( env.get('ML_MODEL_MODEL_NAME')
+        or dep_env('weights', 'ML_MODEL_MODEL_NAME')
+        or deps['weights']['dict']['deps']['model-source']['dict']['customize']['install_env']['MODEL_NAME'] )
     print('\n-=-=-=-=-= Generating user.conf for model "{}" ...'.format(model_name))
     scenario            = env['CK_LOADGEN_SCENARIO']
     user_conf_rel_path  = env['CK_LOADGEN_USER_CONF']

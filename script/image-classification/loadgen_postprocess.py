@@ -75,9 +75,9 @@ def ck_postprocess(i):
 
     os.environ['PYTHONPATH'] = deps['lib-python-numpy']['dict']['env']['PYTHONPATH'].split(':')[0] +':'+os.environ.get('PYTHONPATH','')
 
-    dtype = deps['weights']['dict']['env'].get('CK_MLPERF_ACCURACY_IMAGENET_TYPE','')
-    if dtype == '':
-        dtype = env.get('CK_MLPERF_ACCURACY_IMAGENET_TYPE', 'float32')
+    dtype = ( env.get('CK_MLPERF_ACCURACY_IMAGENET_TYPE')
+        or deps['weights']['dict']['env'].get('CK_MLPERF_ACCURACY_IMAGENET_TYPE')
+        or 'float32' )
 
     command = [ deps['python']['dict']['env']['CK_ENV_COMPILER_PYTHON_FILE'], accuracy_script,
               '--mlperf-accuracy-file', MLPERF_LOG_ACCURACY_JSON,
