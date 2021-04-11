@@ -1,9 +1,5 @@
 # Collective Knowledge workflows for MLPerf
 
-**All CK components can be found at [cKnowledge.io](https://cKnowledge.io) and in [one GitHub repository](https://github.com/ctuning/ai)!**
-
-*This project is hosted by the [cTuning foundation (non-profit R&D organization)](https://cTuning.org).*
-
 [![compatibility](https://github.com/ctuning/ck-guide-images/blob/master/ck-compatible.svg)](https://github.com/ctuning/ck)
 [![automation](https://github.com/ctuning/ck-guide-images/blob/master/ck-artifact-automated-and-reusable.svg)](http://cTuning.org/ae)
 
@@ -11,6 +7,12 @@
 
 Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg?branch=master)](https://travis-ci.org/ctuning/ck-mlperf)
 
+## News
+
+* **April 2021** We are very excited to join forces with [OctoML.ai](https://OctoML.ai)! Contact [Grigori Fursin](https://cKnowledge.io/@gfursin) for more details!
+* **March 2021** All CK components can be found at [cKnowledge.io](https://cKnowledge.io) and in [one GitHub repository](https://github.com/ctuning/ck-ml)!
+* **March 2021** See our [ACM TechTalk](https://learning.acm.org/techtalks/reproducibility) about the CK technology, reproducible research, FAIR principles and MLPerf.
+* **March 2021** The overview of the CK technology has appeared in the Philosophical Transactions A, the world's longest-running journal where Newton published: <a href="https://doi.org/10.1098/rsta.2020.0211">DOI</a>, <a href="https://arxiv.org/pdf/2011.01149.pdf">ArXiv</a>.
 
 ## Table of Contents
 - [Installation](#installation)

@@ -7,8 +7,8 @@ sudo:       false
 language:   python
 
 python:
-    - 3.5
     - 3.6
+    - 3.7
 
 matrix:
     include:
@@ -17,12 +17,12 @@ matrix:
           arch: amd64
           dist: bionic
           python: 3.6.7
-        - name: "Python 3.6.8 on OSX"
-          os: osx
-          osx_image: xcode9.2
-          language: generic
-          python:   3.6
-          env:      WANTED_PYTHON_VERSION=3.6
+#        - name: "Python 3.6.8 on OSX"
+#          os: osx
+#          osx_image: xcode9.2
+#          language: generic
+#          python:   3.6
+#          env:      WANTED_PYTHON_VERSION=3.6
 
 addons:
     apt:
@@ -61,7 +61,7 @@ before_install:
 
 install:
     - CWD=`pwd`
-    - THIS_REPO_NAME=`basename $CWD`
+    - THIS_REPO_NAME=ck-ml
     - echo "TRAVIS_OS_NAME=${TRAVIS_OS_NAME}, WANTED_PYTHON_VERSION=${WANTED_PYTHON_VERSION}"
     - echo "CWD=${CWD}, THIS_REPO_NAME=${THIS_REPO_NAME}, PATH=${PATH}"
     - which "${PYTHON_EXE}"

@@ -1,3 +1,6 @@
+20210411:
+  * [gfursin] fixed travis and updated news
+
 20210403:
   * [gfursin] fixed TFLite packages 1.15 (eigen library).
      https://github.com/ctuning/ck/issues/138
