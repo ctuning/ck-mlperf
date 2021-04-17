@@ -79,13 +79,13 @@ install:
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
     - ck install package --tags=dataset,imagenet,preprocessed,using-pillow,first.20 # we only need a short preprocessed subset
     - echo "0" | ck install package --tags=model,image-classification,onnx,mobilenet,non-quantized,nchw,downloaded   # MobileNet ONNX model, downloaded
-    - ck install package --tags=model,onnx,mobilenet,nhwc,converted                 # MobileNet ONNX model, converted from TF, in NHWC
-    - ck install package --tags=model,onnx,resnet,nchw,converted                    # ResNet50 ONNX model, converted from TF, in NCHW
-    - ck install package --tags=model,onnx,resnet,nhwc,converted                    # ResNet50 ONNX model, converted from TF, in NHWC
-
+    - echo "0" | ck install package --tags=model,onnx,mobilenet,nhwc,converted                 # MobileNet ONNX model, converted from TF, in NHWC
+    - echo "0" | ck install package --tags=model,onnx,resnet,nchw,converted                    # ResNet50 ONNX model, converted from TF, in NCHW
+    - echo "0" | ck install package --tags=model,onnx,resnet,nhwc,converted                    # ResNet50 ONNX model, converted from TF, in NHWC
+    - echo "0" | ck install package --tags=lib,python-package,onnxruntime
 script:
     - ck show env                                                                   # show everything that has been detected or installed
-    - ck run program:image-classification-onnx-py --dep_add_tags.weights=mobilenet,converted --cmd_key=barebones --env.CK_BATCH_SIZE=3      # internal preprocessing
+    - echo "0" | ck run program:image-classification-onnx-py --dep_add_tags.weights=mobilenet,converted --cmd_key=barebones --env.CK_BATCH_SIZE=3      # internal preprocessing
     - ck run program:image-classification-onnx-py --dep_add_tags.weights=mobilenet,downloaded --cmd_key=preprocessed --env.CK_BATCH_COUNT=2 # external preprocessing
     - ck run program:image-classification-onnx-py --dep_add_tags.weights=resnet,nchw,converted --cmd_key=preprocessed                       # channels-first layout
     - ck run program:image-classification-onnx-py --dep_add_tags.weights=resnet,nhwc,converted --cmd_key=preprocessed                       # channels-last layout
