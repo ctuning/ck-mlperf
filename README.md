@@ -7,10 +7,12 @@
 
 Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg?branch=master)](https://travis-ci.org/ctuning/ck-mlperf)
 
+*All CK components from the community are now continuously aggregated in [one CK repository](https://github.com/ctuning/ck-ml).*
+
 ## News
 
 * **April 2021** We are very excited to join forces with [OctoML.ai](https://OctoML.ai)! Contact [Grigori Fursin](https://cKnowledge.io/@gfursin) for more details!
-* **March 2021** All CK components can be found at [cKnowledge.io](https://cKnowledge.io) and in [one GitHub repository](https://github.com/ctuning/ck-ml)!
+* **March 2021** For your convenience, all CK components for ML Systems are now aggregated in [one GitHub repository](https://github.com/ctuning/ck-ml)! They can be also searched for at the [cKnowledge.io portal](https://cKnowledge.io)!
 * **March 2021** See our [ACM TechTalk](https://learning.acm.org/techtalks/reproducibility) about the CK technology, reproducible research, FAIR principles and MLPerf.
 * **March 2021** The overview of the CK technology has appeared in the Philosophical Transactions A, the world's longest-running journal where Newton published: <a href="https://doi.org/10.1098/rsta.2020.0211">DOI</a>, <a href="https://arxiv.org/pdf/2011.01149.pdf">ArXiv</a>.
 
@@ -31,8 +33,6 @@ Linux/MacOS: [![Travis Build Status](https://travis-ci.org/ctuning/ck-mlperf.svg
         - [Prerequisites](#prereqs)
         - [Modify](#modify_run_local) `run_local.sh`
         - [Use](#use_run_local) `run_local_sh`
-
-- [Training v0.7](#training_0_7)
 
 
 <a name="installation"></a>
@@ -253,8 +253,3 @@ $ ./run_local.sh tf mobilenet cpu
 ...
 TestScenario.Offline qps=237.10, mean=3.3406, time=4.319, queries=1024, tiles=50.0:2.9683,80.0:4.2340,90.0:4.2692,95.0:4.2827,99.0:4.2932,99.9:4.2932
 ```
-
-<a name="training_0_7"></a>
-## MLPerf Training v0.7
-
-**TODO**

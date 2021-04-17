@@ -78,7 +78,7 @@ install:
     - ck install package:lib-tensorflow-1.13.1-cpu                                  # avoid manual selection
     - ck install package:imagenet-2012-val-min                                      # avoid manual selection
     - ck install package --tags=dataset,imagenet,preprocessed,using-pillow,first.20 # we only need a short preprocessed subset
-    - ck install package --tags=model,image-classification,onnx,mobilenet,non-quantized,nchw,downloaded   # MobileNet ONNX model, downloaded
+    - echo "0" | ck install package --tags=model,image-classification,onnx,mobilenet,non-quantized,nchw,downloaded   # MobileNet ONNX model, downloaded
     - ck install package --tags=model,onnx,mobilenet,nhwc,converted                 # MobileNet ONNX model, converted from TF, in NHWC
     - ck install package --tags=model,onnx,resnet,nchw,converted                    # ResNet50 ONNX model, converted from TF, in NCHW
     - ck install package --tags=model,onnx,resnet,nhwc,converted                    # ResNet50 ONNX model, converted from TF, in NHWC
